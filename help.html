@@ -37,6 +37,11 @@
     --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08);
   }
 
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
   html {
     scroll-behavior: smooth;
   }
@@ -48,8 +53,8 @@
     background: var(--bg);
     color: var(--text);
     line-height: 1.6;
-    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    font-size: 15px;
   }
 
   .container {
@@ -219,7 +224,7 @@
      ============================================================ */
   .content-layout {
     display: grid;
-    grid-template-columns: 220px 1fr;
+    grid-template-columns: 220px minmax(0, 1fr);
     gap: 48px;
     padding: 40px 0 100px;
   }
@@ -275,6 +280,8 @@
 
   .main-content {
     min-width: 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
   }
 
   .help-section {
@@ -419,6 +426,7 @@
     padding: 0 22px;
     opacity: 0;
     transition: opacity 0.3s ease, padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    word-break: break-word;
   }
 
   .faq-item.open .faq-a {
@@ -436,6 +444,7 @@
     font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
     font-size: 0.88em;
     font-weight: 500;
+    word-break: break-all;
   }
 
   .faq-a ul {
@@ -476,6 +485,7 @@
     font-size: 14px;
     color: var(--text-secondary);
     border-bottom: 1px dashed var(--border-light);
+    word-break: break-word;
   }
 
   .steps li:last-child {
@@ -500,7 +510,7 @@
   }
 
   /* ============================================================
-     表格
+     表格（不再 nowrap，允许换行）
      ============================================================ */
   .help-table {
     width: 100%;
@@ -511,6 +521,8 @@
     border-radius: 12px;
     overflow: hidden;
     margin: 16px 0;
+    table-layout: fixed;
+    word-break: break-word;
   }
 
   .help-table thead {
@@ -526,6 +538,7 @@
     letter-spacing: 0.3px;
     text-transform: uppercase;
     border-bottom: 1px solid var(--border-light);
+    word-break: break-word;
   }
 
   .help-table td {
@@ -533,6 +546,7 @@
     border-bottom: 1px solid var(--border-light);
     color: var(--text-secondary);
     vertical-align: top;
+    word-break: break-word;
   }
 
   .help-table tr:last-child td {
@@ -556,6 +570,7 @@
     display: flex;
     gap: 12px;
     align-items: flex-start;
+    word-break: break-word;
   }
 
   .tip-icon {
@@ -566,6 +581,7 @@
 
   .tip-body {
     flex: 1;
+    min-width: 0;
   }
 
   .tip-body strong {
@@ -599,7 +615,7 @@
   }
 
   /* ============================================================
-     代码块
+     代码块（允许换行）
      ============================================================ */
   .code-block {
     background: var(--code-bg);
@@ -612,6 +628,8 @@
     color: var(--code-text);
     overflow-x: auto;
     margin: 12px 0;
+    word-break: break-word;
+    white-space: pre-wrap;
   }
 
   .code-block .comment {
@@ -636,6 +654,7 @@
     font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
     font-size: 0.88em;
     font-weight: 500;
+    word-break: break-all;
   }
 
   /* ============================================================
@@ -734,7 +753,10 @@
      移动端布局（< 900px）
      ============================================================ */
   @media (max-width: 900px) {
-    /* 移动端容器内边距加大 */
+    body {
+      font-size: 16px;
+    }
+
     .container {
       padding: 0 20px;
     }
@@ -756,7 +778,7 @@
       -webkit-backdrop-filter: saturate(180%) blur(20px);
       border-bottom: 1px solid rgba(0, 0, 0, 0.06);
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-      padding: 0 24px;
+      padding: 0 20px;
       max-height: 0;
       overflow: hidden;
       opacity: 0;
@@ -769,7 +791,7 @@
     .nav-links.open {
       max-height: 500px;
       opacity: 1;
-      padding: 12px 24px 20px;
+      padding: 12px 20px 20px;
       pointer-events: auto;
     }
 
@@ -785,7 +807,7 @@
     .nav-links a {
       display: block;
       padding: 14px 4px;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 500;
       color: var(--text);
     }
@@ -811,30 +833,25 @@
       color: var(--blue-hover);
     }
 
-    .nav-links .nav-external svg {
-      transform: none;
-    }
-
-    /* ============================================================
-       移动端布局：目录改为横向胶囊
-       ============================================================ */
+    /* 布局 */
     .content-layout {
       grid-template-columns: 1fr;
-      gap: 28px;
-      padding: 20px 0 60px;
+      gap: 20px;
+      padding: 16px 0 60px;
     }
 
+    /* 目录：横向胶囊 */
     .sidebar {
       position: sticky;
       top: 60px;
       z-index: 10;
       max-height: none;
       overflow: visible;
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.96);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       margin: 0 -20px;
-      padding: 12px 20px;
+      padding: 10px 20px;
       border-bottom: 1px solid var(--border-light);
     }
 
@@ -864,7 +881,7 @@
     .sidebar a {
       display: block;
       padding: 8px 14px;
-      font-size: 13px;
+      font-size: 14px;
       white-space: nowrap;
       border-radius: 999px;
       border-left: none;
@@ -885,116 +902,157 @@
       border-left: none;
     }
 
-    /* ============================================================
-       移动端内容间距
-       ============================================================ */
+    /* 页面标题 */
     .page-hero {
-      padding: 100px 0 24px;
+      padding: 90px 0 20px;
     }
 
     .page-hero h1 {
-      font-size: 32px;
+      font-size: 34px;
       letter-spacing: -1px;
     }
 
     .page-hero p {
-      font-size: 15px;
-      padding: 0 8px;
+      font-size: 16px;
+      padding: 0 4px;
     }
 
+    /* 内容区 */
     .help-section {
-      margin-bottom: 48px;
+      margin-bottom: 40px;
     }
 
     .help-section h2 {
-      font-size: 22px;
-      gap: 8px;
+      font-size: 24px;
+      gap: 10px;
       margin-bottom: 16px;
+      padding-bottom: 10px;
     }
 
     .help-section h2 .num {
-      width: 24px;
-      height: 24px;
-      font-size: 12px;
+      width: 26px;
+      height: 26px;
+      font-size: 13px;
     }
 
     .help-section h3 {
-      font-size: 15px;
+      font-size: 17px;
       margin: 20px 0 8px;
     }
 
     .help-section p {
-      font-size: 14px;
+      font-size: 16px;
+      line-height: 1.7;
     }
 
     /* FAQ */
     .faq-q {
       padding: 16px 18px;
-      font-size: 14px;
+      font-size: 16px;
+      line-height: 1.5;
     }
 
     .faq-a {
       padding: 0 18px;
-      font-size: 13.5px;
+      font-size: 15px;
+      line-height: 1.75;
     }
 
     .faq-item.open .faq-a {
       padding: 0 18px 16px;
     }
 
-    /* 表格：横向滚动 */
+    /* 表格：去掉 nowrap，允许换行 */
     .help-table {
-      font-size: 13px;
+      font-size: 14px;
       display: block;
       overflow-x: auto;
-      white-space: nowrap;
       -webkit-overflow-scrolling: touch;
+      word-break: break-word;
+      white-space: normal;
     }
 
-    .help-table th,
+    .help-table thead,
+    .help-table tbody {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .help-table th {
+      font-size: 12.5px;
+      padding: 10px 12px;
+    }
+
     .help-table td {
       padding: 10px 12px;
+      font-size: 14px;
+      line-height: 1.55;
+      white-space: normal;
+    }
+
+    /* 表格列宽自适应 */
+    .help-table th:first-child,
+    .help-table td:first-child {
+      width: 38%;
+    }
+
+    .help-table th:last-child,
+    .help-table td:last-child {
+      width: 62%;
     }
 
     /* 步骤 */
     .steps li {
-      padding: 12px 0 12px 44px;
-      font-size: 13.5px;
+      padding: 12px 0 12px 46px;
+      font-size: 15px;
+      line-height: 1.7;
     }
 
     .steps li::before {
-      width: 28px;
-      height: 28px;
-      font-size: 12px;
+      width: 30px;
+      height: 30px;
+      font-size: 13px;
       top: 10px;
     }
 
     /* 提示框 */
     .tip {
       padding: 14px 16px;
-      font-size: 13.5px;
+      font-size: 15px;
+      line-height: 1.7;
       border-radius: 10px;
+      gap: 10px;
     }
 
     .tip-icon {
-      font-size: 16px;
+      font-size: 18px;
     }
 
     /* 代码块 */
     .code-block {
-      font-size: 12px;
+      font-size: 13.5px;
       padding: 14px 16px;
       border-radius: 8px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-all;
     }
 
     code {
-      font-size: 0.85em;
+      font-size: 0.9em;
       padding: 2px 5px;
+      word-break: break-all;
     }
 
     /* 页脚 */
     footer {
       padding: 32px 0;
+      font-size: 14px;
+    }
+
+    footer .footer-brand {
+      font-size: 17px;
     }
   }
 
@@ -1003,20 +1061,76 @@
      ============================================================ */
   @media (max-width: 480px) {
     .container {
-      padding: 0 18px;
+      padding: 0 16px;
     }
 
     .page-hero h1 {
-      font-size: 28px;
+      font-size: 30px;
+    }
+
+    .page-hero p {
+      font-size: 15px;
     }
 
     .help-section h2 {
-      font-size: 20px;
+      font-size: 22px;
+    }
+
+    .help-section h3 {
+      font-size: 16px;
+    }
+
+    .help-section p {
+      font-size: 15px;
     }
 
     .sidebar {
-      margin: 0 -18px;
-      padding: 10px 18px;
+      margin: 0 -16px;
+      padding: 10px 16px;
+    }
+
+    .sidebar a {
+      font-size: 13px;
+      padding: 7px 12px;
+    }
+
+    /* 表格：小屏改为堆叠式 */
+    .help-table {
+      font-size: 13.5px;
+    }
+
+    .help-table th {
+      font-size: 12px;
+      padding: 8px 10px;
+    }
+
+    .help-table td {
+      padding: 8px 10px;
+      font-size: 13.5px;
+    }
+
+    .faq-q {
+      font-size: 15px;
+      padding: 14px 16px;
+    }
+
+    .faq-a {
+      font-size: 14px;
+      padding: 0 16px;
+    }
+
+    .faq-item.open .faq-a {
+      padding: 0 16px 14px;
+    }
+
+    .code-block {
+      font-size: 12.5px;
+      padding: 12px 14px;
+    }
+
+    .steps li {
+      font-size: 14px;
+      padding-left: 42px;
     }
   }
 </style>
@@ -1120,12 +1234,12 @@
       <h3>安装步骤</h3>
       <ol class="steps">
         <li>
-          <strong>插件获取</strong><br>
-          Linux582021的QQ号：<code>2703441387</code>，联系Linux获取 <code>InTheNameOfLinux.jar</code>。
+          <strong>获取插件</strong><br>
+          请联系 <strong>Linux582021</strong> 获取插件文件（QQ：<strong>2703441387</strong>）。
         </li>
         <li>
           <strong>放入插件目录</strong><br>
-          将 jar 文件放入服务器 <code>plugins/</code> 目录。
+          将 <code>InTheNameOfLinux.jar</code> 放入服务器 <code>plugins/</code> 目录。
         </li>
         <li>
           <strong>启动服务器</strong><br>
