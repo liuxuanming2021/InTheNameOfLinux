@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InTheNameOfLinux · 服务器管理插件</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --blue: #0071e3;
+    --blue-hover: #0062cc;
+    --blue-light: #e8f2ff;
+    --blue-soft: #f0f7ff;
+    --blue-border: #c4ddff;
+    --bg: #ffffff;
+    --bg-secondary: #f5f5f7;
+    --bg-tertiary: #fafafc;
+    --text: #1d1d1f;
+    --text-secondary: #515154;
+    --text-tertiary: #86868b;
+    --border: #d2d2d7;
+    --border-light: #e8e8ed;
+    --code-bg: #f5f5f7;
+    --code-text: #1d1d1f;
+    --code-comment: #6e6e73;
+    --code-keyword: #0071e3;
+    --code-value: #b7472a;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 20px 48px rgba(0, 113, 227, 0.15);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
+                 'SF Pro Text', 'Helvetica Neue', 'PingFang SC',
+                 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ============================================================
+     导航栏
+     ============================================================ */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    z-index: 1000;
+  }
+
+  .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 52px;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: -0.2px;
+  }
+
+  .nav-logo-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--blue) 0%, #5e9eff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+    align-items: center;
+  }
+
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover {
+    color: var(--text);
+  }
+
+  .nav-links .nav-help {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .nav-links .nav-help:hover {
+    color: var(--text);
+  }
+
+  .nav-links .nav-external {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--blue);
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 980px;
+    background: var(--blue-light);
+    transition: all 0.2s ease;
+    font-size: 13px;
+  }
+
+  .nav-links .nav-external:hover {
+    color: #fff;
+    background: var(--blue);
+  }
+
+  .nav-links .nav-external svg {
+    transition: transform 0.2s ease;
+  }
+
+  .nav-links .nav-external:hover svg {
+    transform: translate(1px, -1px);
+  }
+
+  /* ============================================================
+     Hero 区
+     ============================================================ */
+  .hero {
+    padding: 140px 0 100px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 600px;
+    background: radial-gradient(ellipse at center,
+                rgba(0, 113, 227, 0.10) 0%,
+                rgba(0, 113, 227, 0.03) 40%,
+                transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero > .container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: var(--blue-light);
+    border-radius: 999px;
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--blue);
+    border-radius: 50%;
+  }
+
+  .hero h1 {
+    font-size: clamp(40px, 6.5vw, 72px);
+    font-weight: 700;
+    letter-spacing: -2px;
+    line-height: 1.05;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, #0071e3 0%, #5e9eff 50%, #00c7ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-subtitle {
+    font-size: clamp(17px, 2.2vw, 21px);
+    color: var(--text-secondary);
+    max-width: 620px;
+    margin: 0 auto 32px;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+
+  .meta-tag {
+    padding: 6px 14px;
+    background: var(--bg-secondary);
+    border-radius: 999px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .meta-tag strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* ============================================================
+     按钮
+     ============================================================ */
+  .btn {
+    padding: 12px 26px;
+    border-radius: 980px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    border: 1px solid transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: -0.1px;
+  }
+
+  /* 主按钮：实心蓝 */
+  .btn-primary {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+  }
+
+  .btn-primary:hover {
+    background: var(--blue-hover);
+    border-color: var(--blue-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0, 113, 227, 0.3);
+  }
+
+  /* 副按钮：淡蓝底 + 蓝边框 + 蓝字 */
+  .btn-secondary {
+    background: var(--blue-soft);
+    color: var(--blue);
+    border-color: var(--blue-border);
+  }
+
+  .btn-secondary:hover {
+    background: var(--blue-light);
+    border-color: var(--blue);
+    color: var(--blue-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0, 113, 227, 0.15);
+  }
+
+  /* ============================================================
+     Section
+     ============================================================ */
+  section {
+    padding: 80px 0;
+  }
+
+  section.alt {
+    background: var(--bg-secondary);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+
+  .section-header h2 {
+    font-size: clamp(30px, 4.5vw, 44px);
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    margin-bottom: 12px;
+    color: var(--text);
+    line-height: 1.1;
+  }
+
+  .section-header p {
+    font-size: 17px;
+    color: var(--text-secondary);
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    display: inline-block;
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  /* ============================================================
+     卡片网格
+     ============================================================ */
+  .grid {
+    display: grid;
+    gap: 16px;
+  }
+
+  .grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+
+  /* ============================================================
+     卡片
+     ============================================================ */
+  .card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 28px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(0);
+    transition: transform 0.7s ease,
+                box-shadow 0.7s ease,
+                border-color 0.7s ease;
+    will-change: transform;
+  }
+
+  .card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 24px 48px rgba(0, 113, 227, 0.16),
+                0 8px 16px rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 113, 227, 0.35);
+  }
+
+  .card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--blue-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 18px;
+    transition: transform 0.7s ease;
+  }
+
+  .card:hover .card-icon {
+    transform: scale(1.1);
+  }
+
+  .card h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .card p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  .card ul {
+    list-style: none;
+    margin-top: 14px;
+  }
+
+  .card ul li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 5px 0 5px 18px;
+    position: relative;
+  }
+
+  .card ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    width: 6px;
+    height: 6px;
+    background: var(--blue);
+    border-radius: 50%;
+    opacity: 0.6;
+  }
+
+  /* ============================================================
+     命令块
+     ============================================================ */
+  .command-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 20px;
+    font-family: 'SF Mono', 'Menlo', 'Consolas', 'Monaco', monospace;
+    font-size: 12.5px;
+    line-height: 1.9;
+    overflow-x: auto;
+    margin-top: 16px;
+    color: var(--code-text);
+    position: relative;
+  }
+
+  .command-block::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ff5f56;
+    box-shadow: 16px 0 0 #ffbd2e, 32px 0 0 #27c93f;
+  }
+
+  .command-block > div:first-child {
+    margin-top: 20px;
+  }
+
+  .command-block .cmd {
+    color: var(--code-keyword);
+    font-weight: 600;
+  }
+
+  .command-block .comment {
+    color: var(--code-comment);
+    font-style: italic;
+  }
+
+  .command-block .key {
+    color: var(--code-value);
+    font-weight: 500;
+  }
+
+  code {
+    background: var(--blue-light);
+    color: var(--blue);
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 0.88em;
+    font-weight: 500;
+  }
+
+  /* ============================================================
+     表格
+     ============================================================ */
+  .table-wrap {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid var(--border-light);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transform: translateY(0);
+    transition: transform 0.7s ease,
+                box-shadow 0.7s ease,
+                border-color 0.7s ease;
+    will-change: transform;
+  }
+
+  .table-wrap:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0, 113, 227, 0.14);
+    border-color: rgba(0, 113, 227, 0.3);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  thead {
+    background: var(--bg-tertiary);
+  }
+
+  th {
+    padding: 14px 20px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text);
+    font-size: 12px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-light);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-secondary);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr:hover {
+    background: var(--bg-tertiary);
+  }
+
+  td code {
+    font-size: 12px;
+    padding: 3px 8px;
+  }
+
+  /* ============================================================
+     统计
+     ============================================================ */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin-top: 40px;
+  }
+
+  .stat {
+    text-align: center;
+    padding: 28px 20px;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(0);
+    transition: transform 0.7s ease,
+                box-shadow 0.7s ease,
+                border-color 0.7s ease;
+    will-change: transform;
+  }
+
+  .stat:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 113, 227, 0.16);
+    border-color: rgba(0, 113, 227, 0.35);
+  }
+
+  .stat-value {
+    font-size: 38px;
+    font-weight: 700;
+    color: var(--blue);
+    margin-bottom: 4px;
+    letter-spacing: -1.5px;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  /* ============================================================
+     页脚
+     ============================================================ */
+  footer {
+    padding: 48px 0;
+    background: var(--bg-secondary);
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 13px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  footer .footer-brand {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  footer p {
+    margin-bottom: 4px;
+  }
+
+  footer a {
+    color: var(--blue);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  footer a:hover {
+    color: var(--blue-hover);
+  }
+
+  /* ============================================================
+     响应式
+     ============================================================ */
+  @media (max-width: 900px) {
+    .nav-links li:not(:last-child):not(:nth-last-child(2)) {
+      display: none;
+    }
+
+    .nav-links {
+      gap: 8px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding: 110px 0 70px;
+    }
+
+    section {
+      padding: 60px 0;
+    }
+
+    .card {
+      padding: 22px;
+    }
+
+    .command-block {
+      font-size: 11px;
+      padding: 16px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+    }
+  }
+
+  /* ============================================================
+     滚动淡入
+     ============================================================ */
+  .reveal {
+    opacity: 0;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    animation: fadeIn 0.8s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="#" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      InTheNameOfLinux
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">功能</a></li>
+      <li><a href="#penalty">封禁</a></li>
+      <li><a href="#moderator">协管</a></li>
+      <li><a href="#commands">命令</a></li>
+      <li><a href="help.html" class="nav-help">帮助</a></li>
+      <li><a href="#tech">技术</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          Nalxer 服务器
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">v26.10.5-Alpha · Minecraft 1.12.2</div>
+    <h1>以 Linux 之名<br><span class="gradient">守护你的服务器</span></h1>
+    <p class="hero-subtitle">
+      一款为服务器管理员量身打造的综合管理插件，集身份验证、封禁管理、功能限制、协管权限、插件联动于一体。
+    </p>
+
+    <div class="hero-meta">
+      <span class="meta-tag"><strong>SHA-256</strong> 加密存储</span>
+      <span class="meta-tag"><strong>0</strong> 明文密码</span>
+      <span class="meta-tag"><strong>16</strong> 个命令</span>
+      <span class="meta-tag"><strong>100%</strong> 异步安全</span>
+    </div>
+
+    <div class="hero-buttons">
+      <a href="#features" class="btn btn-primary">查看功能</a>
+      <a href="#commands" class="btn btn-secondary">命令列表</a>
+      <a href="help.html" class="btn btn-secondary">帮助中心</a>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">CORE FEATURES</span>
+      <h2>核心功能</h2>
+      <p>五大模块协同工作，覆盖服务器管理的方方面面</p>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card reveal">
+        <div class="card-icon">🔐</div>
+        <h3>身份验证</h3>
+        <p>SHA-256 + 随机盐 + 10000 次迭代的密码加密存储，聊天栏输入密码零日志泄漏。</p>
+        <ul>
+          <li>密码最短 6 位</li>
+          <li>失败 3 秒冷却</li>
+          <li>5 次锁定 300 秒</li>
+          <li>重启后锁定保留</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🚫</div>
+        <h3>封禁管理</h3>
+        <p>账号封禁、临时封禁、IP 封禁、历史查询一站式管理，广播带原因。</p>
+        <ul>
+          <li>永久 / 临时封禁</li>
+          <li>IP 封禁与解封</li>
+          <li>封禁历史可追溯</li>
+          <li>到期自动解封</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">⚔️</div>
+        <h3>功能封禁</h3>
+        <p>禁方块、禁移动、禁言，精确限制玩家行为，不影响账号登录。</p>
+        <ul>
+          <li>禁止方块交互</li>
+          <li>冻结移动坐标</li>
+          <li>拦截聊天与私聊</li>
+          <li>定时自动解除</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">👮</div>
+        <h3>协管体系</h3>
+        <p>协管无 OP 但可使用惩罚命令，时长限制 + 权限分流。</p>
+        <ul>
+          <li>封禁时长上限可配</li>
+          <li>禁止永久封禁</li>
+          <li>帮助菜单分流</li>
+          <li>TAB 补全分流</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🛡️</div>
+        <h3>玩家保护</h3>
+        <p>Linux582021 专属保护机制，拦截他人对该玩家的恶意操作。</p>
+        <ul>
+          <li>命令拦截</li>
+          <li>Sudo 拦截</li>
+          <li>控制台拦截</li>
+          <li>fs1 突破</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🔗</div>
+        <h3>插件联动</h3>
+        <p>与 XlandCore、假人插件、XlandStop 无缝联动，功能增强。</p>
+        <ul>
+          <li>XlandCore 身份</li>
+          <li>假人信息同步</li>
+          <li>重启命令监听</li>
+          <li>延迟检测 + reload</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="penalty" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">PENALTY SYSTEM</span>
+      <h2>封禁系统</h2>
+      <p>三层封禁体系，覆盖账号、IP、功能三个维度</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <div class="card-icon">🎯</div>
+        <h3>账号封禁</h3>
+        <p>永久 / 临时封禁，支持自定义时间与原因，广播带原因显示。</p>
+        <div class="command-block">
+          <div><span class="comment"># 永久封禁</span></div>
+          <div><span class="cmd">/ban</span> <span class="key">Steve</span> 使用作弊客户端</div>
+          <div></div>
+          <div><span class="comment"># 临时封禁</span></div>
+          <div><span class="cmd">/tempban</span> <span class="key">Steve</span> 1d12h 刷屏</div>
+          <div></div>
+          <div><span class="comment"># 封禁 IP</span></div>
+          <div><span class="cmd">/banip</span> <span class="key">Steve</span> 多开小号</div>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">⏱️</div>
+        <h3>时间格式</h3>
+        <p>支持单一单位与组合单位，灵活应对各种封禁场景。</p>
+        <div class="command-block">
+          <div><span class="key">10s</span>      <span class="comment"># 10 秒</span></div>
+          <div><span class="key">5m</span>       <span class="comment"># 5 分钟</span></div>
+          <div><span class="key">1h</span>       <span class="comment"># 1 小时</span></div>
+          <div><span class="key">1d</span>       <span class="comment"># 1 天</span></div>
+          <div><span class="key">1w</span>       <span class="comment"># 1 周</span></div>
+          <div><span class="key">1d12h</span>    <span class="comment"># 1 天 12 小时</span></div>
+          <div><span class="key">1w2d3h</span>   <span class="comment"># 组合单位</span></div>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">⚔️</div>
+        <h3>功能封禁</h3>
+        <p>不影响登录，只限制特定行为，适合轻度违规玩家。</p>
+        <div class="command-block">
+          <div><span class="cmd">/linux banblock</span> <span class="key">Steve</span> 1h  <span class="comment"># 禁方块</span></div>
+          <div><span class="cmd">/linux banmove</span> <span class="key">Steve</span> 30m  <span class="comment"># 禁移动</span></div>
+          <div><span class="cmd">/linux banmsg</span> <span class="key">Steve</span> 1d   <span class="comment"># 禁言</span></div>
+          <div><span class="cmd">/linux banall</span> <span class="key">Steve</span> 3d   <span class="comment"># 全封</span></div>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">📜</div>
+        <h3>历史查询</h3>
+        <p>完整封禁历史记录，支持查询与清除。</p>
+        <div class="command-block">
+          <div><span class="cmd">/linux history</span> <span class="key">Steve</span></div>
+          <div><span class="cmd">/linux lookup</span> <span class="key">Steve</span></div>
+          <div><span class="cmd">/linux seenip</span> <span class="key">1.2.3.4</span></div>
+          <div><span class="cmd">/linux clearhistory</span> <span class="key">Steve</span></div>
+          <div><span class="cmd">/banlist</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="moderator">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">MODERATOR SYSTEM</span>
+      <h2>协管权限体系</h2>
+      <p>基于 XlandCore 身份，无 OP 也能高效管理</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <div class="card-icon">✅</div>
+        <h3>协管可用</h3>
+        <p>协管可以使用 8 个惩罚命令，覆盖功能封禁与解封。</p>
+        <ul>
+          <li><code>/linux banblock</code> 禁用方块</li>
+          <li><code>/linux banmove</code> 禁止移动</li>
+          <li><code>/linux banmsg</code> 禁言</li>
+          <li><code>/linux banall</code> 全面封禁</li>
+          <li>以及 4 个对应的解封命令</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">⛔</div>
+        <h3>协管不可用</h3>
+        <p>账号封禁、隐身、重载等命令仅限完整管理员。</p>
+        <ul>
+          <li><code>/ban</code> · <code>/tempban</code> · <code>/banip</code></li>
+          <li><code>/unban</code> · <code>/unbanip</code></li>
+          <li><code>/hide</code></li>
+          <li><code>/linux reload</code></li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">⏳</div>
+        <h3>时长限制</h3>
+        <p>协管封禁时长有上限，默认为 7 天，可在配置中调整。</p>
+        <ul>
+          <li>禁止永久封禁</li>
+          <li>超过上限直接拒绝</li>
+          <li>可提前解封</li>
+          <li>解封命令无时间限制</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🎨</div>
+        <h3>界面分流</h3>
+        <p>协管的帮助菜单和 TAB 补全只显示可用命令，界面清爽。</p>
+        <ul>
+          <li>帮助菜单：协管专用版</li>
+          <li>TAB 补全：仅 9 个命令</li>
+          <li>OP 优先：管理员显示完整版</li>
+          <li>XlandCore 未加载时回退权限节点</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="commands" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">COMMANDS</span>
+      <h2>命令列表</h2>
+      <p>完整的命令集，覆盖所有管理场景</p>
+    </div>
+
+    <div class="reveal" style="margin-bottom: 48px;">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">
+        管理员通用命令
+      </h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>命令</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/linux help</code></td><td>显示帮助菜单</td></tr>
+            <tr><td><code>/linux reload</code></td><td>重载配置文件</td></tr>
+            <tr><td><code>/linux lookup &lt;玩家/IP&gt;</code></td><td>查询玩家或 IP 信息</td></tr>
+            <tr><td><code>/linux seenip &lt;IP&gt;</code></td><td>查询使用该 IP 的玩家列表</td></tr>
+            <tr><td><code>/linux history &lt;玩家&gt;</code></td><td>查看玩家封禁历史</td></tr>
+            <tr><td><code>/linux clearhistory &lt;玩家&gt;</code></td><td>清除玩家全部历史</td></tr>
+            <tr><td><code>/linux fp [list]</code></td><td>查看假人插件状态 / 列表</td></tr>
+            <tr><td><code>/linux fpsync</code></td><td>手动同步假人数据</td></tr>
+            <tr><td><code>/linux op [list]</code></td><td>检查身份 / 列出管理员</td></tr>
+            <tr><td><code>/banlist</code></td><td>查看封禁列表</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="reveal" style="margin-bottom: 48px;">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">
+        封禁命令
+      </h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>命令</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/ban &lt;玩家&gt; [原因]</code></td><td>永久封禁玩家</td></tr>
+            <tr><td><code>/tempban &lt;玩家&gt; &lt;时间&gt; [原因]</code></td><td>临时封禁玩家</td></tr>
+            <tr><td><code>/banip &lt;玩家/IP&gt; [原因]</code></td><td>封禁 IP 地址</td></tr>
+            <tr><td><code>/unban &lt;玩家&gt;</code></td><td>解封玩家</td></tr>
+            <tr><td><code>/unbanip &lt;IP&gt;</code></td><td>解封 IP</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">
+        功能封禁命令（协管可用）
+      </h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>命令</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/linux banblock &lt;玩家&gt; [时间] [原因]</code></td><td>禁用方块交互</td></tr>
+            <tr><td><code>/linux unbanblock &lt;玩家&gt;</code></td><td>解除方块交互禁用</td></tr>
+            <tr><td><code>/linux banmove &lt;玩家&gt; [时间] [原因]</code></td><td>禁止移动</td></tr>
+            <tr><td><code>/linux unbanmove &lt;玩家&gt;</code></td><td>解除移动禁止</td></tr>
+            <tr><td><code>/linux banmsg &lt;玩家&gt; [时间] [原因]</code></td><td>禁言</td></tr>
+            <tr><td><code>/linux unbanmsg &lt;玩家&gt;</code></td><td>解除禁言</td></tr>
+            <tr><td><code>/linux banall &lt;玩家&gt; [时间] [原因]</code></td><td>全面封禁</td></tr>
+            <tr><td><code>/linux unbanall &lt;玩家&gt;</code></td><td>解除所有功能封禁</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="tech">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">TECHNICAL HIGHLIGHTS</span>
+      <h2>技术亮点</h2>
+      <p>从代码层面保证性能与稳定性</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <h3>🔒 安全</h3>
+        <ul>
+          <li>SHA-256 + 随机盐 + 10000 次迭代</li>
+          <li>常量时间比较防时序攻击</li>
+          <li>聊天栏输密码，服务端日志零痕迹</li>
+          <li>防爆破：冷却 + 锁定 + 持久化</li>
+          <li>权限节点与身份双重校验</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>⚡ 性能</h3>
+        <ul>
+          <li>多级缓存（ConcurrentHashMap）</li>
+          <li>脏标记 + 定时批量写盘</li>
+          <li>惰性清理 + 超时自愈</li>
+          <li>反射缓存（TPS / XlandCore）</li>
+          <li>大表 O(1) 索引（IP 反查）</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>🧵 并发</h3>
+        <ul>
+          <li>异步事件只读判断，回主线程处理</li>
+          <li>volatile 保证配置可见性</li>
+          <li>synchronized 保护 LRU 迭代</li>
+          <li>AtomicBoolean 防任务重入</li>
+          <li>try/finally 精确清除标记</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>🛠️ 健壮</h3>
+        <ul>
+          <li>延迟初始化（假人 / XStop / XlandCore）</li>
+          <li>插件可插拔（softdepend）</li>
+          <li>reload 幂等化</li>
+          <li>异常兜底（try/catch + isEnabled）</li>
+          <li>控制台与玩家分流（UI 适配）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="stats reveal">
+      <div class="stat">
+        <div class="stat-value">18</div>
+        <div class="stat-label">模块文件</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">16</div>
+        <div class="stat-label">命令总数</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">6</div>
+        <div class="stat-label">数据文件</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">23</div>
+        <div class="stat-label">迭代轮次</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">InTheNameOfLinux</div>
+    <p>以 Linux 之名 · 守护你的服务器</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v26.10.5-Alpha · Minecraft 1.12.2 · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+      <a href="help.html">帮助中心</a>
+      &nbsp;·&nbsp;
+      <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  });
+
+  document.querySelectorAll('.reveal').forEach((el) => {
+    observer.observe(el);
+  });
+
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

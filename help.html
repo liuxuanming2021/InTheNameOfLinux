@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>帮助 · InTheNameOfLinux</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --blue: #0071e3;
+    --blue-hover: #0062cc;
+    --blue-light: #e8f2ff;
+    --blue-soft: #f0f7ff;
+    --blue-border: #c4ddff;
+    --bg: #ffffff;
+    --bg-secondary: #f5f5f7;
+    --bg-tertiary: #fafafc;
+    --text: #1d1d1f;
+    --text-secondary: #515154;
+    --text-tertiary: #86868b;
+    --border: #d2d2d7;
+    --border-light: #e8e8ed;
+    --code-bg: #f5f5f7;
+    --code-text: #1d1d1f;
+    --code-comment: #6e6e73;
+    --code-keyword: #0071e3;
+    --code-value: #b7472a;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
+                 'SF Pro Text', 'Helvetica Neue', 'PingFang SC',
+                 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ============================================================
+     导航栏
+     ============================================================ */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    z-index: 1000;
+  }
+
+  .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 52px;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: -0.2px;
+  }
+
+  .nav-logo-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--blue) 0%, #5e9eff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+    align-items: center;
+  }
+
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover {
+    color: var(--text);
+  }
+
+  .nav-links .nav-help {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .nav-links .nav-help:hover {
+    color: var(--text);
+  }
+
+  .nav-links .nav-external {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--blue);
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 980px;
+    background: var(--blue-light);
+    transition: all 0.2s ease;
+    font-size: 13px;
+  }
+
+  .nav-links .nav-external:hover {
+    color: #fff;
+    background: var(--blue);
+  }
+
+  .nav-links .nav-external svg {
+    transition: transform 0.2s ease;
+  }
+
+  .nav-links .nav-external:hover svg {
+    transform: translate(1px, -1px);
+  }
+
+  /* ============================================================
+     页面标题
+     ============================================================ */
+  .page-hero {
+    padding: 120px 0 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .page-hero::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 700px;
+    height: 500px;
+    background: radial-gradient(ellipse at center,
+                rgba(0, 113, 227, 0.10) 0%,
+                rgba(0, 113, 227, 0.03) 40%,
+                transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-hero > .container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .page-hero .section-label {
+    display: inline-block;
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .page-hero h1 {
+    font-size: clamp(36px, 5.5vw, 60px);
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .page-hero p {
+    font-size: 18px;
+    color: var(--text-secondary);
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  /* ============================================================
+     布局
+     ============================================================ */
+  .content-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 48px;
+    padding: 40px 0 100px;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 80px;
+    align-self: start;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+  }
+
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+    padding-left: 12px;
+  }
+
+  .sidebar ul {
+    list-style: none;
+  }
+
+  .sidebar li {
+    margin-bottom: 2px;
+  }
+
+  .sidebar a {
+    display: block;
+    padding: 7px 12px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s;
+    border-left: 2px solid transparent;
+  }
+
+  .sidebar a:hover {
+    background: var(--bg-secondary);
+    color: var(--text);
+  }
+
+  .sidebar a.active {
+    background: var(--blue-light);
+    color: var(--blue);
+    font-weight: 500;
+    border-left-color: var(--blue);
+  }
+
+  .main-content {
+    min-width: 0;
+  }
+
+  .help-section {
+    margin-bottom: 64px;
+    scroll-margin-top: 80px;
+  }
+
+  .help-section h2 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.8px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .help-section h2 .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: var(--blue-light);
+    color: var(--blue);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .help-section h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 24px 0 10px;
+    color: var(--text);
+  }
+
+  .help-section p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+  }
+
+  /* ============================================================
+     FAQ（grid-rows 平滑展开）
+     ============================================================ */
+  .faq-item {
+    background: #fff;
+    border: 1px solid var(--border-light);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .faq-item:hover {
+    border-color: rgba(0, 113, 227, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 113, 227, 0.06);
+  }
+
+  .faq-item.open {
+    border-color: rgba(0, 113, 227, 0.35);
+    box-shadow: 0 8px 24px rgba(0, 113, 227, 0.1);
+  }
+
+  .faq-q {
+    padding: 18px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+    transition: background 0.25s ease;
+    gap: 12px;
+  }
+
+  .faq-q:hover {
+    background: var(--bg-tertiary);
+  }
+
+  .faq-q .faq-icon {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .faq-q .faq-icon::before,
+  .faq-q .faq-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background: var(--blue);
+    border-radius: 2px;
+    transform: translate(-50%, -50%);
+  }
+
+  .faq-q .faq-icon::before {
+    width: 14px;
+    height: 2px;
+  }
+
+  .faq-q .faq-icon::after {
+    width: 2px;
+    height: 14px;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.25s ease;
+  }
+
+  .faq-item.open .faq-q .faq-icon {
+    transform: rotate(180deg);
+  }
+
+  .faq-item.open .faq-q .faq-icon::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+    opacity: 0;
+  }
+
+  /* grid-template-rows 平滑动画 */
+  .faq-a-wrap {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .faq-item.open .faq-a-wrap {
+    grid-template-rows: 1fr;
+  }
+
+  .faq-a {
+    overflow: hidden;
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    padding: 0 22px;
+    opacity: 0;
+    transition: opacity 0.3s ease, padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .faq-item.open .faq-a {
+    padding: 0 22px 18px;
+    opacity: 1;
+    transition: opacity 0.35s ease 0.05s,
+                padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .faq-a code {
+    background: var(--blue-light);
+    color: var(--blue);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 0.88em;
+    font-weight: 500;
+  }
+
+  .faq-a ul {
+    list-style: none;
+    margin: 8px 0;
+  }
+
+  .faq-a ul li {
+    padding: 3px 0 3px 20px;
+    position: relative;
+  }
+
+  .faq-a ul li::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 12px;
+    width: 5px;
+    height: 5px;
+    background: var(--blue);
+    border-radius: 50%;
+    opacity: 0.6;
+  }
+
+  /* ============================================================
+     步骤
+     ============================================================ */
+  .steps {
+    list-style: none;
+    counter-reset: step;
+    margin: 16px 0;
+  }
+
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    padding: 14px 0 14px 52px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    border-bottom: 1px dashed var(--border-light);
+  }
+
+  .steps li:last-child {
+    border-bottom: none;
+  }
+
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 12px;
+    width: 32px;
+    height: 32px;
+    background: var(--blue-light);
+    color: var(--blue);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  /* ============================================================
+     表格
+     ============================================================ */
+  .help-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    background: #fff;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+
+  .help-table thead {
+    background: var(--bg-tertiary);
+  }
+
+  .help-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text);
+    font-size: 12px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .help-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+
+  .help-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .help-table tr:hover {
+    background: var(--bg-tertiary);
+  }
+
+  /* ============================================================
+     提示框
+     ============================================================ */
+  .tip {
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.7;
+    border-left: 4px solid;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .tip-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    line-height: 1.4;
+  }
+
+  .tip-body {
+    flex: 1;
+  }
+
+  .tip-body strong {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+
+  .tip-info {
+    background: var(--blue-light);
+    border-left-color: var(--blue);
+    color: #004a99;
+  }
+
+  .tip-warn {
+    background: #fff8e6;
+    border-left-color: #ffa500;
+    color: #7a4f00;
+  }
+
+  .tip-danger {
+    background: #fff0f0;
+    border-left-color: #ff3b30;
+    color: #8b1a1a;
+  }
+
+  .tip-success {
+    background: #effaf0;
+    border-left-color: #34c759;
+    color: #1a6b28;
+  }
+
+  /* ============================================================
+     代码块
+     ============================================================ */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--code-text);
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+
+  .code-block .comment {
+    color: var(--code-comment);
+    font-style: italic;
+  }
+
+  .code-block .key {
+    color: var(--code-value);
+  }
+
+  .code-block .cmd {
+    color: var(--code-keyword);
+    font-weight: 600;
+  }
+
+  code {
+    background: var(--blue-light);
+    color: var(--blue);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 0.88em;
+    font-weight: 500;
+  }
+
+  /* ============================================================
+     权限标签
+     ============================================================ */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+
+  .badge-op {
+    background: #e8f2ff;
+    color: #0071e3;
+  }
+
+  .badge-mod {
+    background: #fff0e6;
+    color: #c44d00;
+  }
+
+  /* ============================================================
+     页脚
+     ============================================================ */
+  footer {
+    padding: 40px 0;
+    background: var(--bg-secondary);
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 13px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  footer .footer-brand {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  footer a {
+    color: var(--blue);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  footer a:hover {
+    color: var(--blue-hover);
+  }
+
+  /* ============================================================
+     响应式
+     ============================================================ */
+  @media (max-width: 900px) {
+    .nav-links li:not(:last-child):not(:nth-last-child(2)) {
+      display: none;
+    }
+
+    .nav-links {
+      gap: 8px;
+    }
+
+    .content-layout {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .sidebar {
+      position: static;
+      max-height: none;
+      overflow-x: auto;
+    }
+
+    .sidebar ul {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .sidebar a {
+      white-space: nowrap;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .page-hero {
+      padding: 100px 0 40px;
+    }
+
+    .help-section h2 {
+      font-size: 22px;
+    }
+
+    .faq-q {
+      padding: 16px 18px;
+      font-size: 14px;
+    }
+
+    .faq-a {
+      padding: 0 18px;
+    }
+
+    .faq-item.open .faq-a {
+      padding: 0 18px 16px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      InTheNameOfLinux
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#features">功能</a></li>
+      <li><a href="index.html#penalty">封禁</a></li>
+      <li><a href="index.html#moderator">协管</a></li>
+      <li><a href="index.html#commands">命令</a></li>
+      <li><a href="help.html" class="nav-help">帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          Nalxer 服务器
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="section-label">HELP CENTER</span>
+    <h1>帮助中心</h1>
+    <p>详细的安装指南、常见问题、故障排查和配置说明</p>
+  </div>
+</section>
+
+<div class="container content-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-title">目录</div>
+    <ul>
+      <li><a href="#quickstart" class="active">快速开始</a></li>
+      <li><a href="#commands">命令详解</a></li>
+      <li><a href="#permissions">权限说明</a></li>
+      <li><a href="#config">配置说明</a></li>
+      <li><a href="#integration">插件联动</a></li>
+      <li><a href="#troubleshooting">故障排查</a></li>
+      <li><a href="#faq">常见问题</a></li>
+      <li><a href="#uninstall">卸载与备份</a></li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- ========================================================
+         快速开始
+         ======================================================== -->
+    <section class="help-section" id="quickstart">
+      <h2><span class="num">1</span>快速开始</h2>
+
+      <p>3 步完成安装，5 分钟即可上手。适用于 Minecraft 1.12.2（Paper / Spigot）。</p>
+
+      <h3>环境要求</h3>
+      <table class="help-table">
+        <thead>
+          <tr>
+            <th>项目</th>
+            <th>要求</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>服务端</td>
+            <td>Paper 或 Spigot <strong>1.12.2</strong></td>
+          </tr>
+          <tr>
+            <td>Java</td>
+            <td>Java 8（推荐）或 Java 17/21（需加 <code>--add-opens</code> 参数）</td>
+          </tr>
+          <tr>
+            <td>内存</td>
+            <td>建议 ≥ 2GB</td>
+          </tr>
+          <tr>
+            <td>依赖插件</td>
+            <td>无硬性依赖，可选 XlandCore / 假人插件 / XlandStop</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>安装步骤</h3>
+      <ol class="steps">
+        <li>
+          <strong>获取插件</strong><br>
+          Linux的QQ号：<code>2703441387</code>，联系Linux以获取 <code>InTheNameOfLinux.jar</code>。
+        </li>
+        <li>
+          <strong>放入插件目录</strong><br>
+          将 jar 文件放入服务器 <code>plugins/</code> 目录。
+        </li>
+        <li>
+          <strong>启动服务器</strong><br>
+          首次启动会生成默认配置，控制台应输出"首次初始化登录密码"。
+        </li>
+        <li>
+          <strong>登录验证</strong><br>
+          保护对象（默认 <code>Linux582021</code>）进服后，输入 <code>/linux login</code>，然后在聊天栏发送初始密码 <code>password</code>。
+        </li>
+        <li>
+          <strong>修改密码</strong><br>
+          登录成功后，执行 <code>/linux chargepw &lt;新密码&gt;</code> 修改密码（至少 6 位）。
+        </li>
+      </ol>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>务必第一时间修改密码</strong>
+          初始密码 <code>password</code> 是明文公开的，未修改前任何人都可以登录。
+        </div>
+      </div>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>为什么密码要在聊天栏输入？</strong>
+          因为 <code>/linux login 密码</code> 这种形式会被服务端日志记录（Minecraft 原生行为）。而聊天栏消息会被插件拦截，<strong>控制台和日志完全看不到密码</strong>。
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         命令详解
+         ======================================================== -->
+    <section class="help-section" id="commands">
+      <h2><span class="num">2</span>命令详解</h2>
+
+      <h3>登录相关</h3>
+      <table class="help-table">
+        <thead>
+          <tr>
+            <th>命令</th>
+            <th>说明</th>
+            <th>权限</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>/linux login</code></td>
+            <td>进入密码输入模式，在聊天栏发送密码即可验证身份</td>
+            <td><span class="badge badge-op">仅 Linux582021</span></td>
+          </tr>
+          <tr>
+            <td><code>/linux chargepw &lt;新密码&gt;</code></td>
+            <td>修改登录密码（需先登录，至少 6 位）</td>
+            <td><span class="badge badge-op">仅 Linux582021</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>封禁相关</h3>
+      <table class="help-table">
+        <thead>
+          <tr>
+            <th>命令</th>
+            <th>说明</th>
+            <th>权限</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>/ban &lt;玩家&gt; [原因]</code></td>
+            <td>永久封禁玩家账号</td>
+            <td><span class="badge badge-op">ban</span></td>
+          </tr>
+          <tr>
+            <td><code>/tempban &lt;玩家&gt; &lt;时间&gt; [原因]</code></td>
+            <td>临时封禁，到期自动解封</td>
+            <td><span class="badge badge-op">tempban</span></td>
+          </tr>
+          <tr>
+            <td><code>/banip &lt;玩家/IP&gt; [原因]</code></td>
+            <td>封禁 IP 地址，同 IP 玩家会被踢出</td>
+            <td><span class="badge badge-op">banip</span></td>
+          </tr>
+          <tr>
+            <td><code>/unban &lt;玩家&gt;</code></td>
+            <td>解封玩家（同时删除最近一条封禁历史）</td>
+            <td><span class="badge badge-op">unban</span></td>
+          </tr>
+          <tr>
+            <td><code>/unbanip &lt;IP&gt;</code></td>
+            <td>解封 IP</td>
+            <td><span class="badge badge-op">unbanip</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>功能封禁（协管可用）</h3>
+      <table class="help-table">
+        <thead>
+          <tr>
+            <th>命令</th>
+            <th>说明</th>
+            <th>权限</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>/linux banblock &lt;玩家&gt; [时间] [原因]</code></td>
+            <td>禁止方块交互（挖掘、放置、交互）</td>
+            <td><span class="badge badge-mod">协管</span></td>
+          </tr>
+          <tr>
+            <td><code>/linux banmove &lt;玩家&gt; [时间] [原因]</code></td>
+            <td>禁止移动，玩家会被冻结在原位置</td>
+            <td><span class="badge badge-mod">协管</span></td>
+          </tr>
+          <tr>
+            <td><code>/linux banmsg &lt;玩家&gt; [时间] [原因]</code></td>
+            <td>禁言，拦截聊天、私聊、/say 等</td>
+            <td><span class="badge badge-mod">协管</span></td>
+          </tr>
+          <tr>
+            <td><code>/linux banall &lt;玩家&gt; [时间] [原因]</code></td>
+            <td>以上三者合一，全面封禁</td>
+            <td><span class="badge badge-mod">协管</span></td>
+          </tr>
+          <tr>
+            <td><code>/linux unbanblock &lt;玩家&gt;</code></td>
+            <td>解除方块交互禁用</td>
+            <td><span class="badge badge-mod">协管</span></td>
+          </tr>
+          <tr>
+            <td><code>/linux unbanmove &lt;玩家&gt;</code></td>
+            <td>解除移动禁止</td>
+            <td><span class="badge badge-mod">协管</span></td>
+          </tr>
+          <tr>
+            <td><code>/linux unbanmsg &lt;玩家&gt;</code></td>
+            <td>解除禁言</td>
+            <td><span class="badge badge-mod">协管</span></td>
+          </tr>
+          <tr>
+            <td><code>/linux unbanall &lt;玩家&gt;</code></td>
+            <td>解除所有功能封禁</td>
+            <td><span class="badge badge-mod">协管</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>查询与信息</h3>
+      <table class="help-table">
+        <thead>
+          <tr>
+            <th>命令</th>
+            <th>说明</th>
+            <th>权限</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>/linux lookup &lt;玩家/IP&gt;</code></td>
+            <td>查询 UUID、IP、身份、游玩时长、封禁历史</td>
+            <td><span class="badge badge-op">lookup</span></td>
+          </tr>
+          <tr>
+            <td><code>/linux seenip &lt;IP&gt;</code></td>
+            <td>查询使用过该 IP 的所有玩家</td>
+            <td><span class="badge badge-op">lookup</span></td>
+          </tr>
+          <tr>
+            <td><code>/linux history &lt;玩家&gt;</code></td>
+            <td>查看玩家完整封禁历史</td>
+            <td><span class="badge badge-op">history</span></td>
+          </tr>
+          <tr>
+            <td><code>/linux clearhistory &lt;玩家&gt;</code></td>
+            <td>清除玩家全部历史（需二次确认）</td>
+            <td><span class="badge badge-op">clearhistory</span></td>
+          </tr>
+          <tr>
+            <td><code>/banlist</code></td>
+            <td>查看所有封禁记录（账号 + 功能）</td>
+            <td><span class="badge badge-op">ban</span></td>
+          </tr>
+          <tr>
+            <td><code>/linux op [list]</code></td>
+            <td>检查自己身份 / 列出所有管理员</td>
+            <td><span class="badge badge-op">lookup</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>时间格式</h3>
+      <div class="code-block">
+        <div><span class="key">10s</span>       <span class="comment"># 10 秒</span></div>
+        <div><span class="key">5m</span>        <span class="comment"># 5 分钟</span></div>
+        <div><span class="key">1h</span>        <span class="comment"># 1 小时</span></div>
+        <div><span class="key">1d</span>        <span class="comment"># 1 天</span></div>
+        <div><span class="key">1w</span>        <span class="comment"># 1 周</span></div>
+        <div><span class="key">1d12h</span>     <span class="comment"># 1 天 12 小时（组合）</span></div>
+        <div><span class="key">1w2d3h30m</span> <span class="comment"># 1 周 2 天 3 小时 30 分钟</span></div>
+      </div>
+      <p>支持单位：<code>s</code>（秒）、<code>m</code>（分钟）、<code>h</code>（小时）、<code>d</code>（天）、<code>w</code>（周）。可以组合使用。</p>
+    </section>
+
+    <!-- ========================================================
+         权限说明
+         ======================================================== -->
+    <section class="help-section" id="permissions">
+      <h2><span class="num">3</span>权限说明</h2>
+
+      <p>插件使用三级权限体系：OP / 协管 / 普通玩家。</p>
+
+      <table class="help-table">
+        <thead>
+          <tr>
+            <th>权限节点</th>
+            <th>说明</th>
+            <th>默认</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>inthenameoflinux.reload</code></td>
+            <td>重载配置、修改拦截列表、开关控制台拦截</td>
+            <td>OP</td>
+          </tr>
+          <tr>
+            <td><code>inthenameoflinux.ban</code></td>
+            <td>使用 /ban /xlban /banlist</td>
+            <td>OP</td>
+          </tr>
+          <tr>
+            <td><code>inthenameoflinux.tempban</code></td>
+            <td>使用 /tempban</td>
+            <td>OP</td>
+          </tr>
+          <tr>
+            <td><code>inthenameoflinux.banip</code></td>
+            <td>使用 /banip</td>
+            <td>OP</td>
+          </tr>
+          <tr>
+            <td><code>inthenameoflinux.unban</code></td>
+            <td>使用 /unban</td>
+            <td>OP</td>
+          </tr>
+          <tr>
+            <td><code>inthenameoflinux.unbanip</code></td>
+            <td>使用 /unbanip</td>
+            <td>OP</td>
+          </tr>
+          <tr>
+            <td><code>inthenameoflinux.lookup</code></td>
+            <td>使用 /linux lookup / seenip / fp</td>
+            <td>OP</td>
+          </tr>
+          <tr>
+            <td><code>inthenameoflinux.history</code></td>
+            <td>使用 /linux history</td>
+            <td>OP</td>
+          </tr>
+          <tr>
+            <td><code>inthenameoflinux.clearhistory</code></td>
+            <td>使用 /linux clearhistory</td>
+            <td>OP</td>
+          </tr>
+          <tr>
+            <td><code>inthenameoflinux.penalty</code></td>
+            <td>完整惩罚权限（banblock / banmove / banmsg / banall 等）</td>
+            <td>OP</td>
+          </tr>
+          <tr>
+            <td><code>inthenameoflinux.moderator</code></td>
+            <td>协管权限节点（XlandCore 未加载时的回退）</td>
+            <td>否</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>协管说明</h3>
+      <ul class="steps">
+        <li>协管身份<strong>优先从 XlandCore 读取</strong>（身份 = "协管"）。</li>
+        <li>如果 XlandCore 未加载，则回退到权限节点 <code>inthenameoflinux.moderator</code>。</li>
+        <li>协管可用 8 个功能封禁命令，<strong>不能使用账号封禁</strong>（/ban、/tempban、/banip）。</li>
+        <li>协管封禁时长<strong>上限为 7 天</strong>，不能执行永久封禁。</li>
+        <li>协管的帮助菜单和 TAB 补全只显示可用命令。</li>
+      </ul>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>OP 优先原则</strong>
+          如果玩家同时是 OP 和协管，插件会将其识别为"完整管理员"，显示完整帮助。
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         配置说明
+         ======================================================== -->
+    <section class="help-section" id="config">
+      <h2><span class="num">4</span>配置说明</h2>
+
+      <p>所有配置都在 <code>plugins/InTheNameOfLinux/config.yml</code>，修改后执行 <code>/linux reload</code> 即可生效（无需重启）。</p>
+
+      <h3>关键配置项</h3>
+      <table class="help-table">
+        <thead>
+          <tr>
+            <th>配置项</th>
+            <th>默认值</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>protected-player</code></td>
+            <td>Linux582021</td>
+            <td>重点保护的玩家名</td>
+          </tr>
+          <tr>
+            <td><code>blocked-player</code></td>
+            <td>fs1</td>
+            <td>突破拦截时的代理玩家</td>
+          </tr>
+          <tr>
+            <td><code>appeal-group</code></td>
+            <td>925200745</td>
+            <td>封禁踢出消息里的申诉群号</td>
+          </tr>
+          <tr>
+            <td><code>broadcast-ban</code></td>
+            <td>true</td>
+            <td>是否全服广播封禁消息（false 只广播给管理员）</td>
+          </tr>
+          <tr>
+            <td><code>refuse-enabled</code></td>
+            <td>true</td>
+            <td>全局命令拦截开关</td>
+          </tr>
+          <tr>
+            <td><code>console-cmd-enabled</code></td>
+            <td>false</td>
+            <td>控制台对保护对象命令的拦截开关</td>
+          </tr>
+          <tr>
+            <td><code>fs1-refuse-enabled</code></td>
+            <td>true</td>
+            <td>突破 fs1 拦截功能开关</td>
+          </tr>
+          <tr>
+            <td><code>penalty-sync.interval-seconds</code></td>
+            <td>60</td>
+            <td>功能封禁缓存与文件对齐间隔</td>
+          </tr>
+          <tr>
+            <td><code>data-save.interval-seconds</code></td>
+            <td>30</td>
+            <td>数据文件批量写盘间隔</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>登录配置</h3>
+      <div class="code-block">
+        <div><span class="cmd">login</span>:</div>
+        <div>  <span class="key">password-salt</span>: ""        <span class="comment"># 自动生成，勿改</span></div>
+        <div>  <span class="key">password-hash</span>: ""        <span class="comment"># 自动生成，勿改</span></div>
+        <div>  <span class="key">min-length</span>: 6             <span class="comment"># 密码最短长度</span></div>
+        <div>  <span class="key">fail-delay-seconds</span>: 3     <span class="comment"># 失败冷却（秒）</span></div>
+        <div>  <span class="key">max-fails</span>: 5              <span class="comment"># 连续失败多少次锁定</span></div>
+        <div>  <span class="key">lockout-seconds</span>: 300      <span class="comment"># 锁定时长（秒）</span></div>
+        <div>  <span class="key">timeout-seconds</span>: 90       <span class="comment"># 登录超时踢出（秒）</span></div>
+      </div>
+
+      <h3>协管配置</h3>
+      <div class="code-block">
+        <div><span class="cmd">moderator</span>:</div>
+        <div>  <span class="key">enabled</span>: true                          <span class="comment"># 协管功能开关</span></div>
+        <div>  <span class="key">max-duration-days</span>: 7                   <span class="comment"># 协管封禁时长上限（天）</span></div>
+        <div>  <span class="key">fallback-permission</span>: "inthenameoflinux.moderator"</div>
+      </div>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>不要手动修改 login.password-salt / password-hash</strong>
+          这两行由插件自动生成。如果修改错误，会导致无法登录。想重置密码，删掉这两行的值（改成 <code>""</code>），重启后会自动重置为 <code>password</code>。
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         插件联动
+         ======================================================== -->
+    <section class="help-section" id="integration">
+      <h2><span class="num">5</span>插件联动</h2>
+
+      <h3>XlandCore</h3>
+      <p>用于读取玩家身份（服主 / 副服主 / 管理员 / 协管）。协管体系依赖此插件。</p>
+      <ul class="steps">
+        <li>如果 XlandCore 在服务器启动时已加载，静态块会立即检测到。</li>
+        <li>如果 XlandCore 后加载，插件会在 <strong>20 秒后延迟检测一次</strong>。</li>
+        <li>执行 <code>/linux reload</code> 也会重新检测。</li>
+      </ul>
+
+      <h3>假人插件（FakePlayerPlugin）</h3>
+      <p>同步假人数据，用于 <code>/linux fp</code> 和查询识别。</p>
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>如果假人插件改过包名</strong>
+          请在 <code>config.yml</code> 修改 <code>fakeplayer.info-class</code> 的值。
+        </div>
+      </div>
+
+      <h3>XlandStop</h3>
+      <p>监听 <code>xstop</code> / <code>xlstop</code> / <code>xlandstop</code> 命令，全服广播谁在重启服务器。</p>
+    </section>
+
+    <!-- ========================================================
+         故障排查
+         ======================================================== -->
+    <section class="help-section" id="troubleshooting">
+      <h2><span class="num">6</span>故障排查</h2>
+
+      <h3>问题：登录后仍然无法执行命令</h3>
+      <ul class="steps">
+        <li>确认输对了密码（大小写敏感）。</li>
+        <li>如果被锁定，等待锁定时间结束（默认 300 秒）。</li>
+        <li>查看控制台是否输出"验证身份成功"。</li>
+      </ul>
+
+      <h3>问题：封禁命令没有生效</h3>
+      <ul class="steps">
+        <li>检查是否拥有对应权限（<code>/linux op</code> 检查自己身份）。</li>
+        <li>检查 <code>config.yml</code> 里的 <code>refuse-enabled</code> 是否为 true。</li>
+        <li>查看控制台是否有错误堆栈。</li>
+      </ul>
+
+      <h3>问题：ProtocolLib 报错 "Unable to make protected final java.lang.Class..."</h3>
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>这是 ProtocolLib 与 Java 17+ 的兼容问题，与本插件无关。</strong>
+          在启动脚本的 java 命令中加参数：
+          <code>--add-opens java.base/java.lang=ALL-UNNAMED</code>
+        </div>
+      </div>
+
+      <h3>问题：假人插件显示"版本不兼容"</h3>
+      <ul class="steps">
+        <li>检查假人插件的实际包名。</li>
+        <li>修改 <code>config.yml</code> 的 <code>fakeplayer.info-class</code>。</li>
+        <li>执行 <code>/linux reload</code>。</li>
+      </ul>
+
+      <h3>问题：重启后临时封禁没有恢复</h3>
+      <ul class="steps">
+        <li>检查 <code>data.yml</code> 是否损坏（YAML 格式）。</li>
+        <li>检查服务器时间是否准确（时间错乱会导致到期判断错误）。</li>
+        <li>查看控制台是否有"恢复任务失败"日志。</li>
+      </ul>
+
+      <h3>问题：/linux reload 后功能失效</h3>
+      <ul class="steps">
+        <li>检查控制台是否有异常堆栈。</li>
+        <li>尝试完全重启服务器（而非 /reload）。</li>
+        <li>如果仍然异常，删除 <code>plugins/InTheNameOfLinux/</code> 下的缓存文件（保留 config.yml）。</li>
+      </ul>
+    </section>
+
+    <!-- ========================================================
+         常见问题
+         ======================================================== -->
+    <section class="help-section" id="faq">
+      <h2><span class="num">7</span>常见问题</h2>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>为什么密码要在聊天栏输入，不能直接 /linux login 密码？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            Minecraft 服务端在处理命令前，会先把 <code>/linux login 密码</code> 整条命令写进日志。
+            而聊天栏消息可以被插件"提前拦截"，<strong>不会进入日志</strong>。
+            为了密码安全，本插件采用聊天栏输入方式。
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>忘记密码了怎么办？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            两种方法：
+            <ul>
+              <li>方法一：编辑 <code>config.yml</code>，把 <code>login.password-salt</code> 和 <code>login.password-hash</code> 两行改成 <code>""</code>（空字符串），重启服务器后密码重置为 <code>password</code>。</li>
+              <li>方法二：删除整个 <code>config.yml</code>，重启后会自动生成新配置。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>协管为什么不能封禁账号？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            这是设计选择。协管权限有限，只能使用"功能封禁"（禁方块 / 禁移动 / 禁言 / 全封）。
+            账号封禁（/ban、/tempban、/banip）属于更高级的操作，仅限完整管理员。
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>协管为什么不能永久封禁？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            防止协管滥用权限。永久封禁是不可逆操作，需要完整管理员执行。
+            协管最长可封 7 天（可配置）。
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>封禁后玩家还能上线吗？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            <ul>
+              <li><strong>账号封禁</strong>：直接踢出，登录时被拒绝。</li>
+              <li><strong>功能封禁</strong>（禁方块 / 禁移动 / 禁言）：可以正常登录，但对应功能被限制。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>为什么被禁言后，我说话没反应？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            这是正常的。禁言会拦截你的所有聊天消息、私聊指令、/say 等。你只能与管理员私聊。
+            屏幕上会显示一条提示"你已被禁言！"。
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>/linux login 后没有提示我输密码？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            检查几点：
+            <ul>
+              <li>你是否是保护对象（默认 Linux582021）？</li>
+              <li>聊天栏有没有显示黄色提示"请在聊天栏直接输入密码"？</li>
+              <li>如果提示出现后你退出了游戏，再次进服需要重新输入 /linux login。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>数据文件在哪里？如何备份？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            所有数据都在 <code>plugins/InTheNameOfLinux/</code> 目录下：
+            <ul>
+              <li><code>config.yml</code> — 插件配置</li>
+              <li><code>data.yml</code> — 封禁历史</li>
+              <li><code>penalty.yml</code> — 功能封禁记录</li>
+              <li><code>userip.yml</code> — IP 与身份缓存</li>
+              <li><code>playtime.yml</code> — 游玩时长</li>
+              <li><code>fp.yml</code> — 假人数据快照</li>
+            </ul>
+            直接复制整个文件夹即可备份。
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>插件会影响服务器性能吗？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            影响极小。插件采用了多重优化：
+            <ul>
+              <li>所有数据都缓存到内存，避免频繁读磁盘。</li>
+              <li>封禁缓存 3 秒，重复查询不重建。</li>
+              <li>数据文件批量保存（默认 30 秒一次）。</li>
+              <li>异步事件只读判断，回主线程处理。</li>
+              <li>反射方法首次调用后缓存。</li>
+            </ul>
+            实测 TPS 影响 &lt; 0.5%。
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>如何修改封禁广播的范围？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            编辑 <code>config.yml</code> 里的 <code>broadcast-ban</code>：
+            <ul>
+              <li><code>true</code>（默认）：全服广播。</li>
+              <li><code>false</code>：只广播给有权限的管理员。</li>
+            </ul>
+            修改后 <code>/linux reload</code> 生效。
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>如何关闭"突破 fs1 拦截"功能？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            两种方法：
+            <ul>
+              <li>执行 <code>/linux fs off</code>（仅 Linux582021 本人可用）。</li>
+              <li>编辑 <code>config.yml</code>，把 <code>fs1-refuse-enabled</code> 改成 <code>false</code>。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>能同时封禁多个玩家吗？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            目前不支持批量命令。可以写循环脚本调用 <code>/ban</code>。
+            批量封禁时，插件会立即写盘（不受 30 秒批量保存影响）。
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>玩家改名后历史记录会丢失吗？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            <ul>
+              <li><strong>正版服务器</strong>：UUID 不变，改名后历史记录仍在（用 UUID 关联）。</li>
+              <li><strong>离线服务器</strong>：UUID 由名字计算，改名 = 换人，历史记录不会关联。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         卸载与备份
+         ======================================================== -->
+    <section class="help-section" id="uninstall">
+      <h2><span class="num">8</span>卸载与备份</h2>
+
+      <h3>备份</h3>
+      <ol class="steps">
+        <li>停止服务器（<code>stop</code>）。</li>
+        <li>复制 <code>plugins/InTheNameOfLinux/</code> 整个目录到安全位置。</li>
+        <li>如果使用了协管功能，同时备份 XlandCore 的配置文件。</li>
+      </ol>
+
+      <h3>卸载</h3>
+      <ol class="steps">
+        <li>停止服务器。</li>
+        <li>删除 <code>plugins/InTheNameOfLinux.jar</code>。</li>
+        <li>可选：删除 <code>plugins/InTheNameOfLinux/</code> 目录（保留则下次安装时数据仍存在）。</li>
+        <li>启动服务器。</li>
+      </ol>
+
+      <div class="tip tip-danger">
+        <span class="tip-icon">🚨</span>
+        <div class="tip-body">
+          <strong>卸载前请注意</strong>
+          如果插件中存在活跃的临时封禁任务，卸载后这些任务会被取消，被封禁的玩家将立刻可以进入服务器。
+          卸载前建议先手动解封所有玩家。
+        </div>
+      </div>
+
+      <div class="tip tip-success">
+        <span class="tip-icon">✅</span>
+        <div class="tip-body">
+          <strong>更新插件时</strong>
+          直接替换 jar 文件即可，<strong>不需要删除数据目录</strong>。配置和数据会自动保留。
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">InTheNameOfLinux</div>
+    <p>以 Linux 之名 · 守护你的服务器</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v26.10.5-Alpha · Minecraft 1.12.2 · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+      <a href="index.html">← 返回主页</a>
+      &nbsp;·&nbsp;
+      <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 →</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+  // FAQ 展开收起
+  document.querySelectorAll('.faq-q').forEach((q) => {
+    q.addEventListener('click', () => {
+      q.parentElement.classList.toggle('open');
+    });
+  });
+
+  // 侧边栏激活状态跟随滚动
+  const sections = document.querySelectorAll('.help-section');
+  const sidebarLinks = document.querySelectorAll('.sidebar a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        sidebarLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, {
+    rootMargin: '-80px 0px -60% 0px',
+    threshold: 0
+  });
+
+  sections.forEach((s) => observer.observe(s));
+
+  // 平滑滚动
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
