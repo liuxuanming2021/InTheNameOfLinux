@@ -322,7 +322,7 @@
   }
 
   /* ============================================================
-     FAQ（grid-rows 平滑展开）
+     FAQ
      ============================================================ */
   .faq-item {
     background: #fff;
@@ -401,7 +401,6 @@
     opacity: 0;
   }
 
-  /* grid-template-rows 平滑动画 */
   .faq-a-wrap {
     display: grid;
     grid-template-rows: 0fr;
@@ -691,15 +690,124 @@
   }
 
   /* ============================================================
-     响应式
+     移动端汉堡菜单
+     ============================================================ */
+  .nav-toggle {
+    display: none;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    position: relative;
+    z-index: 1001;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .nav-toggle:hover {
+    background: var(--bg-secondary);
+  }
+
+  .nav-toggle span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    margin: 4px auto;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .nav-toggle.active span:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+  }
+  .nav-toggle.active span:nth-child(2) {
+    opacity: 0;
+  }
+  .nav-toggle.active span:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  /* ============================================================
+     移动端布局（< 900px）
      ============================================================ */
   @media (max-width: 900px) {
-    .nav-links li:not(:last-child):not(:nth-last-child(2)) {
-      display: none;
+    .nav-toggle {
+      display: block;
     }
 
     .nav-links {
-      gap: 8px;
+      position: fixed;
+      top: 52px;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      gap: 0;
+      align-items: stretch;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      padding: 0 24px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.25s ease,
+                  padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    }
+
+    .nav-links.open {
+      max-height: 500px;
+      opacity: 1;
+      padding: 12px 24px 20px;
+      pointer-events: auto;
+    }
+
+    .nav-links li {
+      width: 100%;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .nav-links li:last-child {
+      border-bottom: none;
+    }
+
+    .nav-links a {
+      display: block;
+      padding: 14px 4px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .nav-links a:hover {
+      color: var(--blue);
+      background: transparent;
+    }
+
+    .nav-links .nav-external {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 4px;
+      background: transparent;
+      color: var(--blue);
+      font-weight: 500;
+      border-radius: 0;
+    }
+
+    .nav-links .nav-external:hover {
+      background: transparent;
+      color: var(--blue-hover);
+    }
+
+    .nav-links .nav-external svg {
+      transform: none;
     }
 
     .content-layout {
@@ -756,14 +864,15 @@
       <span class="nav-logo-icon">L</span>
       InTheNameOfLinux
     </a>
-    <ul class="nav-links">
+
+    <ul class="nav-links" id="navLinks">
       <li><a href="index.html#features">功能</a></li>
       <li><a href="index.html#penalty">封禁</a></li>
       <li><a href="index.html#moderator">协管</a></li>
       <li><a href="index.html#commands">命令</a></li>
       <li><a href="help.html" class="nav-help">帮助</a></li>
       <li>
-        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+        <a href="https://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
           Nalxer 服务器
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" stroke-width="2.5"
@@ -775,6 +884,12 @@
         </a>
       </li>
     </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </div>
 </nav>
 
@@ -804,9 +919,7 @@
 
   <main class="main-content">
 
-    <!-- ========================================================
-         快速开始
-         ======================================================== -->
+    <!-- 快速开始 -->
     <section class="help-section" id="quickstart">
       <h2><span class="num">1</span>快速开始</h2>
 
@@ -843,8 +956,8 @@
       <h3>安装步骤</h3>
       <ol class="steps">
         <li>
-          <strong>获取插件</strong><br>
-          Linux的QQ号：<code>2703441387</code>，联系Linux以获取 <code>InTheNameOfLinux.jar</code>。
+          <strong>编译打包</strong><br>
+          使用 Maven 编译：<code>mvn clean package</code>，生成 <code>InTheNameOfLinux.jar</code>。
         </li>
         <li>
           <strong>放入插件目录</strong><br>
@@ -881,9 +994,7 @@
       </div>
     </section>
 
-    <!-- ========================================================
-         命令详解
-         ======================================================== -->
+    <!-- 命令详解 -->
     <section class="help-section" id="commands">
       <h2><span class="num">2</span>命令详解</h2>
 
@@ -1057,9 +1168,7 @@
       <p>支持单位：<code>s</code>（秒）、<code>m</code>（分钟）、<code>h</code>（小时）、<code>d</code>（天）、<code>w</code>（周）。可以组合使用。</p>
     </section>
 
-    <!-- ========================================================
-         权限说明
-         ======================================================== -->
+    <!-- 权限说明 -->
     <section class="help-section" id="permissions">
       <h2><span class="num">3</span>权限说明</h2>
 
@@ -1150,9 +1259,7 @@
       </div>
     </section>
 
-    <!-- ========================================================
-         配置说明
-         ======================================================== -->
+    <!-- 配置说明 -->
     <section class="help-section" id="config">
       <h2><span class="num">4</span>配置说明</h2>
 
@@ -1245,9 +1352,7 @@
       </div>
     </section>
 
-    <!-- ========================================================
-         插件联动
-         ======================================================== -->
+    <!-- 插件联动 -->
     <section class="help-section" id="integration">
       <h2><span class="num">5</span>插件联动</h2>
 
@@ -1273,9 +1378,7 @@
       <p>监听 <code>xstop</code> / <code>xlstop</code> / <code>xlandstop</code> 命令，全服广播谁在重启服务器。</p>
     </section>
 
-    <!-- ========================================================
-         故障排查
-         ======================================================== -->
+    <!-- 故障排查 -->
     <section class="help-section" id="troubleshooting">
       <h2><span class="num">6</span>故障排查</h2>
 
@@ -1325,9 +1428,7 @@
       </ul>
     </section>
 
-    <!-- ========================================================
-         常见问题
-         ======================================================== -->
+    <!-- 常见问题 -->
     <section class="help-section" id="faq">
       <h2><span class="num">7</span>常见问题</h2>
 
@@ -1535,9 +1636,7 @@
       </div>
     </section>
 
-    <!-- ========================================================
-         卸载与备份
-         ======================================================== -->
+    <!-- 卸载与备份 -->
     <section class="help-section" id="uninstall">
       <h2><span class="num">8</span>卸载与备份</h2>
 
@@ -1587,7 +1686,7 @@
     <p style="margin-top: 12px;">
       <a href="index.html">← 返回主页</a>
       &nbsp;·&nbsp;
-      <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 →</a>
+      <a href="https://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 →</a>
     </p>
   </div>
 </footer>
@@ -1632,6 +1731,36 @@
       }
     });
   });
+
+  // ============================================================
+  // 移动端汉堡菜单
+  // ============================================================
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
 </script>
 
 </body>
