@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="512" height="512">
+  <!-- 白色圆角背景 + 细黑边框 -->
+  <rect x="4" y="4" width="248" height="248" rx="56" fill="#FFFFFF" stroke="#1D1D1F" stroke-width="3"/>
+
+  <!-- 黑色盾牌 -->
+  <path d="M128 40
+           L196 64
+           L196 122
+           Q196 172 128 212
+           Q60 172 60 122
+           L60 64
+           Z"
+        fill="#1D1D1F"/>
+
+  <!-- 白色终端符号 -->
+  <path d="M100 110
+           L124 128
+           L100 146"
+        stroke="#FFFFFF"
+        stroke-width="9"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"/>
+  <line x1="134" y1="146" x2="160" y2="146"
+        stroke="#FFFFFF"
+        stroke-width="9"
+        stroke-linecap="round"/>
+</svg>
