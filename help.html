@@ -37,11 +37,6 @@
     --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08);
   }
 
-  html, body {
-    overflow-x: hidden;
-    max-width: 100vw;
-  }
-
   html {
     scroll-behavior: smooth;
   }
@@ -55,6 +50,7 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     font-size: 15px;
+    overflow-x: hidden;
   }
 
   .container {
@@ -280,8 +276,6 @@
 
   .main-content {
     min-width: 0;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
   }
 
   .help-section {
@@ -426,7 +420,6 @@
     padding: 0 22px;
     opacity: 0;
     transition: opacity 0.3s ease, padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    word-break: break-word;
   }
 
   .faq-item.open .faq-a {
@@ -510,19 +503,37 @@
   }
 
   /* ============================================================
-     表格（不再 nowrap，允许换行）
+     表格（横向可滚动）
      ============================================================ */
+  .table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 16px 0;
+    border-radius: 12px;
+    border: 1px solid var(--border-light);
+    background: #fff;
+  }
+
+  .table-scroll::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .table-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 3px;
+  }
+
+  .table-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
   .help-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 13.5px;
     background: #fff;
-    border: 1px solid var(--border-light);
-    border-radius: 12px;
-    overflow: hidden;
-    margin: 16px 0;
-    table-layout: fixed;
-    word-break: break-word;
+    min-width: 100%;
   }
 
   .help-table thead {
@@ -538,7 +549,7 @@
     letter-spacing: 0.3px;
     text-transform: uppercase;
     border-bottom: 1px solid var(--border-light);
-    word-break: break-word;
+    white-space: nowrap;
   }
 
   .help-table td {
@@ -546,7 +557,6 @@
     border-bottom: 1px solid var(--border-light);
     color: var(--text-secondary);
     vertical-align: top;
-    word-break: break-word;
   }
 
   .help-table tr:last-child td {
@@ -555,6 +565,10 @@
 
   .help-table tr:hover {
     background: var(--bg-tertiary);
+  }
+
+  .help-table td:first-child {
+    white-space: nowrap;
   }
 
   /* ============================================================
@@ -615,7 +629,7 @@
   }
 
   /* ============================================================
-     代码块（允许换行）
+     代码块
      ============================================================ */
   .code-block {
     background: var(--code-bg);
@@ -667,6 +681,7 @@
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.2px;
+    white-space: nowrap;
   }
 
   .badge-op {
@@ -758,7 +773,7 @@
     }
 
     .container {
-      padding: 0 20px;
+      padding: 0 16px;
     }
 
     .nav-toggle {
@@ -850,8 +865,8 @@
       background: rgba(255, 255, 255, 0.96);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      margin: 0 -20px;
-      padding: 10px 20px;
+      margin: 0 -16px;
+      padding: 10px 16px;
       border-bottom: 1px solid var(--border-light);
     }
 
@@ -962,44 +977,27 @@
       padding: 0 18px 16px;
     }
 
-    /* 表格：去掉 nowrap，允许换行 */
-    .help-table {
-      font-size: 14px;
-      display: block;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      word-break: break-word;
-      white-space: normal;
+    /* 表格：横向滚动 */
+    .table-scroll {
+      margin: 14px -16px;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
     }
 
-    .help-table thead,
-    .help-table tbody {
-      display: table;
-      width: 100%;
-      table-layout: fixed;
+    .help-table {
+      font-size: 14px;
     }
 
     .help-table th {
-      font-size: 12.5px;
-      padding: 10px 12px;
+      font-size: 13px;
+      padding: 10px 14px;
     }
 
     .help-table td {
-      padding: 10px 12px;
+      padding: 10px 14px;
       font-size: 14px;
-      line-height: 1.55;
-      white-space: normal;
-    }
-
-    /* 表格列宽自适应 */
-    .help-table th:first-child,
-    .help-table td:first-child {
-      width: 38%;
-    }
-
-    .help-table th:last-child,
-    .help-table td:last-child {
-      width: 62%;
+      line-height: 1.6;
     }
 
     /* 步骤 */
@@ -1061,7 +1059,7 @@
      ============================================================ */
   @media (max-width: 480px) {
     .container {
-      padding: 0 16px;
+      padding: 0 14px;
     }
 
     .page-hero h1 {
@@ -1085,8 +1083,8 @@
     }
 
     .sidebar {
-      margin: 0 -16px;
-      padding: 10px 16px;
+      margin: 0 -14px;
+      padding: 10px 14px;
     }
 
     .sidebar a {
@@ -1094,18 +1092,21 @@
       padding: 7px 12px;
     }
 
-    /* 表格：小屏改为堆叠式 */
+    .table-scroll {
+      margin: 12px -14px;
+    }
+
     .help-table {
       font-size: 13.5px;
     }
 
     .help-table th {
       font-size: 12px;
-      padding: 8px 10px;
+      padding: 8px 12px;
     }
 
     .help-table td {
-      padding: 8px 10px;
+      padding: 8px 12px;
       font-size: 13.5px;
     }
 
@@ -1204,32 +1205,34 @@
       <p>3 步完成安装，5 分钟即可上手。适用于 Minecraft 1.12.2（Paper / Spigot）。</p>
 
       <h3>环境要求</h3>
-      <table class="help-table">
-        <thead>
-          <tr>
-            <th>项目</th>
-            <th>要求</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>服务端</td>
-            <td>Paper 或 Spigot <strong>1.12.2</strong></td>
-          </tr>
-          <tr>
-            <td>Java</td>
-            <td>Java 8（推荐）或 Java 17/21（需加 <code>--add-opens</code> 参数）</td>
-          </tr>
-          <tr>
-            <td>内存</td>
-            <td>建议 ≥ 2GB</td>
-          </tr>
-          <tr>
-            <td>依赖插件</td>
-            <td>无硬性依赖，可选 XlandCore / 假人插件 / XlandStop</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr>
+              <th>项目</th>
+              <th>要求</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>服务端</td>
+              <td>Paper 或 Spigot <strong>1.12.2</strong></td>
+            </tr>
+            <tr>
+              <td>Java</td>
+              <td>Java 8（推荐）或 Java 17/21（需加 <code>--add-opens</code> 参数）</td>
+            </tr>
+            <tr>
+              <td>内存</td>
+              <td>建议 ≥ 2GB</td>
+            </tr>
+            <tr>
+              <td>依赖插件</td>
+              <td>无硬性依赖，可选 XlandCore / 假人插件 / XlandStop</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <h3>安装步骤</h3>
       <ol class="steps">
@@ -1276,161 +1279,169 @@
       <h2><span class="num">2</span>命令详解</h2>
 
       <h3>登录相关</h3>
-      <table class="help-table">
-        <thead>
-          <tr>
-            <th>命令</th>
-            <th>说明</th>
-            <th>权限</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>/linux login</code></td>
-            <td>进入密码输入模式，在聊天栏发送密码即可验证身份</td>
-            <td><span class="badge badge-op">仅 Linux582021</span></td>
-          </tr>
-          <tr>
-            <td><code>/linux chargepw &lt;新密码&gt;</code></td>
-            <td>修改登录密码（需先登录，至少 6 位）</td>
-            <td><span class="badge badge-op">仅 Linux582021</span></td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr>
+              <th>命令</th>
+              <th>说明</th>
+              <th>权限</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>/linux login</code></td>
+              <td>进入密码输入模式，在聊天栏发送密码即可验证身份</td>
+              <td><span class="badge badge-op">仅 Linux582021</span></td>
+            </tr>
+            <tr>
+              <td><code>/linux chargepw &lt;新密码&gt;</code></td>
+              <td>修改登录密码（需先登录，至少 6 位）</td>
+              <td><span class="badge badge-op">仅 Linux582021</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <h3>封禁相关</h3>
-      <table class="help-table">
-        <thead>
-          <tr>
-            <th>命令</th>
-            <th>说明</th>
-            <th>权限</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>/ban &lt;玩家&gt; [原因]</code></td>
-            <td>永久封禁玩家账号</td>
-            <td><span class="badge badge-op">ban</span></td>
-          </tr>
-          <tr>
-            <td><code>/tempban &lt;玩家&gt; &lt;时间&gt; [原因]</code></td>
-            <td>临时封禁，到期自动解封</td>
-            <td><span class="badge badge-op">tempban</span></td>
-          </tr>
-          <tr>
-            <td><code>/banip &lt;玩家/IP&gt; [原因]</code></td>
-            <td>封禁 IP 地址，同 IP 玩家会被踢出</td>
-            <td><span class="badge badge-op">banip</span></td>
-          </tr>
-          <tr>
-            <td><code>/unban &lt;玩家&gt;</code></td>
-            <td>解封玩家（同时删除最近一条封禁历史）</td>
-            <td><span class="badge badge-op">unban</span></td>
-          </tr>
-          <tr>
-            <td><code>/unbanip &lt;IP&gt;</code></td>
-            <td>解封 IP</td>
-            <td><span class="badge badge-op">unbanip</span></td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr>
+              <th>命令</th>
+              <th>说明</th>
+              <th>权限</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>/ban &lt;玩家&gt; [原因]</code></td>
+              <td>永久封禁玩家账号</td>
+              <td><span class="badge badge-op">ban</span></td>
+            </tr>
+            <tr>
+              <td><code>/tempban &lt;玩家&gt; &lt;时间&gt; [原因]</code></td>
+              <td>临时封禁，到期自动解封</td>
+              <td><span class="badge badge-op">tempban</span></td>
+            </tr>
+            <tr>
+              <td><code>/banip &lt;玩家/IP&gt; [原因]</code></td>
+              <td>封禁 IP 地址，同 IP 玩家会被踢出</td>
+              <td><span class="badge badge-op">banip</span></td>
+            </tr>
+            <tr>
+              <td><code>/unban &lt;玩家&gt;</code></td>
+              <td>解封玩家（同时删除最近一条封禁历史）</td>
+              <td><span class="badge badge-op">unban</span></td>
+            </tr>
+            <tr>
+              <td><code>/unbanip &lt;IP&gt;</code></td>
+              <td>解封 IP</td>
+              <td><span class="badge badge-op">unbanip</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <h3>功能封禁（协管可用）</h3>
-      <table class="help-table">
-        <thead>
-          <tr>
-            <th>命令</th>
-            <th>说明</th>
-            <th>权限</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>/linux banblock &lt;玩家&gt; [时间] [原因]</code></td>
-            <td>禁止方块交互（挖掘、放置、交互）</td>
-            <td><span class="badge badge-mod">协管</span></td>
-          </tr>
-          <tr>
-            <td><code>/linux banmove &lt;玩家&gt; [时间] [原因]</code></td>
-            <td>禁止移动，玩家会被冻结在原位置</td>
-            <td><span class="badge badge-mod">协管</span></td>
-          </tr>
-          <tr>
-            <td><code>/linux banmsg &lt;玩家&gt; [时间] [原因]</code></td>
-            <td>禁言，拦截聊天、私聊、/say 等</td>
-            <td><span class="badge badge-mod">协管</span></td>
-          </tr>
-          <tr>
-            <td><code>/linux banall &lt;玩家&gt; [时间] [原因]</code></td>
-            <td>以上三者合一，全面封禁</td>
-            <td><span class="badge badge-mod">协管</span></td>
-          </tr>
-          <tr>
-            <td><code>/linux unbanblock &lt;玩家&gt;</code></td>
-            <td>解除方块交互禁用</td>
-            <td><span class="badge badge-mod">协管</span></td>
-          </tr>
-          <tr>
-            <td><code>/linux unbanmove &lt;玩家&gt;</code></td>
-            <td>解除移动禁止</td>
-            <td><span class="badge badge-mod">协管</span></td>
-          </tr>
-          <tr>
-            <td><code>/linux unbanmsg &lt;玩家&gt;</code></td>
-            <td>解除禁言</td>
-            <td><span class="badge badge-mod">协管</span></td>
-          </tr>
-          <tr>
-            <td><code>/linux unbanall &lt;玩家&gt;</code></td>
-            <td>解除所有功能封禁</td>
-            <td><span class="badge badge-mod">协管</span></td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr>
+              <th>命令</th>
+              <th>说明</th>
+              <th>权限</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>/linux banblock &lt;玩家&gt; [时间] [原因]</code></td>
+              <td>禁止方块交互（挖掘、放置、交互）</td>
+              <td><span class="badge badge-mod">协管</span></td>
+            </tr>
+            <tr>
+              <td><code>/linux banmove &lt;玩家&gt; [时间] [原因]</code></td>
+              <td>禁止移动，玩家会被冻结在原位置</td>
+              <td><span class="badge badge-mod">协管</span></td>
+            </tr>
+            <tr>
+              <td><code>/linux banmsg &lt;玩家&gt; [时间] [原因]</code></td>
+              <td>禁言，拦截聊天、私聊、/say 等</td>
+              <td><span class="badge badge-mod">协管</span></td>
+            </tr>
+            <tr>
+              <td><code>/linux banall &lt;玩家&gt; [时间] [原因]</code></td>
+              <td>以上三者合一，全面封禁</td>
+              <td><span class="badge badge-mod">协管</span></td>
+            </tr>
+            <tr>
+              <td><code>/linux unbanblock &lt;玩家&gt;</code></td>
+              <td>解除方块交互禁用</td>
+              <td><span class="badge badge-mod">协管</span></td>
+            </tr>
+            <tr>
+              <td><code>/linux unbanmove &lt;玩家&gt;</code></td>
+              <td>解除移动禁止</td>
+              <td><span class="badge badge-mod">协管</span></td>
+            </tr>
+            <tr>
+              <td><code>/linux unbanmsg &lt;玩家&gt;</code></td>
+              <td>解除禁言</td>
+              <td><span class="badge badge-mod">协管</span></td>
+            </tr>
+            <tr>
+              <td><code>/linux unbanall &lt;玩家&gt;</code></td>
+              <td>解除所有功能封禁</td>
+              <td><span class="badge badge-mod">协管</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <h3>查询与信息</h3>
-      <table class="help-table">
-        <thead>
-          <tr>
-            <th>命令</th>
-            <th>说明</th>
-            <th>权限</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>/linux lookup &lt;玩家/IP&gt;</code></td>
-            <td>查询 UUID、IP、身份、游玩时长、封禁历史</td>
-            <td><span class="badge badge-op">lookup</span></td>
-          </tr>
-          <tr>
-            <td><code>/linux seenip &lt;IP&gt;</code></td>
-            <td>查询使用过该 IP 的所有玩家</td>
-            <td><span class="badge badge-op">lookup</span></td>
-          </tr>
-          <tr>
-            <td><code>/linux history &lt;玩家&gt;</code></td>
-            <td>查看玩家完整封禁历史</td>
-            <td><span class="badge badge-op">history</span></td>
-          </tr>
-          <tr>
-            <td><code>/linux clearhistory &lt;玩家&gt;</code></td>
-            <td>清除玩家全部历史（需二次确认）</td>
-            <td><span class="badge badge-op">clearhistory</span></td>
-          </tr>
-          <tr>
-            <td><code>/banlist</code></td>
-            <td>查看所有封禁记录（账号 + 功能）</td>
-            <td><span class="badge badge-op">ban</span></td>
-          </tr>
-          <tr>
-            <td><code>/linux op [list]</code></td>
-            <td>检查自己身份 / 列出所有管理员</td>
-            <td><span class="badge badge-op">lookup</span></td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr>
+              <th>命令</th>
+              <th>说明</th>
+              <th>权限</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>/linux lookup &lt;玩家/IP&gt;</code></td>
+              <td>查询 UUID、IP、身份、游玩时长、封禁历史</td>
+              <td><span class="badge badge-op">lookup</span></td>
+            </tr>
+            <tr>
+              <td><code>/linux seenip &lt;IP&gt;</code></td>
+              <td>查询使用过该 IP 的所有玩家</td>
+              <td><span class="badge badge-op">lookup</span></td>
+            </tr>
+            <tr>
+              <td><code>/linux history &lt;玩家&gt;</code></td>
+              <td>查看玩家完整封禁历史</td>
+              <td><span class="badge badge-op">history</span></td>
+            </tr>
+            <tr>
+              <td><code>/linux clearhistory &lt;玩家&gt;</code></td>
+              <td>清除玩家全部历史（需二次确认）</td>
+              <td><span class="badge badge-op">clearhistory</span></td>
+            </tr>
+            <tr>
+              <td><code>/banlist</code></td>
+              <td>查看所有封禁记录（账号 + 功能）</td>
+              <td><span class="badge badge-op">ban</span></td>
+            </tr>
+            <tr>
+              <td><code>/linux op [list]</code></td>
+              <td>检查自己身份 / 列出所有管理员</td>
+              <td><span class="badge badge-op">lookup</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <h3>时间格式</h3>
       <div class="code-block">
@@ -1450,72 +1461,74 @@
 
       <p>插件使用三级权限体系：OP / 协管 / 普通玩家。</p>
 
-      <table class="help-table">
-        <thead>
-          <tr>
-            <th>权限节点</th>
-            <th>说明</th>
-            <th>默认</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>inthenameoflinux.reload</code></td>
-            <td>重载配置、修改拦截列表、开关控制台拦截</td>
-            <td>OP</td>
-          </tr>
-          <tr>
-            <td><code>inthenameoflinux.ban</code></td>
-            <td>使用 /ban /xlban /banlist</td>
-            <td>OP</td>
-          </tr>
-          <tr>
-            <td><code>inthenameoflinux.tempban</code></td>
-            <td>使用 /tempban</td>
-            <td>OP</td>
-          </tr>
-          <tr>
-            <td><code>inthenameoflinux.banip</code></td>
-            <td>使用 /banip</td>
-            <td>OP</td>
-          </tr>
-          <tr>
-            <td><code>inthenameoflinux.unban</code></td>
-            <td>使用 /unban</td>
-            <td>OP</td>
-          </tr>
-          <tr>
-            <td><code>inthenameoflinux.unbanip</code></td>
-            <td>使用 /unbanip</td>
-            <td>OP</td>
-          </tr>
-          <tr>
-            <td><code>inthenameoflinux.lookup</code></td>
-            <td>使用 /linux lookup / seenip / fp</td>
-            <td>OP</td>
-          </tr>
-          <tr>
-            <td><code>inthenameoflinux.history</code></td>
-            <td>使用 /linux history</td>
-            <td>OP</td>
-          </tr>
-          <tr>
-            <td><code>inthenameoflinux.clearhistory</code></td>
-            <td>使用 /linux clearhistory</td>
-            <td>OP</td>
-          </tr>
-          <tr>
-            <td><code>inthenameoflinux.penalty</code></td>
-            <td>完整惩罚权限（banblock / banmove / banmsg / banall 等）</td>
-            <td>OP</td>
-          </tr>
-          <tr>
-            <td><code>inthenameoflinux.moderator</code></td>
-            <td>协管权限节点（XlandCore 未加载时的回退）</td>
-            <td>否</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr>
+              <th>权限节点</th>
+              <th>说明</th>
+              <th>默认</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>inthenameoflinux.reload</code></td>
+              <td>重载配置、修改拦截列表、开关控制台拦截</td>
+              <td>OP</td>
+            </tr>
+            <tr>
+              <td><code>inthenameoflinux.ban</code></td>
+              <td>使用 /ban /xlban /banlist</td>
+              <td>OP</td>
+            </tr>
+            <tr>
+              <td><code>inthenameoflinux.tempban</code></td>
+              <td>使用 /tempban</td>
+              <td>OP</td>
+            </tr>
+            <tr>
+              <td><code>inthenameoflinux.banip</code></td>
+              <td>使用 /banip</td>
+              <td>OP</td>
+            </tr>
+            <tr>
+              <td><code>inthenameoflinux.unban</code></td>
+              <td>使用 /unban</td>
+              <td>OP</td>
+            </tr>
+            <tr>
+              <td><code>inthenameoflinux.unbanip</code></td>
+              <td>使用 /unbanip</td>
+              <td>OP</td>
+            </tr>
+            <tr>
+              <td><code>inthenameoflinux.lookup</code></td>
+              <td>使用 /linux lookup / seenip / fp</td>
+              <td>OP</td>
+            </tr>
+            <tr>
+              <td><code>inthenameoflinux.history</code></td>
+              <td>使用 /linux history</td>
+              <td>OP</td>
+            </tr>
+            <tr>
+              <td><code>inthenameoflinux.clearhistory</code></td>
+              <td>使用 /linux clearhistory</td>
+              <td>OP</td>
+            </tr>
+            <tr>
+              <td><code>inthenameoflinux.penalty</code></td>
+              <td>完整惩罚权限（banblock / banmove / banmsg / banall 等）</td>
+              <td>OP</td>
+            </tr>
+            <tr>
+              <td><code>inthenameoflinux.moderator</code></td>
+              <td>协管权限节点（XlandCore 未加载时的回退）</td>
+              <td>否</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <h3>协管说明</h3>
       <ul class="steps">
@@ -1541,62 +1554,64 @@
       <p>所有配置都在 <code>plugins/InTheNameOfLinux/config.yml</code>，修改后执行 <code>/linux reload</code> 即可生效（无需重启）。</p>
 
       <h3>关键配置项</h3>
-      <table class="help-table">
-        <thead>
-          <tr>
-            <th>配置项</th>
-            <th>默认值</th>
-            <th>说明</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>protected-player</code></td>
-            <td>Linux582021</td>
-            <td>重点保护的玩家名</td>
-          </tr>
-          <tr>
-            <td><code>blocked-player</code></td>
-            <td>fs1</td>
-            <td>突破拦截时的代理玩家</td>
-          </tr>
-          <tr>
-            <td><code>appeal-group</code></td>
-            <td>925200745</td>
-            <td>封禁踢出消息里的申诉群号</td>
-          </tr>
-          <tr>
-            <td><code>broadcast-ban</code></td>
-            <td>true</td>
-            <td>是否全服广播封禁消息（false 只广播给管理员）</td>
-          </tr>
-          <tr>
-            <td><code>refuse-enabled</code></td>
-            <td>true</td>
-            <td>全局命令拦截开关</td>
-          </tr>
-          <tr>
-            <td><code>console-cmd-enabled</code></td>
-            <td>false</td>
-            <td>控制台对保护对象命令的拦截开关</td>
-          </tr>
-          <tr>
-            <td><code>fs1-refuse-enabled</code></td>
-            <td>true</td>
-            <td>突破 fs1 拦截功能开关</td>
-          </tr>
-          <tr>
-            <td><code>penalty-sync.interval-seconds</code></td>
-            <td>60</td>
-            <td>功能封禁缓存与文件对齐间隔</td>
-          </tr>
-          <tr>
-            <td><code>data-save.interval-seconds</code></td>
-            <td>30</td>
-            <td>数据文件批量写盘间隔</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr>
+              <th>配置项</th>
+              <th>默认值</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>protected-player</code></td>
+              <td>Linux582021</td>
+              <td>重点保护的玩家名</td>
+            </tr>
+            <tr>
+              <td><code>blocked-player</code></td>
+              <td>fs1</td>
+              <td>突破拦截时的代理玩家</td>
+            </tr>
+            <tr>
+              <td><code>appeal-group</code></td>
+              <td>925200745</td>
+              <td>封禁踢出消息里的申诉群号</td>
+            </tr>
+            <tr>
+              <td><code>broadcast-ban</code></td>
+              <td>true</td>
+              <td>是否全服广播封禁消息（false 只广播给管理员）</td>
+            </tr>
+            <tr>
+              <td><code>refuse-enabled</code></td>
+              <td>true</td>
+              <td>全局命令拦截开关</td>
+            </tr>
+            <tr>
+              <td><code>console-cmd-enabled</code></td>
+              <td>false</td>
+              <td>控制台对保护对象命令的拦截开关</td>
+            </tr>
+            <tr>
+              <td><code>fs1-refuse-enabled</code></td>
+              <td>true</td>
+              <td>突破 fs1 拦截功能开关</td>
+            </tr>
+            <tr>
+              <td><code>penalty-sync.interval-seconds</code></td>
+              <td>60</td>
+              <td>功能封禁缓存与文件对齐间隔</td>
+            </tr>
+            <tr>
+              <td><code>data-save.interval-seconds</code></td>
+              <td>30</td>
+              <td>数据文件批量写盘间隔</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <h3>登录配置</h3>
       <div class="code-block">
