@@ -690,7 +690,7 @@
   }
 
   /* ============================================================
-     移动端汉堡菜单
+     汉堡菜单
      ============================================================ */
   .nav-toggle {
     display: none;
@@ -734,6 +734,11 @@
      移动端布局（< 900px）
      ============================================================ */
   @media (max-width: 900px) {
+    /* 移动端容器内边距加大 */
+    .container {
+      padding: 0 20px;
+    }
+
     .nav-toggle {
       display: block;
     }
@@ -810,37 +815,119 @@
       transform: none;
     }
 
+    /* ============================================================
+       移动端布局：目录改为横向胶囊
+       ============================================================ */
     .content-layout {
       grid-template-columns: 1fr;
-      gap: 24px;
+      gap: 28px;
+      padding: 20px 0 60px;
     }
 
     .sidebar {
-      position: static;
+      position: sticky;
+      top: 60px;
+      z-index: 10;
       max-height: none;
-      overflow-x: auto;
+      overflow: visible;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      margin: 0 -20px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .sidebar-title {
+      display: none;
     }
 
     .sidebar ul {
       display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
+      gap: 8px;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .sidebar ul::-webkit-scrollbar {
+      display: none;
+    }
+
+    .sidebar li {
+      margin-bottom: 0;
+      flex-shrink: 0;
     }
 
     .sidebar a {
+      display: block;
+      padding: 8px 14px;
+      font-size: 13px;
       white-space: nowrap;
+      border-radius: 999px;
+      border-left: none;
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
     }
-  }
 
-  @media (max-width: 768px) {
+    .sidebar a:hover {
+      background: var(--bg-secondary);
+      color: var(--text);
+    }
+
+    .sidebar a.active {
+      background: var(--blue);
+      color: #fff;
+      font-weight: 500;
+      border-left: none;
+    }
+
+    /* ============================================================
+       移动端内容间距
+       ============================================================ */
     .page-hero {
-      padding: 100px 0 40px;
+      padding: 100px 0 24px;
+    }
+
+    .page-hero h1 {
+      font-size: 32px;
+      letter-spacing: -1px;
+    }
+
+    .page-hero p {
+      font-size: 15px;
+      padding: 0 8px;
+    }
+
+    .help-section {
+      margin-bottom: 48px;
     }
 
     .help-section h2 {
       font-size: 22px;
+      gap: 8px;
+      margin-bottom: 16px;
     }
 
+    .help-section h2 .num {
+      width: 24px;
+      height: 24px;
+      font-size: 12px;
+    }
+
+    .help-section h3 {
+      font-size: 15px;
+      margin: 20px 0 8px;
+    }
+
+    .help-section p {
+      font-size: 14px;
+    }
+
+    /* FAQ */
     .faq-q {
       padding: 16px 18px;
       font-size: 14px;
@@ -848,10 +935,88 @@
 
     .faq-a {
       padding: 0 18px;
+      font-size: 13.5px;
     }
 
     .faq-item.open .faq-a {
       padding: 0 18px 16px;
+    }
+
+    /* 表格：横向滚动 */
+    .help-table {
+      font-size: 13px;
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .help-table th,
+    .help-table td {
+      padding: 10px 12px;
+    }
+
+    /* 步骤 */
+    .steps li {
+      padding: 12px 0 12px 44px;
+      font-size: 13.5px;
+    }
+
+    .steps li::before {
+      width: 28px;
+      height: 28px;
+      font-size: 12px;
+      top: 10px;
+    }
+
+    /* 提示框 */
+    .tip {
+      padding: 14px 16px;
+      font-size: 13.5px;
+      border-radius: 10px;
+    }
+
+    .tip-icon {
+      font-size: 16px;
+    }
+
+    /* 代码块 */
+    .code-block {
+      font-size: 12px;
+      padding: 14px 16px;
+      border-radius: 8px;
+    }
+
+    code {
+      font-size: 0.85em;
+      padding: 2px 5px;
+    }
+
+    /* 页脚 */
+    footer {
+      padding: 32px 0;
+    }
+  }
+
+  /* ============================================================
+     小屏额外调整（< 480px）
+     ============================================================ */
+  @media (max-width: 480px) {
+    .container {
+      padding: 0 18px;
+    }
+
+    .page-hero h1 {
+      font-size: 28px;
+    }
+
+    .help-section h2 {
+      font-size: 20px;
+    }
+
+    .sidebar {
+      margin: 0 -18px;
+      padding: 10px 18px;
     }
   }
 </style>
@@ -919,7 +1084,6 @@
 
   <main class="main-content">
 
-    <!-- 快速开始 -->
     <section class="help-section" id="quickstart">
       <h2><span class="num">1</span>快速开始</h2>
 
@@ -994,7 +1158,6 @@
       </div>
     </section>
 
-    <!-- 命令详解 -->
     <section class="help-section" id="commands">
       <h2><span class="num">2</span>命令详解</h2>
 
@@ -1168,7 +1331,6 @@
       <p>支持单位：<code>s</code>（秒）、<code>m</code>（分钟）、<code>h</code>（小时）、<code>d</code>（天）、<code>w</code>（周）。可以组合使用。</p>
     </section>
 
-    <!-- 权限说明 -->
     <section class="help-section" id="permissions">
       <h2><span class="num">3</span>权限说明</h2>
 
@@ -1259,7 +1421,6 @@
       </div>
     </section>
 
-    <!-- 配置说明 -->
     <section class="help-section" id="config">
       <h2><span class="num">4</span>配置说明</h2>
 
@@ -1352,7 +1513,6 @@
       </div>
     </section>
 
-    <!-- 插件联动 -->
     <section class="help-section" id="integration">
       <h2><span class="num">5</span>插件联动</h2>
 
@@ -1378,7 +1538,6 @@
       <p>监听 <code>xstop</code> / <code>xlstop</code> / <code>xlandstop</code> 命令，全服广播谁在重启服务器。</p>
     </section>
 
-    <!-- 故障排查 -->
     <section class="help-section" id="troubleshooting">
       <h2><span class="num">6</span>故障排查</h2>
 
@@ -1428,7 +1587,6 @@
       </ul>
     </section>
 
-    <!-- 常见问题 -->
     <section class="help-section" id="faq">
       <h2><span class="num">7</span>常见问题</h2>
 
@@ -1636,7 +1794,6 @@
       </div>
     </section>
 
-    <!-- 卸载与备份 -->
     <section class="help-section" id="uninstall">
       <h2><span class="num">8</span>卸载与备份</h2>
 
@@ -1692,14 +1849,12 @@
 </footer>
 
 <script>
-  // FAQ 展开收起
   document.querySelectorAll('.faq-q').forEach((q) => {
     q.addEventListener('click', () => {
       q.parentElement.classList.toggle('open');
     });
   });
 
-  // 侧边栏激活状态跟随滚动
   const sections = document.querySelectorAll('.help-section');
   const sidebarLinks = document.querySelectorAll('.sidebar a');
 
@@ -1719,7 +1874,6 @@
 
   sections.forEach((s) => observer.observe(s));
 
-  // 平滑滚动
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener('click', function (e) {
       e.preventDefault();
@@ -1732,9 +1886,6 @@
     });
   });
 
-  // ============================================================
-  // 移动端汉堡菜单
-  // ============================================================
   const navToggle = document.getElementById('navToggle');
   const navLinks = document.getElementById('navLinks');
 
