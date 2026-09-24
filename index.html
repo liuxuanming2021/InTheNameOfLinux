@@ -32,6 +32,12 @@
     --code-comment: #6e6e73;
     --code-keyword: #0071e3;
     --code-value: #b7472a;
+    --green: #34c759;
+    --green-light: #effaf0;
+    --orange: #ff9500;
+    --orange-light: #fff8e6;
+    --red: #ff3b30;
+    --red-light: #fff0f0;
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
     --shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08);
@@ -121,15 +127,6 @@
   }
 
   .nav-links a:hover {
-    color: var(--text);
-  }
-
-  .nav-links .nav-help {
-    color: var(--text-secondary);
-    font-weight: 500;
-  }
-
-  .nav-links .nav-help:hover {
     color: var(--text);
   }
 
@@ -609,6 +606,76 @@
   }
 
   /* ============================================================
+     流程步骤（时间线）
+     ============================================================ */
+  .flow {
+    list-style: none;
+    counter-reset: step;
+    margin: 0;
+    padding: 0;
+  }
+
+  .flow li {
+    counter-increment: step;
+    position: relative;
+    padding: 18px 24px 18px 68px;
+    background: #fff;
+    border: 1px solid var(--border-light);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+  }
+
+  .flow li:hover {
+    transform: translateX(4px);
+    box-shadow: 0 12px 28px rgba(0, 113, 227, 0.10);
+    border-color: rgba(0, 113, 227, 0.3);
+  }
+
+  .flow li::before {
+    content: counter(step);
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    background: var(--blue-light);
+    color: var(--blue);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  .flow li strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ============================================================
+     徽章
+     ============================================================ */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .badge-op   { background: var(--blue-light); color: var(--blue); }
+  .badge-mod  { background: #fff0e6; color: #c44d00; }
+  .badge-new  { background: var(--green-light); color: #1a6b28; }
+
+  /* ============================================================
      页脚
      ============================================================ */
   footer {
@@ -780,9 +847,6 @@
     }
   }
 
-  /* ============================================================
-     移动端其他调整（< 768px）
-     ============================================================ */
   @media (max-width: 768px) {
     .hero {
       padding: 110px 0 70px;
@@ -804,6 +868,16 @@
     .stat-value {
       font-size: 32px;
     }
+
+    .flow li {
+      padding: 16px 18px 16px 60px;
+    }
+    .flow li::before {
+      left: 16px;
+      width: 30px;
+      height: 30px;
+      font-size: 12px;
+    }
   }
 </style>
 </head>
@@ -822,10 +896,10 @@
     <ul class="nav-links" id="navLinks">
       <li><a href="#features">功能</a></li>
       <li><a href="#penalty">封禁</a></li>
+      <li><a href="#report">举报</a></li>
       <li><a href="#moderator">协管</a></li>
       <li><a href="#commands">命令</a></li>
       <li><a href="help.html" class="nav-help">帮助</a></li>
-      <li><a href="#tech">技术</a></li>
       <li>
         <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
           Nalxer 服务器
@@ -856,13 +930,13 @@
     <div class="hero-badge">v26.10.5-Alpha · Minecraft 1.12.2</div>
     <h1>以 Linux 之名<br><span class="gradient">守护你的服务器</span></h1>
     <p class="hero-subtitle">
-      一款为服务器管理员量身打造的综合管理插件，集身份验证、封禁管理、功能限制、协管权限、插件联动于一体。
+      一款为服务器管理员量身打造的综合管理插件，集身份验证、封禁管理、举报系统、功能限制、协管权限、插件联动于一体。
     </p>
 
     <div class="hero-meta">
       <span class="meta-tag"><strong>SHA-256</strong> 加密存储</span>
       <span class="meta-tag"><strong>0</strong> 明文密码</span>
-      <span class="meta-tag"><strong>16</strong> 个命令</span>
+      <span class="meta-tag"><strong>30+</strong> 个子命令</span>
       <span class="meta-tag"><strong>100%</strong> 异步安全</span>
     </div>
 
@@ -882,7 +956,7 @@
     <div class="section-header reveal">
       <span class="section-label">CORE FEATURES</span>
       <h2>核心功能</h2>
-      <p>五大模块协同工作，覆盖服务器管理的方方面面</p>
+      <p>七大模块协同工作，覆盖服务器管理的方方面面</p>
     </div>
 
     <div class="grid grid-3">
@@ -923,6 +997,18 @@
       </div>
 
       <div class="card reveal">
+        <div class="card-icon">📢</div>
+        <h3>举报系统 <span class="badge badge-new">NEW</span></h3>
+        <p>玩家提交举报，管理层调查后处理，服主离线消息离线缓存上线自动推送。</p>
+        <ul>
+          <li>24 小时调查冷却</li>
+          <li>1 分钟提交冷却</li>
+          <li>接受 / 驳回 + 备注</li>
+          <li>离线消息自动暂存</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
         <div class="card-icon">👮</div>
         <h3>协管体系</h3>
         <p>协管无 OP 但可使用惩罚命令，时长限制 + 权限分流。</p>
@@ -955,6 +1041,30 @@
           <li>假人信息同步</li>
           <li>重启命令监听</li>
           <li>延迟检测 + reload</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">💾</div>
+        <h3>数据持久化</h3>
+        <p>六个独立数据文件，脏标记 + 定时批量写盘，性能与安全兼顾。</p>
+        <ul>
+          <li>默认 30 秒批量写</li>
+          <li>可配置为立即写</li>
+          <li>reload 幂等化</li>
+          <li>快照回滚保护</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🖱️</div>
+        <h3>交互式帮助</h3>
+        <p>可点击的帮助菜单与封禁列表翻页，悬停提示，一键填充。</p>
+        <ul>
+          <li>点击执行 / 填充</li>
+          <li>分页浏览</li>
+          <li>悬停查看说明</li>
+          <li>1.12.2 兼容</li>
         </ul>
       </div>
     </div>
@@ -1029,13 +1139,129 @@
         </div>
       </div>
     </div>
+
+    <div class="reveal" style="margin-top: 32px;">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">
+        二次确认机制 <span class="badge badge-new">NEW</span>
+      </h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>操作</th>
+              <th>触发命令</th>
+              <th>确认命令</th>
+              <th>有效期</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>清空历史</td>
+              <td><code>/linux clearhistory &lt;玩家&gt;</code></td>
+              <td><code>/linux clearhistory confirm</code></td>
+              <td>5 分钟</td>
+            </tr>
+            <tr>
+              <td>清空已处理举报</td>
+              <td><code>/linux report clear handled</code></td>
+              <td><code>/linux report clear confirm</code></td>
+              <td>5 分钟</td>
+            </tr>
+            <tr>
+              <td>清空全部举报</td>
+              <td><code>/linux report clear all</code></td>
+              <td><code>/linux report clear confirm</code></td>
+              <td>5 分钟</td>
+            </tr>
+            <tr>
+              <td>清空待广播</td>
+              <td><code>/linux report clear pending</code></td>
+              <td><code>/linux report clear confirm</code></td>
+              <td>5 分钟</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     举报系统
+     ============================================================ -->
+<section id="report">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">REPORT SYSTEM</span>
+      <h2>举报系统 <span class="badge badge-new">NEW</span></h2>
+      <p>玩家提交举报 → 管理层调查 → 处理并通知当事人</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <div class="card-icon">📝</div>
+        <h3>提交流程</h3>
+        <p>玩家提交举报后，插件会根据被举报人身份进行智能分流通知。</p>
+        <ol class="flow" style="margin-top: 16px;">
+          <li><strong>玩家提交</strong><code>/linux report &lt;玩家&gt; &lt;原因&gt;</code>，1 分钟冷却</li>
+          <li><strong>智能分流</strong>根据被举报人身份决定通知对象</li>
+          <li><strong>24 小时冷却</strong>提交后 24 小时内不接受 / 驳回（调查期）</li>
+          <li><strong>处理并通知</strong>接受或驳回，举报人收到结果</li>
+          <li><strong>服主同步</strong>所有处理结果同步广播给服主</li>
+        </ol>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🎯</div>
+        <h3>分流规则</h3>
+        <p>根据被举报人身份，通知范围不同，避免打草惊蛇或漏报。</p>
+        <div class="table-wrap" style="margin-top: 16px;">
+          <table>
+            <thead>
+              <tr><th>被举报人身份</th><th>通知对象</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>服主</td><td>仅服主本人</td></tr>
+              <tr><td>协管 / 管理员 / 副服主</td><td>其他管理层（不含被举报人）</td></tr>
+              <tr><td>普通玩家</td><td>所有管理层（不含举报人）</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">📢</div>
+        <h3>离线消息缓存</h3>
+        <p>服主离线时收到新举报 / 处理结果，消息自动缓存到 <code>reports.yml</code>。</p>
+        <ul>
+          <li>服主上线 <strong>10 秒后</strong>自动推送</li>
+          <li>上限 100 条，超出丢弃最早的</li>
+          <li>玩家离线期间的举报处理结果也会缓存</li>
+          <li>玩家上线后延迟 3 秒推送</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🧹</div>
+        <h3>批量清理</h3>
+        <p>支持多种清理模式，均需要二次确认。</p>
+        <div class="command-block">
+          <div><span class="cmd">/linux report clear handled</span>  <span class="comment"># 已处理</span></div>
+          <div><span class="cmd">/linux report clear all</span>      <span class="comment"># 全部</span></div>
+          <div><span class="cmd">/linux report clear pending</span>  <span class="comment"># 待广播</span></div>
+          <div><span class="cmd">/linux report clear player</span> <span class="key">Steve</span></div>
+          <div><span class="cmd">/linux report clear id</span> <span class="key">3</span></div>
+          <div><span class="cmd">/linux report clear confirm</span>  <span class="comment"># 确认执行</span></div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- ============================================================
      协管体系
      ============================================================ -->
-<section id="moderator">
+<section id="moderator" class="alt">
   <div class="container">
     <div class="section-header reveal">
       <span class="section-label">MODERATOR SYSTEM</span>
@@ -1047,25 +1273,27 @@
       <div class="card reveal">
         <div class="card-icon">✅</div>
         <h3>协管可用</h3>
-        <p>协管可以使用 8 个惩罚命令，覆盖功能封禁与解封。</p>
+        <p>协管可以使用 8 个惩罚命令，覆盖功能封禁与解封，以及举报的查看 / 处理。</p>
         <ul>
           <li><code>/linux banblock</code> 禁用方块</li>
           <li><code>/linux banmove</code> 禁止移动</li>
           <li><code>/linux banmsg</code> 禁言</li>
           <li><code>/linux banall</code> 全面封禁</li>
           <li>以及 4 个对应的解封命令</li>
+          <li><code>/linux report list / info / accept / reject</code></li>
         </ul>
       </div>
 
       <div class="card reveal">
         <div class="card-icon">⛔</div>
         <h3>协管不可用</h3>
-        <p>账号封禁、隐身、重载等命令仅限完整管理员。</p>
+        <p>账号封禁、隐身、重载、清空举报等命令仅限完整管理员。</p>
         <ul>
           <li><code>/ban</code> · <code>/tempban</code> · <code>/banip</code></li>
           <li><code>/unban</code> · <code>/unbanip</code></li>
           <li><code>/hide</code></li>
           <li><code>/linux reload</code></li>
+          <li><code>/linux report clear *</code></li>
         </ul>
       </div>
 
@@ -1087,7 +1315,7 @@
         <p>协管的帮助菜单和 TAB 补全只显示可用命令，界面清爽。</p>
         <ul>
           <li>帮助菜单：协管专用版</li>
-          <li>TAB 补全：仅 9 个命令</li>
+          <li>TAB 补全：仅显示可用命令</li>
           <li>OP 优先：管理员显示完整版</li>
           <li>XlandCore 未加载时回退权限节点</li>
         </ul>
@@ -1099,7 +1327,7 @@
 <!-- ============================================================
      命令列表
      ============================================================ -->
-<section id="commands" class="alt">
+<section id="commands">
   <div class="container">
     <div class="section-header reveal">
       <span class="section-label">COMMANDS</span>
@@ -1120,16 +1348,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><code>/linux help</code></td><td>显示帮助菜单</td></tr>
+            <tr><td><code>/linux help [页码]</code></td><td>显示分页帮助菜单（可点击翻页）</td></tr>
             <tr><td><code>/linux reload</code></td><td>重载配置文件</td></tr>
             <tr><td><code>/linux lookup &lt;玩家/IP&gt;</code></td><td>查询玩家或 IP 信息</td></tr>
             <tr><td><code>/linux seenip &lt;IP&gt;</code></td><td>查询使用该 IP 的玩家列表</td></tr>
             <tr><td><code>/linux history &lt;玩家&gt;</code></td><td>查看玩家封禁历史</td></tr>
-            <tr><td><code>/linux clearhistory &lt;玩家&gt;</code></td><td>清除玩家全部历史</td></tr>
+            <tr><td><code>/linux clearhistory &lt;玩家&gt;</code></td><td>清除玩家全部历史（二次确认）</td></tr>
             <tr><td><code>/linux fp [list]</code></td><td>查看假人插件状态 / 列表</td></tr>
             <tr><td><code>/linux fpsync</code></td><td>手动同步假人数据</td></tr>
             <tr><td><code>/linux op [list]</code></td><td>检查身份 / 列出管理员</td></tr>
-            <tr><td><code>/banlist</code></td><td>查看封禁列表</td></tr>
+            <tr><td><code>/banlist [页码]</code></td><td>查看封禁列表（可点击翻页）</td></tr>
           </tbody>
         </table>
       </div>
@@ -1158,7 +1386,7 @@
       </div>
     </div>
 
-    <div class="reveal">
+    <div class="reveal" style="margin-bottom: 48px;">
       <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">
         功能封禁命令（协管可用）
       </h3>
@@ -1183,13 +1411,39 @@
         </table>
       </div>
     </div>
+
+    <div class="reveal">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">
+        举报命令 <span class="badge badge-new">NEW</span>
+      </h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>命令</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/linux report &lt;玩家&gt; &lt;原因&gt;</code></td><td>提交举报（1 分钟冷却）</td></tr>
+            <tr><td><code>/linux report list</code></td><td>查看待处理举报</td></tr>
+            <tr><td><code>/linux report all</code></td><td>查看全部举报</td></tr>
+            <tr><td><code>/linux report info &lt;ID&gt;</code></td><td>查看举报详情</td></tr>
+            <tr><td><code>/linux report accept &lt;ID&gt; [备注]</code></td><td>接受举报</td></tr>
+            <tr><td><code>/linux report reject &lt;ID&gt; [备注]</code></td><td>驳回举报</td></tr>
+            <tr><td><code>/linux report clear &lt;模式&gt;</code></td><td>清空举报（需二次确认）</td></tr>
+            <tr><td><code>/linux report clear confirm</code></td><td>确认执行清空</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- ============================================================
      技术亮点
      ============================================================ -->
-<section id="tech">
+<section id="tech" class="alt">
   <div class="container">
     <div class="section-header reveal">
       <span class="section-label">TECHNICAL HIGHLIGHTS</span>
@@ -1225,7 +1479,7 @@
         <ul>
           <li>异步事件只读判断，回主线程处理</li>
           <li>volatile 保证配置可见性</li>
-          <li>synchronized 保护 LRU 迭代</li>
+          <li>synchronized 保护 pending 列表</li>
           <li>AtomicBoolean 防任务重入</li>
           <li>try/finally 精确清除标记</li>
         </ul>
@@ -1249,15 +1503,15 @@
         <div class="stat-label">模块文件</div>
       </div>
       <div class="stat">
-        <div class="stat-value">16</div>
-        <div class="stat-label">命令总数</div>
+        <div class="stat-value">30+</div>
+        <div class="stat-label">子命令总数</div>
       </div>
       <div class="stat">
         <div class="stat-value">6</div>
         <div class="stat-label">数据文件</div>
       </div>
       <div class="stat">
-        <div class="stat-value">23</div>
+        <div class="stat-value">24</div>
         <div class="stat-label">迭代轮次</div>
       </div>
     </div>
