@@ -28,6 +28,10 @@
     --code-comment: #6e6e73;
     --code-keyword: #0071e3;
     --code-value: #b7472a;
+    --green: #34c759;
+    --green-light: #effaf0;
+    --orange-light: #fff8e6;
+    --red-light: #fff0f0;
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
   }
 
@@ -697,6 +701,11 @@
     color: #c44d00;
   }
 
+  .badge-new {
+    background: #effaf0;
+    color: #1a6b28;
+  }
+
   /* ============================================================
      页脚
      ============================================================ */
@@ -1077,6 +1086,7 @@
     <ul class="nav-links" id="navLinks">
       <li><a href="index.html#features">功能</a></li>
       <li><a href="index.html#penalty">封禁</a></li>
+      <li><a href="index.html#report">举报</a></li>
       <li><a href="index.html#moderator">协管</a></li>
       <li><a href="index.html#commands">命令</a></li>
       <li><a href="help.html">帮助</a></li>
@@ -1117,6 +1127,8 @@
     <ul>
       <li><a href="#quickstart" class="active">快速开始</a></li>
       <li><a href="#commands">命令详解</a></li>
+      <li><a href="#report">举报系统</a></li>
+      <li><a href="#confirm">二次确认</a></li>
       <li><a href="#permissions">权限说明</a></li>
       <li><a href="#config">配置说明</a></li>
       <li><a href="#integration">插件联动</a></li>
@@ -1274,7 +1286,7 @@
             <tr><td><code>/linux seenip &lt;IP&gt;</code></td><td>查询使用过该 IP 的所有玩家</td><td><span class="badge badge-op">lookup</span></td></tr>
             <tr><td><code>/linux history &lt;玩家&gt;</code></td><td>查看玩家完整封禁历史</td><td><span class="badge badge-op">history</span></td></tr>
             <tr><td><code>/linux clearhistory &lt;玩家&gt;</code></td><td>清除玩家全部历史（需二次确认）</td><td><span class="badge badge-op">clearhistory</span></td></tr>
-            <tr><td><code>/banlist</code></td><td>查看所有封禁记录（账号 + 功能）</td><td><span class="badge badge-op">ban</span></td></tr>
+            <tr><td><code>/banlist [页码]</code></td><td>查看所有封禁记录（账号 + 功能），可点击翻页</td><td><span class="badge badge-op">ban</span></td></tr>
             <tr><td><code>/linux op [list]</code></td><td>检查自己身份 / 列出所有管理员</td><td><span class="badge badge-op">lookup</span></td></tr>
           </tbody>
         </table>
@@ -1293,8 +1305,152 @@
       <p>支持单位：<code>s</code>（秒）、<code>m</code>（分钟）、<code>h</code>（小时）、<code>d</code>（天）、<code>w</code>（周）。可以组合使用。</p>
     </section>
 
+    <section class="help-section" id="report">
+      <h2><span class="num">3</span>举报系统 <span class="badge badge-new">NEW</span></h2>
+
+      <p>插件内置举报系统，玩家提交举报后，管理层调查处理，结果自动通知当事人与服主。</p>
+
+      <h3>提交流程</h3>
+      <ol class="steps">
+        <li>
+          <strong>玩家提交举报</strong>
+          执行 <code>/linux report &lt;玩家&gt; &lt;原因&gt;</code>，提交后进入 1 分钟全局冷却。
+        </li>
+        <li>
+          <strong>智能分流通知</strong>
+          根据被举报人身份决定通知对象（见下表）。
+        </li>
+        <li>
+          <strong>24 小时调查冷却</strong>
+          举报提交后 24 小时内<strong>不能接受 / 驳回</strong>，用于调查。
+        </li>
+        <li>
+          <strong>管理层处理</strong>
+          管理员 / 协管执行 <code>/linux report accept &lt;ID&gt;</code> 或 <code>reject &lt;ID&gt;</code>，可附加备注。
+        </li>
+        <li>
+          <strong>结果通知</strong>
+          举报人上线后立即收到处理结果，服主也会收到同步广播。
+        </li>
+      </ol>
+
+      <h3>智能分流规则</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>被举报人身份</th><th>通知对象</th><th>说明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>服主（Linux582021）</td><td>仅服主本人</td><td>不会广播给其他管理层</td></tr>
+            <tr><td>协管 / 管理员 / 副服主</td><td>其他管理层</td><td>不会通知被举报人本人</td></tr>
+            <tr><td>普通玩家</td><td>所有管理层</td><td>举报人自己除外</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>离线消息缓存</h3>
+      <ul class="steps">
+        <li>服主离线时收到新举报 → 消息暂存到 <code>reports.yml</code>。</li>
+        <li>服主上线 <strong>10 秒后</strong>自动推送所有暂存消息。</li>
+        <li>暂存上限 <strong>100 条</strong>，超出丢弃最早的。</li>
+        <li>举报人离线期间的处理结果也会缓存，上线后延迟 3 秒推送。</li>
+      </ul>
+
+      <h3>清理举报记录</h3>
+      <p>支持多种清理模式，<strong>全部需要二次确认</strong>。</p>
+      <div class="code-block">
+        <div><span class="cmd">/linux report clear handled</span>        <span class="comment"># 清空已处理的举报</span></div>
+        <div><span class="cmd">/linux report clear all</span>            <span class="comment"># 清空所有举报（不可恢复）</span></div>
+        <div><span class="cmd">/linux report clear pending</span>        <span class="comment"># 清空待广播消息</span></div>
+        <div><span class="cmd">/linux report clear player</span> <span class="key">Steve</span>  <span class="comment"># 清空某玩家相关举报</span></div>
+        <div><span class="cmd">/linux report clear id</span> <span class="key">3</span>        <span class="comment"># 删除指定举报</span></div>
+        <div><span class="cmd">/linux report clear confirm</span>          <span class="comment"># 确认执行（5 分钟内有效）</span></div>
+      </div>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>清空操作需二次确认</strong>
+          输入 <code>/linux report clear &lt;模式&gt;</code> 后，需要再执行 <code>/linux report clear confirm</code> 才会真正清空。
+          确认有效期 5 分钟，过期自动取消。
+        </div>
+      </div>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>控制台无需二次确认</strong>
+          如果从控制台执行清空命令，会直接执行，不经过 confirm 步骤。
+        </div>
+      </div>
+    </section>
+
+    <section class="help-section" id="confirm">
+      <h2><span class="num">4</span>二次确认机制 <span class="badge badge-new">NEW</span></h2>
+
+      <p>为了防止误操作，以下命令都需要<strong>二次确认</strong>才能执行。确认有效期统一为 <strong>5 分钟</strong>。</p>
+
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>操作</th><th>第一步</th><th>第二步（确认）</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>清空玩家历史</td>
+              <td><code>/linux clearhistory Steve</code></td>
+              <td><code>/linux clearhistory confirm</code></td>
+            </tr>
+            <tr>
+              <td>清空已处理举报</td>
+              <td><code>/linux report clear handled</code></td>
+              <td><code>/linux report clear confirm</code></td>
+            </tr>
+            <tr>
+              <td>清空全部举报</td>
+              <td><code>/linux report clear all</code></td>
+              <td><code>/linux report clear confirm</code></td>
+            </tr>
+            <tr>
+              <td>清空待广播消息</td>
+              <td><code>/linux report clear pending</code></td>
+              <td><code>/linux report clear confirm</code></td>
+            </tr>
+            <tr>
+              <td>清空玩家相关举报</td>
+              <td><code>/linux report clear player Steve</code></td>
+              <td><code>/linux report clear confirm</code></td>
+            </tr>
+            <tr>
+              <td>删除指定举报</td>
+              <td><code>/linux report clear id 3</code></td>
+              <td><code>/linux report clear confirm</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>确认机制规则</h3>
+      <ul class="steps">
+        <li>第一步输入后，插件会显示"确认要清空 XXX 吗？"并给出 <code>confirm</code> 提示。</li>
+        <li>玩家需要在 <strong>5 分钟内</strong>执行 confirm，过期自动取消。</li>
+        <li>如果重复执行第一步，<strong>上一次待确认操作会被替换</strong>（会显示提示）。</li>
+        <li>玩家退出游戏时，待确认状态会被清除。</li>
+        <li>控制台执行时<strong>无需二次确认</strong>，直接生效。</li>
+        <li>清空待广播消息（pending）时，如果当前没有待广播消息，会提示无需清空。</li>
+      </ul>
+
+      <div class="tip tip-danger">
+        <span class="tip-icon">🚨</span>
+        <div class="tip-body">
+          <strong>清空操作不可恢复</strong>
+          尤其是 <code>/linux report clear all</code> 会删除全部举报记录，请谨慎使用。
+        </div>
+      </div>
+    </section>
+
     <section class="help-section" id="permissions">
-      <h2><span class="num">3</span>权限说明</h2>
+      <h2><span class="num">5</span>权限说明</h2>
 
       <p>插件使用三级权限体系：OP / 协管 / 普通玩家。</p>
 
@@ -1314,6 +1470,8 @@
             <tr><td><code>inthenameoflinux.history</code></td><td>使用 /linux history</td><td>OP</td></tr>
             <tr><td><code>inthenameoflinux.clearhistory</code></td><td>使用 /linux clearhistory</td><td>OP</td></tr>
             <tr><td><code>inthenameoflinux.penalty</code></td><td>完整惩罚权限（banblock / banmove / banmsg / banall 等）</td><td>OP</td></tr>
+            <tr><td><code>inthenameoflinux.report</code></td><td>查看 / 处理举报（list / info / accept / reject）</td><td>OP / 协管</td></tr>
+            <tr><td><code>inthenameoflinux.report.admin</code></td><td>清空举报记录（clear 系列命令）</td><td>OP</td></tr>
             <tr><td><code>inthenameoflinux.moderator</code></td><td>协管权限节点（XlandCore 未加载时的回退）</td><td>否</td></tr>
           </tbody>
         </table>
@@ -1324,6 +1482,7 @@
         <li>协管身份<strong>优先从 XlandCore 读取</strong>（身份 = "协管"）。</li>
         <li>如果 XlandCore 未加载，则回退到权限节点 <code>inthenameoflinux.moderator</code>。</li>
         <li>协管可用 8 个功能封禁命令，<strong>不能使用账号封禁</strong>（/ban、/tempban、/banip）。</li>
+        <li>协管可以查看 / 处理举报（list / info / accept / reject），但<strong>不能清空举报</strong>（需要 report.admin）。</li>
         <li>协管封禁时长<strong>上限为 7 天</strong>，不能执行永久封禁。</li>
         <li>协管的帮助菜单和 TAB 补全只显示可用命令。</li>
       </ul>
@@ -1338,7 +1497,7 @@
     </section>
 
     <section class="help-section" id="config">
-      <h2><span class="num">4</span>配置说明</h2>
+      <h2><span class="num">6</span>配置说明</h2>
 
       <p>所有配置都在 <code>plugins/InTheNameOfLinux/config.yml</code>，修改后执行 <code>/linux reload</code> 即可生效（无需重启）。</p>
 
@@ -1357,7 +1516,7 @@
             <tr><td><code>console-cmd-enabled</code></td><td>false</td><td>控制台对保护对象命令的拦截开关</td></tr>
             <tr><td><code>fs1-refuse-enabled</code></td><td>true</td><td>突破 fs1 拦截功能开关</td></tr>
             <tr><td><code>penalty-sync.interval-seconds</code></td><td>60</td><td>功能封禁缓存与文件对齐间隔</td></tr>
-            <tr><td><code>data-save.interval-seconds</code></td><td>30</td><td>数据文件批量写盘间隔</td></tr>
+            <tr><td><code>data-save.interval-seconds</code></td><td>30</td><td>数据文件批量写盘间隔（设为 0 = 每次立即写盘）</td></tr>
           </tbody>
         </table>
       </div>
@@ -1392,7 +1551,7 @@
     </section>
 
     <section class="help-section" id="integration">
-      <h2><span class="num">5</span>插件联动</h2>
+      <h2><span class="num">7</span>插件联动</h2>
 
       <h3>XlandCore</h3>
       <p>用于读取玩家身份（服主 / 副服主 / 管理员 / 协管）。协管体系依赖此插件。</p>
@@ -1414,10 +1573,15 @@
 
       <h3>XlandStop</h3>
       <p>监听 <code>xstop</code> / <code>xlstop</code> / <code>xlandstop</code> 命令，全服广播谁在重启服务器。</p>
+      <ul class="steps">
+        <li>插件启动时<strong>延迟 20 秒</strong>检测这三个命令是否注册。</li>
+        <li>如果检测到，会注册监听器全服广播重启操作。</li>
+        <li>执行 <code>/linux reload</code> 会重新检测。</li>
+      </ul>
     </section>
 
     <section class="help-section" id="troubleshooting">
-      <h2><span class="num">6</span>故障排查</h2>
+      <h2><span class="num">8</span>故障排查</h2>
 
       <h3>问题：登录后仍然无法执行命令</h3>
       <ul class="steps">
@@ -1431,6 +1595,31 @@
         <li>检查是否拥有对应权限（<code>/linux op</code> 检查自己身份）。</li>
         <li>检查 <code>config.yml</code> 里的 <code>refuse-enabled</code> 是否为 true。</li>
         <li>查看控制台是否有错误堆栈。</li>
+      </ul>
+
+      <h3>问题：举报提交后无法立即处理</h3>
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>这是设计行为，不是故障</strong>
+          举报提交后 24 小时内不能处理，用于给管理层留出调查时间。等待冷却结束后即可 accept / reject。
+        </div>
+      </div>
+
+      <h3>问题：服主离线时举报消息没收到</h3>
+      <ul class="steps">
+        <li>消息会暂存到 <code>reports.yml</code> 的 pending 列表。</li>
+        <li>服主上线后 <strong>10 秒</strong>才会推送，请稍等。</li>
+        <li>如果延迟期间服主又掉线，消息会保留，下次上线继续推送。</li>
+        <li>如果长时间未收到，检查 <code>reports.yml</code> 的 <code>pending-reports</code> 字段。</li>
+      </ul>
+
+      <h3>问题：清空命令执行后没反应</h3>
+      <ul class="steps">
+        <li>清空命令需要<strong>二次确认</strong>。先执行第一步，再执行 <code>confirm</code>。</li>
+        <li>检查确认是否过期（5 分钟有效期）。</li>
+        <li>如果是控制台执行，则无需确认，直接生效。</li>
+        <li>如果提示"没有待确认的清空操作"，说明第一步没有执行或被替换。</li>
       </ul>
 
       <h3>问题：ProtocolLib 报错 "Unable to make protected final java.lang.Class..."</h3>
@@ -1466,7 +1655,7 @@
     </section>
 
     <section class="help-section" id="faq">
-      <h2><span class="num">7</span>常见问题</h2>
+      <h2><span class="num">9</span>常见问题</h2>
 
       <div class="faq-item">
         <div class="faq-q">
@@ -1494,6 +1683,51 @@
               <li>方法一：编辑 <code>config.yml</code>，把 <code>login.password-salt</code> 和 <code>login.password-hash</code> 两行改成 <code>""</code>（空字符串），重启服务器后密码重置为 <code>password</code>。</li>
               <li>方法二：删除整个 <code>config.yml</code>，重启后会自动生成新配置。</li>
             </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>举报系统是怎么通知管理层的？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            插件会根据<strong>被举报人身份</strong>智能分流：
+            <ul>
+              <li>被举报人是<strong>服主</strong>：只通知服主本人。</li>
+              <li>被举报人是<strong>协管 / 管理员 / 副服主</strong>：通知其他管理层，不通知被举报人。</li>
+              <li>被举报人是<strong>普通玩家</strong>：通知所有管理层（举报人除外）。</li>
+            </ul>
+            如果服主离线，消息会被暂存，上线 10 秒后自动推送。
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>为什么举报提交后 24 小时内不能处理？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            这是<strong>调查冷却期</strong>，给管理层留出充足时间核实举报内容。
+            如果举报提交后立刻就能 accept / reject，可能会被恶意利用（例如报复性举报、快速驳回掩盖问题）。
+            冷却期可确保处理决策是经过调查的。
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>二次确认过期了怎么办？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            直接重新执行第一步命令即可。确认有效期是 <strong>5 分钟</strong>，过期后旧的待确认状态会被自动清除，
+            再次执行第一步会生成新的待确认状态。
           </div>
         </div>
       </div>
@@ -1584,6 +1818,7 @@
               <li><code>userip.yml</code> — IP 与身份缓存</li>
               <li><code>playtime.yml</code> — 游玩时长</li>
               <li><code>fp.yml</code> — 假人数据快照</li>
+              <li><code>reports.yml</code> — 举报记录与待广播消息</li>
             </ul>
             直接复制整个文件夹即可备份。
           </div>
@@ -1602,6 +1837,7 @@
               <li>所有数据都缓存到内存，避免频繁读磁盘。</li>
               <li>封禁缓存 3 秒，重复查询不重建。</li>
               <li>数据文件批量保存（默认 30 秒一次）。</li>
+              <li>举报待广播消息 5 分钟定时写盘。</li>
               <li>异步事件只读判断，回主线程处理。</li>
               <li>反射方法首次调用后缓存。</li>
             </ul>
@@ -1670,10 +1906,27 @@
           </div>
         </div>
       </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>帮助菜单和封禁列表的翻页怎么用？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            两种方式：
+            <ul>
+              <li>在聊天栏点击底部的 <strong>◀ 上一页 / 下一页 ▶</strong> 文字即可翻页。</li>
+              <li>直接输入 <code>/linux help &lt;页码&gt;</code> 或 <code>/banlist &lt;页码&gt;</code>。</li>
+            </ul>
+            命令条目本身也可以点击：带 <code>&lt;参数&gt;</code> 的命令会<strong>自动填充</strong>到聊天框，无参数的命令会<strong>直接执行</strong>。
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="help-section" id="uninstall">
-      <h2><span class="num">8</span>卸载与备份</h2>
+      <h2><span class="num">10</span>卸载与备份</h2>
 
       <h3>备份</h3>
       <ol class="steps">
