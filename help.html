@@ -1288,6 +1288,7 @@
             <tr><td><code>/linux clearhistory &lt;玩家&gt;</code></td><td>清除玩家全部历史（需二次确认）</td><td><span class="badge badge-op">clearhistory</span></td></tr>
             <tr><td><code>/banlist [页码]</code></td><td>查看所有封禁记录（账号 + 功能），可点击翻页</td><td><span class="badge badge-op">ban</span></td></tr>
             <tr><td><code>/linux op [list]</code></td><td>检查自己身份 / 列出所有管理员</td><td><span class="badge badge-op">lookup</span></td></tr>
+            <tr><td><code>/hide</code></td><td>切换隐身（等价于执行 <code>/vanish</code>），不带参数。仅保护对象本人可用</td><td><span class="badge badge-op">仅 Linux582021</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -1303,6 +1304,16 @@
         <div><span class="key">1w2d3h30m</span> <span class="comment"># 1 周 2 天 3 小时 30 分钟</span></div>
       </div>
       <p>支持单位：<code>s</code>（秒）、<code>m</code>（分钟）、<code>h</code>（小时）、<code>d</code>（天）、<code>w</code>（周）。可以组合使用。</p>
+      <p>也可以只写数字，按<strong>秒</strong>计算（例如 <code>/tempban Steve 600 刷屏</code> = 10 分钟）。</p>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>非法时长会被拒绝，而不是当成永久封禁</strong>
+          像 <code>0</code>、<code>abc</code>、<code>1x</code>、超长数字（如 <code>99999999999999999999h</code>）这类输入会直接报错中止。
+          26.11.2 之前这些输入可能被静默当成"永久封禁"，升级后不会再有这个风险。
+        </div>
+      </div>
     </section>
 
     <section class="help-section" id="report">
@@ -1473,17 +1484,18 @@
             <tr><td><code>inthenameoflinux.report</code></td><td>查看 / 处理举报（list / info / accept / reject）</td><td>OP / 协管</td></tr>
             <tr><td><code>inthenameoflinux.report.admin</code></td><td>清空举报记录（clear 系列命令）</td><td>OP</td></tr>
             <tr><td><code>inthenameoflinux.moderator</code></td><td>协管权限节点（XlandCore 未加载时的回退）</td><td>否</td></tr>
+            <tr><td><code>inthenameoflinux.sudo.wildcard</code></td><td>允许使用 sudo 通配符（everyone / all / @a）驱动其他在线玩家执行命令</td><td>OP</td></tr>
           </tbody>
         </table>
       </div>
 
       <h3>协管说明</h3>
       <ul class="steps">
-        <li>协管身份<strong>优先从 XlandCore 读取</strong>（身份 = "协管"）。</li>
+        <li>协管身份<strong>优先从 XlandCore 读取</strong>（身份 = "协管"，且需确实持有 <code>xlcore.mod</code>）。</li>
         <li>如果 XlandCore 未加载，则回退到权限节点 <code>inthenameoflinux.moderator</code>。</li>
         <li>协管可用 8 个功能封禁命令，<strong>不能使用账号封禁</strong>（/ban、/tempban、/banip）。</li>
         <li>协管可以查看 / 处理举报（list / info / accept / reject），但<strong>不能清空举报</strong>（需要 report.admin）。</li>
-        <li>协管封禁时长<strong>上限为 7 天</strong>，不能执行永久封禁。</li>
+        <li>协管封禁时长<strong>上限为 7 天</strong>，不能执行永久封禁；<code>/tempban</code> 也受同一上限约束（26.11.2 起补齐）。</li>
         <li>协管的帮助菜单和 TAB 补全只显示可用命令。</li>
       </ul>
 
@@ -1514,7 +1526,9 @@
             <tr><td><code>broadcast-ban</code></td><td>true</td><td>是否全服广播封禁消息（false 只广播给管理员）</td></tr>
             <tr><td><code>refuse-enabled</code></td><td>true</td><td>全局命令拦截开关</td></tr>
             <tr><td><code>console-cmd-enabled</code></td><td>false</td><td>控制台对保护对象命令的拦截开关</td></tr>
-            <tr><td><code>fs1-refuse-enabled</code></td><td>true</td><td>突破 fs1 拦截功能开关</td></tr>
+            <tr><td><code>fs1-refuse-enabled</code></td><td>false</td><td>突破 fs1 拦截功能开关。这是一个<strong>提权通道</strong>（以 fs1 身份代为执行命令），自 26.11.2 起默认关闭，且不再回退到控制台执行；需要时再显式开启</td></tr>
+            <tr><td><code>tempban-reminder.enabled</code></td><td>true</td><td>临时封禁即将解封时的全服提醒开关</td></tr>
+            <tr><td><code>tempban-reminder.advance-seconds</code></td><td>60</td><td>提前多少秒提醒（服务器重启后提醒任务会自动重建）</td></tr>
             <tr><td><code>penalty-sync.interval-seconds</code></td><td>60</td><td>功能封禁缓存与文件对齐间隔</td></tr>
             <tr><td><code>data-save.interval-seconds</code></td><td>30</td><td>数据文件批量写盘间隔（设为 0 = 每次立即写盘）</td></tr>
           </tbody>
@@ -1634,17 +1648,29 @@
 
       <h3>问题：假人插件显示"版本不兼容"</h3>
       <ul class="steps">
-        <li>检查假人插件的实际包名。</li>
-        <li>修改 <code>config.yml</code> 的 <code>fakeplayer.info-class</code>。</li>
-        <li>执行 <code>/linux reload</code>。</li>
+        <li>插件会先用<strong>假人插件自己的类加载器</strong>加载 <code>fakeplayer.info-class</code>，失败时自动改用实际取到的假人类，所以一般不需要手改。</li>
+        <li>如果仍然报错，检查假人插件的 <code>FakePlayerInfo</code> 类是否还存在、方法名是否改过。</li>
+        <li>必要时修改 <code>config.yml</code> 的 <code>fakeplayer.info-class</code>（默认 <code>example.fakeplayer.FakePlayerInfo</code>）。</li>
+        <li>改完执行 <code>/linux reload</code>。</li>
       </ul>
 
-      <h3>问题：重启后临时封禁没有恢复</h3>
+      <h3>问题：重启后临时封禁没有恢复 / 到解封时间了还没解封</h3>
       <ul class="steps">
+        <li>临时封禁的到期时间是写在 <code>data.yml</code> 里的，重启后插件会<strong>自动重建到期任务和"即将解封"提醒任务</strong>，无需手动处理。</li>
         <li>检查 <code>data.yml</code> 是否损坏（YAML 格式）。</li>
         <li>检查服务器时间是否准确（时间错乱会导致到期判断错误）。</li>
-        <li>查看控制台是否有"恢复任务失败"日志。</li>
+        <li>到期时间若已被手工改成非法值（例如 <code>2026-02-30</code>），插件会<strong>跳过该条并打告警</strong>，请检查控制台日志。</li>
       </ul>
+
+      <h3>问题：封禁记录里一直留着一条"临时"封禁</h3>
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>26.11.2 起会自动清理</strong>
+          临时封禁到期自动解封时，会同时删除 <code>data.yml</code> 里那条记录，<code>/banlist</code> 不会再有幽灵条目。
+          升级前遗留的过期记录会在下次启动时自动清理一次。
+        </div>
+      </div>
 
       <h3>问题：/linux reload 后功能失效</h3>
       <ul class="steps">
@@ -1969,7 +1995,7 @@
     <div class="footer-brand">InTheNameOfLinux</div>
     <p>以 Linux 之名 · 守护你的服务器</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v26.10.5-Alpha · Minecraft 1.12.2 · Made with ♥ by Linux582021
+      v26.11.2 · Minecraft 1.12.2 · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
       <a href="index.html">← 返回主页</a>
