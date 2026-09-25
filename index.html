@@ -57,6 +57,20 @@
     line-height: 1.5;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* 中文换行兜底：CJK 默认不断行，长串中文会把窄屏列宽挤爆 */
+  .card p,
+  .card li,
+  .flow li,
+  .penalty-card p,
+  td,
+  th,
+  .command-block {
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   .container {
@@ -504,7 +518,8 @@
     background: #fff;
     border-radius: 14px;
     border: 1px solid var(--border-light);
-    overflow: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     box-shadow: var(--shadow-sm);
     transform: translateY(0);
     transition: transform 0.7s ease,
@@ -852,6 +867,13 @@
       padding: 110px 0 70px;
     }
 
+    /* ★ 表头不要 nowrap：窄屏会让列互相挤压 */
+    .hero h1,
+    .section-header h2,
+    .stat-value {
+      letter-spacing: 0;
+    }
+
     section {
       padding: 60px 0;
     }
@@ -877,6 +899,41 @@
       width: 30px;
       height: 30px;
       font-size: 12px;
+    }
+
+    /* ===== 表格：允许换行，超宽时横向滚动而不是挤压 ===== */
+    .table-wrap {
+      margin: 14px -16px;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+
+    table {
+      font-size: 13.5px;
+    }
+
+    th,
+    td {
+      white-space: normal;
+      padding: 10px 12px;
+      line-height: 1.6;
+    }
+
+    th {
+      font-size: 12px;
+    }
+
+    /* ★ 关键：桌面上首列是 nowrap，36 字符的 /linux banblock <玩家> [时间] [原因]
+       在 360px 屏上会占掉约 245px，把「说明」列压到只剩 70 多 px —— 汉字就挤成一团。
+       窄屏改为允许在必要处断开，让两列都能呼吸。 */
+    .table-wrap td:first-child {
+      white-space: normal;
+    }
+
+    .table-wrap td:first-child code {
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
   }
 </style>
@@ -1141,7 +1198,7 @@
     </div>
 
     <div class="reveal" style="margin-top: 32px;">
-      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600;">
         二次确认机制 <span class="badge badge-new">NEW</span>
       </h3>
       <div class="table-wrap">
@@ -1336,7 +1393,7 @@
     </div>
 
     <div class="reveal" style="margin-bottom: 48px;">
-      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600;">
         管理员通用命令
       </h3>
       <div class="table-wrap">
@@ -1366,7 +1423,7 @@
     </div>
 
     <div class="reveal" style="margin-bottom: 48px;">
-      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600;">
         封禁命令
       </h3>
       <div class="table-wrap">
@@ -1389,7 +1446,7 @@
     </div>
 
     <div class="reveal" style="margin-bottom: 48px;">
-      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600;">
         功能封禁命令（协管可用）
       </h3>
       <div class="table-wrap">
@@ -1415,7 +1472,7 @@
     </div>
 
     <div class="reveal">
-      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600;">
         举报命令 <span class="badge badge-new">NEW</span>
       </h3>
       <div class="table-wrap">
