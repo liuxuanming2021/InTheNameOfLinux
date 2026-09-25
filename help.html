@@ -1240,6 +1240,16 @@
         </table>
       </div>
 
+      <div class="tip tip-danger">
+        <span class="tip-icon">🚨</span>
+        <div class="tip-body">
+          <strong>不支持 <code>/linux login &lt;密码&gt;</code></strong>
+          26.11.2 起已移除该用法。服务端会在命令交给插件之前就把它写进
+          <code>logs/latest.log</code>，等于把明文口令落盘。请只用
+          <code>/linux login</code> 后在聊天栏发送密码。
+        </div>
+      </div>
+
       <h3>封禁相关</h3>
       <div class="table-scroll">
         <table class="help-table">
@@ -1283,6 +1293,8 @@
           </thead>
           <tbody>
             <tr><td><code>/linux lookup &lt;玩家/IP&gt;</code></td><td>查询 UUID、IP、身份、游玩时长、封禁历史</td><td><span class="badge badge-op">lookup</span></td></tr>
+            <tr><td><code>/linux logs [页码]</code></td><td><strong>插件状态总览</strong>：运行时、开关状态、各数据文件（含记录数/大小/落盘是否成功）、定时任务、以及 XlandCore / 假人插件 / XlandStop / PlaceholderAPI 的联动状态。分页显示，每页 10 行</td><td><span class="badge badge-op">lookup</span></td></tr>
+            <tr><td><code>/linux audit [玩家] [页码]</code></td><td><strong>审计日志</strong>：谁在什么时候改了什么（惩罚 / 权限开关 / 认证 / 举报 / 拦截）。分页显示，每页 10 行；带玩家名时只看该玩家相关记录</td><td><span class="badge badge-op">lookup</span></td></tr>
             <tr><td><code>/linux seenip &lt;IP&gt;</code></td><td>查询使用过该 IP 的所有玩家</td><td><span class="badge badge-op">lookup</span></td></tr>
             <tr><td><code>/linux history &lt;玩家&gt;</code></td><td>查看玩家完整封禁历史</td><td><span class="badge badge-op">history</span></td></tr>
             <tr><td><code>/linux clearhistory &lt;玩家&gt;</code></td><td>清除玩家全部历史（需二次确认）</td><td><span class="badge badge-op">clearhistory</span></td></tr>
@@ -1583,6 +1595,59 @@
           <strong>如果假人插件改过包名</strong>
           请在 <code>config.yml</code> 修改 <code>fakeplayer.info-class</code> 的值。
         </div>
+      </div>
+
+      <h3>PlaceholderAPI 变量</h3>
+      <p>装好 PlaceholderAPI 后，插件会注册 <code>inl</code> 前缀的变量，可在计分板 / 聊天 / Tab 插件里直接用：</p>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>变量</th><th>说明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>%inl_identity%</code></td><td>身份（服主 / 副服主 / 管理员 / 协管 / 普通玩家）</td></tr>
+            <tr><td><code>%inl_banned%</code></td><td>该玩家是否被账号封禁（是 / 否）</td></tr>
+            <tr><td><code>%inl_penalty%</code></td><td>该玩家是否有任意功能封禁（是 / 否）</td></tr>
+            <tr><td><code>%inl_penalty_types%</code></td><td>功能封禁类型，逗号分隔（如 <code>禁言,禁用方块</code>）</td></tr>
+            <tr><td><code>%inl_playtime%</code></td><td>累计在线（如 <code>3天2小时</code>）</td></tr>
+            <tr><td><code>%inl_playtime_millis%</code></td><td>累计在线（毫秒，便于排序或条件判断）</td></tr>
+            <tr><td><code>%inl_bans%</code></td><td>全服封禁记录总数</td></tr>
+            <tr><td><code>%inl_reports%</code></td><td>待处理举报数</td></tr>
+            <tr><td><code>%inl_online%</code></td><td>在线人数</td></tr>
+            <tr><td><code>%inl_fakeplayers%</code></td><td>假人数量</td></tr>
+            <tr><td><code>%inl_version%</code></td><td>插件版本</td></tr>
+            <tr><td><code>%inl_fs1%</code></td><td>fs1 提权通道是否开启（开 / 关）</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>没装 PlaceholderAPI 时插件会安静跳过注册，不影响其他功能。可用变量清单也可以直接用 <code>/linux logs</code> 查看。</p>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>分页显示</strong>
+          <code>/linux logs</code>、<code>/linux audit</code>、<code>/linux help</code>、<code>/banlist</code>
+          都是每页 10 行、带可点击的「◀ 上一页 / 下一页 ▶」；玩家点一下即可翻页，控制台会显示纯文字页码提示。
+        </div>
+      </div>
+
+      <h3>数据文件</h3>
+      <p>全部在 <code>plugins/InTheNameOfLinux/</code>，可用 <code>/linux logs</code> 一次看到记录数与落盘状态：</p>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>文件</th><th>内容</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>data.yml</code></td><td>账号封禁记录（含到期时间、操作者）</td></tr>
+            <tr><td><code>penalty.yml</code></td><td>功能封禁（禁言 / 禁移动 / 禁方块）</td></tr>
+            <tr><td><code>reports.yml</code></td><td>举报记录与待广播消息</td></tr>
+            <tr><td><code>userip.yml</code></td><td>玩家 IP 与身份记录</td></tr>
+            <tr><td><code>playtime.yml</code></td><td>累计在线时长</td></tr>
+            <tr><td><code>fp.yml</code></td><td>假人数据快照</td></tr>
+            <tr><td><code>audit.yml</code></td><td>审计日志（保留最近 5000 条，用 <code>/linux audit</code> 查询）</td></tr>
+          </tbody>
+        </table>
       </div>
 
       <h3>XlandStop</h3>
