@@ -2,7 +2,9 @@
 
 `InTheNameOfLinux` 插件的官方网站 / 使用文档。**纯静态、零依赖、零构建**：两个 HTML 文件直接双击就能看，丢到任何静态托管（GitHub Pages / 宝塔 / Nginx）都能跑。
 
-> 对手服官网是另一个目录：`../NalxerWeb/`（nalxer.top）。
+> 同一台服务器的官网在另一个目录：`../NalxerWeb/`（`nalxer.top`）。
+> 两者关系：**LinuxWeb 是这个插件的官网，NalxerWeb 是跑这个插件的服务器官网**，
+> 两个站之间互相有跳转（LinuxWeb 导航栏的「Nalxer 服务器 →」）。
 
 ---
 
@@ -153,7 +155,7 @@ python E:\Plugins\LinuxWeb\_tools\check_html.py `
 
 静态站点，把 `LinuxWeb/` 下的文件（不含 `_tools/` 与 README）上传到站点目录即可。GitHub Pages 的话直接推到仓库根或 `/docs`。
 
-页面指向手服官网 `http://nalxer.top` 的位置共 5 处：`index.html` 3 处（导航外链、页脚链接、页脚「Nalxer 服务器 → nalxer.top」文字）、`help.html` 2 处（导航外链、页脚链接）。域名如果换了，直接搜索 `nalxer.top` 一并替换。
+页面指向服务器官网 `http://nalxer.top` 的位置共 5 处：`index.html` 3 处（导航外链、页脚链接、页脚「Nalxer 服务器 → nalxer.top」文字）、`help.html` 2 处（导航外链、页脚链接）。域名如果换了，直接搜索 `nalxer.top` 一并替换。
 
 ## 8. 当前状态与已知事项
 
