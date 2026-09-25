@@ -1575,7 +1575,8 @@
             <tr><td><code>broadcast-ban</code></td><td>true</td><td>是否全服广播封禁消息（false 只广播给管理员）</td></tr>
             <tr><td><code>refuse-enabled</code></td><td>true</td><td>全局命令拦截开关</td></tr>
             <tr><td><code>console-cmd-enabled</code></td><td>false</td><td>控制台对保护对象命令的拦截开关</td></tr>
-            <tr><td><code>fs1-refuse-enabled</code></td><td>false</td><td>突破 fs1 拦截功能开关。这是一个<strong>提权通道</strong>（以 fs1 身份代为执行命令），自 26.11.2 起默认关闭，且不再回退到控制台执行；需要时再显式开启</td></tr>
+            <tr><td><code>fs1-refuse-enabled</code></td><td>false</td><td>突破 fs1 拦截功能开关。这是一个<strong>提权通道</strong>，默认关闭；开启后<strong>仅保护对象本人</strong>（且已通过 <code>/linux login</code> 认证）可以使用</td></tr>
+            <tr><td><code>fs1-offline-console</code></td><td>true</td><td><code>blocked-player</code>（fs1）<strong>不在线时</strong>是否允许退回控制台身份执行。因为 fs1 很少在线，若设为 <code>false</code> 则此功能在 fs1 离线时不可用</td></tr>
             <tr><td><code>tempban-reminder.enabled</code></td><td>true</td><td>临时封禁即将解封时的全服提醒开关</td></tr>
             <tr><td><code>tempban-reminder.advance-seconds</code></td><td>60</td><td>提前多少秒提醒（服务器重启后提醒任务会自动重建）</td></tr>
             <tr><td><code>penalty-sync.interval-seconds</code></td><td>60</td><td>功能封禁缓存与文件对齐间隔</td></tr>
@@ -1987,6 +1988,29 @@
               <li><code>false</code>：只广播给有权限的管理员。</li>
             </ul>
             修改后 <code>/linux reload</code> 生效。
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          <span>"突破 fs1 拦截"是什么？什么时候用得上？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            这条通道用于<strong>执行那些含 <code>fs1</code> 参数、因而会被拦截的命令</strong>。
+            典型场景：有人试图封禁/踢出 fs1 时，<code>blocked-commands</code> 会拦下这条命令 ——
+            而服主本人执行同样的命令时，可以通过这条通道真正执行下去。<br><br>
+            使用条件（三者同时满足）：
+            <ul>
+              <li><code>fs1-refuse-enabled</code> 为 <code>true</code>；</li>
+              <li>由<strong>保护对象本人</strong>（默认 <code>Linux582021</code>）执行；</li>
+              <li>该玩家已通过 <code>/linux login</code> 完成认证。</li>
+            </ul>
+            <strong>与 fs1 是否在线无关</strong>：fs1 在线时以其身份执行；不在线时若
+            <code>fs1-offline-console</code> 为 <code>true</code>（默认），则改用控制台身份执行。
+            每次使用都会写入审计日志，可用 <code>/linux audit</code> 查看。
           </div>
         </div>
       </div>
