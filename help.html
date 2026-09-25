@@ -56,6 +56,24 @@
     overflow-wrap: break-word;
   }
 
+  /* ============================================================
+     中文换行兜底（移动端"字挤在一起"的根因之一）
+     CJK 默认不在字与字之间断行，长串中文/命令会把列宽撑爆或互相挤压。
+     word-break: break-word 不影响正常英文单词，只在必要时断开。
+     ============================================================ */
+  .help-section p,
+  .help-section li,
+  .steps li,
+  .tip-body,
+  .faq-a,
+  .faq-q,
+  .help-table td,
+  .help-table th,
+  .code-block {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
   .container {
     max-width: 1080px;
     margin: 0 auto;
@@ -307,7 +325,7 @@
   .help-section h2 {
     font-size: 28px;
     font-weight: 700;
-    letter-spacing: -0.8px;
+    letter-spacing: 0;
     margin-bottom: 20px;
     padding-bottom: 12px;
     border-bottom: 1px solid var(--border-light);
@@ -872,6 +890,7 @@
 
     .page-hero h1 {
       font-size: 34px;
+      letter-spacing: 0;
     }
 
     .page-hero p {
@@ -929,10 +948,20 @@
       border-radius: 0;
       border-left: none;
       border-right: none;
+      -webkit-overflow-scrolling: touch;
     }
 
     .help-table {
       font-size: 14px;
+      width: 100%;
+    }
+
+    /* ★ 关键修复：桌面的 th / td:first-child 是 nowrap，
+       窄屏下第一列（写满 /linux xxx 长命令）不能换行，
+       于是浏览器只能拼命压缩第二列，汉字就挤到一起了。 */
+    .help-table th,
+    .help-table td:first-child {
+      white-space: normal;
     }
 
     .help-table th {
@@ -944,6 +973,12 @@
       padding: 10px 14px;
       font-size: 14px;
       line-height: 1.6;
+    }
+
+    /* 长命令允许在必要时断开，避免把第二列（中文说明）压到挤成一团 */
+    .help-table td:first-child code {
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     /* 步骤 */
@@ -997,8 +1032,10 @@
       padding: 0 14px;
     }
 
+    /* 中文标题不要负字距：42px 的负数会让汉字重叠/发糊 */
     .page-hero h1 {
       font-size: 30px;
+      letter-spacing: 0;
     }
 
     .help-section h2 {
