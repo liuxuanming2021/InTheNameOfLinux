@@ -1032,6 +1032,20 @@
       </div>
 
       <div class="card reveal">
+        <h3>🚧 控制台与玩家 fs1 保护 <span class="badge badge-new">NEW</span></h3>
+        <p>26.11.3 之前，控制台这条线其实是<strong>关着的</strong>：保护判定被登录检查挡在后面，
+           只有你已登录时才拦得住；判定目标还错成了保护对象名。</p>
+        <ul>
+          <li><strong>控制台 / Rcon</strong> 提到 fs1 一律拦截，<strong>与登录态无关</strong></li>
+          <li><strong>其他玩家</strong>对 fs1 使用命令同样拦截（<code>/say</code>、<code>/msg</code>、
+              <code>/tpa</code>、<code>/xlcore ban fs1</code> …）</li>
+          <li>判定按<strong>独立参数</strong>匹配，<code>/say fs1x</code> 不会误拦</li>
+          <li>保护优先级<strong>绝对高于</strong>突破通道，且不因"已被其他插件取消"而跳过</li>
+          <li>唯一的豁免是本插件的 fs1 突破通道（本人 + 已登录才可达）</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
         <h3>🎯 命令接管 <span class="badge badge-new">NEW</span></h3>
         <p>Bukkit 的纯名命令是"谁先加载谁占有"。本服 Essentials / AdvancedBan 加载更早，
            把 <code>/ban</code>、<code>/tempban</code>、<code>/banip</code>、

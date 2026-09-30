@@ -1670,7 +1670,7 @@
             <tr><td><code>appeal-group</code></td><td>925200745</td><td>封禁踢出消息里的申诉群号</td></tr>
             <tr><td><code>broadcast-ban</code></td><td>true</td><td>是否全服广播封禁消息（false 只广播给管理员）</td></tr>
             <tr><td><code>refuse-enabled</code></td><td>true</td><td>全局命令拦截开关</td></tr>
-            <tr><td><code>console-cmd-enabled</code></td><td>false</td><td>控制台对保护对象命令的拦截开关</td></tr>
+            <tr><td><code>console-cmd-enabled</code></td><td>true</td><td><strong>控制台 fs1 保护</strong>（26.11.3 起默认开启）。控制台 / Rcon 发出的、提到 <code>blocked-player</code>（fs1）的命令一律拦截，判定与玩家路径一致（按独立参数匹配，<code>/say fs1x</code> 不会误拦）。<strong>与登录态无关</strong> —— 即使你不在线也会拦。唯一豁免是本插件的 fs1 突破通道</td></tr>
             <tr><td><code>fs1-refuse-enabled</code></td><td>false</td><td>突破 fs1 拦截功能开关。这是一个<strong>提权通道</strong>，默认关闭；开启后<strong>仅保护对象本人</strong>（且已通过 <code>/linux login</code> 认证）可以使用</td></tr>
             <tr><td><code>fs1-offline-console</code></td><td>true</td><td><code>blocked-player</code>（fs1）<strong>不在线时</strong>是否允许退回控制台身份执行。因为 fs1 很少在线，若设为 <code>false</code> 则此功能在 fs1 离线时不可用</td></tr>
             <tr><td><code>tempban-reminder.enabled</code></td><td>true</td><td>临时封禁即将解封时的全服提醒开关</td></tr>
