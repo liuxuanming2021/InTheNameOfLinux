@@ -1162,7 +1162,8 @@
   <aside class="sidebar">
     <div class="sidebar-title">目录</div>
     <ul>
-      <li><a href="#quickstart" class="active">快速开始</a></li>
+      <li><a href="#changelog" class="active">更新日志</a></li>
+      <li><a href="#quickstart">快速开始</a></li>
       <li><a href="#commands">命令详解</a></li>
       <li><a href="#report">举报系统</a></li>
       <li><a href="#confirm">二次确认</a></li>
@@ -1176,6 +1177,96 @@
   </aside>
 
   <main class="main-content">
+
+    <section class="help-section" id="changelog">
+      <h2>更新日志</h2>
+
+      <h3>26.11.3-Alpha</h3>
+      <p>本版集中在<strong>插件间对抗</strong>与<strong>防护不被绕过</strong>，全部改动均经过真机验证
+         （Paper 1.12.2 + 40 余个插件）。</p>
+
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>改动</th><th>说明</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>fs1 保护接管</strong></td>
+              <td><code>x1</code>（<code>FastMenu.jar</code>）会拦截<strong>任何</strong>提到 fs1 的命令，
+                  连保护对象本人与控制台都拦，导致突破通道收不到事件。
+                  现改为运行时注销 x1 的监听器、由本插件承担保护：
+                  <strong>不修改不删除任何 jar</strong>，保护范围不变，但<strong>放行保护对象本人</strong>。
+                  开关 <code>fs1-protection-takeover</code>（默认 true）</td>
+            </tr>
+            <tr>
+              <td><strong>命令接管</strong></td>
+              <td>纯名命令"谁先加载谁占有"。实测本服 <code>/ban</code>、<code>/tempban</code>、
+                  <code>/banip</code>、<code>/unban</code>、<code>/unbanip</code>、<code>/banlist</code>
+                  分别被 Essentials / AdvancedBan 占走，导致这些命令的拦截<strong>实际不生效</strong>。
+                  现启动时自动抢回。开关 <code>command-takeover</code>，可用
+                  <code>command-takeover-exclude</code> 排除指定插件</td>
+            </tr>
+            <tr>
+              <td><strong>插件所有权</strong></td>
+              <td>保护对象上线即强制授予本插件全部权限节点（权限附件层优先级高于权限插件计算值），
+                  退出时移除。开关 <code>owner-force-permissions</code></td>
+            </tr>
+            <tr>
+              <td><strong>审计防篡改</strong></td>
+              <td><code>audit.yml</code> 被改成非法 YAML、结构被改写、条目损坏、解析数与文件行数不符，
+                  或运行时条目数变少 —— 一律 <code>SEVERE</code> 告警并写入自检记录。
+                  <code>/linux logs</code> 会显示"审计完整性 ⚠"</td>
+            </tr>
+            <tr>
+              <td><strong>监听器自检</strong></td>
+              <td>每 30 秒检查本插件监听器数量，发现被
+                  <code>HandlerList.unregisterAll</code> 摘除就重新注册并大声告警</td>
+            </tr>
+            <tr>
+              <td><strong>尊重他人取消</strong></td>
+              <td>原先监听器带 <code>ignoreCancelled = true</code>，任何插件先取消事件，
+                  本插件的登录门禁与 fs1 保护就被整段跳过。
+                  现保护判定不再被跳过，但"代为执行"仍尊重他人的取消</td>
+            </tr>
+            <tr>
+              <td><strong>变量扩展修复</strong></td>
+              <td>旧版把 PlaceholderAPI 的 <code>PlaceholderHook</code> 当接口做动态代理，
+                  但它是<strong>抽象类</strong>，运行时必然抛
+                  <code>PlaceholderHook is not an interface</code>，
+                  12 个 <code>%inl_*%</code> 变量全部不生效。现改为真正的
+                  <code>PlaceholderExpansion</code> 子类（没装 PAPI 时仍不会加载该类）</td>
+            </tr>
+            <tr>
+              <td><strong>口令存储升级</strong></td>
+              <td><strong>PBKDF2-HMAC-SHA256 · 12 万次迭代</strong>，哈希自带算法标识，
+                  旧 SHA-256 哈希在登录成功后<strong>自动升级</strong></td>
+            </tr>
+            <tr>
+              <td><strong>其他加固</strong></td>
+              <td>控制台路径不再撤销其他插件的取消裁决；服主权限授予失败不再静默；
+                  进入服务器立即授予权限（去掉 1 tick 空窗）；
+                  <code>/linux logs</code> 不再输出服务端构建号与 Java 版本</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>升级注意</strong>
+          <code>command-takeover</code>、<code>command-takeover-exclude</code>、
+          <code>owner-force-permissions</code> 是新增键。你现有的 <code>config.yml</code>
+          不会自动补上它们，但代码读不到时使用默认值（均为 true / 空列表），
+          <strong>行为与升级前一致</strong>，需要调整再手动添加。
+        </div>
+      </div>
+
+      <p style="color:var(--text-muted);font-size:.9rem;">
+        更早的版本变更请见插件目录下的 <code>FIXES-*.md</code> 记录文件。
+      </p>
+    </section>
 
     <section class="help-section" id="quickstart">
       <h2><span class="num">1</span>快速开始</h2>
@@ -1570,7 +1661,12 @@
           </thead>
           <tbody>
             <tr><td><code>protected-player</code></td><td>Linux582021</td><td>重点保护的玩家名</td></tr>
-            <tr><td><code>blocked-player</code></td><td>fs1</td><td>突破拦截时的代理玩家</td></tr>
+            <tr><td><code>blocked-player</code></td><td>fs1</td><td>受保护、禁止他人提及的玩家名</td></tr>
+            <tr><td><code>fs1-protection-takeover</code></td><td>true</td><td>是否接管 <code>x1</code> 插件（<code>FastMenu.jar</code>）的 fs1 保护。x1 会拦截<strong>任何</strong>提到 fs1 的命令（含保护对象本人与控制台），导致突破通道不可用；开启后本插件会在运行时注销 x1 的监听器（<strong>不修改、不删除 jar</strong>，重启即恢复）</td></tr>
+            <tr><td><code>fs1-hide-join-message</code></td><td>true</td><td>是否隐藏 fs1 的进服提示（接管自 x1 的 <code>setJoinMessage(null)</code>）</td></tr>
+            <tr><td><code>command-takeover</code></td><td>true</td><td>是否把被其他插件占用的纯名命令<strong>抢回本插件</strong>。Bukkit 的命令名是"谁先加载谁占有"，Essentials / AdvancedBan 等更早加载的插件会占走 <code>/ban</code>、<code>/tempban</code> 等，导致本插件对它们的拦截<strong>实际不生效</strong></td></tr>
+            <tr><td><code>command-takeover-exclude</code></td><td>[]</td><td>不要抢这些插件的命令（按 <code>plugin.yml</code> 里的 <code>name</code> 匹配，忽略大小写）。例：想让 Essentials 保留 <code>/ban</code> 就填 <code>[Essentials]</code></td></tr>
+            <tr><td><code>owner-force-permissions</code></td><td>true</td><td>保护对象上线时，强制授予本插件 <code>plugin.yml</code> 里声明的<strong>全部权限节点</strong>。即使权限插件漏配或有人剥夺节点，服主本人也一定能管理自己的插件（退出时自动移除，恢复权限插件计算）</td></tr>
             <tr><td><code>appeal-group</code></td><td>925200745</td><td>封禁踢出消息里的申诉群号</td></tr>
             <tr><td><code>broadcast-ban</code></td><td>true</td><td>是否全服广播封禁消息（false 只广播给管理员）</td></tr>
             <tr><td><code>refuse-enabled</code></td><td>true</td><td>全局命令拦截开关</td></tr>
@@ -1624,6 +1720,21 @@
         <li>如果 XlandCore 后加载，插件会在 <strong>20 秒后延迟检测一次</strong>。</li>
         <li>执行 <code>/linux reload</code> 也会重新检测。</li>
       </ul>
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>XlandCore 的两个权限节点请谨慎授予</strong>
+          <code>xlcore.admin</code> 与 <code>xlcore.bypass.*</code> 都等同于完全管理员权限，
+          <strong>副服主（co-owners）同样拥有管理员权限</strong>。持有它们的人可以执行
+          <code>/xlcore add|remove</code> 管理协管列表。<br><br>
+          <strong>2026-09-29 修复</strong>：<code>/xlcore add|remove</code> 原先未校验玩家名，
+          而该名字会被拼进以控制台身份执行的 <code>lp user …</code> 命令，
+          输入 <code>Steve permission set * true</code> 这类内容即可借控制台把
+          <code>*</code> 权限刷给任意玩家。现已加入严格玩家名校验
+          （仅允许 1-16 位字母/数字/下划线），并在拼接出口处二次校验。
+          升级后若输入不合法名字会收到"玩家名不合法"提示，属正常防护。
+        </div>
+      </div>
 
       <h3>假人插件（FakePlayerPlugin）</h3>
       <p>同步假人数据，用于 <code>/linux fp</code> 和查询识别。</p>
@@ -1637,6 +1748,16 @@
 
       <h3>PlaceholderAPI 变量</h3>
       <p>装好 PlaceholderAPI 后，插件会注册 <code>inl</code> 前缀的变量，可在计分板 / 聊天 / Tab 插件里直接用：</p>
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>26.11.3-Alpha 修复</strong>
+          旧版把 <code>PlaceholderHook</code> 当接口做动态代理，但它是<strong>抽象类</strong>，
+          注册时必然抛 <code>PlaceholderHook is not an interface</code> —— 下表的变量<strong>一个都不生效</strong>。
+          现已改为真正的 <code>PlaceholderExpansion</code> 子类。升级后请重启服务器，
+          并确认控制台出现 <code>[PAPI] 已注册变量扩展: %inl_*%（12 个变量）</code>。
+        </div>
+      </div>
       <div class="table-scroll">
         <table class="help-table">
           <thead>
@@ -2017,6 +2138,27 @@
 
       <div class="faq-item">
         <div class="faq-q">
+          <span>装了 x1（FastMenu.jar）后 fs1 突破用不了？</span>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-a-wrap">
+          <div class="faq-a">
+            这是<strong>插件冲突</strong>，不是配置问题。x1 的
+            <code>shouldBlock()</code> 会对<strong>任何</strong>提到 fs1 的命令直接取消事件，
+            且只给"当前在线的 fs1 本人"放行 —— 保护对象本人和控制台命令都被它拦下，
+            导致本插件的突破通道永远收不到事件。<br><br>
+            解决办法：保持 <code>fs1-protection-takeover: true</code>（默认）。本插件会在启动时用
+            Bukkit 的 <code>HandlerList.unregisterAll()</code> <strong>注销 x1 的监听器</strong>并提出接管，
+            保护范围与 x1 一致（非保护对象提到 fs1 一样被拦），但<strong>放行保护对象本人</strong>，
+            于是突破通道可正常工作。<br><br>
+            <strong>不修改、不删除任何 jar 文件</strong>，重启服务器即可完全恢复 x1 原状。
+            用 <code>/linux logs</code> 可以查看接管状态。
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
           <span>如何关闭"突破 fs1 拦截"功能？</span>
           <span class="faq-icon"></span>
         </div>
@@ -2121,7 +2263,7 @@
     <div class="footer-brand">InTheNameOfLinux</div>
     <p>以 Linux 之名 · 守护你的服务器</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v26.11.2 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+      v26.11.3-Alpha · Minecraft 1.12.2 · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
       <a href="index.html">← 返回主页</a>

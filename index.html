@@ -951,6 +951,7 @@
     </a>
 
     <ul class="nav-links" id="navLinks">
+      <li><a href="#whatsnew">更新</a></li>
       <li><a href="#features">功能</a></li>
       <li><a href="#penalty">封禁</a></li>
       <li><a href="#report">举报</a></li>
@@ -984,23 +985,131 @@
      ============================================================ -->
 <section class="hero">
   <div class="container">
-    <div class="hero-badge">v26.11.2 · Minecraft 1.12.2</div>
+    <div class="hero-badge">v26.11.3-Alpha · Minecraft 1.12.2</div>
     <h1>以 Linux 之名<br><span class="gradient">守护你的服务器</span></h1>
     <p class="hero-subtitle">
       一款为服务器管理员量身打造的综合管理插件，集身份验证、封禁管理、举报系统、功能限制、协管权限、插件联动于一体。
     </p>
 
     <div class="hero-meta">
-      <span class="meta-tag"><strong>SHA-256</strong> 加密存储</span>
+      <span class="meta-tag"><strong>PBKDF2</strong> 12 万次迭代</span>
       <span class="meta-tag"><strong>0</strong> 明文密码</span>
       <span class="meta-tag"><strong>30+</strong> 个子命令</span>
-      <span class="meta-tag"><strong>100%</strong> 异步安全</span>
+      <span class="meta-tag"><strong>12</strong> 个 PAPI 变量</span>
     </div>
 
     <div class="hero-buttons">
       <a href="#features" class="btn btn-primary">查看功能</a>
       <a href="#commands" class="btn btn-secondary">命令列表</a>
       <a href="help.html" class="btn btn-secondary">帮助中心</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     本版更新
+     ============================================================ -->
+<section id="whatsnew">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">WHAT'S NEW</span>
+      <h2>26.11.3-Alpha 更新亮点</h2>
+      <p>插件保护、命令接管、权限自持、审计防篡改</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <h3>🛡️ fs1 保护接管 <span class="badge badge-new">NEW</span></h3>
+        <p>插件 <code>x1</code>（<code>FastMenu.jar</code>）会对<strong>任何</strong>提到 fs1 的命令直接取消事件，
+           连保护对象本人和控制台都拦，导致 fs1 突破通道永远收不到事件。</p>
+        <ul>
+          <li>运行时注销 x1 的监听器，保护改由本插件承担</li>
+          <li><strong>不修改、不删除任何 jar</strong>，重启即恢复</li>
+          <li>保护范围不变：非保护对象提到 fs1 照样拦</li>
+          <li>放行保护对象本人 → 突破通道恢复可用</li>
+          <li>顺带接管 x1 的"隐藏 fs1 进服提示"</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>🎯 命令接管 <span class="badge badge-new">NEW</span></h3>
+        <p>Bukkit 的纯名命令是"谁先加载谁占有"。本服 Essentials / AdvancedBan 加载更早，
+           把 <code>/ban</code>、<code>/tempban</code>、<code>/banip</code>、
+           <code>/unban</code>、<code>/unbanip</code>、<code>/banlist</code> 全占走了，
+           导致拦截列表里的这些命令<strong>实际拦不到</strong>。</p>
+        <ul>
+          <li>启动时把被占用的命令<strong>抢回本插件</strong></li>
+          <li>支持排除名单，不想抢的插件可跳过</li>
+          <li>拦截判定同时基于原始命令字符串，不依赖命令归属</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>👑 插件所有权 <span class="badge badge-new">NEW</span></h3>
+        <p>即使权限插件漏配节点、或有人通过权限插件剥夺节点，服主本人也一定能管理自己的插件。</p>
+        <ul>
+          <li>保护对象上线即强制授予 <code>plugin.yml</code> 里声明的<strong>全部权限节点</strong></li>
+          <li>权限附件层优先级高于权限插件计算值</li>
+          <li>退出时移除附件，恢复权限插件正常计算</li>
+          <li><code>/linux logs</code> 显示"授予结果 成功/失败"</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>🔍 审计防篡改 <span class="badge badge-new">NEW</span></h3>
+        <p>审计日志是明文 YAML，任何能写文件的东西都能把它改坏或精确删掉几条记录，
+           而旧版会<strong>静默从 0 条开始</strong> —— 看起来只是"没记录过"，痕迹被无声抹除。</p>
+        <ul>
+          <li>整库无法解析 / 结构被改写 → 控制台 SEVERE 告警</li>
+          <li>条目格式损坏、解析数与文件行数不符 → 告警</li>
+          <li>运行时文件被替换或截断（条目数变少）→ 告警</li>
+          <li><code>/linux logs</code> 显示"审计完整性 ⚠"</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>💓 监听器自检 <span class="badge badge-new">NEW</span></h3>
+        <p>任何插件都能用 <code>HandlerList.unregisterAll</code> 一行摘掉本插件的全部监听器，
+           那时登录门禁、fs1 保护、命令拦截会同时<strong>静默失效</strong>，而服务器看起来一切正常。</p>
+        <ul>
+          <li>每 30 秒自检监听器数量</li>
+          <li>数量下降即重新注册 + 大声告警 + 写审计</li>
+          <li>完全防不住，但<strong>不会再有静默失效</strong></li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>🧩 变量扩展修复 <span class="badge badge-new">NEW</span></h3>
+        <p>旧版把 PlaceholderAPI 的 <code>PlaceholderHook</code> 当接口做动态代理，
+           但它是<strong>抽象类</strong>，运行时必然报错，
+           12 个 <code>%inl_*%</code> 变量<strong>全部不生效</strong>。</p>
+        <ul>
+          <li>改为真正的 <code>PlaceholderExpansion</code> 子类</li>
+          <li>没装 PAPI 的服务器仍不会加载该类（无 NoClassDefFoundError）</li>
+          <li>身份 / 封禁 / 在线 / 假人 / 版本 / fs1 等 12 个变量可用</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>⚖️ 尊重他人取消 <span class="badge badge-new">NEW</span></h3>
+        <p>原先监听器带 <code>ignoreCancelled = true</code>：任何插件先取消事件，
+           本插件的登录门禁与 fs1 保护就被<strong>整段跳过</strong>（x1 正是这么干掉我们的）。</p>
+        <ul>
+          <li>保护判定不再被"已取消"跳过</li>
+          <li>但"代为执行"仍尊重他人的取消，不覆盖对方的安全判决</li>
+          <li>玩家路径与控制台路径行为一致</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>🔑 口令存储升级 <span class="badge badge-new">新</span></h3>
+        <ul>
+          <li><strong>PBKDF2-HMAC-SHA256 · 12 万次迭代</strong>，替代原 SHA-256 单轮</li>
+          <li>哈希自带算法标识，旧哈希登录成功后<strong>自动升级</strong></li>
+          <li>登录失败冷却 + 锁定，且计数状态持久化</li>
+          <li>启动时若仍使用默认口令会持续告警</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
@@ -1514,7 +1623,8 @@
       <div class="card reveal">
         <h3>🔒 安全</h3>
         <ul>
-          <li>SHA-256 + 随机盐 + 10000 次迭代</li>
+          <li>PBKDF2-HMAC-SHA256 · 12 万次迭代 <span class="badge badge-new">新</span></li>
+          <li>旧 SHA-256 哈希登录时自动升级</li>
           <li>常量时间比较防时序攻击</li>
           <li>聊天栏输密码，服务端日志零痕迹</li>
           <li>防爆破：冷却 + 锁定 + 持久化</li>
@@ -1585,7 +1695,7 @@
     <div class="footer-brand">InTheNameOfLinux</div>
     <p>以 Linux 之名 · 守护你的服务器</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v26.11.2 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+      v26.11.3-Alpha · Minecraft 1.12.2 · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
       <a href="help.html">帮助中心</a>
