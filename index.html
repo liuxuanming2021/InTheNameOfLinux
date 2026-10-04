@@ -1021,13 +1021,13 @@
       <div class="card reveal">
         <h3>🛡️ fs1 保护接管 <span class="badge badge-new">NEW</span></h3>
         <p>插件 <code>x1</code>（<code>FastMenu.jar</code>）会对<strong>任何</strong>提到 fs1 的命令直接取消事件，
-           连保护对象本人和控制台都拦，导致 fs1 突破通道永远收不到事件。</p>
+           连保护对象本人和控制台都拦 —— 光靠本插件"放行"是没用的，命令早被它取消。</p>
         <ul>
           <li>运行时注销 x1 的监听器，保护改由本插件承担</li>
           <li><strong>不修改、不删除任何 jar</strong>，重启即恢复</li>
-          <li>保护范围不变：非保护对象提到 fs1 照样拦</li>
-          <li>放行保护对象本人 → 突破通道恢复可用</li>
+          <li><strong>fs1 本人</strong>与<strong>服主</strong>直接放行，其余玩家照样拦</li>
           <li>顺带接管 x1 的"隐藏 fs1 进服提示"</li>
+          <li><span style="color:var(--text-tertiary);">此项<strong>不可关闭</strong>：关掉后 x1 会抢先取消事件，服主将无法管理 fs1</span></li>
         </ul>
       </div>
 
@@ -1036,12 +1036,12 @@
         <p>26.11.3 之前，控制台这条线其实是<strong>关着的</strong>：保护判定被登录检查挡在后面，
            只有你已登录时才拦得住；判定目标还错成了保护对象名。</p>
         <ul>
-          <li><strong>控制台 / Rcon</strong> 提到 fs1 一律拦截，<strong>与登录态无关</strong></li>
+          <li><strong>控制台 / Rcon</strong> 提到 fs1 一律拦截，<strong>与登录态无关</strong>，没有例外</li>
           <li><strong>其他玩家</strong>对 fs1 使用命令同样拦截（<code>/say</code>、<code>/msg</code>、
               <code>/tpa</code>、<code>/xlcore ban fs1</code> …）</li>
           <li>判定按<strong>独立参数</strong>匹配，<code>/say fs1x</code> 不会误拦</li>
-          <li>保护优先级<strong>绝对高于</strong>突破通道，且不因"已被其他插件取消"而跳过</li>
-          <li>唯一的豁免是本插件的 fs1 突破通道（本人 + 已登录才可达）</li>
+          <li>触发时<strong>双向通知</strong>：服主与 fs1 各收到一条"谁 做了什么（已拦截）"</li>
+          <li>保护优先级<strong>绝对高于</strong>其它判定，且不因"已被其他插件取消"而跳过</li>
         </ul>
       </div>
 
@@ -1124,6 +1124,28 @@
           <li>启动时若仍使用默认口令会持续告警</li>
         </ul>
       </div>
+
+      <div class="card reveal">
+        <h3>👤 普通玩家帮助菜单 <span class="badge badge-new">新</span></h3>
+        <p>以前普通玩家打开 <code>/linux help</code>，看到的是一整份<strong>管理员帮助</strong>
+           （封禁、解封、查询 IP…）—— 既用不了，也让人以为服务器管理很随意。</p>
+        <ul>
+          <li>补上<strong>普通玩家</strong>这一档，只列 5 条真正可用的命令</li>
+          <li>帮助菜单改为<strong>四档分流</strong>：服主 / 管理员 / 协管 / 玩家</li>
+          <li>只显示该身份<strong>确实能用</strong>的命令，不再列出会报"无权限"的项</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>🗑️ 移除提权通道 <span class="badge badge-new">改</span></h3>
+        <p>原「突破 fs1 拦截」通道能<strong>借 fs1 / 控制台身份</strong>执行任意含 fs1 的命令，
+           本质是个提权面。</p>
+        <ul>
+          <li>fs1 本人与服主现在<strong>直接放行</strong>，这条通道已无意义</li>
+          <li>连带删除：<code>/linux fs</code> 命令、两个配置项、一个占位符</li>
+          <li>攻击面更小 —— 少一条"能以他人身份执行命令"的路径</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
@@ -1195,7 +1217,7 @@
         <ul>
           <li>封禁时长上限可配</li>
           <li>禁止永久封禁</li>
-          <li>帮助菜单分流</li>
+          <li>帮助菜单四档分流（玩家 / 协管 / 管理员 / 服主）</li>
           <li>TAB 补全分流</li>
         </ul>
       </div>
@@ -1208,7 +1230,7 @@
           <li>命令拦截</li>
           <li>Sudo 拦截</li>
           <li>控制台拦截</li>
-          <li>fs1 突破</li>
+          <li>fs1 保护（放行 fs1 与服主）</li>
         </ul>
       </div>
 
