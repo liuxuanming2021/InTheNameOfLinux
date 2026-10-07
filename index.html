@@ -957,6 +957,7 @@
       <li><a href="#report">举报</a></li>
       <li><a href="#moderator">协管</a></li>
       <li><a href="#commands">命令</a></li>
+      <li><a href="#credits">感谢</a></li>
       <li><a href="help.html" class="nav-help">帮助</a></li>
       <li>
         <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
@@ -985,7 +986,7 @@
      ============================================================ -->
 <section class="hero">
   <div class="container">
-    <div class="hero-badge">v26.11.3-Alpha · Minecraft 1.12.2</div>
+    <div class="hero-badge">v26.11.4-RC · Minecraft 1.12.2</div>
     <h1>以 Linux 之名<br><span class="gradient">守护你的服务器</span></h1>
     <p class="hero-subtitle">
       一款为服务器管理员量身打造的综合管理插件，集身份验证、封禁管理、举报系统、功能限制、协管权限、插件联动于一体。
@@ -994,7 +995,7 @@
     <div class="hero-meta">
       <span class="meta-tag"><strong>PBKDF2</strong> 12 万次迭代</span>
       <span class="meta-tag"><strong>0</strong> 明文密码</span>
-      <span class="meta-tag"><strong>30+</strong> 个子命令</span>
+      <span class="meta-tag"><strong>28</strong> 个子命令</span>
       <span class="meta-tag"><strong>12</strong> 个 PAPI 变量</span>
     </div>
 
@@ -1013,11 +1014,56 @@
   <div class="container">
     <div class="section-header reveal">
       <span class="section-label">WHAT'S NEW</span>
-      <h2>26.11.3-Alpha 更新亮点</h2>
-      <p>插件保护、命令接管、权限自持、审计防篡改</p>
+      <h2>26.11.4-RC 更新亮点</h2>
+      <p>非法 NBT 检测、查询带维度坐标、主页改为点击即执行</p>
     </div>
 
     <div class="grid grid-2">
+      <div class="card reveal">
+        <h3>🧪 非法 NBT 物品检测 <span class="badge badge-new">NEW</span></h3>
+        <p>把独立的 <code>BanNbt</code> 插件<strong>整体合并进本插件</strong>，
+           少装一个插件、少一份配置。</p>
+        <ul>
+          <li>周期扫描（默认 20 秒）或手动 <code>/linux nbtview</code></li>
+          <li>检测超限附魔、非法属性修饰符（攻击力 / 生命 / 护甲 / 速度等）</li>
+          <li>抗性提升等级 ≥ 4 自动压回 3 级</li>
+          <li>清除时播报<strong>带悬浮详情</strong>：物品名、数量、原因、附魔</li>
+          <li>豁免名单、豁免世界全部可在配置里改，<strong>不含任何硬编码玩家名</strong>；<strong>op 不豁免</strong></li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>📍 查询显示维度与坐标 <span class="badge badge-new">新</span></h3>
+        <p><code>/linux lookup</code> 现在会给出玩家<strong>所在维度与精确坐标</strong>。</p>
+        <ul>
+          <li>在线玩家：<strong>实时</strong>读取当前位置</li>
+          <li>离线玩家：使用<strong>退出服务器时</strong>记录的位置</li>
+          <li>拿不到位置时明确显示"无法获取"，不会给出错误坐标</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>🖱️ 主页改为点击即执行 <span class="badge badge-new">新</span></h3>
+        <p>插件主页的<strong>/linux plugins</strong> 与 <strong>/linux help</strong>
+           不再需要手动输入，点一下就直接执行。</p>
+        <ul>
+          <li>鼠标悬停有说明文字</li>
+          <li>点击立即执行，不用先填充再回车</li>
+          <li><code>/linux plugins</code> 一屏看清所有子插件联动状态</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>🔧 配置不再"看不见" <span class="badge badge-new">改</span></h3>
+        <p>以前新版新增的配置段<strong>永远不会出现在你已有的 config.yml 里</strong>
+           —— 功能能用（读的是内置默认值），但服主看不到、也改不了。</p>
+        <ul>
+          <li>启动时自动把<strong>缺失的配置键</strong>补进你的 config.yml</li>
+          <li>已存在的键<strong>绝不覆盖</strong>，你改过的值原样保留</li>
+          <li>补齐后会打印一行日志告知补了几个键</li>
+        </ul>
+      </div>
+
       <div class="card reveal">
         <h3>🛡️ fs1 保护接管 <span class="badge badge-new">NEW</span></h3>
         <p>插件 <code>x1</code>（<code>FastMenu.jar</code>）会对<strong>任何</strong>提到 fs1 的命令直接取消事件，
@@ -1142,7 +1188,6 @@
            本质是个提权面。</p>
         <ul>
           <li>fs1 本人与服主现在<strong>直接放行</strong>，这条通道已无意义</li>
-          <li>连带删除：<code>/linux fs</code> 命令、两个配置项、一个占位符</li>
           <li>攻击面更小 —— 少一条"能以他人身份执行命令"的路径</li>
         </ul>
       </div>
@@ -1158,14 +1203,14 @@
     <div class="section-header reveal">
       <span class="section-label">CORE FEATURES</span>
       <h2>核心功能</h2>
-      <p>七大模块协同工作，覆盖服务器管理的方方面面</p>
+      <p>十大模块协同工作，覆盖服务器管理的方方面面</p>
     </div>
 
     <div class="grid grid-3">
       <div class="card reveal">
         <div class="card-icon">🔐</div>
         <h3>身份验证</h3>
-        <p>SHA-256 + 随机盐 + 10000 次迭代的密码加密存储，聊天栏输入密码零日志泄漏。</p>
+        <p><strong>PBKDF2-HMAC-SHA256 · 12 万次迭代</strong> 的密码加密存储，聊天栏输入密码零日志泄漏。</p>
         <ul>
           <li>密码最短 6 位</li>
           <li>失败 3 秒冷却</li>
@@ -1231,6 +1276,18 @@
           <li>Sudo 拦截</li>
           <li>控制台拦截</li>
           <li>fs1 保护（放行 fs1 与服主）</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🧪</div>
+        <h3>非法 NBT 检测 <span class="badge badge-new">NEW</span></h3>
+        <p>合并自原 <code>BanNbt</code> 插件，周期扫描并清除被改坏属性的物品，播报带悬浮详情。</p>
+        <ul>
+          <li>附魔等级与属性上限可配</li>
+          <li>抗性提升自动压级</li>
+          <li>豁免玩家 / 世界</li>
+          <li>兼容饰品与自定义世界</li>
         </ul>
       </div>
 
@@ -1340,6 +1397,32 @@
           <div><span class="cmd">/banlist</span></div>
         </div>
       </div>
+    </div>
+
+    <div class="reveal" style="margin-top: 32px;">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600;">
+        🔑 登录验证
+      </h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>命令</th>
+              <th>使用者</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/linux login</code></td><td>玩家</td><td>开始验证身份；执行后在<strong>聊天栏直接发送密码</strong>（不要加 /）</td></tr>
+            <tr><td><code>/linux chargepw &lt;新密码&gt;</code></td><td>管理员</td><td>修改登录密码（初始密码在首次启动时打印到控制台）</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top: 14px; color: var(--text-secondary); font-size: 14px;">
+        验证过程：进服后按提示执行 <code>/linux login</code> → 在聊天栏直接输入密码。
+        消息会被插件<strong>立即拦截</strong>，其他玩家与控制台都看不到，服务端日志也不留痕迹；
+        输入 <code>cancel</code> 可取消。连续输错达上限会锁定，重启服务器后锁定状态依然保留。
+      </p>
     </div>
 
     <div class="reveal" style="margin-top: 32px;">
@@ -1550,6 +1633,7 @@
             </tr>
           </thead>
           <tbody>
+            <tr><td><code>/linux ban &lt;玩家&gt; [原因]</code></td><td>封禁玩家（与 <code>/ban</code> 等价，用于拦截列表统一口径）</td></tr>
             <tr><td><code>/linux help [页码]</code></td><td>显示分页帮助菜单（可点击翻页）</td></tr>
             <tr><td><code>/linux logs [页码]</code></td><td>插件状态总览（开关、数据文件、任务、子插件联动），每页 10 行</td></tr>
             <tr><td><code>/linux audit [玩家] [页码]</code></td><td>审计日志：谁改了什么，每页 10 行</td></tr>
@@ -1560,7 +1644,13 @@
             <tr><td><code>/linux clearhistory &lt;玩家&gt;</code></td><td>清除玩家全部历史（二次确认）</td></tr>
             <tr><td><code>/linux fp [list]</code></td><td>查看假人插件状态 / 列表</td></tr>
             <tr><td><code>/linux fpsync</code></td><td>手动同步假人数据</td></tr>
+            <tr><td><code>/linux plugins</code></td><td>查看插件联动状态（XlandCore / 假人 / 头衔 / NBT 检测等），主页可点击直达</td></tr>
+            <tr><td><code>/linux nbtview</code></td><td>立即扫描并清除在线玩家的非法 NBT 物品</td></tr>
+            <tr><td><code>/linux chargepw &lt;新密码&gt;</code></td><td>修改登录密码（初始密码见控制台）</td></tr>
+            <tr><td><code>/linux hide</code></td><td>切换隐身（调用 /vanish，仅服主可用）</td></tr>
+            <tr><td><code>/linux cmd &lt;玩家&gt; &lt;命令&gt;</code></td><td>以指定玩家身份执行命令</td></tr>
             <tr><td><code>/linux op [list]</code></td><td>检查身份 / 列出管理员</td></tr>
+            <tr><td><code>/linux refuse</code></td><td>查看 / 修改命令拦截列表</td></tr>
             <tr><td><code>/banlist [页码]</code></td><td>查看封禁列表（可点击翻页）</td></tr>
           </tbody>
         </table>
@@ -1635,8 +1725,12 @@
             <tr><td><code>/linux report info &lt;ID&gt;</code></td><td>查看举报详情</td></tr>
             <tr><td><code>/linux report accept &lt;ID&gt; [备注]</code></td><td>接受举报</td></tr>
             <tr><td><code>/linux report reject &lt;ID&gt; [备注]</code></td><td>驳回举报</td></tr>
-            <tr><td><code>/linux report clear &lt;模式&gt;</code></td><td>清空举报（需二次确认）</td></tr>
-            <tr><td><code>/linux report clear confirm</code></td><td>确认执行清空</td></tr>
+            <tr><td><code>/linux report clear handled</code></td><td>清空已处理的举报</td></tr>
+            <tr><td><code>/linux report clear all</code></td><td>清空所有举报</td></tr>
+            <tr><td><code>/linux report clear pending</code></td><td>清空待广播消息</td></tr>
+            <tr><td><code>/linux report clear player &lt;玩家&gt;</code></td><td>清空某玩家相关举报</td></tr>
+            <tr><td><code>/linux report clear id &lt;ID&gt;</code></td><td>删除指定举报</td></tr>
+            <tr><td><code>/linux report clear confirm</code></td><td>确认执行上述清空（需二次确认）</td></tr>
           </tbody>
         </table>
       </div>
@@ -1704,20 +1798,69 @@
 
     <div class="stats reveal">
       <div class="stat">
-        <div class="stat-value">18</div>
+        <div class="stat-value">25</div>
         <div class="stat-label">模块文件</div>
       </div>
       <div class="stat">
-        <div class="stat-value">30+</div>
+        <div class="stat-value">28</div>
         <div class="stat-label">子命令总数</div>
       </div>
       <div class="stat">
-        <div class="stat-value">6</div>
+        <div class="stat-value">7</div>
         <div class="stat-label">数据文件</div>
       </div>
       <div class="stat">
         <div class="stat-value">24</div>
         <div class="stat-label">迭代轮次</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     感谢列表
+     ============================================================ -->
+<section id="credits" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">CREDITS</span>
+      <h2>感谢列表</h2>
+      <p>这个插件离不开以下贡献者</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <div class="card-icon">👑</div>
+        <h3>Linux582021 <span class="badge badge-new">作者</span></h3>
+        <p>插件作者与主要维护者。</p>
+        <ul>
+          <li>整体架构与核心功能实现</li>
+          <li>封禁 / 举报 / 协管 / 保护体系</li>
+          <li>配置、文档与官网维护</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🧪</div>
+        <h3>星白喵喵 <span class="badge badge-new">作者</span></h3>
+        <p>共同作者。</p>
+        <ul>
+          <li><strong>提供 BanNbt 插件源码</strong></li>
+          <li>其非法 NBT 检测逻辑已成为本插件的一部分，<br>
+              即 <code>/linux nbtview</code> 与周期扫描功能</li>
+          <li>检测阈值与判定规则依据其原始实现</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip tip-info" style="margin-top: 32px;">
+      <span class="tip-icon">💡</span>
+      <div class="tip-body">
+        <strong>关于非法 NBT 检测</strong>
+        该功能原本是一个独立插件 <code>BanNbt</code>，由 <strong>星白喵喵</strong> 提供源码。
+        现已<strong>整体合并进 InTheNameOfLinux</strong>：检测阈值、抗性提升压缩等判定规则
+        均沿用其原始实现，并在此基础上补充了配置化豁免名单、世界豁免、
+        饰品兼容与悬浮详情播报。感谢他的贡献。
       </div>
     </div>
   </div>
@@ -1731,7 +1874,7 @@
     <div class="footer-brand">InTheNameOfLinux</div>
     <p>以 Linux 之名 · 守护你的服务器</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v26.11.3-Alpha · Minecraft 1.12.2 · Made with ♥ by Linux582021
+      v26.11.4-RC · Minecraft 1.12.2 · Made with ♥ by Linux582021 &amp; 星白喵喵
     </p>
     <p style="margin-top: 12px;">
       <a href="help.html">帮助中心</a>
