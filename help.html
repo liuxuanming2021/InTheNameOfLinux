@@ -768,7 +768,7 @@
   /* ============================================================
      移动端（< 900px）
      ============================================================ */
-  @media (max-width: 900px) {
+  @media (max-width: 920px) {
     body {
       font-size: 16px;
     }
@@ -1057,7 +1057,7 @@
        · 其余列 = 说明正文，逐行铺开
      这样命令自己占一行，解析从下一行开始，手机上不再挤成一长条。
      桌面端**完全不受影响**，仍是正常表格。 */
-  @media (max-width: 900px) {
+  @media (max-width: 920px) {
     .table-scroll {
       overflow-x: visible;
     }
@@ -1125,6 +1125,23 @@
 
     .help-table td:not(:first-child) + td:not(:first-child) {
       border-top: 1px dashed var(--border-light);
+    }
+
+    /* ★ 权限对照表：窄屏卡片模式下表头被隐藏，
+       每行只有 ✅/❌ 根本看不出是哪一列 —— 用 data-label 标出身份 */
+    .perm-compare td[data-label] {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .perm-compare td[data-label]::before {
+      content: attr(data-label);
+      flex: 0 0 auto;
+      min-width: 4.5em;
+      color: var(--text-tertiary);
+      font-size: 12.5px;
+      font-weight: 500;
     }
 
     /* 表格里的代码与长串允许断开，避免溢出卡片 */
@@ -1476,9 +1493,53 @@
         更早的版本变更请见插件目录下的 <code>FIXES-*.md</code> 记录文件。
       </p>
     </section>
+    <section class="help-section" id="credits">
+      <h2><span class="num">1</span>感谢列表</h2>
 
+      <p>本插件的开发与维护离不开以下贡献者。</p>
+
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>贡献者</th><th>身份</th><th>贡献</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Linux582021</strong></td>
+              <td><span class="badge badge-op">作者</span></td>
+              <td>插件作者与主要维护者：整体架构、封禁 / 举报 / 协管 / 保护体系、配置与文档</td>
+            </tr>
+            <tr>
+              <td><strong>星白喵喵</strong></td>
+              <td><span class="badge badge-op">作者</span></td>
+              <td><strong>提供 BanNbt 插件源码</strong>。其非法 NBT 检测逻辑已成为本插件的一部分，
+                  即 <code>/linux nbtview</code> 与周期扫描功能；
+                  检测阈值与判定规则依据其原始实现</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>关于非法 NBT 检测的来源</h3>
+      <p>该功能原本是一个独立插件 <code>BanNbt</code>，源码由 <strong>星白喵喵</strong> 提供。
+         现已<strong>整体合并进 InTheNameOfLinux</strong>，因此不再需要单独安装 <code>BanNbt.jar</code>。</p>
+      <ul class="steps">
+        <li><strong>沿用其原始实现</strong>：附魔等级上限、属性修饰符阈值（攻击力 / 击退抗性 / 最大生命 / 移动速度 / 护甲 / 护甲韧性）、抗性提升压缩规则。</li>
+        <li><strong>在此基础上补充</strong>：豁免玩家与世界配置化（不再硬编码名字）、饰品兼容（<code>#pscharm:</code> 标记）、悬浮详情播报、<code>/linux nbtview</code> 手动扫描。</li>
+      </ul>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>插件内也能看到作者</strong>
+          执行 <code>/linux</code> 打开主页时，显示的作者列表直接读取 <code>plugin.yml</code>，
+          因此会同时显示 <strong>Linux582021</strong> 与 <strong>星白喵喵</strong>。
+        </div>
+      </div>
+
+    </section>
     <section class="help-section" id="quickstart">
-      <h2><span class="num">1</span>快速开始</h2>
+      <h2><span class="num">2</span>快速开始</h2>
 
       <p>3 步完成安装，5 分钟即可上手。适用于 Minecraft 1.12.2（Paper / Spigot）。</p>
 
@@ -1552,9 +1613,8 @@
         </div>
       </div>
     </section>
-
     <section class="help-section" id="commands">
-      <h2><span class="num">2</span>命令详解</h2>
+      <h2><span class="num">3</span>命令详解</h2>
 
       <h3>登录相关</h3>
       <div class="table-scroll">
@@ -1672,9 +1732,8 @@
         </div>
       </div>
     </section>
-
     <section class="help-section" id="report">
-      <h2><span class="num">3</span>举报系统 <span class="badge badge-new">NEW</span></h2>
+      <h2><span class="num">4</span>举报系统 <span class="badge badge-new">NEW</span></h2>
 
       <p>插件内置举报系统，玩家提交举报后，管理层调查处理，结果自动通知当事人与服主。</p>
 
@@ -1752,9 +1811,8 @@
         </div>
       </div>
     </section>
-
     <section class="help-section" id="confirm">
-      <h2><span class="num">4</span>二次确认机制 <span class="badge badge-new">NEW</span></h2>
+      <h2><span class="num">5</span>二次确认机制 <span class="badge badge-new">NEW</span></h2>
 
       <p>为了防止误操作，以下命令都需要<strong>二次确认</strong>才能执行。确认有效期统一为 <strong>5 分钟</strong>。</p>
 
@@ -1816,9 +1874,8 @@
         </div>
       </div>
     </section>
-
     <section class="help-section" id="permissions">
-      <h2><span class="num">5</span>权限说明</h2>
+      <h2><span class="num">6</span>权限说明</h2>
 
       <p>插件使用<strong>三级权限体系</strong>：OP / 协管 / 普通玩家。<code>/linux help</code>
          会据此<strong>自动分流</strong>，只列出该身份真正能用的命令。</p>
@@ -1934,25 +1991,26 @@
 
         <h3>协管 / 管理员 权限对照</h3>
         <div class="table-scroll">
-          <table class="help-table">
-            <thead>
-              <tr><th>能力</th><th>协管</th><th>管理员（非 Linux）</th><th>服主</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>功能封禁（禁言 / 禁移动 / 禁交互 / 全面）</td><td>✅</td><td>✅</td><td>✅</td></tr>
-              <tr><td>举报处理（list / info / accept / reject）</td><td>✅</td><td>✅</td><td>✅</td></tr>
-              <tr><td>账号封禁 <code>/ban</code> <code>/tempban</code></td><td>❌</td><td>✅</td><td>✅</td></tr>
-              <tr><td>IP 封禁 <code>/banip</code></td><td>❌</td><td>✅</td><td>✅</td></tr>
-              <tr><td>解封 <code>/unban</code> <code>/unbanip</code></td><td>❌</td><td>✅</td><td>✅</td></tr>
-              <tr><td>封禁列表 <code>/banlist</code></td><td>❌</td><td>✅</td><td>✅</td></tr>
-              <tr><td>封禁历史 / 清除历史</td><td>❌</td><td>✅</td><td>✅</td></tr>
-              <tr><td>查询 <code>/linux lookup</code> <code>seenip</code></td><td>❌</td><td>✅</td><td>✅</td></tr>
-              <tr><td>举报清理 <code>report clear</code></td><td>❌</td><td>✅</td><td>✅</td></tr>
-              <tr><td>重载配置 / 审计日志 / 状态总览</td><td>❌</td><td>✅</td><td>✅</td></tr>
-              <tr><td>隐身 <code>/hide</code></td><td>❌</td><td>❌</td><td>✅</td></tr>
-              <tr><td>拦截列表 / 控制台开关 / NBT 扫描 / 改密</td><td>❌</td><td>❌</td><td>✅</td></tr>
-            </tbody>
-          </table>
+          <table class="help-table perm-compare">
+              <thead>
+                <tr><th>能力</th><th>协管</th><th>管理员（非 Linux）</th><th>服主</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>功能封禁（禁言 / 禁移动 / 禁交互 / 全面）</td><td data-label="协管">✅</td><td data-label="管理员">✅</td><td data-label="服主">✅</td></tr>
+                <tr><td>举报处理（list / info / accept / reject）</td><td data-label="协管">✅</td><td data-label="管理员">✅</td><td data-label="服主">✅</td></tr>
+                <tr><td><code>/linux checkop</code>（身份自检）</td><td data-label="协管">✅</td><td data-label="管理员">✅</td><td data-label="服主">✅</td></tr>
+                <tr><td>账号封禁 <code>/ban</code> <code>/tempban</code></td><td data-label="协管">❌</td><td data-label="管理员">✅</td><td data-label="服主">✅</td></tr>
+                <tr><td>IP 封禁 <code>/banip</code></td><td data-label="协管">❌</td><td data-label="管理员">✅</td><td data-label="服主">✅</td></tr>
+                <tr><td>解封 <code>/unban</code> <code>/unbanip</code></td><td data-label="协管">❌</td><td data-label="管理员">✅</td><td data-label="服主">✅</td></tr>
+                <tr><td>封禁列表 <code>/banlist</code></td><td data-label="协管">❌</td><td data-label="管理员">✅</td><td data-label="服主">✅</td></tr>
+                <tr><td>封禁历史 / 清除历史</td><td data-label="协管">❌</td><td data-label="管理员">✅</td><td data-label="服主">✅</td></tr>
+                <tr><td>查询 <code>/linux lookup</code> <code>seenip</code></td><td data-label="协管">❌</td><td data-label="管理员">✅</td><td data-label="服主">✅</td></tr>
+                <tr><td>举报清理 <code>report clear</code></td><td data-label="协管">❌</td><td data-label="管理员">✅</td><td data-label="服主">✅</td></tr>
+                <tr><td>重载配置 / 审计日志 / 状态总览</td><td data-label="协管">❌</td><td data-label="管理员">✅</td><td data-label="服主">✅</td></tr>
+                <tr><td>隐身 <code>/hide</code></td><td data-label="协管">❌</td><td data-label="管理员">❌</td><td data-label="服主">✅</td></tr>
+                <tr><td>拦截列表 / 控制台开关 / NBT 扫描 / 改密</td><td data-label="协管">❌</td><td data-label="管理员">❌</td><td data-label="服主">✅</td></tr>
+              </tbody>
+            </table>
         </div>
         <p style="color:var(--text-secondary);font-size:.92rem;">
           简言之：<strong>协管只能"限制功能"，管理员可以真正"封号"</strong>；
@@ -1969,9 +2027,8 @@
           </div>
         </div>
     </section>
-
     <section class="help-section" id="config">
-      <h2><span class="num">6</span>配置说明</h2>
+      <h2><span class="num">7</span>配置说明</h2>
 
       <p>所有配置都在 <code>plugins/InTheNameOfLinux/config.yml</code>，修改后执行 <code>/linux reload</code> 即可生效（无需重启）。</p>
 
@@ -2042,10 +2099,76 @@
           这两行由插件自动生成。如果修改错误，会导致无法登录。想重置密码，删掉这两行的值（改成 <code>""</code>），重启后会自动重置为 <code>password</code>。
         </div>
       </div>
+      <h3 id="config-ref">完整配置参考</h3>
+      <p>下表列出 <code>config.yml</code> 里的<strong>全部配置项</strong>与默认值，按插件里的顺序排列。缺项会在启动时自动补齐，已有项不会被覆盖。</p>
+      <div class="table-scroll">
+      <table class="help-table">
+      <thead>
+      <tr><th>配置项</th><th>默认值</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+      <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>保护对象与基础</strong></td></tr>
+      <tr><td><code>protected-player</code></td><td>Linux582021</td><td>重点保护的玩家名（服主本人）。他会获得本插件全部权限节点；其他人对他执行命令会被拦截并双向通知。填错会导致"服主自己反被限制"，请填准。</td></tr>
+      <tr><td><code>blocked-player</code></td><td>fs1</td><td>另一个受保护的玩家名。任何<strong>其他</strong>玩家在命令里提到这个名字都会被拦下，并通知双方（按独立参数匹配，<code>/msg fs1x</code> 不会误拦）。留空 = 关闭该项保护。</td></tr>
+      <tr><td><code>appeal-group</code></td><td>925200745</td><td>申诉群号，显示在封禁踢出提示里，让被封玩家知道去哪申诉。</td></tr>
+      <tr><td><code>broadcast-ban</code></td><td>true</td><td>执行封禁时是否<strong>全服广播</strong>。设为 <code>false</code> 则只广播给管理员。</td></tr>
+      <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>命令拦截</strong></td></tr>
+      <tr><td><code>blocked-commands</code></td><td>xlcore ban, xlcore kick, ban, banip, kick, tempban, linux ban, xlban</td><td>拦截命令列表。普通玩家执行列表里的命令会被拦下；保护对象与 blocked-player 本人不受限。两种写法：<code>ban</code>（只匹配命令名）、<code>xlcore ban</code>（带空格 = 匹配整行文字）。</td></tr>
+      <tr><td><code>refuse-enabled</code></td><td>true</td><td>上面那个拦截列表的<strong>总开关</strong>。关掉后普通玩家也能随意执行列表里的命令，请谨慎。</td></tr>
+      <tr><td><code>console-cmd-enabled</code></td><td>true</td><td>控制台 / Rcon 发出的、提到 blocked-player 的命令是否也拦截。<strong>与登录态无关</strong> —— 服主不在线时照样拦。</td></tr>
+      <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>提醒与定时任务</strong></td></tr>
+      <tr><td><code>tempban-reminder.enabled</code></td><td>true</td><td>临时封禁即将到期时，是否全服提醒。</td></tr>
+      <tr><td><code>tempban-reminder.advance-seconds</code></td><td>60</td><td>提前多少秒提醒。注意：该提醒任务在服务器重启后会自动重建，不会丢失。</td></tr>
+      <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>命令接管与权限</strong></td></tr>
+      <tr><td><code>command-takeover</code></td><td>true</td><td>是否把被其他插件占用的纯名命令<strong>抢回本插件</strong>。Bukkit 的命令名是"谁先加载谁占有"，Essentials / AdvancedBan 等比本插件先加载的插件会占走 <code>/ban</code>、<code>/tempban</code> 等，导致本插件对它们的拦截<strong>实际不生效</strong>。（如果你的服用 Essentials 管封禁，可以关掉这项。）</td></tr>
+      <tr><td><code>command-takeover-exclude</code></td><td>[]</td><td>不抢这些插件的命令（按 <code>plugin.yml</code> 里的 <code>name</code> 匹配，忽略大小写）。例：想让 Essentials 保留 <code>/ban</code> 就填 <code>[Essentials]</code>。</td></tr>
+      <tr><td><code>owner-force-permissions</code></td><td>true</td><td>保护对象上线时，强制授予本插件 <code>plugin.yml</code> 里声明的<strong>全部权限节点</strong>。即使权限插件漏配或有人剥夺节点，服主本人也一定能管理自己的插件（退出时自动移除）。</td></tr>
+      <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>fs1 保护（接管自 x1 插件）</strong></td></tr>
+      <tr><td><code>fs1-protection-takeover</code></td><td>true</td><td>是否接管 <code>x1</code> 插件（<code>FastMenu.jar</code>）的 fs1 保护。x1 会拦截<strong>任何</strong>提到 fs1 的命令（连本人与控制台都拦），开启后本插件会在运行时注销 x1 的监听器（<strong>不改不删 jar</strong>，重启即恢复），改由本插件承担保护：fs1 本人与服主放行，其他玩家照样拦。<strong>建议保持开启</strong>，否则我们的"放行"会被 x1 抢先取消而失效。</td></tr>
+      <tr><td><code>fs1-hide-join-message</code></td><td>true</td><td>是否隐藏 fs1 的进服提示（接管自 x1 原本的 <code>setJoinMessage(null)</code>）。</td></tr>
+      <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>数据同步与定时写盘</strong></td></tr>
+      <tr><td><code>penalty-sync.enabled</code></td><td>true</td><td>是否开启功能封禁记录的定时同步。</td></tr>
+      <tr><td><code>penalty-sync.interval-seconds</code></td><td>60</td><td>内存缓存与 penalty.yml 对齐的间隔（秒）。</td></tr>
+      <tr><td><code>data-save.interval-seconds</code></td><td>30</td><td>数据文件批量写盘的间隔（秒）。设为 <code>0</code> = 每次改动立即写盘（更安全但更频繁）。</td></tr>
+      <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>假人插件联动</strong></td></tr>
+      <tr><td><code>fakeplayer.info-class</code></td><td>example.fakeplayer.FakePlayerInfo</td><td>假人插件里保存假人信息的类名。<strong>一般不用改。</strong></td></tr>
+      <tr><td><code>fakeplayer.init-delay-seconds</code></td><td>20</td><td>插件启动后延迟多久初始化假人联动（秒）。给假人插件留加载时间。</td></tr>
+      <tr><td><code>fakeplayer.sync-interval-seconds</code></td><td>60</td><td>假人列表同步间隔（秒）。</td></tr>
+      <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>登录验证</strong></td></tr>
+      <tr><td><code>login.password-salt</code></td><td>&quot;&quot;</td><td><strong>不要手改。</strong>密码的随机盐，首次运行自动生成。</td></tr>
+      <tr><td><code>login.password-hash</code></td><td>&quot;&quot;</td><td><strong>不要手改。</strong>密码哈希（PBKDF2-HMAC-SHA256 · 12 万次迭代）。想重置密码就删掉这两项的值，重启后会自动生成新初始密码并打印到控制台。</td></tr>
+      <tr><td><code>login.min-length</code></td><td>6</td><td>新密码的最短长度。</td></tr>
+      <tr><td><code>login.fail-delay-seconds</code></td><td>3</td><td>密码输错后的等待时间（秒）。</td></tr>
+      <tr><td><code>login.max-fails</code></td><td>5</td><td>连续输错几次后锁定账号。</td></tr>
+      <tr><td><code>login.lockout-seconds</code></td><td>300</td><td>锁定时长（秒）。默认 5 分钟。</td></tr>
+      <tr><td><code>login.timeout-seconds</code></td><td>90</td><td>进服后多久没完成验证就踢出（秒）。想宽松点就调大。</td></tr>
+      <tr><td><code>login.lockout-until</code></td><td>0</td><td><strong>运行时状态，不要手改。</strong>锁定截止时间戳，插件自己维护。</td></tr>
+      <tr><td><code>login.fail-count</code></td><td>0</td><td><strong>运行时状态，不要手改。</strong>当前连续失败次数。</td></tr>
+      <tr><td><code>login.last-fail-time</code></td><td>0</td><td><strong>运行时状态，不要手改。</strong>最后一次失败的时间戳。</td></tr>
+      <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>协管</strong></td></tr>
+      <tr><td><code>moderator.enabled</code></td><td>true</td><td>是否启用协管体系。关闭后没有人会被识别为协管。</td></tr>
+      <tr><td><code>moderator.max-duration-days</code></td><td>7</td><td>协管能执行的<strong>最长封禁时长</strong>（天）。防止协管滥用长期封禁；协管不能执行永久封禁。</td></tr>
+      <tr><td><code>moderator.fallback-permission</code></td><td>inthenameoflinux.moderator</td><td>协管权限节点。XlandCore 未加载、或 XlandCore 没给身份时的回退判定依据。</td></tr>
+      <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>非法 NBT 检测</strong></td></tr>
+      <tr><td><code>nbt.enabled</code></td><td>true</td><td>非法 NBT 物品检测的<strong>总开关</strong>。</td></tr>
+      <tr><td><code>nbt.scan-seconds</code></td><td>20</td><td>周期扫描间隔（秒）。<strong>设为 0 = 关闭周期扫描</strong>，仍可用 <code>/linux nbtview</code> 手动扫一次。</td></tr>
+      <tr><td><code>nbt.exempt-players</code></td><td>&quot;&quot;</td><td>豁免玩家（逗号分隔，大小写不敏感）。留空 = <strong>所有人（含 op）都会被检查</strong>。<strong>op 不会自动豁免</strong> —— 需要豁免谁就把名字写进来。</td></tr>
+      <tr><td><code>nbt.exempt-worlds</code></td><td>&quot;&quot;</td><td>豁免世界（逗号分隔）：这些世界里<strong>跳过物品检测</strong>。用于兼容会给道具加自定义属性的自定义世界。</td></tr>
+      <tr><td><code>nbt.skip-charms</code></td><td>true</td><td>跳过带饰品标记（lore 里的 <code>#pscharm:</code>）的物品，避免误删玩家花点卷买的饰品。建议保持开启。</td></tr>
+      <tr><td><code>nbt.compress-resistance</code></td><td>true</td><td>把抗性提升等级 ≥ 4 压回 3 级（原 BanNbt 的行为）。只在<strong>非豁免世界</strong>生效。</td></tr>
+      <tr><td><code>nbt.max-enchant-level</code></td><td>20</td><td>附魔等级上限，超过即判定为非法并清除该物品。</td></tr>
+      <tr><td><code>nbt.max.attack-damage</code></td><td>50.0</td><td>属性修饰符 <code>generic.attackDamage</code> 的数值上限，超过即清除。</td></tr>
+      <tr><td><code>nbt.max.knockback-resistance</code></td><td>1.0</td><td>属性修饰符 <code>generic.knockbackResistance</code> 的数值上限，超过即清除。</td></tr>
+      <tr><td><code>nbt.max.max-health</code></td><td>10.0</td><td>属性修饰符 <code>generic.maxHealth</code> 的数值上限，超过即清除。</td></tr>
+      <tr><td><code>nbt.max.movement-speed</code></td><td>0.5</td><td>属性修饰符 <code>generic.movementSpeed</code> 的数值上限，超过即清除。</td></tr>
+      <tr><td><code>nbt.max.armor</code></td><td>30.0</td><td>属性修饰符 <code>generic.armor</code> 的数值上限，超过即清除。</td></tr>
+      <tr><td><code>nbt.max.armor-toughness</code></td><td>20.0</td><td>属性修饰符 <code>generic.armorToughness</code> 的数值上限，超过即清除。</td></tr>
+      </tbody>
+      </table>
+      </div>
     </section>
-
     <section class="help-section" id="nbt">
-      <h2><span class="num">7</span>非法 NBT 检测 <span class="badge badge-new">NEW</span></h2>
+      <h2><span class="num">8</span>非法 NBT 检测 <span class="badge badge-new">NEW</span></h2>
 
       <p>本功能<strong>由原独立插件 BanNbt 整体合并而来</strong>：现在只需装一个插件、维护一份配置，
          不必再单独摆放 <code>BanNbt.jar</code>。</p>
@@ -2103,9 +2226,8 @@
         </div>
       </div>
     </section>
-
     <section class="help-section" id="integration">
-      <h2><span class="num">8</span>插件联动</h2>
+      <h2><span class="num">9</span>插件联动</h2>
 
       <h3>XlandCore</h3>
       <p>用于读取玩家身份（服主 / 副服主 / 管理员 / 协管）。协管体系依赖此插件。</p>
@@ -2215,9 +2337,8 @@
         <li>执行 <code>/linux reload</code> 会重新检测。</li>
       </ul>
     </section>
-
     <section class="help-section" id="troubleshooting">
-      <h2><span class="num">9</span>故障排查</h2>
+      <h2><span class="num">10</span>故障排查</h2>
 
       <h3>问题：登录后仍然无法执行命令</h3>
       <ul class="steps">
@@ -2301,9 +2422,8 @@
         <li>如果仍然异常，删除 <code>plugins/InTheNameOfLinux/</code> 下的缓存文件（保留 config.yml）。</li>
       </ul>
     </section>
-
     <section class="help-section" id="faq">
-      <h2><span class="num">10</span>常见问题</h2>
+      <h2><span class="num">11</span>常见问题</h2>
 
       <div class="faq-item">
         <div class="faq-q">
@@ -2616,12 +2736,11 @@
         </div>
       </div>
     </section>
-
 <!-- ============================================================
      到期自动解除 vs 手动解除
      ============================================================ -->
 <section class="help-section" id="expiry">
-  <h2><span class="num">11</span>到期自动解除与手动解除</h2>
+  <h2><span class="num">12</span>到期自动解除与手动解除</h2>
 
   <p>两种解除方式对<strong>封禁记录</strong>的处理不同，这是本插件的一个明确设计。</p>
 
@@ -2658,9 +2777,8 @@
     </div>
   </div>
 </section>
-
     <section class="help-section" id="uninstall">
-      <h2><span class="num">12</span>卸载与备份</h2>
+      <h2><span class="num">13</span>卸载与备份</h2>
 
       <h3>备份</h3>
       <ol class="steps">
@@ -2693,118 +2811,6 @@
           直接替换 jar 文件即可，<strong>不需要删除数据目录</strong>。配置和数据会自动保留。
         </div>
       </div>
-    </section>
-
-    <section class="help-section" id="credits">
-      <h2><span class="num">13</span>感谢列表</h2>
-
-      <p>本插件的开发与维护离不开以下贡献者。</p>
-
-      <div class="table-scroll">
-        <table class="help-table">
-          <thead>
-            <tr><th>贡献者</th><th>身份</th><th>贡献</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Linux582021</strong></td>
-              <td><span class="badge badge-op">作者</span></td>
-              <td>插件作者与主要维护者：整体架构、封禁 / 举报 / 协管 / 保护体系、配置与文档</td>
-            </tr>
-            <tr>
-              <td><strong>星白喵喵</strong></td>
-              <td><span class="badge badge-op">作者</span></td>
-              <td><strong>提供 BanNbt 插件源码</strong>。其非法 NBT 检测逻辑已成为本插件的一部分，
-                  即 <code>/linux nbtview</code> 与周期扫描功能；
-                  检测阈值与判定规则依据其原始实现</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h3>关于非法 NBT 检测的来源</h3>
-      <p>该功能原本是一个独立插件 <code>BanNbt</code>，源码由 <strong>星白喵喵</strong> 提供。
-         现已<strong>整体合并进 InTheNameOfLinux</strong>，因此不再需要单独安装 <code>BanNbt.jar</code>。</p>
-      <ul class="steps">
-        <li><strong>沿用其原始实现</strong>：附魔等级上限、属性修饰符阈值（攻击力 / 击退抗性 / 最大生命 / 移动速度 / 护甲 / 护甲韧性）、抗性提升压缩规则。</li>
-        <li><strong>在此基础上补充</strong>：豁免玩家与世界配置化（不再硬编码名字）、饰品兼容（<code>#pscharm:</code> 标记）、悬浮详情播报、<code>/linux nbtview</code> 手动扫描。</li>
-      </ul>
-
-      <div class="tip tip-info">
-        <span class="tip-icon">💡</span>
-        <div class="tip-body">
-          <strong>插件内也能看到作者</strong>
-          执行 <code>/linux</code> 打开主页时，显示的作者列表直接读取 <code>plugin.yml</code>，
-          因此会同时显示 <strong>Linux582021</strong> 与 <strong>星白喵喵</strong>。
-        </div>
-      </div>
-
-        <h3 id="config-ref">完整配置参考</h3>
-        <p>下表列出 <code>config.yml</code> 里的<strong>全部配置项</strong>与默认值，按插件里的顺序排列。缺项会在启动时自动补齐，已有项不会被覆盖。</p>
-        <div class="table-scroll">
-          <table class="help-table">
-            <thead>
-              <tr><th>配置项</th><th>默认值</th><th>说明</th></tr>
-            </thead>
-            <tbody>
-            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>保护对象与基础</strong></td></tr>
-            <tr><td><code>protected-player</code></td><td>Linux582021</td><td></td></tr>
-            <tr><td><code>blocked-player</code></td><td>fs1</td><td></td></tr>
-            <tr><td><code>appeal-group</code></td><td>925200745</td><td></td></tr>
-            <tr><td><code>broadcast-ban</code></td><td>true</td><td></td></tr>
-            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>命令拦截</strong></td></tr>
-            <tr><td><code>blocked-commands</code></td><td>xlcore ban, xlcore kick, ban, banip, kick, tempban, linux ban, xlban</td><td></td></tr>
-            <tr><td><code>refuse-enabled</code></td><td>true</td><td></td></tr>
-            <tr><td><code>console-cmd-enabled</code></td><td>true</td><td></td></tr>
-            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>提醒与定时任务</strong></td></tr>
-            <tr><td><code>tempban-reminder.enabled</code></td><td>true</td><td></td></tr>
-            <tr><td><code>tempban-reminder.advance-seconds</code></td><td>60</td><td></td></tr>
-            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>命令接管与权限</strong></td></tr>
-            <tr><td><code>command-takeover</code></td><td>true</td><td></td></tr>
-            <tr><td><code>command-takeover-exclude</code></td><td>[]</td><td></td></tr>
-            <tr><td><code>owner-force-permissions</code></td><td>true</td><td></td></tr>
-            <tr><td><code>fs1-protection-takeover</code></td><td>true</td><td></td></tr>
-            <tr><td><code>fs1-hide-join-message</code></td><td>true</td><td></td></tr>
-            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>数据同步</strong></td></tr>
-            <tr><td><code>penalty-sync.enabled</code></td><td>true</td><td></td></tr>
-            <tr><td><code>penalty-sync.interval-seconds</code></td><td>60</td><td></td></tr>
-            <tr><td><code>data-save.interval-seconds</code></td><td>30</td><td></td></tr>
-            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>假人插件联动</strong></td></tr>
-            <tr><td><code>fakeplayer.info-class</code></td><td>example.fakeplayer.FakePlayerInfo</td><td></td></tr>
-            <tr><td><code>fakeplayer.init-delay-seconds</code></td><td>20</td><td></td></tr>
-            <tr><td><code>fakeplayer.sync-interval-seconds</code></td><td>60</td><td></td></tr>
-            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>登录验证</strong></td></tr>
-            <tr><td><code>login.password-salt</code></td><td>""</td><td></td></tr>
-            <tr><td><code>login.password-hash</code></td><td>""</td><td></td></tr>
-            <tr><td><code>login.min-length</code></td><td>6</td><td></td></tr>
-            <tr><td><code>login.fail-delay-seconds</code></td><td>3</td><td></td></tr>
-            <tr><td><code>login.max-fails</code></td><td>5</td><td></td></tr>
-            <tr><td><code>login.lockout-seconds</code></td><td>300</td><td></td></tr>
-            <tr><td><code>login.timeout-seconds</code></td><td>90</td><td></td></tr>
-            <tr><td><code>login.lockout-until</code></td><td>0</td><td></td></tr>
-            <tr><td><code>login.fail-count</code></td><td>0</td><td></td></tr>
-            <tr><td><code>login.last-fail-time</code></td><td>0</td><td></td></tr>
-            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>协管</strong></td></tr>
-            <tr><td><code>moderator.enabled</code></td><td>true</td><td></td></tr>
-            <tr><td><code>moderator.max-duration-days</code></td><td>7</td><td></td></tr>
-            <tr><td><code>moderator.fallback-permission</code></td><td>inthenameoflinux.moderator</td><td></td></tr>
-            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>非法 NBT 检测</strong></td></tr>
-            <tr><td><code>nbt.enabled</code></td><td>true</td><td></td></tr>
-            <tr><td><code>nbt.scan-seconds</code></td><td>20</td><td></td></tr>
-            <tr><td><code>nbt.exempt-players</code></td><td>""</td><td></td></tr>
-            <tr><td><code>nbt.exempt-worlds</code></td><td>""</td><td></td></tr>
-            <tr><td><code>nbt.skip-charms</code></td><td>true</td><td></td></tr>
-            <tr><td><code>nbt.compress-resistance</code></td><td>true</td><td></td></tr>
-            <tr><td><code>nbt.max-enchant-level</code></td><td>20</td><td></td></tr>
-            <tr><td><code>nbt.max.attack-damage</code></td><td>50.0</td><td></td></tr>
-            <tr><td><code>nbt.max.knockback-resistance</code></td><td>1.0</td><td></td></tr>
-            <tr><td><code>nbt.max.max-health</code></td><td>10.0</td><td></td></tr>
-            <tr><td><code>nbt.max.movement-speed</code></td><td>0.5</td><td></td></tr>
-            <tr><td><code>nbt.max.armor</code></td><td>30.0</td><td></td></tr>
-            <tr><td><code>nbt.max.armor-toughness</code></td><td>20.0</td><td></td></tr>
-            </tbody>
-          </table>
-        </div>
     </section>
 
   </main>
