@@ -1121,7 +1121,7 @@ font-size: 18px;
 display: grid;
     grid-template-columns: 220px minmax(0, 1fr);
     gap: 48px;
-    padding: 40px 0 100px;
+    padding: 40px 24px 100px;
 }
 
 .sidebar {
@@ -1552,7 +1552,7 @@ color: var(--code-keyword);
 
   .content-layout {
   display: block;
-        padding: 16px 0 60px;
+        padding: 16px 24px 60px;
   }
   .sidebar-title {
   display: none;
@@ -2402,14 +2402,15 @@ color: var(--code-keyword);
   .bg-video {
     display: none;
 
-    /* 封面之外的内容区需要遮住固定背景，否则滚动时图片透在文字下。
-       这层随页面滚动（不是 fixed），从封面底部开始往下铺。 */
+    /* hero 之外的内容区要遮住固定背景，否则滚动时图片透在文字下。
+       这层随页面滚动（不是 fixed），从 hero 底部开始往下铺。
+       —— 与主页同一套做法，只是把「封面高度」换成「各自 hero 高度」。 */
     body::before {
       content: '';
       position: absolute;
       left: 0;
       right: 0;
-      top: min(100vw * 1920 / 1080, 100vh);
+      top: max(min(100vw * 1920 / 1080, 100vh), 58vh);
       bottom: 0;
       background: var(--bg);
       z-index: -1;
@@ -2446,7 +2447,9 @@ color: var(--code-keyword);
   /* 手机端背景：用一个「固定层」承载 mobile.jpg，
          与桌面端的 .bg-video 行为一致 —— 背景不动、文字滚动。
          ::before 用 position: fixed 钉在视口，按图片比例完整显示。 */
-  .cover::before {
+  .cover::before,
+  .hero::before,
+  .page-hero::before {
     content: '';
     position: fixed;
     top: 0;
@@ -2596,7 +2599,7 @@ color: var(--code-keyword);
   /* 只保留左侧目录栏 + 正文（右侧「本页目录」已去掉） */
   grid-template-columns: 248px minmax(0, 1fr);
   gap: 48px;
-  padding: 40px 0 100px;
+  padding: 40px 24px 100px;
   align-items: start;
 }
 
@@ -2795,7 +2798,9 @@ color: var(--code-keyword);
   .content-layout,
   .content-layout.no-toc {
     display: block;
-    padding: 16px 0 60px;
+    /* 这个元素同时有 .container 类，左右 24px 内边距必须保留，
+       否则表格卡片会贴住屏幕边缘。 */
+    padding: 16px 24px 60px;
   }
 
   .sidebar-title {
@@ -3723,6 +3728,131 @@ color: var(--code-keyword);
   border-color: var(--blue);
 }
 
+/* ============================================================
+   全站背景（照搬主页）：视频 / mobile.jpg 固定在底层
+   ============================================================
+   主页是深色文字压在视频上（封面区），但正文很长，
+   深色字压在浅色画面上读不清 —— 所以正文加一层浅玻璃底，
+   视频在上面留一点可见度。hero 区保持透明。
+   ============================================================ */
+.hero,
+.page-hero {
+  position: relative;
+}
+
+/* 正文各容器：浅玻璃底 */
+#plugins,
+#about,
+.main-content,
+.intro-wrap,
+.overview,
+.help-section,
+.help-hub-grid {
+  position: relative;
+}
+
+@media (max-width: 920px) {
+  /* 各页面 hero 高度不同，背景层按图片比例完整显示 */
+  .hero::before,
+  .page-hero::before {
+    background-attachment: fixed;
+  }
+
+}
+
+/* ============================================================
+   介绍页的封面：结构与主页一致，但不占满整屏
+   ============================================================ */
+.cover-page {
+  min-height: auto;
+  padding: 132px 24px 72px;
+}
+
+.cover-page .cover-title {
+  font-size: clamp(30px, 5vw, 46px);
+}
+
+.cover-page .cover-quote {
+  margin-bottom: 26px;
+}
+
+/* 介绍页的封面按钮用主页那套胶囊 */
+.cover-page .cover-btn {
+  display: inline-block;
+  padding: 10px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 20px;
+  background: rgba(20, 20, 20, 0.4);
+  color: #fff;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.cover-page .cover-btn:hover {
+  background: var(--blue);
+  border-color: var(--blue);
+}
+
+@media (max-width: 920px) {
+  .cover-page {
+    padding: 96px 20px 56px;
+  }
+}
+
+/* ============================================================
+   插件帮助页：正文纯白（不要玻璃、不要视频透底）
+   ============================================================
+   注意：顶栏（nav）与汉堡菜单（.nav-links）保持液态玻璃，不在此列。
+   linuxhelp.html（综合帮助）整体跟主页一样用玻璃，也不在此列。
+   ============================================================ */
+body.pure-white {
+  background: #fff;
+}
+
+/* 正文里所有玻璃控件改成实白 */
+body.pure-white .help-table,
+body.pure-white .help-table tr,
+body.pure-white .help-table td,
+body.pure-white .table-wrap,
+body.pure-white .table-scroll,
+body.pure-white .faq-item,
+body.pure-white .tip,
+body.pure-white .sidebar,
+body.pure-white .sidebar a,
+body.pure-white .card,
+body.pure-white .btn,
+body.pure-white .hero-btn {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+body.pure-white .help-section,
+body.pure-white .main-content,
+body.pure-white .content-layout {
+  background: #fff;
+}
+
+/* 手机端胶囊目录：纯白底 */
+@media (max-width: 920px) {
+  body.pure-white .sidebar {
+    background: #fff;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  body.pure-white .sidebar a {
+    background: #fff;
+    border: 1px solid var(--border-light);
+  }
+
+  body.pure-white .sidebar a.active {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+  }
+
+}
+
 /* ---- 减少动态效果：保留视频，只关动画 ---- */
 @media (prefers-reduced-motion: reduce) {
   /* 注意：.reveal 的入场动画保留 —— 去掉它会让页面看起来没有动画。
@@ -3749,7 +3879,9 @@ color: var(--code-keyword);
   .content-layout,
   .content-layout.no-toc {
     display: block;
-    padding: 16px 0 60px;
+    /* 这个元素同时有 .container 类，左右 24px 内边距必须保留，
+       否则表格卡片会贴住屏幕边缘。 */
+    padding: 16px 24px 60px;
   }
 
   .sidebar {
@@ -3770,21 +3902,15 @@ color: var(--code-keyword);
     display: none;
   }
 
-  /* 横排一行，超出横向滑动 */
+  /* 自动换行：窄屏也能一次看全，不用横向滑动 */
   .sidebar ul {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 8px;
     align-items: center;
-    padding: 0 16px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-
-  .sidebar ul::-webkit-scrollbar {
-    display: none;
+    /* 左右留白由 .sidebar 提供（24px），这里不能再加，否则叠加成 48px */
+    padding: 0;
+    overflow: visible;
   }
 
   .sidebar li {

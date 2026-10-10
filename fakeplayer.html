@@ -6,11 +6,14 @@
 <title>FakePlayerPlugin · 假人插件</title>
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="apple-touch-icon" href="icon.svg">
-<link rel="stylesheet" href="style.css?v=a85d2672">
+<link rel="stylesheet" href="style.css?v=5a1499b7">
 </head>
 <body>
 
-<nav>
+<video class="bg-video" id="bgVideo" loop muted playsinline
+       preload="none" aria-hidden="true" poster="mobile.jpg"></video>
+
+<nav class="nav-home">
   <div class="container nav-inner">
     <a href="index.html" class="nav-logo">
       <span class="nav-logo-icon">L</span>
@@ -44,17 +47,34 @@
   </div>
 </nav>
 
-<section class="page-hero">
-  <div class="container">
+<header class="cover cover-page has-video">
+  <div class="cover-overlay"></div>
+
+  <div class="cover-inner">
     <span class="plug-hero-ver">v26.11.2 · Paper 1.12.2</span>
-    <h1>让假人替你<strong>留在服务器里</strong></h1>
-    <p>用假人占住挂机位 —— 保持在线、维持区块加载，刷怪塔和农场照常运转，本体不用一直开着。</p>
-    <div class="hero-buttons">
-      <a href="fakeplayerhelp.html" class="btn btn-primary">查看使用帮助</a>
-      <a href="#features" class="btn btn-secondary">了解功能</a>
+
+    <h1 class="cover-title">FakePlayerPlugin</h1>
+    <p class="cover-subtitle">FAKE PLAYER</p>
+
+    <hr class="cover-divider">
+
+    <p class="cover-quote">
+      用假人占住挂机位
+      <br>
+      <strong>保持在线 · 维持区块加载</strong>
+    </p>
+
+    <div class="cover-nav">
+        <a href="fakeplayerhelp.html" class="cover-btn">查看使用帮助</a>
+        <a href="#features" class="cover-btn">了解功能</a>
+        <a href="linuxhelp.html" class="cover-btn">综合帮助中心</a>
+    </div>
+
+    <div class="cover-remark">
+      <p><strong>1</strong> 条命令创建 · AuthMe 兼容 · 区块强制加载</p>
     </div>
   </div>
-</section>
+</header>
 
 <!-- ── 一句话说明 ─────────────────────────────────────── -->
 <section id="what">
@@ -263,6 +283,30 @@
 </footer>
 
 <script>
+    // 背景视频：只在宽屏加载（与主页一致）
+    (function () {
+      var v = document.getElementById('bgVideo');
+      if (!v) return;
+      var mq = window.matchMedia('(min-width: 921px)');
+      function apply() {
+        if (mq.matches) {
+          if (!v.getAttribute('src')) {
+            v.setAttribute('src', 'video.mp4');
+            v.load();
+            var pr = v.play();
+            if (pr && pr.catch) { pr.catch(function () {}); }
+          }
+        } else {
+          try { v.pause(); } catch (e) {}
+          v.removeAttribute('src');
+          try { v.load(); } catch (e) {}
+        }
+      }
+      apply();
+      if (mq.addEventListener) { mq.addEventListener('change', apply); }
+      else if (mq.addListener) { mq.addListener(apply); }
+    })();
+
   // 滚动淡入
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {

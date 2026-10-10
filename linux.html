@@ -6,14 +6,17 @@
 <title>InTheNameOfLinux · 服务器管理插件</title>
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="apple-touch-icon" href="icon.svg">
-<link rel="stylesheet" href="style.css?v=a85d2672">
+<link rel="stylesheet" href="style.css?v=5a1499b7">
 </head>
 <body>
+
+<video class="bg-video" id="bgVideo" loop muted playsinline
+       preload="none" aria-hidden="true" poster="mobile.jpg"></video>
 
 <!-- ============================================================
      导航
      ============================================================ -->
-<nav>
+<nav class="nav-home">
   <div class="container nav-inner">
     <a href="index.html" class="nav-logo">
       <span class="nav-logo-icon">L</span>
@@ -57,18 +60,34 @@
 <!-- ============================================================
      Hero
      ============================================================ -->
-<section class="hero">
-  <div class="container">
-    <span class="hero-badge">v26.11.4正式版 · Paper 1.12.2</span>
-    <h1>InTheNameOfLinux</h1>
-    <p class="hero-sub">一个插件管完服务器的<strong>安全与秩序</strong></p>
-    <div class="hero-buttons">
-      <a href="linuxpluginhelp.html" class="btn btn-primary">插件帮助</a>
-      <a href="#features" class="btn btn-secondary">查看功能</a>
-      <a href="linuxhelp.html" class="btn btn-secondary">综合帮助中心</a>
+<header class="cover cover-page has-video">
+  <div class="cover-overlay"></div>
+
+  <div class="cover-inner">
+    <span class="plug-hero-ver">v26.11.4正式版 · Paper 1.12.2</span>
+
+    <h1 class="cover-title">InTheNameOfLinux</h1>
+    <p class="cover-subtitle">SERVER MANAGEMENT</p>
+
+    <hr class="cover-divider">
+
+    <p class="cover-quote">
+      以 Linux 之名，守护你的服务器
+      <br>
+      <strong>身份验证 · 封禁 · 举报 · 协管</strong>
+    </p>
+
+    <div class="cover-nav">
+        <a href="linuxpluginhelp.html" class="cover-btn">插件帮助</a>
+        <a href="#features" class="cover-btn">查看功能</a>
+        <a href="linuxhelp.html" class="cover-btn">综合帮助中心</a>
+    </div>
+
+    <div class="cover-remark">
+      <p><strong>8</strong> 大模块 · 28 条子命令 · 24 个权限节点</p>
     </div>
   </div>
-</section>
+</header>
 
 <!-- ── 数字条 ─────────────────────────────────────────── -->
 <section id="overview">
@@ -613,6 +632,30 @@
      脚本
      ============================================================ -->
 <script>
+    // 背景视频：只在宽屏加载（与主页一致）
+    (function () {
+      var v = document.getElementById('bgVideo');
+      if (!v) return;
+      var mq = window.matchMedia('(min-width: 921px)');
+      function apply() {
+        if (mq.matches) {
+          if (!v.getAttribute('src')) {
+            v.setAttribute('src', 'video.mp4');
+            v.load();
+            var pr = v.play();
+            if (pr && pr.catch) { pr.catch(function () {}); }
+          }
+        } else {
+          try { v.pause(); } catch (e) {}
+          v.removeAttribute('src');
+          try { v.load(); } catch (e) {}
+        }
+      }
+      apply();
+      if (mq.addEventListener) { mq.addEventListener('change', apply); }
+      else if (mq.addListener) { mq.addListener(apply); }
+    })();
+
   // 滚动淡入
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
