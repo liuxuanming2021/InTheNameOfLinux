@@ -1541,52 +1541,8 @@ color: var(--code-keyword);
   display: block;
         padding: 16px 0 60px;
   }
-  .sidebar {
-  position: sticky;
-        top: 60px;
-        z-index: 10;
-        max-height: none;
-        overflow: visible;
-        background: rgba(255, 255, 255, 0.96);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        margin: 0 0 16px;
-        padding: 10px 0;
-        border-bottom: 1px solid var(--border-light);
-  }
   .sidebar-title {
   display: none;
-  }
-  .sidebar ul {
-  display: flex;
-        gap: 8px;
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        padding-bottom: 4px;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-  }
-  .sidebar ul::-webkit-scrollbar {
-  display: none;
-  }
-  .sidebar li {
-  margin-bottom: 0;
-        flex-shrink: 0;
-  }
-  .sidebar a {
-  display: block;
-        padding: 8px 14px;
-        font-size: 14px;
-        white-space: nowrap;
-        border-radius: 999px;
-        border-left: none;
-        background: var(--bg-secondary);
-        color: var(--text-secondary);
-  }
-  .sidebar a.active {
-  background: var(--blue);
-        color: #fff;
-        font-weight: 500;
   }
   .page-hero {
   padding: 90px 0 16px;
@@ -1781,13 +1737,6 @@ color: var(--code-keyword);
   }
   .help-section p {
   font-size: 15px;
-  }
-  .sidebar {
-        padding: 10px 0;
-  }
-  .sidebar a {
-  font-size: 13px;
-        padding: 7px 12px;
   }
   .table-scroll {
   margin: 12px 0;
@@ -2826,74 +2775,9 @@ color: var(--code-keyword);
     padding: 16px 0 60px;
   }
 
-  /* 抽屉式侧栏 */
-  .sidebar {
-    position: fixed;
-    top: 52px;
-    left: 0;
-    bottom: 0;
-    width: min(78vw, 300px);
-    max-height: none;
-    padding: 14px 16px 40px;
-    background: rgba(255, 255, 255, 0.82);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    backdrop-filter: blur(24px) saturate(180%);
-    border-right: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 8px 0 32px rgba(15, 25, 35, 0.12);
-    transform: translateX(-102%);
-    transition: transform .28s cubic-bezier(.22, 1, .36, 1);
-    z-index: 940;
-    overflow-y: auto;
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-  }
-
   .sidebar-title {
     display: block;
     margin-bottom: 10px;
-  }
-
-  /* 抽屉里恢复纵向列表（原本是横向胶囊） */
-  .sidebar ul {
-    display: block;
-    overflow-x: visible;
-    padding-bottom: 0;
-  }
-
-  .sidebar li {
-    margin-bottom: 1px;
-    flex-shrink: 1;
-  }
-
-  .sidebar a {
-    padding: 9px 12px;
-    border-radius: 0 8px 8px 0;
-    font-size: 14px;
-    white-space: normal;
-  }
-
-  .sidebar a.active {
-    background: var(--blue-light);
-  }
-
-  /* 抽屉遮罩 */
-  .sidebar-backdrop {
-    position: fixed;
-    inset: 52px 0 0 0;
-    background: rgba(15, 25, 35, 0.32);
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .28s ease;
-    z-index: 935;
-  }
-
-  .sidebar-backdrop.open {
-    opacity: 1;
-    pointer-events: auto;
   }
 
   .page-toc {
@@ -3797,3 +3681,10 @@ color: var(--code-keyword);
   }
 }
 
+/* 帮助页侧栏：手机端不显示（目录已由顶栏下方的横滑项承担） */
+@media (max-width: 920px) {
+  .sidebar,
+  .sidebar-backdrop {
+    display: none !important;
+  }
+}
