@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>帮助 · LinuxTitle</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* 本页专属微调 */
+  .plug-hero-ver {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 4px 12px;
+      border-radius: 980px;
+      background: var(--blue-light);
+      color: var(--blue);
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="title.html">LinuxTitle 介绍</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          Nalxer 服务器
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="plug-hero-ver">v26.11.2</span>
+    <h1>LinuxTitle 帮助中心</h1>
+    <p>命令详解、解锁条件、节日活动与常见问题</p>
+  </div>
+</section>
+
+<div class="container content-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-title">目录</div>
+    <ul>
+      <li><a href="#quickstart" class="active">快速开始</a></li>
+      <li><a href="#commands">命令详解</a></li>
+      <li><a href="#unlock">解锁条件</a></li>
+      <li><a href="#festival">节日活动</a></li>
+      <li><a href="#config">配置说明</a></li>
+      <li><a href="#permissions">权限节点</a></li>
+      <li><a href="#faq">常见问题</a></li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+
+<section class="help-section" id="quickstart">
+    <h2><span class="num">1</span>快速开始</h2>
+
+      <p>LinuxTitle 是一个<strong>自动解锁</strong>的头衔插件：玩家不需要申请，
+         只要满足条件就会自动获得对应头衔。获得后可以自由切换显示或关闭。</p>
+
+      <h3>三步上手</h3>
+      <ol class="steps">
+        <li>把 <code>LinuxTitle.jar</code> 放入 <code>plugins/</code> 目录并重启服务器。</li>
+        <li>编辑 <code>plugins/LinuxTitle/titles.yml</code>，按需调整头衔名称与解锁条件。</li>
+        <li>执行 <code>/title reload</code> 让配置生效，玩家即可用 <code>/title list</code> 查看头衔。</li>
+      </ol>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>可选依赖</strong>
+          装了 <code>PlaceholderAPI</code> 的话，头衔可以用于其它插件的变量显示；
+          没装也能正常运行，只是变量不可用。
+        </div>
+      </div>
+    
+  </section>
+
+<section class="help-section" id="commands">
+    <h2><span class="num">2</span>命令详解</h2>
+
+      <h3>玩家命令</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>命令</th><th>说明</th><th>权限</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/title help [页码]</code></td><td>显示帮助菜单，按身份展示不同目录，可点击翻页</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/title list [页码]</code></td><td>列出全部头衔，并标出自己哪些已解锁</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/title use &lt;头衔ID&gt;</code></td><td>使用指定头衔（必须是已解锁的）</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/title off</code></td><td>关闭头衔显示</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/title info &lt;头衔ID&gt;</code></td><td>查看某个头衔的解锁条件与说明</td><td><span class="badge badge-op">所有人</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>管理员命令</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>命令</th><th>说明</th><th>权限</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/title give &lt;玩家&gt; &lt;头衔ID&gt;</code></td><td>手动授予玩家头衔（无视解锁条件）</td><td><span class="badge badge-op">linuxtitle.admin</span></td></tr>
+            <tr><td><code>/title revoke &lt;玩家&gt; &lt;头衔ID&gt;</code></td><td>收回玩家已获得的头衔</td><td><span class="badge badge-op">linuxtitle.admin</span></td></tr>
+            <tr><td><code>/title check [玩家]</code></td><td>立即复查解锁条件（不填玩家则查全体在线）</td><td><span class="badge badge-op">linuxtitle.admin</span></td></tr>
+            <tr><td><code>/title reload</code></td><td>重载 <code>config.yml</code> 与 <code>titles.yml</code></td><td><span class="badge badge-op">linuxtitle.admin</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>命令别名</strong>
+          <code>/title</code> 也可以用 <code>/titles</code> 或 <code>/lt</code> 代替，效果完全相同。
+        </div>
+      </div>
+    
+  </section>
+
+<section class="help-section" id="unlock">
+    <h2><span class="num">3</span>解锁条件</h2>
+
+      <p>头衔按 <strong>解锁方式</strong> 分为六类，全部配置在 <code>titles.yml</code> 里。</p>
+
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>解锁类型</th><th>判定依据</th><th>例子</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>first_join</code></td><td>首次进入服务器</td><td>新人</td></tr>
+            <tr><td><code>playtime</code></td><td>累计游玩时长达到阈值</td><td>常驻 / 元老</td></tr>
+            <tr><td><code>statistic</code></td><td>某项原版统计达标（击杀 / 挖掘 / 死亡等）</td><td>PVP 之王 / 矿工</td></tr>
+            <tr><td><code>daily_playtime</code></td><td>当日在线时长达到阈值</td><td>每日活跃 / 每日传奇</td></tr>
+            <tr><td><code>festival</code></td><td>处于指定节日期间</td><td>春节 / 中秋</td></tr>
+            <tr><td><code>manual</code></td><td>只能由管理员 <code>/title give</code> 授予</td><td>赞助者 / 自定义头衔</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>怎么改解锁阈值</h3>
+      <p>打开 <code>plugins/LinuxTitle/titles.yml</code>，找到对应头衔，修改
+         <code>condition-value</code> 即可。例如把「常驻」改成需要 10 小时：</p>
+      <div class="code-block">
+        <div>resident:</div>
+        <div>  name: "&amp;a常驻"</div>
+        <div>  type: playtime</div>
+        <div>  condition-value: 36000000   <span class="comment"># 毫秒，10 小时</span></div>
+      </div>
+      <p>改完执行 <code>/title reload</code> 生效。<strong>时长一律用毫秒</strong>，
+         <code>3600000</code> = 1 小时。</p>
+    
+  </section>
+
+<section class="help-section" id="festival">
+    <h2><span class="num">4</span>节日活动</h2>
+
+      <p>插件内置<strong>农历换算</strong>，春节、端午、中秋会按当年农历日期自动开放，
+         不需要每年手动改日期。</p>
+
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>节日</th><th>类型</th><th>默认时间</th><th>持续</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>元旦</td><td>公历</td><td>12-30 ~ 01-02</td><td>跨年</td></tr>
+            <tr><td>春节</td><td>农历</td><td>正月初一</td><td>10 天</td></tr>
+            <tr><td>端午节</td><td>农历</td><td>五月初五</td><td>6 天</td></tr>
+            <tr><td>中秋节</td><td>农历</td><td>八月十五</td><td>6 天</td></tr>
+            <tr><td>国庆节</td><td>公历</td><td>09-30 ~ 10-07</td><td>8 天</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div><span class="comment"># 农历节日：填农历月、日，插件自动换算当年公历日期</span></div>
+        <div>spring_festival:</div>
+        <div>  name: "春节"</div>
+        <div>  type: "lunar"</div>
+        <div>  lunar-month: 1</div>
+        <div>  lunar-day: 1</div>
+        <div>  duration: 10        <span class="comment"># 持续天数（含开始当天）</span></div>
+        <div></div>
+        <div><span class="comment"># 公历节日：直接填 MM-dd</span></div>
+        <div>national_day:</div>
+        <div>  name: "国庆节"</div>
+        <div>  type: "solar"</div>
+        <div>  start: "09-30"</div>
+        <div>  end: "10-07"</div>
+      </div>
+    
+  </section>
+
+<section class="help-section" id="config">
+    <h2><span class="num">5</span>配置说明</h2>
+
+      <h3>config.yml 主要配置项</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>配置项</th><th>默认值</th><th>说明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>allow-self-switch</code></td><td>true</td><td>是否允许玩家自己切换头衔。关掉后只能由管理员授予与指定。</td></tr>
+            <tr><td><code>allow-self-disable</code></td><td>true</td><td>是否允许玩家用 <code>/title off</code> 关闭头衔显示。</td></tr>
+            <tr><td><code>auto-check-interval-seconds</code></td><td>60</td><td>自动复查解锁条件的间隔（秒）。调小会更及时，但更耗性能。</td></tr>
+            <tr><td><code>help.mode</code></td><td>auto</td><td>帮助菜单的身份判定：<code>auto</code> 自动 / <code>admin</code> 一律管理员视角 / <code>player</code> 一律玩家视角。</td></tr>
+            <tr><td><code>chat.enabled</code></td><td>true</td><td>是否在聊天里显示头衔前缀。</td></tr>
+            <tr><td><code>daily.enabled</code></td><td>true</td><td>是否启用每日头衔（每天重新统计）。</td></tr>
+            <tr><td><code>daily.reset-hour</code> / <code>reset-minute</code></td><td>0 / 0</td><td>每日头衔的重置时间，默认每天 0 点。</td></tr>
+            <tr><td><code>newcomer.enabled</code></td><td>true</td><td>新玩家首次进服是否自动授予「新人」头衔。</td></tr>
+            <tr><td><code>newcomer.title-id</code></td><td>newcomer</td><td>新人头衔的 ID。</td></tr>
+            <tr><td><code>newcomer.delay-seconds</code></td><td>10</td><td>进服后延迟几秒授予，避免与其它登录插件抢时序。</td></tr>
+            <tr><td><code>newcomer.max-playtime-millis</code></td><td>3600000</td><td>累计游玩超过这个时长就不再算新人（默认 1 小时）。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>关于 help.mode</strong>
+          <code>linuxtitle.admin</code> 的默认值是 <code>op</code>，也就是说<strong>服里的 OP 会自动通过这个判定</strong>，
+          与他是不是"管理员"其实无关。如果你只是加了 OP、并不想看到管理员目录，
+          把 <code>help.mode</code> 设为 <code>player</code> 即可。
+        </div>
+      </div>
+    
+  </section>
+
+<section class="help-section" id="permissions">
+    <h2><span class="num">6</span>权限节点</h2>
+
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>权限节点</th><th>说明</th><th>默认</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>linuxtitle.use</code></td><td>玩家命令：<code>list</code> / <code>use</code> / <code>info</code> / <code>off</code></td><td>所有人</td></tr>
+            <tr><td><code>linuxtitle.admin</code></td><td>管理命令：<code>give</code> / <code>revoke</code> / <code>check</code> / <code>reload</code></td><td>OP</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>只想给管理员、不想给全部 OP？</strong>
+          在权限插件里把 <code>linuxtitle.admin</code> 显式授予指定玩家组，
+          同时<strong>不要</strong>给 <code>-linuxtitle.admin</code> 以外的 OP 默认权限（默认值改为 false）。
+        </div>
+      </div>
+    
+  </section>
+
+<section class="help-section" id="faq">
+    <h2><span class="num">7</span>常见问题</h2>
+
+      <div class="faq-item">
+        <div class="faq-q"><span>玩家说"我达到条件了但没解锁"？</span><span class="faq-icon"></span></div>
+        <div class="faq-a-wrap"><div class="faq-a">
+          先让玩家重进一次服务器，或执行 <code>/title check &lt;玩家&gt;</code> 立即复查。
+          若仍未解锁，用 <code>/title info &lt;头衔ID&gt;</code> 看条件是否与预期一致
+          （特别注意时长的单位是<strong>毫秒</strong>）。
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q"><span>头衔没有显示在聊天里？</span><span class="faq-icon"></span></div>
+        <div class="faq-a-wrap"><div class="faq-a">
+          依次检查：<code>config.yml</code> 的 <code>chat.enabled</code> 是否为 true；
+          玩家是否用 <code>/title off</code> 关掉了显示；确认玩家确实已经 <code>/title use</code> 了某个头衔。
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q"><span>我不是管理员，为什么 /title help 显示管理员目录？</span><span class="faq-icon"></span></div>
+        <div class="faq-a-wrap"><div class="faq-a">
+          因为 <code>linuxtitle.admin</code> 的默认值是 <code>op</code>，只要你是 OP 就会通过判定。
+          把 <code>config.yml</code> 的 <code>help.mode</code> 改成 <code>player</code> 可以强制按玩家视角显示。
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q"><span>每日头衔第二天还在？</span><span class="faq-icon"></span></div>
+        <div class="faq-a-wrap"><div class="faq-a">
+          每日头衔会在 <code>daily.reset-hour</code> / <code>reset-minute</code> 指定的时间重新统计。
+          如果没重置，检查 <code>daily.enabled</code> 是否为 true，以及服务器时间是否正确。
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q"><span>节日头衔日期不对？</span><span class="faq-icon"></span></div>
+        <div class="faq-a-wrap"><div class="faq-a">
+          农历节日由插件自动换算，一般不需要手动改。若确实需要固定日期，
+          把 <code>type</code> 从 <code>lunar</code> 改成 <code>solar</code>，
+          再用 <code>start</code> / <code>end</code> 指定 <code>MM-dd</code>。
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q"><span>改了配置怎么生效？</span><span class="faq-icon"></span></div>
+        <div class="faq-a-wrap"><div class="faq-a">
+          执行 <code>/title reload</code>。玩家已获得的头衔不会因为重载丢失。
+        </div></div>
+      </div>
+    
+  </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">LinuxTitle</div>
+    <p>头衔解锁与展示插件 · 让玩家的付出看得见</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v26.11.2 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+      <a href="index.html">← 插件列表</a>
+      &nbsp;·&nbsp;
+      <a href="title.html">插件介绍</a>
+      &nbsp;·&nbsp;
+      <a href="linuxpluginhelp.html">Linux 帮助中心</a>
+      &nbsp;·&nbsp;
+      <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.faq-q').forEach((q) => {
+    q.addEventListener('click', () => {
+      q.parentElement.classList.toggle('open');
+    });
+  });
+
+  const sidebarLinks = document.querySelectorAll('.sidebar a');
+    // 参与滚动高亮的锚点：各章节 + 侧栏指向的其它锚点（如 #config-ref）
+    const watched = [];
+    const seen = {};
+    sidebarLinks.forEach((link) => {
+      const href = link.getAttribute('href') || '';
+      if (href.charAt(0) !== '#') return;
+      const id = href.slice(1);
+      if (seen[id]) return;
+      const el = document.getElementById(id);
+      if (el) { watched.push(el); seen[id] = true; }
+    });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        sidebarLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, {
+    rootMargin: '-80px 0px -60% 0px',
+    threshold: 0
+  });
+
+  watched.forEach((s) => observer.observe(s));
+
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>
