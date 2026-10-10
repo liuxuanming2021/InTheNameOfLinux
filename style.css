@@ -3860,6 +3860,9 @@ body > nav {
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    /* 右侧渐隐，提示「还能往右滑」 */
+    -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 40px), transparent 100%);
+    mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 40px), transparent 100%);
   }
 
   .sidebar-flat::-webkit-scrollbar {
