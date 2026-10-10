@@ -46,127 +46,252 @@
 
 <section class="page-hero">
   <div class="container">
-    <span class="plug-hero-ver">v26.11.2</span>
-    <h1>LinuxTitle</h1>
-    <p>头衔解锁与展示插件 · 让玩家的付出看得见</p>
+    <span class="plug-hero-ver">v26.11.2 · Paper 1.12.2</span>
+    <h1>把你的经历<strong>戴在名字前面</strong></h1>
+    <p>28 个头衔自动解锁 —— 在线时长、挖矿钓鱼、节日活动、服务器贡献，各有一条路。</p>
     <div class="hero-buttons">
-      <a href="#features" class="btn btn-primary">查看功能</a>
-      <a href="#commands" class="btn btn-secondary">命令列表</a>
-      <a href="linuxhelp.html" class="btn btn-secondary">综合帮助中心</a>
+      <a href="titlehelp.html" class="btn btn-primary">查看使用帮助</a>
+      <a href="#titles" class="btn btn-secondary">浏览全部头衔</a>
     </div>
   </div>
 </section>
 
-<section id="features">
+<!-- ── 数字统计条 ─────────────────────────────────────── -->
+<section id="stats">
   <div class="container">
     <div class="section-header reveal">
-      <span class="section-label">FEATURES</span>
-      <h2>核心功能</h2>
-      <p>六大模块，覆盖头衔的解锁、展示与管理</p>
+      <div class="num-head"><span class="num">01</span><span class="rule"></span></div>
+      <h2>一眼看全</h2>
     </div>
 
-    <div class="grid grid-3">
-      <div class="card reveal">
-        <div class="card-icon">🏅</div>
-        <h3>28 个头衔</h3>
-        <p>从「新人」到「传奇」，覆盖成长、技巧、社交与活动四大类。</p>
-        <ul>
-            <li>成长类：新人 / 常驻 / 元老</li>
-            <li>技巧类：PVP 之王 / 建筑大师 / 矿工</li>
-            <li>社交类：向导 / 守护者 / 赞助者</li>
-            <li>活动类：节日头衔 + 每日头衔</li>
-        </ul>
-      </div>
-      <div class="card reveal">
-        <div class="card-icon">⚙️</div>
-        <h3>自动解锁</h3>
-        <p>按条件自动判定，玩家无需申请，进服后自动检查。</p>
-        <ul>
-            <li>游玩时长达到门槛自动解锁</li>
-            <li>统计数据（击杀 / 挖掘 / 死亡等）达标解锁</li>
-            <li>管理员也可手动授予指定头衔</li>
-            <li>默认每 60 秒复查一次</li>
-        </ul>
-      </div>
-      <div class="card reveal">
-        <div class="card-icon">🎋</div>
-        <h3>节日活动</h3>
-        <p>内置农历换算，春节、端午、中秋自动按农历日期开放。</p>
-        <ul>
-            <li>春节 / 端午 / 中秋：农历自动换算</li>
-            <li>元旦 / 国庆：公历日期区间</li>
-            <li>节日期间自动解锁对应头衔</li>
-            <li>持续天数可配置</li>
-        </ul>
-      </div>
-      <div class="card reveal">
-        <div class="card-icon">📅</div>
-        <h3>每日头衔</h3>
-        <p>每天 0 点重置的活跃度头衔，鼓励玩家日常上线。</p>
-        <ul>
-            <li>每日活跃 / 每日硬核 / 每日传奇</li>
-            <li>按当日在线时长判定</li>
-            <li>重置时间可配置</li>
-            <li>第二天重新统计，不会永久保留</li>
-        </ul>
-      </div>
-      <div class="card reveal">
-        <div class="card-icon">💬</div>
-        <h3>聊天前缀</h3>
-        <p>解锁的头衔可显示在聊天前缀，玩家能自由切换或关闭。</p>
-        <ul>
-            <li>支持 PlaceholderAPI 变量</li>
-            <li>玩家可 /title use 切换</li>
-            <li>可 /title off 关闭显示</li>
-            <li>权限节点分流：玩家命令 / 管理命令</li>
-        </ul>
-      </div>
-      <div class="card reveal">
-        <div class="card-icon">🧭</div>
-        <h3>新人引导</h3>
-        <p>新玩家首次进服自动获得「新人」头衔。</p>
-        <ul>
-            <li>进服延迟 10 秒后自动授予</li>
-            <li>超过指定游玩时长后不再授予</li>
-            <li>避免老玩家重登被误判为新人</li>
-            <li>头衔 ID 与阈值可配置</li>
-        </ul>
-      </div>
+    <div class="stat-row reveal">
+      <div class="stat-cell"><b>28</b><span>个头衔</span></div>
+      <div class="stat-cell"><b>5</b><span>类解锁条件</span></div>
+      <div class="stat-cell"><b>5</b><span>个节日自动开放</span></div>
+      <div class="stat-cell"><b>60s</b><span>自动检查间隔</span></div>
     </div>
   </div>
 </section>
 
+<!-- ── 头衔画廊 ───────────────────────────────────────── -->
 <section id="titles" class="alt">
   <div class="container">
     <div class="section-header reveal">
-      <span class="section-label">TITLES</span>
-      <h2>头衔一览</h2>
-      <p>共 28 个头衔，分为四类</p>
+      <div class="num-head"><span class="num">02</span><span class="rule"></span></div>
+      <h2>全部头衔</h2>
+      <p>按解锁条件分五类，颜色代表类别</p>
     </div>
 
-    <div class="table-scroll reveal">
-      <table class="help-table">
-        <thead>
-          <tr><th>分类</th><th>头衔</th><th>解锁方式</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>成长</td><td>新人 / 常驻 / 元老</td><td>按累计游玩时长自动解锁</td></tr>
-          <tr><td>技巧</td><td>PVP 之王 / 建筑大师 / 矿工 / 匠人</td><td>按对应统计数据达标解锁</td></tr>
-          <tr><td>社交</td><td>向导 / 守护者 / 赞助者 / 收藏家</td><td>按行为统计或管理员授予</td></tr>
-          <tr><td>活动</td><td>春节 / 端午 / 中秋 / 国庆</td><td>节日期间自动开放</td></tr>
-          <tr><td>每日</td><td>每日活跃 / 每日硬核 / 每日传奇</td><td>按当日在线时长，每天重置</td></tr>
-        </tbody>
-      </table>
+    <!-- 时间成就 -->
+    <div class="band-title reveal">时间成就 · 累计在线时长</div>
+    <div class="tile-grid reveal">
+      <div class="tile tile--growth">
+        <div class="tile-emoji">🌱</div>
+        <div class="tile-name">初来乍到</div>
+        <div class="tile-cond">在线 1 小时</div>
+      </div>
+      <div class="tile tile--growth">
+        <div class="tile-emoji">🏡</div>
+        <div class="tile-name">常驻居民</div>
+        <div class="tile-cond">在线 50 小时</div>
+      </div>
+      <div class="tile tile--growth">
+        <div class="tile-emoji">⭐</div>
+        <div class="tile-name">老玩家</div>
+        <div class="tile-cond">在线 200 小时</div>
+      </div>
+      <div class="tile tile--growth">
+        <div class="tile-emoji">👑</div>
+        <div class="tile-name">元老</div>
+        <div class="tile-cond">在线 500 小时</div>
+      </div>
+    </div>
+
+    <!-- 统计数据 -->
+    <div class="band-title reveal">统计数据 · 原版统计达标</div>
+    <div class="tile-grid reveal">
+      <div class="tile tile--skill">
+        <div class="tile-emoji">⛏️</div>
+        <div class="tile-name">挖矿狂魔</div>
+        <div class="tile-cond">挖矿 99999</div>
+      </div>
+      <div class="tile tile--skill">
+        <div class="tile-emoji">🌾</div>
+        <div class="tile-name">种田大户</div>
+        <div class="tile-cond">收获 99999</div>
+      </div>
+      <div class="tile tile--skill">
+        <div class="tile-emoji">🎣</div>
+        <div class="tile-name">钓鱼佬</div>
+        <div class="tile-cond">钓鱼 99999</div>
+      </div>
+      <div class="tile tile--skill">
+        <div class="tile-emoji">💀</div>
+        <div class="tile-name">死亡达人</div>
+        <div class="tile-cond">死亡 99999</div>
+      </div>
+    </div>
+
+    <!-- 活动成就 -->
+    <div class="band-title reveal">活动成就 · 服内活动获得</div>
+    <div class="tile-grid reveal">
+      <div class="tile tile--social">
+        <div class="tile-emoji">⚔️</div>
+        <div class="tile-name">PVP冠军</div>
+        <div class="tile-cond">PVP 赛事</div>
+      </div>
+      <div class="tile tile--social">
+        <div class="tile-emoji">🏛️</div>
+        <div class="tile-name">建筑大师</div>
+        <div class="tile-cond">建筑评选</div>
+      </div>
+      <div class="tile tile--social">
+        <div class="tile-emoji">💎</div>
+        <div class="tile-name">寻宝达人</div>
+        <div class="tile-cond">寻宝活动</div>
+      </div>
+      <div class="tile tile--social">
+        <div class="tile-emoji">🎉</div>
+        <div class="tile-name">活动常客</div>
+        <div class="tile-cond">活动参与</div>
+      </div>
+    </div>
+
+    <!-- 贡献成就 -->
+    <div class="band-title reveal">贡献成就 · 管理员授予</div>
+    <div class="tile-grid reveal">
+      <div class="tile tile--event">
+        <div class="tile-emoji">🔮</div>
+        <div class="tile-name">水晶征服者</div>
+        <div class="tile-cond">击败水晶执政官</div>
+      </div>
+      <div class="tile tile--event">
+        <div class="tile-emoji">🗺️</div>
+        <div class="tile-name">迷失之境征服者</div>
+        <div class="tile-cond">集齐五王通关</div>
+      </div>
+      <div class="tile tile--event">
+        <div class="tile-emoji">🗡️</div>
+        <div class="tile-name">弑神铸剑师</div>
+        <div class="tile-cond">铸成鸿蒙终焉</div>
+      </div>
+      <div class="tile tile--event">
+        <div class="tile-emoji">🧱</div>
+        <div class="tile-name">共建者</div>
+        <div class="tile-cond">参与服务器建设</div>
+      </div>
+      <div class="tile tile--event">
+        <div class="tile-emoji">🧭</div>
+        <div class="tile-name">引路人</div>
+        <div class="tile-cond">带新玩家上手</div>
+      </div>
+      <div class="tile tile--event">
+        <div class="tile-emoji">🛡️</div>
+        <div class="tile-name">守护者</div>
+        <div class="tile-cond">维护服务器秩序</div>
+      </div>
+      <div class="tile tile--event">
+        <div class="tile-emoji">💝</div>
+        <div class="tile-name">赞助者</div>
+        <div class="tile-cond">赞助服务器</div>
+      </div>
+      <div class="tile tile--event">
+        <div class="tile-emoji">💠</div>
+        <div class="tile-name">VIP</div>
+        <div class="tile-cond">管理员授予</div>
+      </div>
+    </div>
+
+    <!-- 每日头衔 -->
+    <div class="band-title reveal">每日头衔 · 每天重新统计</div>
+    <div class="tile-grid reveal">
+      <div class="tile tile--daily">
+        <div class="tile-emoji">☀️</div>
+        <div class="tile-name">今日活跃</div>
+        <div class="tile-cond">今日在线 1 小时</div>
+      </div>
+      <div class="tile tile--daily">
+        <div class="tile-emoji">🔥</div>
+        <div class="tile-name">今日肝帝</div>
+        <div class="tile-cond">今日在线 6 小时</div>
+      </div>
+      <div class="tile tile--daily">
+        <div class="tile-emoji">🌟</div>
+        <div class="tile-name">今日传说</div>
+        <div class="tile-cond">今日在线 12 小时</div>
+      </div>
+    </div>
+
+    <!-- 节日头衔 -->
+    <div class="band-title reveal">节日头衔 · 到日子自动开放</div>
+    <div class="tile-grid reveal">
+      <div class="tile tile--daily" style="--tile-accent:#4a90c0">
+        <div class="tile-emoji">🎊</div>
+        <div class="tile-name">万象更新</div>
+        <div class="tile-cond">元旦 · 12-30 ~ 01-02</div>
+      </div>
+      <div class="tile tile--daily" style="--tile-accent:#c0504a">
+        <div class="tile-emoji">🧧</div>
+        <div class="tile-name">辞旧迎新</div>
+        <div class="tile-cond">春节 · 农历正月初一，10 天</div>
+      </div>
+      <div class="tile tile--daily" style="--tile-accent:#4aa060">
+        <div class="tile-emoji">🐉</div>
+        <div class="tile-name">龙舟竞渡</div>
+        <div class="tile-cond">端午 · 农历五月初五，6 天</div>
+      </div>
+      <div class="tile tile--daily" style="--tile-accent:#c09a4a">
+        <div class="tile-emoji">🌕</div>
+        <div class="tile-name">花好月圆</div>
+        <div class="tile-cond">中秋 · 农历八月十五，6 天</div>
+      </div>
+      <div class="tile tile--daily" style="--tile-accent:#c07a4a">
+        <div class="tile-emoji">🎆</div>
+        <div class="tile-name">普天同庆</div>
+        <div class="tile-cond">国庆 · 09-30 ~ 10-07</div>
+      </div>
     </div>
   </div>
 </section>
 
-<section id="commands">
+<!-- ── 解锁方式 ───────────────────────────────────────── -->
+<section id="unlock">
   <div class="container">
     <div class="section-header reveal">
-      <span class="section-label">COMMANDS</span>
+      <div class="num-head"><span class="num">03</span><span class="rule"></span></div>
+      <h2>怎么拿到头衔</h2>
+      <p>四种解锁方式，大部分是全自动的</p>
+    </div>
+
+    <div class="intro-split">
+      <div class="reveal">
+        <h2>不用申请，到了就是你的</h2>
+        <p>
+          插件每 <strong>60 秒</strong>检查一次所有在线玩家的数据，
+          满足条件的头衔会自动发到你的账号里，不需要找管理员。
+        </p>
+        <p style="margin-top: 14px;">
+          新玩家第一次进服，<strong>10 秒后</strong>会自动戴上「初来乍到」，
+          让新人有归属感，也提醒他还有别的头衔可以拿。
+        </p>
+      </div>
+      <ul class="split-points reveal stagger">
+        <li><strong>自动解锁</strong><br>在线时长、挖矿钓鱼等达标即得</li>
+        <li><strong>每日重置</strong><br>今日活跃类头衔每天 00:00 重新统计</li>
+        <li><strong>节日开放</strong><br>到日期范围内自动可用，过了就收起</li>
+        <li><strong>管理员授予</strong><br>贡献类头衔由管理员手动发</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── 命令 ───────────────────────────────────────────── -->
+<section id="commands" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="num-head"><span class="num">04</span><span class="rule"></span></div>
       <h2>命令一览</h2>
-      <p>主命令 <code>/title</code>，别名 <code>/titles</code>、<code>/lt</code></p>
+      <p>主命令 <code>/title</code>，简写 <code>/titles</code> 或 <code>/lt</code></p>
     </div>
 
     <div class="table-scroll reveal">
@@ -175,20 +300,34 @@
           <tr><th>命令</th><th>说明</th><th>权限</th></tr>
         </thead>
         <tbody>
-            <tr><td><code>/title help [页码]</code></td><td>显示帮助菜单（按身份分流，可点击翻页）</td><td><span class="badge badge-op">所有人</span></td></tr>
-            <tr><td><code>/title list [页码]</code></td><td>列出全部头衔及自己的解锁状态</td><td><span class="badge badge-op">所有人</span></td></tr>
-            <tr><td><code>/title use &lt;头衔ID&gt;</code></td><td>使用 / 切换头衔</td><td><span class="badge badge-op">所有人</span></td></tr>
-            <tr><td><code>/title off</code></td><td>关闭头衔显示</td><td><span class="badge badge-op">所有人</span></td></tr>
-            <tr><td><code>/title info &lt;头衔ID&gt;</code></td><td>查看某个头衔的解锁条件与说明</td><td><span class="badge badge-op">所有人</span></td></tr>
-            <tr><td><code>/title give &lt;玩家&gt; &lt;头衔ID&gt;</code></td><td>手动授予玩家头衔</td><td><span class="badge badge-op">linuxtitle.admin</span></td></tr>
-            <tr><td><code>/title revoke &lt;玩家&gt; &lt;头衔ID&gt;</code></td><td>收回玩家头衔</td><td><span class="badge badge-op">linuxtitle.admin</span></td></tr>
-            <tr><td><code>/title check [玩家]</code></td><td>立即复查解锁条件</td><td><span class="badge badge-op">linuxtitle.admin</span></td></tr>
-            <tr><td><code>/title reload</code></td><td>重载插件配置</td><td><span class="badge badge-op">linuxtitle.admin</span></td></tr>
+          <tr><td><code>/title list</code></td><td>查看全部头衔及解锁进度</td><td><span class="badge">玩家</span></td></tr>
+          <tr><td><code>/title use &lt;ID&gt;</code></td><td>佩戴指定头衔</td><td><span class="badge">玩家</span></td></tr>
+          <tr><td><code>/title info</code></td><td>查看当前佩戴的头衔</td><td><span class="badge">玩家</span></td></tr>
+          <tr><td><code>/title off</code></td><td>关闭头衔显示</td><td><span class="badge">玩家</span></td></tr>
+          <tr><td><code>/title help</code></td><td>查看帮助菜单</td><td><span class="badge">玩家</span></td></tr>
+          <tr><td><code>/title check &lt;玩家&gt;</code></td><td>检查并刷新某玩家的可解锁头衔</td><td><span class="badge badge-op">OP</span></td></tr>
+          <tr><td><code>/title give &lt;玩家&gt; &lt;ID&gt;</code></td><td>授予指定头衔</td><td><span class="badge badge-op">OP</span></td></tr>
+          <tr><td><code>/title revoke &lt;玩家&gt; &lt;ID&gt;</code></td><td>收回指定头衔</td><td><span class="badge badge-op">OP</span></td></tr>
+          <tr><td><code>/title reload</code></td><td>重载配置</td><td><span class="badge badge-op">OP</span></td></tr>
         </tbody>
       </table>
     </div>
   </div>
 </section>
+
+<!-- ── 底部 CTA ───────────────────────────────────────── -->
+<section id="get">
+  <div class="cta-band reveal">
+    <p class="cta-wordmark">LinuxTitle</p>
+    <p>28 个头衔，总有一个是你已经拿到的。</p>
+    <div class="cta-actions">
+      <a href="titlehelp.html" class="btn btn-primary">查看使用帮助</a>
+      <a href="index.html#plugins" class="btn btn-secondary">← 返回插件列表</a>
+    </div>
+  </div>
+</section>
+
+
 
 <footer>
   <div class="container">
