@@ -3412,6 +3412,380 @@ color: var(--code-keyword);
   }
 }
 
+/* ============================================================
+   介绍页风格 A：收藏展示风（LinuxTitle）
+   ============================================================
+   把「28 个头衔」当收藏品展示：
+     · 编号 + 渐变分隔线的章节头
+     · 彩色 tile 网格，每类一色
+     · 数字用大号字重强调
+   ============================================================ */
+
+/* ---------- 编号章节头 ---------- */
+.num-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.num-head .num {
+  font-family: 'SF Mono', 'Menlo', Consolas, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--blue);
+}
+
+.num-head .rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--blue-border) 0%, transparent 100%);
+}
+
+/* ---------- 彩色 tile 网格 ---------- */
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 12px;
+}
+
+.tile {
+  position: relative;
+  padding: 16px 16px 14px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+  transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+}
+
+.tile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--tile-accent, var(--blue));
+  opacity: .8;
+}
+
+.tile:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(15, 25, 35, 0.10);
+  border-color: rgba(74, 123, 167, 0.28);
+}
+
+.tile-emoji {
+  font-size: 20px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.tile-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.tile-cond {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+/* 分类配色 */
+.tile--growth   { --tile-accent: #4a7ba7; }
+.tile--skill    { --tile-accent: #7a6cb0; }
+.tile--social   { --tile-accent: #4f9d8a; }
+.tile--event    { --tile-accent: #c07a4a; }
+.tile--daily    { --tile-accent: #b0567a; }
+
+/* ---------- 大数字统计条 ---------- */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+  background: #fff;
+}
+
+.stat-cell {
+  padding: 26px 20px;
+  text-align: center;
+  border-right: 1px solid var(--border-light);
+}
+
+.stat-cell:last-child {
+  border-right: none;
+}
+
+.stat-cell b {
+  display: block;
+  font-size: 32px;
+  font-weight: 300;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  color: var(--blue);
+  margin-bottom: 6px;
+}
+
+.stat-cell span {
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+  letter-spacing: .4px;
+}
+
+/* ============================================================
+   介绍页风格 B：编年主题风（InTheNameOfLinux）
+   ============================================================
+   主插件功能多，用「编号章节 + 左右交错图文」讲清：
+     · 章节头带 01/02… 编号与渐变线
+     · 奇数节文字在左、偶数节文字在右（zigzag）
+     · 每节左侧一根主题色带
+   ============================================================ */
+
+/* ---------- 编号大章节 ---------- */
+.chapter {
+  position: relative;
+  padding: 56px 0 56px 34px;
+  border-left: 2px solid var(--border-light);
+}
+
+.chapter:last-of-type {
+  border-left-color: transparent;
+}
+
+/* 节点圆点 */
+.chapter::before {
+  content: '';
+  position: absolute;
+  left: -7px;
+  top: 62px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--blue);
+}
+
+.chapter-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.chapter-no {
+  font-family: 'SF Mono', 'Menlo', Consolas, monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--blue);
+}
+
+.chapter-title {
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  color: var(--text);
+}
+
+.chapter-lede {
+  max-width: 620px;
+  margin-bottom: 26px;
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--text-secondary);
+}
+
+/* ---------- 左右交错图文 ---------- */
+.zigzag {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.zigzag.reverse .zz-text {
+  order: 2;
+}
+
+.zigzag.reverse .zz-panel {
+  order: 1;
+}
+
+.zz-text h4 {
+  margin-bottom: 10px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.zz-text p {
+  font-size: 14.5px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.zz-text ul {
+  margin: 14px 0 0;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--text-secondary);
+}
+
+/* 右侧「面板」：用来放代码、列表、示意 */
+.zz-panel {
+  padding: 22px 24px;
+  border-radius: 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.zz-panel .panel-title {
+  margin-bottom: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.zz-panel ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.zz-panel li + li {
+  margin-top: 6px;
+}
+
+.zz-panel code {
+  font-size: 12.5px;
+}
+
+/* ---------- 主题色带标题（用于小分节） ---------- */
+.band-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 34px 0 18px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.band-title::before {
+  content: '';
+  width: 4px;
+  height: 18px;
+  border-radius: 2px;
+  background: var(--blue);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 920px) {
+  .zigzag {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .zigzag.reverse .zz-text,
+  .zigzag.reverse .zz-panel {
+    order: initial;
+  }
+
+  .chapter {
+    padding: 40px 0 40px 24px;
+  }
+
+  .chapter::before {
+    top: 46px;
+  }
+
+  .stat-cell {
+    border-right: none;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .stat-cell:last-child {
+    border-bottom: none;
+  }
+
+  .tile-grid {
+    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+    gap: 10px;
+  }
+}
+
+/* ============================================================
+   综合帮助页：与主页同一套视觉
+   ============================================================
+   封面与主页一致（视频背景 + 头像 + 标题 + 引言），
+   封面以下是完整不透明的内容区 —— 视频不再透出来。
+   ============================================================ */
+
+/* 内容区通栏：hub-wrap 是 body 直接子元素，宽度取其父级（body），
+   内部再用 .container 把内容居中。 */
+.hub-wrap {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 52px 0 64px;
+  background: var(--bg);
+}
+
+@media (max-width: 920px) {
+  .hub-wrap {
+    padding: 34px 0 48px;
+  }
+}
+
+/* 卡片：底下已是白底，用细边框而非玻璃，层次靠边框和投影 */
+.hub-wrap .help-hub-card {
+  background: #fff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 2px 10px rgba(15, 25, 35, 0.05);
+}
+
+.hub-wrap .help-hub-card:hover {
+  border-color: rgba(74, 123, 167, 0.3);
+  box-shadow: 0 14px 34px rgba(15, 25, 35, 0.10);
+}
+
+/* 说明块：同样是白底 + 细边框 */
+.hub-wrap .hub-note {
+  background: #fff;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 2px 10px rgba(15, 25, 35, 0.04);
+}
+
+/* 底部 CTA 也在白底上 */
+.hub-wrap ~ #get {
+  position: relative;
+  z-index: 1;
+  padding: 0 0 72px;
+  background: var(--bg);
+}
+
+/* 窄屏：白底紧跟封面，不留缝 */
+@media (max-width: 920px) {
+  .hub-wrap {
+    padding-top: 34px;
+    padding-bottom: 48px;
+  }
+}
+
 /* ---- 减少动态效果：保留视频，只关动画 ---- */
 @media (prefers-reduced-motion: reduce) {
   .cover-btn,

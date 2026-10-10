@@ -10,7 +10,10 @@
 </head>
 <body>
 
-<nav>
+<video class="bg-video" id="bgVideo" loop muted playsinline
+       preload="none" aria-hidden="true" poster="mobile.jpg"></video>
+
+<nav class="nav-home">
   <div class="container nav-inner">
     <a href="index.html" class="nav-logo">
       <span class="nav-logo-icon">L</span>
@@ -42,83 +45,126 @@
     </button>
   </div>
 </nav>
+<header class="cover">
+  <div class="cover-overlay"></div>
 
-<section class="page-hero">
+  <div class="cover-inner">
+    <div class="avatar-flip">
+      <div class="avatar-face">
+        <img src="me.jpg" alt="Linux582021 的头像">
+      </div>
+      <div class="avatar-back">
+        <strong>Keep<br>Building</strong>
+        <em>2026 · 守护</em>
+      </div>
+    </div>
+
+    <h1 class="cover-title">综合帮助中心</h1>
+    <p class="cover-subtitle">Documentation</p>
+
+    <hr class="cover-divider">
+
+    <p class="cover-quote">
+      三款插件的使用文档，按插件分类整理
+      <br>
+      <strong>—— Linux582021</strong>
+    </p>
+
+    <div class="cover-nav">
+      <a href="#all" class="cover-btn">全部帮助</a>
+      <a href="#howto" class="cover-btn">怎么用</a>
+      <a href="index.html#plugins" class="cover-btn">插件列表</a>
+    </div>
+
+    <div class="cover-remark">
+      <p>
+        <strong>3</strong> 份文档 · 命令详解 · 配置说明 · 常见问题
+      </p>
+    </div>
+  </div>
+</header>
+<div class="hub-wrap">
   <div class="container">
-    <h1>综合帮助中心</h1>
-    <p>Linux582021 三款插件的使用文档，按插件分类整理</p>
+
+
+<section id="all">
+  <h2 style="font-size: 22px; margin-bottom: 6px;">全部帮助</h2>
+  <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 22px;">
+    点击卡片进入对应插件的帮助文档。每份文档都包含命令详解、配置说明与常见问题。
+  </p>
+
+  <div class="help-hub-grid">
+      <a href="linuxpluginhelp.html" class="help-hub-card">
+        <div class="help-hub-icon">🛡️</div>
+        <h3>InTheNameOfLinux</h3>
+        <div class="hub-ver">v26.11.4正式版</div>
+        <p>服务器综合管理插件的完整帮助：安装、登录验证、封禁体系、举报系统、协管权限、非法 NBT 检测与故障排查。</p>
+        <div class="hub-tags">
+          <span>13 个章节</span>
+          <span>命令详解</span>
+          <span>配置参考 46 项</span>
+          <span>常见问题</span>
+        </div>
+      </a>
+      <a href="titlehelp.html" class="help-hub-card">
+        <div class="help-hub-icon">🏅</div>
+        <h3>LinuxTitle</h3>
+        <div class="hub-ver">v26.11.2</div>
+        <p>头衔系统的完整帮助：命令用法、六种解锁条件、节日活动配置、权限节点与常见问题。</p>
+        <div class="hub-tags">
+          <span>7 个章节</span>
+          <span>解锁条件</span>
+          <span>节日活动</span>
+          <span>权限节点</span>
+        </div>
+      </a>
+      <a href="fakeplayerhelp.html" class="help-hub-card">
+        <div class="help-hub-icon">👥</div>
+        <h3>FakePlayerPlugin</h3>
+        <div class="hub-ver">v26.11.2</div>
+        <p>假人插件的完整帮助：创建与移除假人、数据持久化、区块保护、AuthMe 兼容与常见问题。</p>
+        <div class="hub-tags">
+          <span>5 个章节</span>
+          <span>命令详解</span>
+          <span>使用技巧</span>
+          <span>常见问题</span>
+        </div>
+      </a>
   </div>
 </section>
 
-<div class="container">
+<section id="howto">
+  <div class="hub-note">
+    <h3>💡 怎么找到你要的内容</h3>
+    <ul>
+      <li><strong>不知道命令怎么用</strong> → 进对应插件的帮助，看「命令详解」章节。</li>
+      <li><strong>要改配置</strong> → 看「配置说明」章节，里面逐项解释了每个配置项的作用。</li>
+      <li><strong>出问题了</strong> → 看「故障排查」或「常见问题」章节。</li>
+      <li><strong>只想了解插件有什么功能</strong> → 回到 <a href="index.html">插件列表</a>，进插件介绍页。</li>
+    </ul>
+  </div>
 
-  <section id="all" style="padding-top: 8px;">
-    <h2 style="font-size: 22px; margin-bottom: 6px;">全部帮助</h2>
-    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 22px;">
-      点击卡片进入对应插件的帮助文档。每份文档都包含命令详解、配置说明与常见问题。
-    </p>
-
-    <div class="help-hub-grid">
-        <a href="linuxpluginhelp.html" class="help-hub-card">
-          <div class="help-hub-icon">🛡️</div>
-          <h3>InTheNameOfLinux</h3>
-          <div class="hub-ver">v26.11.4正式版</div>
-          <p>服务器综合管理插件的完整帮助：安装、登录验证、封禁体系、举报系统、协管权限、非法 NBT 检测与故障排查。</p>
-          <div class="hub-tags">
-            <span>13 个章节</span>
-            <span>命令详解</span>
-            <span>配置参考 46 项</span>
-            <span>常见问题</span>
-          </div>
-        </a>
-        <a href="titlehelp.html" class="help-hub-card">
-          <div class="help-hub-icon">🏅</div>
-          <h3>LinuxTitle</h3>
-          <div class="hub-ver">v26.11.2</div>
-          <p>头衔系统的完整帮助：命令用法、六种解锁条件、节日活动配置、权限节点与常见问题。</p>
-          <div class="hub-tags">
-            <span>7 个章节</span>
-            <span>解锁条件</span>
-            <span>节日活动</span>
-            <span>权限节点</span>
-          </div>
-        </a>
-        <a href="fakeplayerhelp.html" class="help-hub-card">
-          <div class="help-hub-icon">👥</div>
-          <h3>FakePlayerPlugin</h3>
-          <div class="hub-ver">v26.11.2</div>
-          <p>假人插件的完整帮助：创建与移除假人、数据持久化、区块保护、AuthMe 兼容与常见问题。</p>
-          <div class="hub-tags">
-            <span>5 个章节</span>
-            <span>命令详解</span>
-            <span>使用技巧</span>
-            <span>常见问题</span>
-          </div>
-        </a>
-    </div>
-  </section>
-
-  <section id="howto" style="padding-top: 40px; padding-bottom: 60px;">
-    <div class="hub-note">
-      <h3>💡 怎么找到你要的内容</h3>
-      <ul>
-        <li><strong>不知道命令怎么用</strong> → 进对应插件的帮助，看「命令详解」章节。</li>
-        <li><strong>要改配置</strong> → 看「配置说明」章节，里面逐项解释了每个配置项的作用。</li>
-        <li><strong>出问题了</strong> → 看「故障排查」或「常见问题」章节。</li>
-        <li><strong>只想了解插件有什么功能</strong> → 回到 <a href="index.html">插件列表</a>，进插件介绍页。</li>
-      </ul>
-    </div>
-
-    <div class="hub-note">
-      <h3>📄 纯文本说明书</h3>
-      <ul>
-        <li><a href="协管使用说明-26.11.4正式版.txt">协管使用说明</a> —— 可直接发给服务器协管。</li>
-        <li><a href="管理员使用说明-26.11.4正式版.txt">管理员使用说明</a> —— 可直接发给服务器管理员。</li>
-      </ul>
-    </div>
-  </section>
-
+  <div class="hub-note">
+    <h3>📄 纯文本说明书</h3>
+    <ul>
+      <li><a href="协管使用说明-26.11.4正式版.txt">协管使用说明</a> —— 可直接发给服务器协管。</li>
+      <li><a href="管理员使用说明-26.11.4正式版.txt">管理员使用说明</a> —— 可直接发给服务器管理员。</li>
+    </ul>
+  </div>
+</section>
+  </div>
 </div>
+<section id="get">
+  <div class="cta-band reveal">
+    <p class="cta-wordmark">还有问题？</p>
+    <p>三款插件的完整文档都在这里，也可以直接进对应插件的帮助页查。</p>
+    <div class="cta-actions">
+      <a href="#all" class="btn btn-primary">回到全部帮助</a>
+      <a href="index.html#plugins" class="btn btn-secondary">← 返回插件列表</a>
+    </div>
+  </div>
+</section>
+
 
 <footer>
   <div class="container">
@@ -142,6 +188,41 @@
 </footer>
 
 <script>
+    // 背景视频：只在宽屏加载（与主页一致）
+    (function () {
+      var v = document.getElementById('bgVideo');
+      if (!v) return;
+      var mq = window.matchMedia('(min-width: 921px)');
+      function apply() {
+        if (mq.matches) {
+          if (!v.getAttribute('src')) {
+            v.setAttribute('src', 'video.mp4');
+            v.load();
+            var pr = v.play();
+            if (pr && pr.catch) { pr.catch(function () {}); }
+          }
+        } else {
+          try { v.pause(); } catch (e) {}
+          v.removeAttribute('src');
+          try { v.load(); } catch (e) {}
+        }
+      }
+      apply();
+      if (mq.addEventListener) { mq.addEventListener('change', apply); }
+      else if (mq.addListener) { mq.addListener(apply); }
+    })();
+
+    // 导航滚动变色
+    (function () {
+      var nav = document.querySelector('.nav-home');
+      if (!nav) return;
+      function update() {
+        nav.classList.toggle('scrolled', window.scrollY > 40);
+      }
+      window.addEventListener('scroll', update, { passive: true });
+      update();
+    })();
+
     // 滚动淡入
     (function () {
       var els = document.querySelectorAll('.reveal');
