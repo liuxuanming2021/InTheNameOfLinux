@@ -292,6 +292,11 @@ nav {
     flex-wrap: wrap;
   }
 
+  /* 介绍页 hero：按钮与上方副标题留出间距 */
+  .page-hero .hero-buttons {
+    margin-top: 34px;
+  }
+
 .btn {
     padding: 12px 26px;
     border-radius: 980px;
@@ -1880,8 +1885,9 @@ color: var(--code-keyword);
   margin-top: 40px;
   padding: 28px;
   border-radius: 16px;
-  background: var(--blue-soft);
-  border: 1px solid var(--blue-border);
+  /* 底色与边框由下面的玻璃规则提供，这里不再铺实色 */
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.34);
 }
 
 .author-box h3 {
@@ -2513,23 +2519,90 @@ color: var(--code-keyword);
 }
 
 /* ============================================================
+   液态玻璃：作者卡片 / 帮助卡片 / 按钮
+   ============================================================
+   注：插件卡片（.card）的玻璃在第 411 行，不在这里重复。
+   镜面高光边（inset 0 1.5px 0）是让面板读起来像玻璃的关键。
+   ============================================================ */
+
+#about .author-box,
+.help-hub-card {
+  background: rgba(255, 255, 255, 0.28);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.14),
+    0 10px 30px rgba(15, 25, 35, 0.12);
+}
+
+.help-hub-card:hover {
+  background: rgba(255, 255, 255, 0.42);
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.2),
+    0 16px 40px rgba(15, 25, 35, 0.18);
+}
+
+/* 按钮：同一套玻璃，高光更细 */
+.btn-primary,
+.btn-secondary,
+.card-links .btn {
+  -webkit-backdrop-filter: blur(14px) saturate(170%);
+  backdrop-filter: blur(14px) saturate(170%);
+  box-shadow:
+    inset 0 1.2px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12),
+    0 6px 20px rgba(15, 25, 35, 0.16);
+}
+
+.btn-primary {
+  background: rgba(255, 255, 255, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  color: var(--blue);
+}
+
+.btn-primary:hover {
+  background: rgba(255, 255, 255, 0.45);
+  border-color: rgba(255, 255, 255, 0.75);
+  color: var(--blue-hover);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.44);
+  color: var(--text-secondary);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.38);
+  border-color: rgba(255, 255, 255, 0.68);
+  color: var(--text);
+}
+
+/* ============================================================
    回退：浏览器不支持 backdrop-filter 时，用不透明底保证可读
    ============================================================ */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  /* 不支持模糊时：仍保持半透明观感，只是提高一点不透明度保证可读，
+     不要用实心白 —— 那会让卡片完全失去玻璃质感 */
   #plugins .card,
   #about .author-box,
   .help-hub-card {
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.72);
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .card-links .btn {
+    background: rgba(255, 255, 255, 0.72);
   }
 
   .btn-primary {
-    background: var(--blue);
+    background: rgba(74, 123, 167, 0.92);
     color: #fff;
-  }
-
-  .btn-secondary,
-  .card-links .btn {
-    background: #ffffff;
   }
 }
 
