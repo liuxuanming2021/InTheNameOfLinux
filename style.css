@@ -1907,7 +1907,7 @@ color: var(--code-keyword);
   padding: 26px 24px;
   border-radius: 16px;
   border: 1px solid var(--border-light);
-  background: #fff;
+  background: rgba(255, 255, 255, 0.28);
   text-decoration: none;
   color: inherit;
   box-shadow: var(--shadow-sm);
@@ -2132,7 +2132,7 @@ color: var(--code-keyword);
   font-size: clamp(14px, 2vw, 17px);
   font-weight: 400;
   letter-spacing: 3px;
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(255, 255, 255, 0.42);
   text-transform: uppercase;
 }
 
@@ -2206,7 +2206,7 @@ color: var(--code-keyword);
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(255, 255, 255, 0.28);
   font-size: 12.5px;
   text-decoration: none;
   letter-spacing: 0.4px;
@@ -2241,9 +2241,6 @@ color: var(--code-keyword);
   background: transparent;
 }
 
-#about {
-  background: rgba(255, 255, 255, 0.22);
-}
 
 /* ---- 主页透明导航（滚动后变实色） ---- */
 .nav-home {
@@ -2369,7 +2366,7 @@ color: var(--code-keyword);
 
 /* 插件卡片 */
 #plugins .card {
-  background: rgba(255, 255, 255, 0.62);
+  background: rgba(255, 255, 255, 0.28);
   border: 1px solid rgba(255, 255, 255, 0.7);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.9),
@@ -2378,7 +2375,7 @@ color: var(--code-keyword);
 }
 
 #plugins .card:hover {
-  background: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.42);
   border-color: rgba(255, 255, 255, 0.9);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 1),
@@ -2388,7 +2385,7 @@ color: var(--code-keyword);
 
 /* 关于作者区块 */
 #about .author-box {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.28);
   border: 1px solid rgba(255, 255, 255, 0.7);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.95),
@@ -2412,7 +2409,7 @@ color: var(--code-keyword);
 
 /* 帮助中心的卡片 */
 .help-hub-card {
-  background: rgba(255, 255, 255, 0.62);
+  background: rgba(255, 255, 255, 0.28);
   border: 1px solid rgba(255, 255, 255, 0.7);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.9),
@@ -2420,7 +2417,7 @@ color: var(--code-keyword);
 }
 
 .help-hub-card:hover {
-  background: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.42);
   border-color: rgba(255, 255, 255, 0.9);
 }
 
@@ -2442,7 +2439,7 @@ color: var(--code-keyword);
   #plugins .card,
   #about .author-box,
   .help-hub-card {
-    background: rgba(255, 255, 255, 0.94);
+    background: rgba(255, 255, 255, 0.72);
   }
 }
 
