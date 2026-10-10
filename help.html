@@ -1027,6 +1027,103 @@
   /* ============================================================
      小屏（< 480px）
      ============================================================ */
+  /* ============================================================
+     窄屏表格卡片化
+     ============================================================
+     问题：原来的两/三列表格在手机上，第一列（命令名、配置项名、改动名）
+     会被第二列的长中文挤压成一条竖排的窄缝，完全没法读。
+
+     方案：900px 以下把表格整体改成"卡片"——
+       · 每行 = 一张卡片
+       · 第一列 = 卡片标题（独立一行，加粗、带底边）
+       · 其余列 = 说明正文，逐行铺开
+     这样命令自己占一行，解析从下一行开始，手机上不再挤成一长条。
+     桌面端**完全不受影响**，仍是正常表格。 */
+  @media (max-width: 900px) {
+    .table-scroll {
+      overflow-x: visible;
+    }
+
+    .help-table,
+    .help-table tbody,
+    .help-table tr,
+    .help-table td {
+      display: block;
+      width: auto;
+    }
+
+    /* 表头在卡片模式下没有意义（每块自带标题），隐藏 */
+    .help-table thead {
+      display: none;
+    }
+
+    .help-table tr {
+      margin-bottom: 12px;
+      padding: 0;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .help-table tr:last-child {
+      margin-bottom: 0;
+    }
+
+    .help-table td {
+      padding: 0;
+      border: none;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    /* ★ 第一列：标题行（命令 / 配置项 / 改动名） */
+    .help-table td:first-child {
+      display: block;
+      padding: 11px 14px;
+      background: var(--bg-secondary, #f7f8fa);
+      border-bottom: 1px solid var(--border-light);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text);
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .help-table td:first-child code {
+      font-weight: 600;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    /* 其余列：正文行，用左侧细分隔线区分多列 */
+    .help-table td:not(:first-child) {
+      display: block;
+      padding: 10px 14px;
+      color: var(--text-secondary);
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .help-table td:not(:first-child) + td:not(:first-child) {
+      border-top: 1px dashed var(--border-light);
+    }
+
+    /* 表格里的代码与长串允许断开，避免溢出卡片 */
+    .help-table td code {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    /* colspan 的说明行（如"非法 NBT 物品检测"分组标题）单独处理 */
+    .help-table td[colspan] {
+      display: block;
+      background: var(--bg-secondary, #f7f8fa);
+      font-weight: 600;
+      color: var(--text);
+    }
+  }
+
   @media (max-width: 480px) {
     .container {
       padding: 0 14px;

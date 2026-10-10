@@ -936,14 +936,82 @@
       font-size: 12px;
     }
 
-    /* ★ 关键：桌面上首列是 nowrap，36 字符的 /linux banblock <玩家> [时间] [原因]
-       在 360px 屏上会占掉约 245px，把「说明」列压到只剩 70 多 px —— 汉字就挤成一团。
-       窄屏改为允许在必要处断开，让两列都能呼吸。 */
+    /* ============================================================
+       ★ 窄屏表格卡片化
+       ============================================================
+       原因：两列表格在手机上，第一列（长命令名）会把第二列的汉字
+       挤压成一条竖排的窄缝，完全没法读。
+
+       方案：每行 = 一张卡片
+         · 第一列 = 卡片标题（独立一行，加粗、带底边）
+         · 其余列 = 说明正文，逐行铺开
+       命令自己占一行，解析从下一行开始。桌面端不受影响。 */
+    .table-wrap {
+      overflow-x: visible;
+    }
+
+    .table-wrap table,
+    .table-wrap tbody,
+    .table-wrap tr,
+    .table-wrap td {
+      display: block;
+      width: auto;
+    }
+
+    /* 表头在卡片模式下没有意义（每块自带标题），隐藏 */
+    .table-wrap thead {
+      display: none;
+    }
+
+    .table-wrap tr {
+      margin-bottom: 12px;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .table-wrap tr:last-child {
+      margin-bottom: 0;
+    }
+
+    .table-wrap td {
+      padding: 0;
+      border: none;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    /* ★ 第一列：标题行（命令 / 配置项名） */
     .table-wrap td:first-child {
+      display: block;
+      padding: 11px 14px;
+      background: var(--bg-secondary, #f7f8fa);
+      border-bottom: 1px solid var(--border-light);
+      font-weight: 600;
       white-space: normal;
     }
 
     .table-wrap td:first-child code {
+      font-weight: 600;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    /* 其余列：正文行 */
+    .table-wrap td:not(:first-child) {
+      display: block;
+      padding: 10px 14px;
+      color: var(--text-secondary);
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .table-wrap td:not(:first-child) + td:not(:first-child) {
+      border-top: 1px dashed var(--border-light);
+    }
+
+    .table-wrap td code {
       overflow-wrap: anywhere;
       word-break: break-word;
     }
