@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InTheNameOfLinux · 服务器管理插件</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* 本页专属微调 */
+  .whatsnew-more {
+      margin: 28px auto 0;
+      max-width: 560px;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-tertiary);
+    }
+  .whatsnew-more a {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 500;
+    }
+  .whatsnew-more a:hover {
+      text-decoration: underline;
+    }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     导航
+     ============================================================ -->
+<nav>
+  <div class="container nav-inner">
+    <a href="#" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      InTheNameOfLinux
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#whatsnew">更新</a></li>
+      <li><a href="#features">功能</a></li>
+      <li><a href="#penalty">封禁</a></li>
+      <li><a href="#report">举报</a></li>
+      <li><a href="#moderator">协管</a></li>
+      <li><a href="#commands">命令</a></li>
+      <li><a href="#tech">技术</a></li>
+      <li><a href="#roles">角色</a></li>
+      <li><a href="#credits">感谢</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          Nalxer 服务器
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ============================================================
+     Hero
+     ============================================================ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">v26.11.4正式版 · Minecraft 1.12.2</div>
+    <h1>以 Linux 之名<br><span class="gradient">守护你的服务器</span></h1>
+    <p class="hero-subtitle">
+      一款为服务器管理员量身打造的综合管理插件，集身份验证、封禁管理、举报系统、功能限制、协管权限、插件联动于一体。
+    </p>
+
+    <div class="hero-meta">
+      <span class="meta-tag"><strong>PBKDF2</strong> 12 万次迭代</span>
+      <span class="meta-tag"><strong>0</strong> 明文密码</span>
+      <span class="meta-tag"><strong>28</strong> 个子命令</span>
+      <span class="meta-tag"><strong>12</strong> 个 PAPI 变量</span>
+    </div>
+
+    <div class="hero-buttons">
+      <a href="#features" class="btn btn-primary">查看功能</a>
+      <a href="#commands" class="btn btn-secondary">命令列表</a>
+      <a href="linuxpluginhelp.html" class="btn btn-secondary">Linux 帮助中心</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     本版更新
+     ============================================================ -->
+<section id="whatsnew">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">WHAT'S NEW</span>
+      <h2>26.11.4正式版 更新亮点</h2>
+      <p>非法 NBT 检测、查询带维度坐标、主页改为点击即执行</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <h3>🧪 非法 NBT 物品检测 <span class="badge badge-new">NEW</span></h3>
+        <p>把独立的 <code>BanNbt</code> 插件<strong>整体合并进本插件</strong>，
+           少装一个插件、少一份配置。</p>
+        <ul>
+          <li>周期扫描（默认 20 秒）或手动 <code>/linux nbtview</code></li>
+          <li>检测超限附魔、非法属性修饰符（攻击力 / 生命 / 护甲 / 速度等）</li>
+          <li>抗性提升等级 ≥ 4 自动压回 3 级</li>
+          <li>清除时播报<strong>带悬浮详情</strong>：物品名、数量、原因、附魔</li>
+          <li>豁免名单、豁免世界全部可在配置里改，<strong>不含任何硬编码玩家名</strong>；<strong>op 不豁免</strong></li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>📍 查询显示维度与坐标 <span class="badge badge-new">新</span></h3>
+        <p><code>/linux lookup</code> 现在会给出玩家<strong>所在维度与精确坐标</strong>。</p>
+        <ul>
+          <li>在线玩家：<strong>实时</strong>读取当前位置</li>
+          <li>离线玩家：使用<strong>退出服务器时</strong>记录的位置</li>
+          <li>拿不到位置时明确显示"无法获取"，不会给出错误坐标</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>🖱️ 主页改为点击即执行 <span class="badge badge-new">新</span></h3>
+        <p>插件主页的<strong>/linux plugins</strong> 与 <strong>/linux help</strong>
+           不再需要手动输入，点一下就直接执行。</p>
+        <ul>
+          <li>鼠标悬停有说明文字</li>
+          <li>点击立即执行，不用先填充再回车</li>
+          <li><code>/linux plugins</code> 一屏看清所有子插件联动状态</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>🔧 配置不再"看不见" <span class="badge badge-new">改</span></h3>
+        <p>以前新版新增的配置段<strong>永远不会出现在你已有的 config.yml 里</strong>
+           —— 功能能用（读的是内置默认值），但服主看不到、也改不了。</p>
+        <ul>
+          <li>启动时自动把<strong>缺失的配置键</strong>补进你的 config.yml</li>
+          <li>已存在的键<strong>绝不覆盖</strong>，你改过的值原样保留</li>
+          <li>补齐后会打印一行日志告知补了几个键</li>
+        </ul>
+      </div>
+
+
+      <div class="card reveal">
+        <h3>👥 管理层列表读真实配置 <span class="badge badge-new">新</span></h3>
+        <p><code>/linux checkop list</code> 改为直接读<strong>服务器上的权威配置</strong>，
+           不再用玩家登录时才记录的身份缓存。</p>
+        <ul>
+          <li><strong>管理员</strong> ← 原版 <code>ops.json</code></li>
+          <li><strong>服主 / 副服主 / 协管</strong> ← <code>plugins/XlandCore/config.yml</code></li>
+          <li>改完权限<strong>立刻反映</strong>，不必等当事人重新登录</li>
+          <li>还没进过服的管理员也能被查到</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>🔄 查看即同步 <span class="badge badge-new">新</span></h3>
+        <p><code>checkop list</code>、<code>lookup</code>、<code>seenip</code>
+           每次执行都会用配置里的权威数据<strong>刷新一次身份记录</strong>。</p>
+        <ul>
+          <li>查询结果里的身份<strong>永远是最新的</strong></li>
+          <li>同步结果写回 <code>userip.yml</code> 并立即落盘</li>
+          <li>列表按 服主 → 副服主 → 协管 → 管理员 排序，标注在线状态</li>
+        </ul>
+      </div>
+      </div>
+
+      <!-- 更早版本指引：放在 grid 外层并居中，
+           否则会成为网格里孤零零的一个单元格，显得又偏又窄 -->
+      <p class="whatsnew-more reveal">
+        更早版本（26.11.3 及以前）的变更记录见
+        <a href="linuxpluginhelp.html#changelog">帮助中心 · 更新日志</a>
+      </p>
+    </div>
+</section>
+
+<!-- ============================================================
+     核心功能
+     ============================================================ -->
+<section id="features">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">CORE FEATURES</span>
+      <h2>核心功能</h2>
+      <p>十大模块协同工作，覆盖服务器管理的方方面面</p>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card reveal">
+        <div class="card-icon">🔐</div>
+        <h3>身份验证</h3>
+        <p><strong>PBKDF2-HMAC-SHA256 · 12 万次迭代</strong> 的密码加密存储，聊天栏输入密码零日志泄漏。</p>
+        <ul>
+          <li>密码最短 6 位</li>
+          <li>失败 3 秒冷却</li>
+          <li>5 次锁定 300 秒</li>
+          <li>重启后锁定保留</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🚫</div>
+        <h3>封禁管理</h3>
+        <p>账号封禁、临时封禁、IP 封禁、历史查询一站式管理，广播带原因。</p>
+        <ul>
+          <li>永久 / 临时封禁</li>
+          <li>IP 封禁与解封</li>
+          <li>封禁历史可追溯</li>
+          <li>到期自动解封</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">⚔️</div>
+        <h3>功能封禁</h3>
+        <p>禁方块、禁移动、禁言，精确限制玩家行为，不影响账号登录。</p>
+        <ul>
+          <li>禁止方块交互</li>
+          <li>冻结移动坐标</li>
+          <li>拦截聊天与私聊</li>
+          <li>定时自动解除</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">📢</div>
+        <h3>举报系统 <span class="badge badge-new">NEW</span></h3>
+        <p>玩家提交举报，管理层调查后处理，服主离线消息离线缓存上线自动推送。</p>
+        <ul>
+          <li>24 小时调查冷却</li>
+          <li>1 分钟提交冷却</li>
+          <li>接受 / 驳回 + 备注</li>
+          <li>离线消息自动暂存</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">👮</div>
+        <h3>协管体系</h3>
+        <p>协管无 OP 但可使用惩罚命令，时长限制 + 权限分流。</p>
+        <ul>
+          <li>封禁时长上限可配</li>
+          <li>禁止永久封禁</li>
+          <li>帮助菜单四档分流（玩家 / 协管 / 管理员 / 服主）</li>
+          <li>TAB 补全分流</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🛡️</div>
+        <h3>玩家保护</h3>
+        <p>Linux582021 专属保护机制，拦截他人对该玩家的恶意操作。</p>
+        <ul>
+          <li>命令拦截</li>
+          <li>Sudo 拦截</li>
+          <li>控制台拦截</li>
+          <li>fs1 保护（放行 fs1 与服主）</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🧪</div>
+        <h3>非法 NBT 检测 <span class="badge badge-new">NEW</span></h3>
+        <p>合并自原 <code>BanNbt</code> 插件，周期扫描并清除被改坏属性的物品，播报带悬浮详情。</p>
+        <ul>
+          <li>附魔等级与属性上限可配</li>
+          <li>抗性提升自动压级</li>
+          <li>豁免玩家 / 世界</li>
+          <li>兼容饰品与自定义世界</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🔗</div>
+        <h3>插件联动</h3>
+        <p>与 XlandCore、假人插件、XlandStop 无缝联动，功能增强。</p>
+        <ul>
+          <li>XlandCore 身份</li>
+          <li>假人信息同步</li>
+          <li>重启命令监听</li>
+          <li>延迟检测 + reload</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">💾</div>
+        <h3>数据持久化</h3>
+        <p>六个独立数据文件，脏标记 + 定时批量写盘，性能与安全兼顾。</p>
+        <ul>
+          <li>默认 30 秒批量写</li>
+          <li>可配置为立即写</li>
+          <li>reload 幂等化</li>
+          <li>快照回滚保护</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🖱️</div>
+        <h3>交互式帮助</h3>
+        <p>可点击的帮助菜单与封禁列表翻页，悬停提示，一键填充。</p>
+        <ul>
+          <li>点击执行 / 填充</li>
+          <li>分页浏览</li>
+          <li>悬停查看说明</li>
+          <li>1.12.2 兼容</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     封禁系统
+     ============================================================ -->
+<section id="penalty" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">PENALTY SYSTEM</span>
+      <h2>封禁系统</h2>
+      <p>三层封禁体系，覆盖账号、IP、功能三个维度</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <div class="card-icon">🎯</div>
+        <h3>账号封禁</h3>
+        <p>永久 / 临时封禁，支持自定义时间与原因，广播带原因显示。</p>
+        <div class="command-block">
+          <div><span class="comment"># 永久封禁</span></div>
+          <div><span class="cmd">/ban</span> <span class="key">Steve</span> 使用作弊客户端</div>
+          <div></div>
+          <div><span class="comment"># 临时封禁</span></div>
+          <div><span class="cmd">/tempban</span> <span class="key">Steve</span> 1d12h 刷屏</div>
+          <div></div>
+          <div><span class="comment"># 封禁 IP</span></div>
+          <div><span class="cmd">/banip</span> <span class="key">Steve</span> 多开小号</div>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">⏱️</div>
+        <h3>时间格式</h3>
+        <p>支持单一单位与组合单位，灵活应对各种封禁场景。</p>
+        <div class="command-block">
+          <div><span class="key">10s</span>      <span class="comment"># 10 秒</span></div>
+          <div><span class="key">5m</span>       <span class="comment"># 5 分钟</span></div>
+          <div><span class="key">1h</span>       <span class="comment"># 1 小时</span></div>
+          <div><span class="key">1d</span>       <span class="comment"># 1 天</span></div>
+          <div><span class="key">1w</span>       <span class="comment"># 1 周</span></div>
+          <div><span class="key">1d12h</span>    <span class="comment"># 1 天 12 小时</span></div>
+          <div><span class="key">1w2d3h</span>   <span class="comment"># 组合单位</span></div>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">⚔️</div>
+        <h3>功能封禁</h3>
+        <p>不影响登录，只限制特定行为，适合轻度违规玩家。</p>
+        <div class="command-block">
+          <div><span class="cmd">/linux banblock</span> <span class="key">Steve</span> 1h  <span class="comment"># 禁方块</span></div>
+          <div><span class="cmd">/linux banmove</span> <span class="key">Steve</span> 30m  <span class="comment"># 禁移动</span></div>
+          <div><span class="cmd">/linux banmsg</span> <span class="key">Steve</span> 1d   <span class="comment"># 禁言</span></div>
+          <div><span class="cmd">/linux banall</span> <span class="key">Steve</span> 3d   <span class="comment"># 全封</span></div>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">📜</div>
+        <h3>历史查询</h3>
+        <p>完整封禁历史记录，支持查询与清除。</p>
+        <div class="command-block">
+          <div><span class="cmd">/linux history</span> <span class="key">Steve</span></div>
+          <div><span class="cmd">/linux lookup</span> <span class="key">Steve</span></div>
+          <div><span class="cmd">/linux seenip</span> <span class="key">1.2.3.4</span></div>
+          <div><span class="cmd">/linux clearhistory</span> <span class="key">Steve</span></div>
+          <div><span class="cmd">/banlist</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal" style="margin-top: 32px;">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600;">
+        🔑 登录验证
+      </h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>命令</th>
+              <th>使用者</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/linux login</code></td><td>玩家</td><td>开始验证身份；执行后在<strong>聊天栏直接发送密码</strong>（不要加 /）</td></tr>
+            <tr><td><code>/linux chargepw &lt;新密码&gt;</code></td><td>管理员</td><td>修改登录密码（初始密码在首次启动时打印到控制台）</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top: 14px; color: var(--text-secondary); font-size: 14px;">
+        验证过程：进服后按提示执行 <code>/linux login</code> → 在聊天栏直接输入密码。
+        消息会被插件<strong>立即拦截</strong>，其他玩家与控制台都看不到，服务端日志也不留痕迹；
+        输入 <code>cancel</code> 可取消。连续输错达上限会锁定，重启服务器后锁定状态依然保留。
+      </p>
+    </div>
+
+    <div class="reveal" style="margin-top: 32px;">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600;">
+        二次确认机制 <span class="badge badge-new">NEW</span>
+      </h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>操作</th>
+              <th>触发命令</th>
+              <th>确认命令</th>
+              <th>有效期</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>清空历史</td>
+              <td><code>/linux clearhistory &lt;玩家&gt;</code></td>
+              <td><code>/linux clearhistory confirm</code></td>
+              <td>5 分钟</td>
+            </tr>
+            <tr>
+              <td>清空已处理举报</td>
+              <td><code>/linux report clear handled</code></td>
+              <td><code>/linux report clear confirm</code></td>
+              <td>5 分钟</td>
+            </tr>
+            <tr>
+              <td>清空全部举报</td>
+              <td><code>/linux report clear all</code></td>
+              <td><code>/linux report clear confirm</code></td>
+              <td>5 分钟</td>
+            </tr>
+            <tr>
+              <td>清空待广播</td>
+              <td><code>/linux report clear pending</code></td>
+              <td><code>/linux report clear confirm</code></td>
+              <td>5 分钟</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     举报系统
+     ============================================================ -->
+<section id="report">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">REPORT SYSTEM</span>
+      <h2>举报系统 <span class="badge badge-new">NEW</span></h2>
+      <p>玩家提交举报 → 管理层调查 → 处理并通知当事人</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <div class="card-icon">📝</div>
+        <h3>提交流程</h3>
+        <p>玩家提交举报后，插件会根据被举报人身份进行智能分流通知。</p>
+        <ol class="flow" style="margin-top: 16px;">
+          <li><strong>玩家提交</strong><code>/linux report &lt;玩家&gt; &lt;原因&gt;</code>，1 分钟冷却</li>
+          <li><strong>智能分流</strong>根据被举报人身份决定通知对象</li>
+          <li><strong>24 小时冷却</strong>提交后 24 小时内不接受 / 驳回（调查期）</li>
+          <li><strong>处理并通知</strong>接受或驳回，举报人收到结果</li>
+          <li><strong>服主同步</strong>所有处理结果同步广播给服主</li>
+        </ol>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🎯</div>
+        <h3>分流规则</h3>
+        <p>根据被举报人身份，通知范围不同，避免打草惊蛇或漏报。</p>
+        <div class="table-wrap" style="margin-top: 16px;">
+          <table>
+            <thead>
+              <tr><th>被举报人身份</th><th>通知对象</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>服主</td><td>仅服主本人</td></tr>
+              <tr><td>协管 / 管理员 / 副服主</td><td>其他管理层（不含被举报人）</td></tr>
+              <tr><td>普通玩家</td><td>所有管理层（不含举报人）</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">📢</div>
+        <h3>离线消息缓存</h3>
+        <p>服主离线时收到新举报 / 处理结果，消息自动缓存到 <code>reports.yml</code>。</p>
+        <ul>
+          <li>服主上线 <strong>10 秒后</strong>自动推送</li>
+          <li>上限 100 条，超出丢弃最早的</li>
+          <li>玩家离线期间的举报处理结果也会缓存</li>
+          <li>玩家上线后延迟 3 秒推送</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🧹</div>
+        <h3>批量清理</h3>
+        <p>支持多种清理模式，均需要二次确认。</p>
+        <div class="command-block">
+          <div><span class="cmd">/linux report clear handled</span>  <span class="comment"># 已处理</span></div>
+          <div><span class="cmd">/linux report clear all</span>      <span class="comment"># 全部</span></div>
+          <div><span class="cmd">/linux report clear pending</span>  <span class="comment"># 待广播</span></div>
+          <div><span class="cmd">/linux report clear player</span> <span class="key">Steve</span></div>
+          <div><span class="cmd">/linux report clear id</span> <span class="key">3</span></div>
+          <div><span class="cmd">/linux report clear confirm</span>  <span class="comment"># 确认执行</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     协管体系
+     ============================================================ -->
+<section id="moderator" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">MODERATOR SYSTEM</span>
+      <h2>协管权限体系</h2>
+      <p>基于 XlandCore 身份，无 OP 也能高效管理</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <div class="card-icon">✅</div>
+        <h3>协管可用</h3>
+        <p>协管可以使用 8 个惩罚命令，覆盖功能封禁与解封，以及举报的查看 / 处理。</p>
+        <ul>
+          <li><code>/linux banblock</code> 禁用方块</li>
+          <li><code>/linux banmove</code> 禁止移动</li>
+          <li><code>/linux banmsg</code> 禁言</li>
+          <li><code>/linux banall</code> 全面封禁</li>
+          <li>以及 4 个对应的解封命令</li>
+          <li><code>/linux report list / info / accept / reject</code></li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">⛔</div>
+        <h3>协管不可用</h3>
+        <p>账号封禁、隐身、重载、清空举报等命令仅限完整管理员。</p>
+        <ul>
+          <li><code>/ban</code> · <code>/tempban</code> · <code>/banip</code></li>
+          <li><code>/unban</code> · <code>/unbanip</code></li>
+          <li><code>/hide</code></li>
+          <li><code>/linux reload</code></li>
+          <li><code>/linux report clear *</code></li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">⏳</div>
+        <h3>时长限制</h3>
+        <p>协管封禁时长有上限，默认为 7 天，可在配置中调整。</p>
+        <ul>
+          <li>禁止永久封禁</li>
+          <li>超过上限直接拒绝</li>
+          <li>可提前解封</li>
+          <li>解封命令无时间限制</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🎨</div>
+        <h3>界面分流</h3>
+        <p>协管的帮助菜单和 TAB 补全只显示可用命令，界面清爽。</p>
+        <ul>
+          <li>帮助菜单：协管专用版</li>
+          <li>TAB 补全：仅显示可用命令</li>
+          <li>OP 优先：管理员显示完整版</li>
+          <li>XlandCore 未加载时回退权限节点</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     命令列表
+     ============================================================ -->
+<section id="commands">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">COMMANDS</span>
+      <h2>命令列表</h2>
+      <p>完整的命令集，覆盖所有管理场景</p>
+    </div>
+
+    <div class="reveal" style="margin-bottom: 48px;">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600;">
+        管理员通用命令
+      </h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>命令</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/linux ban &lt;玩家&gt; [原因]</code></td><td>封禁玩家（与 <code>/ban</code> 等价，用于拦截列表统一口径）</td></tr>
+            <tr><td><code>/linux help [页码]</code></td><td>显示分页帮助菜单（可点击翻页）</td></tr>
+            <tr><td><code>/linux logs [页码]</code></td><td>插件状态总览（开关、数据文件、任务、子插件联动），每页 10 行</td></tr>
+            <tr><td><code>/linux audit [玩家] [页码]</code></td><td>审计日志：谁改了什么，每页 10 行</td></tr>
+            <tr><td><code>/linux reload</code></td><td>重载配置文件（并回报配置校验结果）</td></tr>
+            <tr><td><code>/linux lookup &lt;玩家/IP&gt;</code></td><td>查询玩家或 IP 信息</td></tr>
+            <tr><td><code>/linux seenip &lt;IP&gt;</code></td><td>查询使用该 IP 的玩家列表</td></tr>
+            <tr><td><code>/linux history &lt;玩家&gt;</code></td><td>查看玩家封禁历史</td></tr>
+            <tr><td><code>/linux clearhistory &lt;玩家&gt;</code></td><td>清除玩家全部历史（二次确认）</td></tr>
+            <tr><td><code>/linux fp [list]</code></td><td>查看假人插件状态 / 列表</td></tr>
+            <tr><td><code>/linux fpsync</code></td><td>手动同步假人数据</td></tr>
+            <tr><td><code>/linux plugins</code></td><td>查看插件联动状态（XlandCore / 假人 / 头衔 / NBT 检测等），主页可点击直达</td></tr>
+            <tr><td><code>/linux nbtview</code></td><td>立即扫描并清除在线玩家的非法 NBT 物品</td></tr>
+            <tr><td><code>/linux chargepw &lt;新密码&gt;</code></td><td>修改登录密码（初始密码见控制台）</td></tr>
+            <tr><td><code>/linux hide</code></td><td>切换隐身（调用 /vanish，仅服主可用）</td></tr>
+            <tr><td><code>/linux cmd &lt;玩家&gt; &lt;命令&gt;</code></td><td>以指定玩家身份执行命令</td></tr>
+            <tr><td><code>/linux checkop</code></td><td>检查自己的身份与管理权限（<strong>服主 / 管理员 / 协管都能用</strong>）</td></tr>
+            <tr><td><code>/linux checkop list</code></td><td>列出所有管理员（需 <code>lookup</code> 权限）</td></tr>
+            <tr><td><code>/linux refuse</code></td><td>查看 / 修改命令拦截列表</td></tr>
+            <tr><td><code>/banlist [页码]</code></td><td>查看封禁列表（可点击翻页）</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="reveal" style="margin-bottom: 48px;">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600;">
+        封禁命令
+      </h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>命令</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/ban &lt;玩家&gt; [原因]</code></td><td>永久封禁玩家</td></tr>
+            <tr><td><code>/tempban &lt;玩家&gt; &lt;时间&gt; [原因]</code></td><td>临时封禁玩家</td></tr>
+            <tr><td><code>/banip &lt;玩家/IP&gt; [原因]</code></td><td>封禁 IP 地址</td></tr>
+            <tr><td><code>/unban &lt;玩家&gt;</code></td><td>解封玩家</td></tr>
+            <tr><td><code>/unbanip &lt;IP&gt;</code></td><td>解封 IP</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="reveal" style="margin-bottom: 48px;">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600;">
+        功能封禁命令（协管可用）
+      </h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>命令</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/linux banblock &lt;玩家&gt; [时间] [原因]</code></td><td>禁用方块交互</td></tr>
+            <tr><td><code>/linux unbanblock &lt;玩家&gt;</code></td><td>解除方块交互禁用</td></tr>
+            <tr><td><code>/linux banmove &lt;玩家&gt; [时间] [原因]</code></td><td>禁止移动</td></tr>
+            <tr><td><code>/linux unbanmove &lt;玩家&gt;</code></td><td>解除移动禁止</td></tr>
+            <tr><td><code>/linux banmsg &lt;玩家&gt; [时间] [原因]</code></td><td>禁言</td></tr>
+            <tr><td><code>/linux unbanmsg &lt;玩家&gt;</code></td><td>解除禁言</td></tr>
+            <tr><td><code>/linux banall &lt;玩家&gt; [时间] [原因]</code></td><td>全面封禁</td></tr>
+            <tr><td><code>/linux unbanall &lt;玩家&gt;</code></td><td>解除所有功能封禁</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600;">
+        举报命令 <span class="badge badge-new">NEW</span>
+      </h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>命令</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/linux report &lt;玩家&gt; &lt;原因&gt;</code></td><td>提交举报（1 分钟冷却）</td></tr>
+            <tr><td><code>/linux report list</code></td><td>查看待处理举报</td></tr>
+            <tr><td><code>/linux report all</code></td><td>查看全部举报</td></tr>
+            <tr><td><code>/linux report info &lt;ID&gt;</code></td><td>查看举报详情</td></tr>
+            <tr><td><code>/linux report accept &lt;ID&gt; [备注]</code></td><td>接受举报</td></tr>
+            <tr><td><code>/linux report reject &lt;ID&gt; [备注]</code></td><td>驳回举报</td></tr>
+            <tr><td><code>/linux report clear handled</code></td><td>清空已处理的举报</td></tr>
+            <tr><td><code>/linux report clear all</code></td><td>清空所有举报</td></tr>
+            <tr><td><code>/linux report clear pending</code></td><td>清空待广播消息</td></tr>
+            <tr><td><code>/linux report clear player &lt;玩家&gt;</code></td><td>清空某玩家相关举报</td></tr>
+            <tr><td><code>/linux report clear id &lt;ID&gt;</code></td><td>删除指定举报</td></tr>
+            <tr><td><code>/linux report clear confirm</code></td><td>确认执行上述清空（需二次确认）</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     技术亮点
+     ============================================================ -->
+<section id="tech" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">TECHNICAL HIGHLIGHTS</span>
+      <h2>技术亮点</h2>
+      <p>从代码层面保证性能与稳定性</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <h3>🔒 安全</h3>
+        <ul>
+          <li>PBKDF2-HMAC-SHA256 · 12 万次迭代 <span class="badge badge-new">新</span></li>
+          <li>旧 SHA-256 哈希登录时自动升级</li>
+          <li>常量时间比较防时序攻击</li>
+          <li>聊天栏输密码，服务端日志零痕迹</li>
+          <li>防爆破：冷却 + 锁定 + 持久化</li>
+          <li>权限节点与身份双重校验</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>⚡ 性能</h3>
+        <ul>
+          <li>多级缓存（ConcurrentHashMap）</li>
+          <li>脏标记 + 定时批量写盘</li>
+          <li>惰性清理 + 超时自愈</li>
+          <li>反射缓存（TPS / XlandCore）</li>
+          <li>大表 O(1) 索引（IP 反查）</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>🧵 并发</h3>
+        <ul>
+          <li>异步事件只读判断，回主线程处理</li>
+          <li>volatile 保证配置可见性</li>
+          <li>synchronized 保护 pending 列表</li>
+          <li>AtomicBoolean 防任务重入</li>
+          <li>try/finally 精确清除标记</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>🛠️ 健壮</h3>
+        <ul>
+          <li>延迟初始化（假人 / XStop / XlandCore）</li>
+          <li>插件可插拔（softdepend）</li>
+          <li>reload 幂等化</li>
+          <li>异常兜底（try/catch + isEnabled）</li>
+          <li>控制台与玩家分流（UI 适配）</li>
+          <li>到期自动解除<strong>保留记录</strong>，手动解除才删除</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="stats reveal">
+      <div class="stat">
+        <div class="stat-value">25</div>
+        <div class="stat-label">模块文件</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">28</div>
+        <div class="stat-label">子命令总数</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">7</div>
+        <div class="stat-label">数据文件</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">24</div>
+        <div class="stat-label">迭代轮次</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     角色说明
+     ============================================================ -->
+<section id="roles" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">ROLES</span>
+      <h2>角色与权限</h2>
+      <p>三种身份，权限逐级递增；帮助菜单会按身份自动分流</p>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card reveal">
+        <div class="card-icon">🛡️</div>
+        <h3>协管</h3>
+        <p>只能<strong>限制功能</strong>，不能封号。适合处理轻度违规。</p>
+        <ul>
+          <li>禁言 / 禁移动 / 禁交互 / 全面封禁</li>
+          <li>处理举报（查看 / 接受 / 驳回）</li>
+          <li><strong>必须写明时长</strong>，最长 7 天</li>
+          <li>不能账号封禁、不能清空举报</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">👮</div>
+        <h3>管理员（非服主）</h3>
+        <p>可以<strong>真正封号</strong>，并负责日常运维。</p>
+        <ul>
+          <li>账号封禁 / 临时封禁 / IP 封禁 / 解封</li>
+          <li>查询玩家资料、封禁历史、同 IP 账号</li>
+          <li>处理并清理举报</li>
+          <li>重载配置、查看审计日志与状态总览</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">👑</div>
+        <h3>服主（Linux）</h3>
+        <p>唯一能改插件配置的身份，也是被保护对象。</p>
+        <ul>
+          <li>拦截列表、控制台开关、NBT 扫描</li>
+          <li>隐身 <code>/hide</code>、改登录密码</li>
+          <li>命令被他人用于针对自己时自动拦截并双向通知</li>
+          <li>上线强制持有本插件全部权限节点</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip tip-warn" style="margin-top: 32px;">
+      <span class="tip-icon">⚠️</span>
+      <div class="tip-body">
+        <strong>OP 优先：不要把协管设为 OP</strong>
+        同时是 OP 和协管的玩家会被识别为「完整管理员」，从而获得<strong>完整的封号权限</strong>。
+        按最小权限原则，协管不要给 OP，只给 <code>xlcore.mod</code> 或
+        <code>inthenameoflinux.moderator</code>。
+      </div>
+    </div>
+
+    <div class="tip tip-info" style="margin-top: 20px;">
+      <span class="tip-icon">📄</span>
+      <div class="tip-body">
+        <strong>可直接分发的使用说明</strong>
+        插件包内附两份纯文本说明，发给对应人员即可：
+        <code>协管使用说明-26.11.4正式版.txt</code>、<code>管理员使用说明-26.11.4正式版.txt</code>。
+        详细权限对照见 <a href="linuxpluginhelp.html#permissions">帮助中心 · 权限说明</a>。
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============================================================
+     感谢列表
+     ============================================================ -->
+<section id="credits" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">CREDITS</span>
+      <h2>感谢列表</h2>
+      <p>这个插件离不开以下贡献者</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <div class="card-icon">👑</div>
+        <h3>Linux582021 <span class="badge badge-new">作者</span></h3>
+        <p>插件作者与主要维护者。</p>
+        <ul>
+          <li>整体架构与核心功能实现</li>
+          <li>封禁 / 举报 / 协管 / 保护体系</li>
+          <li>配置、文档与官网维护</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🧪</div>
+        <h3>星白喵喵 <span class="badge badge-new">作者</span></h3>
+        <p>共同作者。</p>
+        <ul>
+          <li><strong>提供 BanNbt 插件源码</strong></li>
+          <li>其非法 NBT 检测逻辑已成为本插件的一部分，<br>
+              即 <code>/linux nbtview</code> 与周期扫描功能</li>
+          <li>检测阈值与判定规则依据其原始实现</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip tip-info" style="margin-top: 32px;">
+      <span class="tip-icon">💡</span>
+      <div class="tip-body">
+        <strong>关于非法 NBT 检测</strong>
+        该功能原本是一个独立插件 <code>BanNbt</code>，由 <strong>星白喵喵</strong> 提供源码。
+        现已<strong>整体合并进 InTheNameOfLinux</strong>：检测阈值、抗性提升压缩等判定规则
+        均沿用其原始实现，并在此基础上补充了配置化豁免名单、世界豁免、
+        饰品兼容与悬浮详情播报。感谢他的贡献。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     页脚
+     ============================================================ -->
+<footer>
+  <div class="container">
+    <div class="footer-brand">InTheNameOfLinux</div>
+    <p>以 Linux 之名 · 守护你的服务器</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v26.11.4正式版 · Minecraft 1.12.2 · Made with ♥ by Linux582021 &amp; 星白喵喵
+    </p>
+    <p style="margin-top: 12px;">
+      <a href="linuxpluginhelp.html">Linux 帮助中心</a>
+      &nbsp;·&nbsp;
+      <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+
+<!-- ============================================================
+     脚本
+     ============================================================ -->
+<script>
+  // 滚动淡入
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  });
+
+  document.querySelectorAll('.reveal').forEach((el) => {
+    observer.observe(el);
+  });
+
+  // 平滑滚动
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ============================================================
+  // 移动端汉堡菜单
+  // ============================================================
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
