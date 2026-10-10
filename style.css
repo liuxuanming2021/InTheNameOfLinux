@@ -3957,3 +3957,110 @@ html.page-anim.page-leaving body {
 html.page-anim body > nav {
   animation: none !important;
 }
+
+
+/* ============================================================
+   透明页面的文字：一律黑色（背景是视频，白色看不清）
+   ============================================================
+   保留白色的：顶栏「L」图标、主按钮文字、头像、侧栏选中项
+   ============================================================ */
+.cover-title,
+.cover-subtitle,
+.cover-quote,
+.cover-quote strong,
+.cover-remark p,
+.cover-remark strong,
+.cover-social a {
+  color: #000 !important;
+  text-shadow: 0 1px 14px rgba(255, 255, 255, 0.75), 0 1px 3px rgba(255, 255, 255, 0.6);
+}
+
+.cover-social a:hover {
+  color: var(--blue) !important;
+}
+
+/* 封面上的胶囊按钮：浅底 + 黑字 */
+.cover-page .cover-btn,
+.cover-btn {
+  color: #000 !important;
+  border-color: rgba(0, 0, 0, 0.22) !important;
+  background: rgba(255, 255, 255, 0.34) !important;
+}
+
+.cover-page .cover-btn:hover,
+.cover-btn:hover {
+  color: #fff !important;
+  background: var(--blue) !important;
+  border-color: var(--blue) !important;
+}
+
+/* 介绍页正文标题与文字 */
+.intro-body h2,
+.intro-body h3,
+.intro-body h4,
+.intro-body .section-label,
+.intro-body .section-header p,
+.intro-body > section > .container > p,
+.chapter-no,
+.chapter-title,
+.chapter-lede,
+.zz-text h4,
+.zz-text p,
+.zz-text ul,
+.band-title,
+.intro-split h2,
+.intro-split p,
+.zigzag .zz-text li {
+  color: #000 !important;
+  text-shadow: 0 1px 14px rgba(255, 255, 255, 0.8), 0 1px 3px rgba(255, 255, 255, 0.65);
+}
+
+.intro-body .section-label {
+  color: var(--blue) !important;
+}
+
+/* 章节竖线节点改深色，压在浅背景上才看得见 */
+.chapter {
+  border-left-color: rgba(0, 0, 0, 0.22) !important;
+}
+
+.chapter::before {
+  background: #fff !important;
+  border-color: var(--blue) !important;
+}
+
+/* 简洁版封面（.cover-page）里的元素 */
+.cover-page .cover-subtitle,
+.cover-page .cover-quote,
+.cover-page .cover-remark p {
+  color: #000 !important;
+}
+
+
+/* 统计条压在深色画面上，用更实的玻璃底 + 白晕，数字才清楚 */
+.stat-row {
+  background: rgba(255, 255, 255, 0.62) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(170%) !important;
+  backdrop-filter: blur(18px) saturate(170%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.7) !important;
+  box-shadow: 0 10px 30px rgba(15, 25, 35, 0.14) !important;
+}
+
+.stat-cell b,
+.stat-cell span,
+.stat-row .stat-cell b,
+.stat-row .stat-cell span {
+  color: var(--text) !important;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.85) !important;
+}
+
+.stat-cell b {
+  color: var(--blue) !important;
+}
+
+/* 章节编号也要有白晕，否则压在深色处看不到 */
+.chapter-no,
+.band-title,
+.section-label {
+  text-shadow: 0 1px 12px rgba(255, 255, 255, 0.9), 0 1px 4px rgba(255, 255, 255, 0.7) !important;
+}
