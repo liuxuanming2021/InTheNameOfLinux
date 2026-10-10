@@ -2617,17 +2617,19 @@ color: var(--code-keyword);
    ============================================================ */
 
 /* ---------- 三栏容器 ---------- */
-.content-layout {
+.content-layout,
+.content-layout.no-toc {
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr) 200px;
-  gap: 40px;
+  /* 只保留左侧目录栏 + 正文（右侧「本页目录」已去掉） */
+  grid-template-columns: 248px minmax(0, 1fr);
+  gap: 48px;
   padding: 40px 0 100px;
   align-items: start;
 }
 
-/* 没有「本页目录」的页面退化为两栏 */
-.content-layout.no-toc {
-  grid-template-columns: 240px minmax(0, 1fr);
+/* 本页目录已移除，保留规则以免残留样式影响 */
+.page-toc {
+  display: none;
 }
 
 /* ---------- 侧栏 ---------- */
@@ -2810,12 +2812,8 @@ color: var(--code-keyword);
 @media (max-width: 1180px) {
   .content-layout,
   .content-layout.no-toc {
-    grid-template-columns: 220px minmax(0, 1fr);
-    gap: 32px;
-  }
-
-  .page-toc {
-    display: none;
+    grid-template-columns: 224px minmax(0, 1fr);
+    gap: 36px;
   }
 }
 
