@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<nav>
+<nav class="nav-home">
   <div class="container nav-inner">
     <a href="index.html" class="nav-logo">
       <span class="nav-logo-icon">L</span>
@@ -44,28 +44,60 @@
 </nav>
 
 <!-- ============================================================
-     Hero
+     封面 Hero（参考 dmego 个人主页的封面式布局）
      ============================================================ -->
-<section class="hero">
-  <div class="container">
-    <div class="hero-badge">Minecraft 1.12.2 · Paper / Spigot</div>
-    <h1>Linux582021</h1>
-    <p class="hero-subtitle">
-      我的 Minecraft 插件作品集 —— 为 Paper / Spigot 1.12.2 编写并维护，覆盖服务器管理、头衔系统与假人系统。
+<header class="cover">
+  <div class="cover-overlay"></div>
+
+  <div class="cover-inner">
+    <!-- 圆形头像：悬停翻转显示背面文字 -->
+    <div class="avatar-flip">
+      <div class="avatar-face">
+        <img src="me.jpg" alt="Linux582021 的头像">
+      </div>
+      <div class="avatar-back">
+        <strong>Keep<br>Building</strong>
+        <em>2026 · 守护</em>
+      </div>
+    </div>
+
+    <h1 class="cover-title">Linux582021</h1>
+    <p class="cover-subtitle">Minecraft Plugin Developer</p>
+
+    <hr class="cover-divider">
+
+    <p class="cover-quote">
+      以 Linux 之名，守护你的服务器
+      <br>
+      <strong>——《守护者》</strong>
     </p>
 
-    <div class="hero-meta">
-      <span class="meta-tag"><strong>3</strong> 款插件</span>
-      <span class="meta-tag"><strong>1.12.2</strong> Paper / Spigot</span>
-      <span class="meta-tag">持续维护</span>
+    <!-- 主导航按钮（胶囊样式） -->
+    <div class="cover-nav">
+      <a href="#plugins" class="cover-btn">插件列表</a>
+      <a href="linuxhelp.html" class="cover-btn">综合帮助</a>
+      <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="cover-btn">Nalxer 服务器</a>
+      <a href="#about" class="cover-btn">关于</a>
     </div>
 
-    <div class="hero-buttons">
-      <a href="#plugins" class="btn btn-primary">查看插件</a>
-      <a href="linuxhelp.html" class="btn btn-secondary">综合帮助中心</a>
+    <!-- 社交/信息行 -->
+    <div class="cover-social">
+      <a href="https://github.com/liuxuanming2021" target="_blank" rel="noopener noreferrer">
+        <span class="ico">◆</span><span class="label">github</span>
+      </a>
+      <a href="linux.html"><span class="ico">◆</span><span class="label">InTheNameOfLinux</span></a>
+      <a href="title.html"><span class="ico">◆</span><span class="label">LinuxTitle</span></a>
+      <a href="fakeplayer.html"><span class="ico">◆</span><span class="label">FakePlayerPlugin</span></a>
+    </div>
+
+    <div class="cover-remark">
+      <p>
+        <strong>3</strong> 款插件 · Paper / Spigot <strong>1.12.2</strong> ·
+        QQ <strong>2703441387</strong>
+      </p>
     </div>
   </div>
-</section>
+</header>
 
 <!-- ============================================================
      插件列表
@@ -79,7 +111,7 @@
     </div>
 
     <div class="grid grid-3">
-      <div class="card reveal">
+<div class="card reveal">
         <div class="card-icon">🛡️</div>
         <h3>InTheNameOfLinux <span class="badge badge-new">综合管理</span></h3>
         <p class="plug-ver">26.11.4正式版</p>
@@ -135,7 +167,7 @@
 </section>
 
 <!-- ============================================================
-     关于
+     关于作者
      ============================================================ -->
 <section id="about" class="alt">
   <div class="container">
@@ -180,6 +212,21 @@
 </footer>
 
 <script>
+    // 主页封面：滚动后导航变实色
+    (function () {
+      var nav = document.querySelector('.nav-home');
+      if (!nav) return;
+      function update() {
+        if (window.scrollY > 40) {
+          nav.classList.add('scrolled');
+        } else {
+          nav.classList.remove('scrolled');
+        }
+      }
+      window.addEventListener('scroll', update, { passive: true });
+      update();
+    })();
+
   // 滚动淡入
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
