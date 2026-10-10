@@ -1184,7 +1184,7 @@
     <section class="help-section" id="changelog">
       <h2>更新日志</h2>
 
-      <h3>26.11.4 正式版</h3>
+      <h3>26.11.4正式版</h3>
       <p>本版集中在<strong>物品安全</strong>与<strong>信息可读性</strong>：把独立的 BanNbt 插件整体合并进来，
          查询能直接给出维度坐标，主页与帮助页改为点击即执行。</p>
 
@@ -1238,7 +1238,7 @@
               <td><strong>🧹 其他</strong></td>
               <td>移除已废弃的 <code>/linux dumpholders</code> 调试命令；
                   作者显示修复（读取 plugin.yml 的作者列表）；
-                  版本号由 <code>26.11.4-Beta</code> 定为 <code>26.11.4</code> 正式版</td>
+                  版本号由 <code>26.11.4-Beta</code> 定为 <code>26.11.4正式版</code></td>
             </tr>
           </tbody>
         </table>
@@ -1521,7 +1521,8 @@
             <tr><td><code>/linux history &lt;玩家&gt;</code></td><td>查看玩家完整封禁历史</td><td><span class="badge badge-op">history</span></td></tr>
             <tr><td><code>/linux clearhistory &lt;玩家&gt;</code></td><td>清除玩家全部历史（需二次确认）</td><td><span class="badge badge-op">clearhistory</span></td></tr>
             <tr><td><code>/banlist [页码]</code></td><td>查看所有封禁记录（账号 + 功能），可点击翻页</td><td><span class="badge badge-op">ban</span></td></tr>
-            <tr><td><code>/linux checkop</code></td><td>检查自己的身份与管理权限（服主 / 管理员 / 协管都能用）</td><td><span class="badge badge-op">lookup</span></td></tr>
+            <tr><td><code>/linux checkop</code></td><td>检查自己的身份与管理权限（<strong>服主 / 管理员 / 协管都能用</strong>，不需要额外权限）</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/linux checkop list</code></td><td><strong>管理层列表</strong>：直接读原版 <code>ops.json</code> 与 <code>plugins/XlandCore/config.yml</code>，按 服主 → 副服主 → 协管 → 管理员 排序并标注在线状态。每次执行都会同步身份记录，改完权限立刻反映</td><td><span class="badge badge-op">lookup</span></td></tr>
             <tr><td><code>/hide</code></td><td>切换隐身（等价于执行 <code>/vanish</code>），不带参数。仅保护对象本人可用</td><td><span class="badge badge-op">仅 Linux582021</span></td></tr>
             <tr><td><code>/linux plugins</code></td><td><strong>插件联动状态一览</strong>：XlandCore 身份识别、假人插件（含假人数量）、XlandStop 监听、LinuxTitle 头衔、命令接管状态、非法 NBT 检测状态。主页可点击直达</td><td><span class="badge badge-op">lookup</span></td></tr>
             <tr><td><code>/linux nbtview</code></td><td><strong>立即扫描并清除</strong>在线玩家的非法 NBT 物品（不等周期扫描）。结果播报到控制台与服主，物品名带悬浮详情</td><td><span class="badge badge-op">nbtview</span></td></tr>
@@ -1785,6 +1786,32 @@
             <strong>OP 优先原则</strong>
             如果玩家同时是 OP 和协管，插件会将其识别为"完整管理员"，显示完整帮助。
             <br>也就是说：<strong>给协管 OP 会让他获得完整的封号权限</strong>，按最小权限原则不要这样做。
+          </div>
+        </div>
+
+        <h3>身份数据从哪来</h3>
+        <p><code>/linux checkop list</code>、<code>/linux lookup</code>、<code>/linux seenip</code>
+           都会读取<strong>服务器上的权威配置</strong>，而不是玩家登录时才记录的身份缓存。</p>
+        <div class="table-scroll">
+          <table class="help-table">
+            <thead>
+              <tr><th>身份</th><th>数据来源</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>管理员</strong></td><td>服务器根目录的原版 <code>ops.json</code></td></tr>
+              <tr><td><strong>服主 / 副服主 / 协管</strong></td>
+                  <td><code>plugins/XlandCore/config.yml</code> 的
+                      <code>owner</code> / <code>co-owners</code> / <code>moderators</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tip tip-info">
+          <span class="tip-icon">🔄</span>
+          <div class="tip-body">
+            <strong>查看即同步</strong>
+            以前身份只在玩家登录时记录，管理员的 OP 被改动后要等那人重新登录才会更新。
+            现在每次查看都会用配置数据刷新一次，并写回 <code>userip.yml</code>（立即落盘），
+            所以<strong>改完权限立刻准确</strong>，没进过服的管理员也能被查到。
           </div>
         </div>
 
@@ -2603,7 +2630,7 @@
     <div class="footer-brand">InTheNameOfLinux</div>
     <p>以 Linux 之名 · 守护你的服务器</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v26.11.4 正式版 · Minecraft 1.12.2 · Made with ♥ by Linux582021 &amp; 星白喵喵
+      v26.11.4正式版 · Minecraft 1.12.2 · Made with ♥ by Linux582021 &amp; 星白喵喵
     </p>
     <p style="margin-top: 12px;">
       <a href="index.html">← 返回主页</a>

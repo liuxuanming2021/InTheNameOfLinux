@@ -987,7 +987,7 @@
      ============================================================ -->
 <section class="hero">
   <div class="container">
-    <div class="hero-badge">v26.11.4 正式版 · Minecraft 1.12.2</div>
+    <div class="hero-badge">v26.11.4正式版 · Minecraft 1.12.2</div>
     <h1>以 Linux 之名<br><span class="gradient">守护你的服务器</span></h1>
     <p class="hero-subtitle">
       一款为服务器管理员量身打造的综合管理插件，集身份验证、封禁管理、举报系统、功能限制、协管权限、插件联动于一体。
@@ -1015,7 +1015,7 @@
   <div class="container">
     <div class="section-header reveal">
       <span class="section-label">WHAT'S NEW</span>
-      <h2>26.11.4 正式版 更新亮点</h2>
+      <h2>26.11.4正式版 更新亮点</h2>
       <p>非法 NBT 检测、查询带维度坐标、主页改为点击即执行</p>
     </div>
 
@@ -1065,6 +1065,29 @@
         </ul>
       </div>
 
+
+      <div class="card reveal">
+        <h3>👥 管理层列表读真实配置 <span class="badge badge-new">新</span></h3>
+        <p><code>/linux checkop list</code> 改为直接读<strong>服务器上的权威配置</strong>，
+           不再用玩家登录时才记录的身份缓存。</p>
+        <ul>
+          <li><strong>管理员</strong> ← 原版 <code>ops.json</code></li>
+          <li><strong>服主 / 副服主 / 协管</strong> ← <code>plugins/XlandCore/config.yml</code></li>
+          <li>改完权限<strong>立刻反映</strong>，不必等当事人重新登录</li>
+          <li>还没进过服的管理员也能被查到</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3>🔄 查看即同步 <span class="badge badge-new">新</span></h3>
+        <p><code>checkop list</code>、<code>lookup</code>、<code>seenip</code>
+           每次执行都会用配置里的权威数据<strong>刷新一次身份记录</strong>。</p>
+        <ul>
+          <li>查询结果里的身份<strong>永远是最新的</strong></li>
+          <li>同步结果写回 <code>userip.yml</code> 并立即落盘</li>
+          <li>列表按 服主 → 副服主 → 协管 → 管理员 排序，标注在线状态</li>
+        </ul>
+      </div>
 
         <div class="reveal" style="margin-top: 8px;">
           <p style="color:var(--text-tertiary);font-size:.9rem;text-align:center;">
@@ -1827,7 +1850,7 @@
     <div class="footer-brand">InTheNameOfLinux</div>
     <p>以 Linux 之名 · 守护你的服务器</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v26.11.4 正式版 · Minecraft 1.12.2 · Made with ♥ by Linux582021 &amp; 星白喵喵
+      v26.11.4正式版 · Minecraft 1.12.2 · Made with ♥ by Linux582021 &amp; 星白喵喵
     </p>
     <p style="margin-top: 12px;">
       <a href="help.html">帮助中心</a>
