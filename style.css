@@ -406,7 +406,12 @@ section.alt {
   }
 
 .card {
-    background: #fff;
+    background: rgba(255, 255, 255, 0.30);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    backdrop-filter: blur(18px) saturate(180%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 8px 32px rgba(30, 44, 56, 0.08);
     border-radius: 18px;
     padding: 28px;
     border: 1px solid var(--border-light);
@@ -429,7 +434,7 @@ section.alt {
     width: 44px;
     height: 44px;
     border-radius: 12px;
-    background: var(--blue-light);
+    background: rgba(255, 255, 255, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -535,7 +540,12 @@ code {
   }
 
 .table-wrap {
-    background: #fff;
+    background: rgba(255, 255, 255, 0.30);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    backdrop-filter: blur(18px) saturate(180%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 8px 32px rgba(30, 44, 56, 0.08);
     border-radius: 14px;
     border: 1px solid var(--border-light);
     overflow-x: auto;
@@ -800,7 +810,7 @@ footer a:hover {
       flex-direction: column;
       gap: 0;
       align-items: stretch;
-      background: rgba(255, 255, 255, 0.98);
+      background: rgba(255, 255, 255, 0.34);
       backdrop-filter: saturate(180%) blur(20px);
       -webkit-backdrop-filter: saturate(180%) blur(20px);
       border-bottom: 1px solid rgba(0, 0, 0, 0.06);
@@ -1207,7 +1217,12 @@ font-size: 15px;
 }
 
 .faq-item {
-background: #fff;
+background: rgba(255, 255, 255, 0.30);
+-webkit-backdrop-filter: blur(18px) saturate(180%);
+backdrop-filter: blur(18px) saturate(180%);
+box-shadow:
+  inset 0 1px 0 rgba(255, 255, 255, 0.9),
+  0 8px 32px rgba(30, 44, 56, 0.08);
     border: 1px solid var(--border-light);
     border-radius: 14px;
     margin-bottom: 12px;
@@ -1678,12 +1693,17 @@ color: var(--code-keyword);
   display: none;
   }
   .help-table tr {
-  margin-bottom: 12px;
-        padding: 0;
-        border: 1px solid var(--border-light);
-        border-radius: 10px;
-        background: #fff;
-        overflow: hidden;
+    margin-bottom: 12px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.28);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    backdrop-filter: blur(18px) saturate(180%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 8px 32px rgba(30, 44, 56, 0.10);
+    overflow: hidden;
   }
   .help-table tr:last-child {
   margin-bottom: 0;
@@ -2331,9 +2351,9 @@ color: var(--code-keyword);
   }
 
   .nav-home .nav-links {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    background: rgba(255, 255, 255, 0.34);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
   }
 
   .nav-home .nav-links a {
@@ -2408,7 +2428,7 @@ color: var(--code-keyword);
 
 /* 帮助页的表格卡片 */
 .help-table {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.30);
 }
 
 .cover-btn:hover {
@@ -2518,6 +2538,25 @@ color: var(--code-keyword);
 
   .btn-secondary {
     background: rgba(255, 255, 255, 0.9);
+  }
+}
+
+/* ============================================================
+   手机端背景：改用 mobile.jpg（不加载视频，节省流量）
+   ============================================================ */
+@media (max-width: 920px) {
+  /* 隐藏视频 */
+  .bg-video {
+    display: none;
+  }
+
+  /* 用 mobile.jpg 作固定背景，保持与桌面端一致的视差（背景不动、文字滚） */
+  .cover {
+    background-image: url("mobile.jpg");
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
   }
 }
 
