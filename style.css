@@ -2399,24 +2399,33 @@ color: var(--code-keyword);
    手机端背景：改用 mobile.jpg（不加载视频，节省流量）
    ============================================================ */
 @media (max-width: 920px) {
-  /* 隐藏视频 */
+  /* 隐藏视频（手机端用 mobile.jpg，省流量） */
   .bg-video {
     display: none;
+  }
 
-    /* body 需要成为定位参照 */
-    body {
-      position: relative;
-    }
+  /* 手机端：导航项收进汉堡，顶栏只留 logo + 汉堡 */
+  .nav-links {
+    display: none;
+  }
 
-    /* 封面遮罩：按要求全部去掉 */
-    .cover-overlay {
-  display: none;
-}
+  .nav-links.open {
+    display: flex;
+  }
 
-    /* 封面内容要压在遮罩之上 */
-    .cover-inner {
-      z-index: 1;
-    }
+  /* body 需要成为定位参照 */
+  body {
+    position: relative;
+  }
+
+  /* 封面遮罩：按要求全部去掉 */
+  .cover-overlay {
+    display: none;
+  }
+
+  /* 封面内容要压在遮罩之上 */
+  .cover-inner {
+    z-index: 1;
   }
 
   /* 手机端背景：用一个「固定层」承载 mobile.jpg，
@@ -2439,6 +2448,15 @@ color: var(--code-keyword);
     background-color: var(--ink-800);
     z-index: -1;
     pointer-events: none;
+  }
+
+
+  /* 插件帮助页（纯白）不要背景图 */
+  body.pure-white .cover::before,
+  body.pure-white .hero::before,
+  body.pure-white .page-hero::before {
+    background-image: none;
+    background-color: #fff;
   }
 
   /* .cover 自己不再承载背景图，也不再用 aspect-ratio 撑高 */
