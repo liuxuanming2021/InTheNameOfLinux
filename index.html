@@ -957,6 +957,7 @@
       <li><a href="#report">举报</a></li>
       <li><a href="#moderator">协管</a></li>
       <li><a href="#commands">命令</a></li>
+      <li><a href="#roles">角色</a></li>
       <li><a href="#credits">感谢</a></li>
       <li><a href="help.html" class="nav-help">帮助</a></li>
       <li>
@@ -986,7 +987,7 @@
      ============================================================ -->
 <section class="hero">
   <div class="container">
-    <div class="hero-badge">v26.11.4-RC · Minecraft 1.12.2</div>
+    <div class="hero-badge">v26.11.4 正式版 · Minecraft 1.12.2</div>
     <h1>以 Linux 之名<br><span class="gradient">守护你的服务器</span></h1>
     <p class="hero-subtitle">
       一款为服务器管理员量身打造的综合管理插件，集身份验证、封禁管理、举报系统、功能限制、协管权限、插件联动于一体。
@@ -1014,7 +1015,7 @@
   <div class="container">
     <div class="section-header reveal">
       <span class="section-label">WHAT'S NEW</span>
-      <h2>26.11.4-RC 更新亮点</h2>
+      <h2>26.11.4 正式版 更新亮点</h2>
       <p>非法 NBT 检测、查询带维度坐标、主页改为点击即执行</p>
     </div>
 
@@ -1818,6 +1819,76 @@
 </section>
 
 <!-- ============================================================
+     角色说明
+     ============================================================ -->
+<section id="roles" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">ROLES</span>
+      <h2>角色与权限</h2>
+      <p>三种身份，权限逐级递增；帮助菜单会按身份自动分流</p>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card reveal">
+        <div class="card-icon">🛡️</div>
+        <h3>协管</h3>
+        <p>只能<strong>限制功能</strong>，不能封号。适合处理轻度违规。</p>
+        <ul>
+          <li>禁言 / 禁移动 / 禁交互 / 全面封禁</li>
+          <li>处理举报（查看 / 接受 / 驳回）</li>
+          <li><strong>必须写明时长</strong>，最长 7 天</li>
+          <li>不能账号封禁、不能清空举报</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">👮</div>
+        <h3>管理员（非服主）</h3>
+        <p>可以<strong>真正封号</strong>，并负责日常运维。</p>
+        <ul>
+          <li>账号封禁 / 临时封禁 / IP 封禁 / 解封</li>
+          <li>查询玩家资料、封禁历史、同 IP 账号</li>
+          <li>处理并清理举报</li>
+          <li>重载配置、查看审计日志与状态总览</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">👑</div>
+        <h3>服主（Linux）</h3>
+        <p>唯一能改插件配置的身份，也是被保护对象。</p>
+        <ul>
+          <li>拦截列表、控制台开关、NBT 扫描</li>
+          <li>隐身 <code>/hide</code>、改登录密码</li>
+          <li>命令被他人用于针对自己时自动拦截并双向通知</li>
+          <li>上线强制持有本插件全部权限节点</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip tip-warn" style="margin-top: 32px;">
+      <span class="tip-icon">⚠️</span>
+      <div class="tip-body">
+        <strong>OP 优先：不要把协管设为 OP</strong>
+        同时是 OP 和协管的玩家会被识别为「完整管理员」，从而获得<strong>完整的封号权限</strong>。
+        按最小权限原则，协管不要给 OP，只给 <code>xlcore.mod</code> 或
+        <code>inthenameoflinux.moderator</code>。
+      </div>
+    </div>
+
+    <div class="tip tip-info" style="margin-top: 20px;">
+      <span class="tip-icon">📄</span>
+      <div class="tip-body">
+        <strong>可直接分发的使用说明</strong>
+        插件包内附两份纯文本说明，发给对应人员即可：
+        <code>协管使用说明-26.11.4.txt</code>、<code>管理员使用说明-26.11.4.txt</code>。
+        详细权限对照见 <a href="help.html#permissions">帮助中心 · 权限说明</a>。
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============================================================
      感谢列表
      ============================================================ -->
 <section id="credits" class="alt">
@@ -1874,7 +1945,7 @@
     <div class="footer-brand">InTheNameOfLinux</div>
     <p>以 Linux 之名 · 守护你的服务器</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v26.11.4-RC · Minecraft 1.12.2 · Made with ♥ by Linux582021 &amp; 星白喵喵
+      v26.11.4 正式版 · Minecraft 1.12.2 · Made with ♥ by Linux582021 &amp; 星白喵喵
     </p>
     <p style="margin-top: 12px;">
       <a href="help.html">帮助中心</a>

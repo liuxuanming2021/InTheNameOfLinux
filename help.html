@@ -1183,7 +1183,7 @@
     <section class="help-section" id="changelog">
       <h2>更新日志</h2>
 
-      <h3>26.11.4-RC</h3>
+      <h3>26.11.4 正式版</h3>
       <p>本版集中在<strong>物品安全</strong>与<strong>信息可读性</strong>：把独立的 BanNbt 插件整体合并进来，
          查询能直接给出维度坐标，主页与帮助页改为点击即执行。</p>
 
@@ -1237,7 +1237,7 @@
               <td><strong>🧹 其他</strong></td>
               <td>移除已废弃的 <code>/linux dumpholders</code> 调试命令；
                   作者显示修复（读取 plugin.yml 的作者列表）；
-                  版本号由 <code>26.11.4-Beta</code> 定为 <code>26.11.4-RC</code></td>
+                  版本号由 <code>26.11.4-Beta</code> 定为 <code>26.11.4</code> 正式版</td>
             </tr>
           </tbody>
         </table>
@@ -1349,7 +1349,7 @@
           <strong>升级注意（26.11.3 时期的说明，现已自动处理）</strong>
           <code>command-takeover</code>、<code>command-takeover-exclude</code>、
           <code>owner-force-permissions</code> 是当时新增的键。
-          <strong>从 26.11.4-RC 起，插件启动时会自动把缺失的键补进 config.yml</strong>，
+          <strong>从 26.11.4 起，插件启动时会自动把缺失的键补进 config.yml</strong>，
           无需再手动添加；已有键不会被覆盖。若你的配置文件里仍看不到这些段，
           说明服务端还在跑旧版 jar，重启服务器即可。
         </div>
@@ -1720,8 +1720,7 @@
             <tr><td><strong>协管</strong>（XlandCore 身份或 <code>inthenameoflinux.moderator</code>）</td>
                 <td>仅功能封禁 + 举报处理（不能账号封禁、不能清空举报）</td></tr>
             <tr><td><strong>普通玩家</strong></td>
-                <td>仅 5 条：<code>/linux help</code>、<code>/linux report &lt;玩家&gt; &lt;原因&gt;</code>、
-                    <code>/linux login</code>、<code>/linux chargepw</code>、<code>/linux op</code></td></tr>
+                <td>仅 2 条：<code>/linux help</code>、<code>/linux report &lt;玩家&gt; &lt;原因&gt;</code></td></tr>
           </tbody>
         </table>
       </div>
@@ -1758,23 +1757,72 @@
         </table>
       </div>
 
-      <h3>协管说明</h3>
-      <ul class="steps">
-        <li>协管身份<strong>优先从 XlandCore 读取</strong>（身份 = "协管"，且需确实持有 <code>xlcore.mod</code>）。</li>
-        <li>如果 XlandCore 未加载，则回退到权限节点 <code>inthenameoflinux.moderator</code>。</li>
-        <li>协管可用 8 个功能封禁命令，<strong>不能使用账号封禁</strong>（/ban、/tempban、/banip）。</li>
-        <li>协管可以查看 / 处理举报（list / info / accept / reject），但<strong>不能清空举报</strong>（需要 report.admin）。</li>
-        <li>协管封禁时长<strong>上限为 7 天</strong>，不能执行永久封禁；<code>/tempban</code> 也受同一上限约束（26.11.2 起补齐）。</li>
-        <li>协管的帮助菜单和 TAB 补全只显示可用命令。</li>
-      </ul>
+        <h3>协管说明</h3>
+        <ul class="steps">
+          <li>协管身份<strong>优先从 XlandCore 读取</strong>（身份 = "协管"，且需确实持有 <code>xlcore.mod</code>）。</li>
+          <li>如果 XlandCore 未加载，则回退到权限节点 <code>inthenameoflinux.moderator</code>。</li>
+          <li>协管可用 8 个功能封禁命令，<strong>不能使用账号封禁</strong>（/ban、/tempban、/banip）。</li>
+          <li>协管可以查看 / 处理举报（list / info / accept / reject），但<strong>不能清空举报</strong>（需要 report.admin）。</li>
+          <li>协管封禁时长<strong>上限为 7 天</strong>，不能执行永久封禁；<code>/tempban</code> 也受同一上限约束（26.11.2 起补齐）。</li>
+          <li>协管的帮助菜单和 TAB 补全只显示可用命令。</li>
+        </ul>
 
-      <div class="tip tip-info">
-        <span class="tip-icon">💡</span>
-        <div class="tip-body">
-          <strong>OP 优先原则</strong>
-          如果玩家同时是 OP 和协管，插件会将其识别为"完整管理员"，显示完整帮助。
+        <div class="tip tip-warn">
+          <span class="tip-icon">⚠️</span>
+          <div class="tip-body">
+            <strong>协管必须写明封禁时长</strong>
+            <code>/linux banmsg Steve 1h 刷屏</code> ✅ &nbsp;·&nbsp;
+            <code>/linux banmsg Steve 刷屏</code> ❌<br>
+            省略时长会被当作"永久"，而协管无权永久封禁，命令会被<strong>直接拒绝</strong>并提示
+            「协管不能执行永久封禁，最长 7 天」。超过 7 天同样会被拒绝。
+          </div>
         </div>
-      </div>
+
+        <div class="tip tip-info">
+          <span class="tip-icon">💡</span>
+          <div class="tip-body">
+            <strong>OP 优先原则</strong>
+            如果玩家同时是 OP 和协管，插件会将其识别为"完整管理员"，显示完整帮助。
+            <br>也就是说：<strong>给协管 OP 会让他获得完整的封号权限</strong>，按最小权限原则不要这样做。
+          </div>
+        </div>
+
+        <h3>协管 / 管理员 权限对照</h3>
+        <div class="table-scroll">
+          <table class="help-table">
+            <thead>
+              <tr><th>能力</th><th>协管</th><th>管理员（非 Linux）</th><th>服主</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>功能封禁（禁言 / 禁移动 / 禁交互 / 全面）</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>举报处理（list / info / accept / reject）</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>账号封禁 <code>/ban</code> <code>/tempban</code></td><td>❌</td><td>✅</td><td>✅</td></tr>
+              <tr><td>IP 封禁 <code>/banip</code></td><td>❌</td><td>✅</td><td>✅</td></tr>
+              <tr><td>解封 <code>/unban</code> <code>/unbanip</code></td><td>❌</td><td>✅</td><td>✅</td></tr>
+              <tr><td>封禁列表 <code>/banlist</code></td><td>❌</td><td>✅</td><td>✅</td></tr>
+              <tr><td>封禁历史 / 清除历史</td><td>❌</td><td>✅</td><td>✅</td></tr>
+              <tr><td>查询 <code>/linux lookup</code> <code>seenip</code></td><td>❌</td><td>✅</td><td>✅</td></tr>
+              <tr><td>举报清理 <code>report clear</code></td><td>❌</td><td>✅</td><td>✅</td></tr>
+              <tr><td>重载配置 / 审计日志 / 状态总览</td><td>❌</td><td>✅</td><td>✅</td></tr>
+              <tr><td>隐身 <code>/hide</code></td><td>❌</td><td>❌</td><td>✅</td></tr>
+              <tr><td>拦截列表 / 控制台开关 / NBT 扫描 / 改密</td><td>❌</td><td>❌</td><td>✅</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="color:var(--text-secondary);font-size:.92rem;">
+          简言之：<strong>协管只能"限制功能"，管理员可以真正"封号"</strong>；
+          涉及插件配置与服主安全的操作（拦截列表、控制台开关、NBT 扫描、改密、隐身）
+          只有服主本人能做 —— 这是防止管理员借插件配置提权的边界。
+        </p>
+
+        <div class="tip tip-info">
+          <span class="tip-icon">📄</span>
+          <div class="tip-body">
+            <strong>完整使用说明</strong>
+            插件压缩包内附两份纯文本说明，可直接发给对应人员：
+            <code>协管使用说明.txt</code> 与 <code>管理员使用说明.txt</code>。
+          </div>
+        </div>
     </section>
 
     <section class="help-section" id="config">
@@ -1800,7 +1848,7 @@
             <tr><td><code>broadcast-ban</code></td><td>true</td><td>是否全服广播封禁消息（false 只广播给管理员）</td></tr>
             <tr><td><code>refuse-enabled</code></td><td>true</td><td>全局命令拦截开关</td></tr>
             <tr><td><code>console-cmd-enabled</code></td><td>true</td><td><strong>控制台 fs1 保护</strong>（26.11.3 起默认开启）。控制台 / Rcon 发出的、提到 <code>blocked-player</code>（fs1）的命令一律拦截，判定与玩家路径一致（按独立参数匹配，<code>/say fs1x</code> 不会误拦）。<strong>与登录态无关</strong> —— 即使你不在线也会拦。原"突破通道"豁免已移除，现在<strong>没有例外</strong></td></tr>
-            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>命令被拦截时的通报（26.11.4-RC 起统一措辞）</strong>：<br>
+            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>命令被拦截时的通报（26.11.4 起统一措辞）</strong>：<br>
               统一文案：<code>玩家 &lt;执行命令的玩家&gt; 尝试对 &lt;被保护的玩家&gt; 使用命令 &lt;完整命令&gt; 已拦截！</code><br>
               执行者是控制台 / Rcon 时<strong>去掉"玩家 "前缀</strong>：<code>控制台 尝试对 fs1 使用命令 /ban fs1 已拦截！</code><br>
               命令统一带斜杠，不会出现 <code>ban fs1</code> 这种缺斜杠的写法。<br>
@@ -1952,7 +2000,7 @@
       <div class="tip tip-warn">
         <span class="tip-icon">⚠️</span>
         <div class="tip-body">
-          <strong>26.11.4-RC 修复</strong>
+          <strong>26.11.4 修复</strong>
           旧版把 <code>PlaceholderHook</code> 当接口做动态代理，但它是<strong>抽象类</strong>，
           注册时必然抛 <code>PlaceholderHook is not an interface</code> —— 下表的变量<strong>一个都不生效</strong>。
           现已改为真正的 <code>PlaceholderExpansion</code> 子类。升级后请重启服务器，
@@ -2513,7 +2561,7 @@
     <div class="footer-brand">InTheNameOfLinux</div>
     <p>以 Linux 之名 · 守护你的服务器</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v26.11.4-RC · Minecraft 1.12.2 · Made with ♥ by Linux582021 &amp; 星白喵喵
+      v26.11.4 正式版 · Minecraft 1.12.2 · Made with ♥ by Linux582021 &amp; 星白喵喵
     </p>
     <p style="margin-top: 12px;">
       <a href="index.html">← 返回主页</a>
