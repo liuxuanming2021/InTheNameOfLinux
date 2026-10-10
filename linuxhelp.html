@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>综合帮助中心 · Linux582021 的插件</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* 本页专属微调 */
+  .help-hub-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 8px;
+    }
+  .help-hub-grid {
+        grid-template-columns: 1fr;
+      }
+  .help-hub-card {
+      display: block;
+      padding: 26px 24px;
+      border-radius: 16px;
+      border: 1px solid var(--border-light);
+      background: #fff;
+      text-decoration: none;
+      color: inherit;
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+  .help-hub-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 34px rgba(0, 113, 227, 0.12);
+      border-color: rgba(0, 113, 227, 0.3);
+    }
+  .help-hub-card h3 {
+      margin-bottom: 6px;
+      font-size: 18px;
+      color: var(--text);
+    }
+  .help-hub-card .hub-ver {
+      margin-bottom: 12px;
+      font-size: 12.5px;
+      color: var(--text-tertiary);
+    }
+  .help-hub-card p {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+  .help-hub-card .hub-tags {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+  .help-hub-card .hub-tags span {
+      padding: 3px 9px;
+      border-radius: 6px;
+      background: var(--bg-secondary);
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+  .help-hub-icon {
+      font-size: 30px;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+  .hub-note {
+      margin-top: 34px;
+      padding: 22px 24px;
+      border-radius: 14px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-light);
+    }
+  .hub-note h3 {
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+  .hub-note ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--text-secondary);
+      line-height: 1.9;
+      font-size: 14px;
+    }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="#all">全部帮助</a></li>
+      <li><a href="#howto">怎么用</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          Nalxer 服务器
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <h1>综合帮助中心</h1>
+    <p>Linux582021 三款插件的使用文档，按插件分类整理</p>
+  </div>
+</section>
+
+<div class="container">
+
+  <section id="all" style="padding-top: 8px;">
+    <h2 style="font-size: 22px; margin-bottom: 6px;">全部帮助</h2>
+    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 22px;">
+      点击卡片进入对应插件的帮助文档。每份文档都包含命令详解、配置说明与常见问题。
+    </p>
+
+    <div class="help-hub-grid">
+        <a href="linuxpluginhelp.html" class="help-hub-card reveal">
+          <div class="help-hub-icon">🛡️</div>
+          <h3>InTheNameOfLinux</h3>
+          <div class="hub-ver">v26.11.4正式版</div>
+          <p>服务器综合管理插件的完整帮助：安装、登录验证、封禁体系、举报系统、协管权限、非法 NBT 检测与故障排查。</p>
+          <div class="hub-tags">
+            <span>13 个章节</span>
+            <span>命令详解</span>
+            <span>配置参考 46 项</span>
+            <span>常见问题</span>
+          </div>
+        </a>
+        <a href="titlehelp.html" class="help-hub-card reveal">
+          <div class="help-hub-icon">🏅</div>
+          <h3>LinuxTitle</h3>
+          <div class="hub-ver">v26.11.2</div>
+          <p>头衔系统的完整帮助：命令用法、六种解锁条件、节日活动配置、权限节点与常见问题。</p>
+          <div class="hub-tags">
+            <span>7 个章节</span>
+            <span>解锁条件</span>
+            <span>节日活动</span>
+            <span>权限节点</span>
+          </div>
+        </a>
+        <a href="fakeplayerhelp.html" class="help-hub-card reveal">
+          <div class="help-hub-icon">👥</div>
+          <h3>FakePlayerPlugin</h3>
+          <div class="hub-ver">v26.11.2</div>
+          <p>假人插件的完整帮助：创建与移除假人、数据持久化、区块保护、AuthMe 兼容与常见问题。</p>
+          <div class="hub-tags">
+            <span>5 个章节</span>
+            <span>命令详解</span>
+            <span>使用技巧</span>
+            <span>常见问题</span>
+          </div>
+        </a>
+    </div>
+  </section>
+
+  <section id="howto" style="padding-top: 40px; padding-bottom: 60px;">
+    <div class="hub-note">
+      <h3>💡 怎么找到你要的内容</h3>
+      <ul>
+        <li><strong>不知道命令怎么用</strong> → 进对应插件的帮助，看「命令详解」章节。</li>
+        <li><strong>要改配置</strong> → 看「配置说明」章节，里面逐项解释了每个配置项的作用。</li>
+        <li><strong>出问题了</strong> → 看「故障排查」或「常见问题」章节。</li>
+        <li><strong>只想了解插件有什么功能</strong> → 回到 <a href="index.html">插件列表</a>，进插件介绍页。</li>
+      </ul>
+    </div>
+
+    <div class="hub-note">
+      <h3>📄 纯文本说明书</h3>
+      <ul>
+        <li><a href="协管使用说明-26.11.4正式版.txt">协管使用说明</a> —— 可直接发给服务器协管。</li>
+        <li><a href="管理员使用说明-26.11.4正式版.txt">管理员使用说明</a> —— 可直接发给服务器管理员。</li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">综合帮助中心</div>
+    <p>三款插件的使用文档集中入口</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      InTheNameOfLinux v26.11.4正式版 · LinuxTitle v26.11.2 · FakePlayerPlugin v26.11.2
+      · Minecraft 1.12.2 · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+      <a href="index.html">← 插件列表</a>
+      &nbsp;·&nbsp;
+      <a href="linux.html">InTheNameOfLinux</a>
+      &nbsp;·&nbsp;
+      <a href="title.html">LinuxTitle</a>
+      &nbsp;·&nbsp;
+      <a href="fakeplayer.html">FakePlayerPlugin</a>
+      &nbsp;·&nbsp;
+      <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.faq-q').forEach((q) => {
+    q.addEventListener('click', () => {
+      q.parentElement.classList.toggle('open');
+    });
+  });
+
+  const sidebarLinks = document.querySelectorAll('.sidebar a');
+    // 参与滚动高亮的锚点：各章节 + 侧栏指向的其它锚点（如 #config-ref）
+    const watched = [];
+    const seen = {};
+    sidebarLinks.forEach((link) => {
+      const href = link.getAttribute('href') || '';
+      if (href.charAt(0) !== '#') return;
+      const id = href.slice(1);
+      if (seen[id]) return;
+      const el = document.getElementById(id);
+      if (el) { watched.push(el); seen[id] = true; }
+    });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        sidebarLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, {
+    rootMargin: '-80px 0px -60% 0px',
+    threshold: 0
+  });
+
+  watched.forEach((s) => observer.observe(s));
+
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>
