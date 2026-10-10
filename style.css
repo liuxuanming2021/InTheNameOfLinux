@@ -2402,41 +2402,16 @@ color: var(--code-keyword);
   .bg-video {
     display: none;
 
-    /* hero 之外的内容区要遮住固定背景，否则滚动时图片透在文字下。
-       这层随页面滚动（不是 fixed），从 hero 底部开始往下铺。
-       —— 与主页同一套做法，只是把「封面高度」换成「各自 hero 高度」。 */
-    body::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: max(min(100vw * 1920 / 1080, 100vh), 58vh);
-      bottom: 0;
-      background: var(--bg);
-      z-index: -1;
-      pointer-events: none;
-    }
 
     /* body 需要成为定位参照 */
     body {
       position: relative;
     }
 
-    /* 封面自身的压暗层（随封面滚动） */
+    /* 封面遮罩：按要求全部去掉 */
     .cover-overlay {
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
-      background: linear-gradient(180deg,
-        rgba(14, 22, 29, 0.30) 0%,
-        rgba(14, 22, 29, 0.12) 45%,
-        rgba(14, 22, 29, 0.42) 100%);
-    }
+  display: none;
+}
 
     /* 封面内容要压在遮罩之上 */
     .cover-inner {
@@ -3033,10 +3008,12 @@ color: var(--code-keyword);
   grid-column: span 2;
   padding: 28px 26px;
   border-radius: 18px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.30);
   border: 1px solid var(--border-light);
   box-shadow: var(--shadow-sm);
   transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  backdrop-filter: blur(18px) saturate(180%);
 }
 
 .bento-item:hover {
@@ -3367,10 +3344,12 @@ color: var(--code-keyword);
   position: relative;
   padding: 16px 16px 14px;
   border-radius: 14px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.30);
   border: 1px solid var(--border-light);
   overflow: hidden;
   transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  backdrop-filter: blur(18px) saturate(180%);
 }
 
 .tile::before {
@@ -3424,7 +3403,9 @@ color: var(--code-keyword);
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid var(--border-light);
-  background: #fff;
+  background: rgba(255, 255, 255, 0.30);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  backdrop-filter: blur(18px) saturate(180%);
 }
 
 .stat-cell {
