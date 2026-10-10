@@ -2405,13 +2405,6 @@ color: var(--code-keyword);
   }
 
   /* 手机端：导航项收进汉堡，顶栏只留 logo + 汉堡 */
-  .nav-links {
-    display: none;
-  }
-
-  .nav-links.open {
-    display: flex;
-  }
 
   /* body 需要成为定位参照 */
   body {
@@ -3769,6 +3762,33 @@ body > nav {
   }
 }
 
+/* ============================================================
+   侧栏分组标题（侧栏已拍平，用 li.sidebar-group-label 代替原来的 summary）
+   ============================================================ */
+.sidebar-flat > .sidebar-group-label {
+  margin: 14px 0 4px;
+  padding: 0 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  list-style: none;
+  cursor: default;
+  pointer-events: none;
+}
+
+.sidebar-flat > .sidebar-group-label:first-child {
+  margin-top: 0;
+}
+
+/* 侧栏整体：原来的 ul 样式 */
+.sidebar-flat {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 /* ---- 减少动态效果：保留视频，只关动画 ---- */
 @media (prefers-reduced-motion: reduce) {
   /* 注意：.reveal 的入场动画保留 —— 去掉它会让页面看起来没有动画。
@@ -3794,52 +3814,69 @@ body > nav {
   .content-layout,
   .content-layout.no-toc {
     display: block;
-    /* 这个元素同时有 .container 类，左右 24px 内边距必须保留，
-       否则表格卡片会贴住屏幕边缘。 */
     padding: 16px 24px 60px;
   }
 
+  /* 胶囊条：一条横滑单行（侧栏已拍平成单个 ul，不再有 details 干扰） */
   .sidebar {
     position: sticky;
     top: 52px;
     z-index: 20;
+    display: block;
+    height: auto;
     max-height: none;
-    overflow: visible;
     margin: 0 0 18px;
     padding: 10px 0;
+    overflow: visible;
     background: rgba(255, 255, 255, 0.42);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     backdrop-filter: blur(20px) saturate(180%);
     border-bottom: 1px solid var(--border-light);
   }
 
-  .sidebar-title {
-    display: none;
+  /* 分组标签（开始使用 / 功能说明…）在手机端不显示 */
+  .sidebar-title,
+  .sidebar summary,
+  .sidebar .sidebar-group-label,
+  .sidebar-flat > .sidebar-group-label {
+    display: none !important;
   }
 
-  /* 自动换行：窄屏也能一次看全，不用横向滑动 */
-  .sidebar ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
-    /* 左右留白由 .sidebar 提供（24px），这里不能再加，否则叠加成 48px */
+  .sidebar-track {
+    display: block;
     padding: 0;
     overflow: visible;
   }
 
-  .sidebar li {
-    flex: 0 0 auto;
-    margin-bottom: 0;
+  .sidebar-flat {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    align-items: center;
+    margin: 0;
+    padding: 0 24px;
+    list-style: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
 
-  /* 每项是胶囊 */
+  .sidebar-flat::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sidebar-flat > li {
+    display: block;
+    flex: 0 0 auto;
+    margin: 0;
+  }
+
   .sidebar a {
     display: inline-flex;
     align-items: center;
     padding: 8px 16px;
     border: 1px solid var(--border-light);
-    border-left: 1px solid var(--border-light);
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.66);
     font-size: 13.5px;
@@ -3854,7 +3891,8 @@ body > nav {
     background: var(--blue-light);
   }
 
-  .sidebar a.active {
+  .sidebar a.active,
+  .sidebar a.sub.active {
     background: var(--blue);
     border-color: var(--blue);
     color: #fff;
@@ -3867,22 +3905,6 @@ body > nav {
     color: var(--text-secondary);
   }
 
-  .sidebar a.sub.active {
-    background: var(--blue);
-    border-color: var(--blue);
-    color: #fff;
-  }
-
-  /* 分组折叠：手机端直接展开成一行，隐藏分组头 */
-  .sidebar details {
-    display: contents;
-  }
-
-  .sidebar summary {
-    display: none;
-  }
-
-  /* 抽屉遮罩在手机端不再使用 */
   .sidebar-backdrop {
     display: none;
   }
