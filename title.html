@@ -6,7 +6,7 @@
 <title>LinuxTitle · 头衔系统插件</title>
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="apple-touch-icon" href="icon.svg">
-<link rel="stylesheet" href="style.css?v=0ac0aab1">
+<link rel="stylesheet" href="style.css?v=a85d2672">
 </head>
 <body>
 
@@ -354,16 +354,29 @@
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
+        // 触发一次就撤掉监听，避免反复播放
+        observer.unobserve(entry.target);
       }
     });
   }, {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
+    // 不能用 0.1：比视口高的元素永远凑不满 10%，会一直 opacity:0
+    threshold: 0,
+    rootMargin: '0px 0px -40px 0px'
   });
 
   document.querySelectorAll('.reveal').forEach((el) => {
     observer.observe(el);
   });
+
+  // 兜底：滚动结束后仍未显示的，直接显示（防止某些浏览器不触发）
+  setTimeout(function () {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) {
+        el.classList.add('visible');
+      }
+    });
+  }, 1200);
 
   // 平滑滚动
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {

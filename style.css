@@ -102,16 +102,21 @@ body {
   }
 
 nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-    z-index: 1000;
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* 液态玻璃：全站顶栏统一，滚动后不变 */
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
+    0 4px 24px rgba(15, 25, 35, 0.07);
+  z-index: 1000;
+  transition: none;
+}
 
 .nav-inner {
     display: flex;
@@ -776,6 +781,17 @@ footer a:hover {
     transition: background 0.2s;
   }
 
+/* 汉堡按钮在浅色背景上几乎看不见，给个玻璃底 */
+.nav-toggle {
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.nav-toggle:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
 .nav-toggle:hover {
     background: var(--bg-secondary);
   }
@@ -815,11 +831,13 @@ footer a:hover {
     flex-direction: column;
     gap: 0;
     align-items: stretch;
-    background: rgba(255, 255, 255, 0.34);
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    /* 0.34 太透，背后高对比画面会让每行明暗不同 → 看起来"模糊不均匀"。
+       提高到 0.86：仍有一点点透，但文字底下的画面已经均匀了。 */
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: saturate(180%) blur(28px);
+    -webkit-backdrop-filter: saturate(180%) blur(28px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 12px 32px rgba(15, 25, 35, 0.14);
     padding: 0 24px;
     max-height: 0;
     overflow: hidden;
@@ -2235,10 +2253,14 @@ color: var(--code-keyword);
 
 /* ---- 主页透明导航（滚动后变实色） ---- */
 .nav-home {
-  background: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  /* 与全站顶栏一致：一样是液态玻璃，不做透明特殊处理 */
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
+    0 4px 24px rgba(15, 25, 35, 0.07);
 }
 
 .nav-home .nav-logo,
@@ -2271,10 +2293,13 @@ color: var(--code-keyword);
 }
 
 .nav-home.scrolled {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+  /* 滚动后不做任何变化，保持同一块玻璃 */
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  box-shadow:
+    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
+    0 4px 24px rgba(15, 25, 35, 0.07);
 }
 
 .nav-home.scrolled .nav-logo,
@@ -2323,8 +2348,11 @@ color: var(--code-keyword);
   }
 
   .nav-home .nav-links {
-    background: rgba(255, 255, 255, 0.42);
-  }
+  /* 与全站汉堡面板统一：足够实，不出现不均匀的透底 */
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: saturate(180%) blur(28px);
+  -webkit-backdrop-filter: saturate(180%) blur(28px);
+}
 
   .nav-home .nav-links a {
     color: var(--text);
@@ -3659,13 +3687,50 @@ color: var(--code-keyword);
   }
 }
 
+/* ============================================================
+   顶栏文字：底色是浅色玻璃，文字必须是深色才看得见
+   ============================================================ */
+.nav-home .nav-logo,
+.nav-home .nav-links a,
+.nav-home.scrolled .nav-logo,
+.nav-home.scrolled .nav-links a {
+  color: var(--text);
+}
+
+.nav-home .nav-logo:hover,
+.nav-home .nav-links a:hover,
+.nav-home.scrolled .nav-logo:hover,
+.nav-home.scrolled .nav-links a:hover {
+  color: var(--blue);
+}
+
+.nav-home .nav-toggle span,
+.nav-home.scrolled .nav-toggle span {
+  background: var(--text);
+}
+
+.nav-home .nav-links .nav-external,
+.nav-home.scrolled .nav-links .nav-external {
+  color: var(--blue);
+  background: transparent;
+  border-color: transparent;
+}
+
+.nav-home .nav-links .nav-external:hover,
+.nav-home.scrolled .nav-links .nav-external:hover {
+  color: #fff;
+  background: var(--blue);
+  border-color: var(--blue);
+}
+
 /* ---- 减少动态效果：保留视频，只关动画 ---- */
 @media (prefers-reduced-motion: reduce) {
+  /* 注意：.reveal 的入场动画保留 —— 去掉它会让页面看起来没有动画。
+     只对会持续运动的元素（头像翻转、导航过渡）关闭。 */
   .cover-btn,
   .avatar-face,
   .avatar-back,
-  .nav-home,
-  .reveal {
+  .nav-home {
     transition: none !important;
     animation: none !important;
   }
