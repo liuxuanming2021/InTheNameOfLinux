@@ -3789,14 +3789,15 @@ body > nav {
   padding: 0;
 }
 
-/* ---- 减少动态效果：保留视频，只关动画 ---- */
+/* ---- 减少动态效果 ----
+   注意：这里不要放 .nav-home / nav —— 那会把汉堡面板的展开过渡一起关掉。
+   主页的 nav 带 nav-home 类，所以在系统开了「减少动态效果」的设备上，
+   汉堡菜单会瞬间弹出、没有任何动画。
+   你要求全站都有动画，这里只关掉持续运动的元素。 */
 @media (prefers-reduced-motion: reduce) {
-  /* 注意：.reveal 的入场动画保留 —— 去掉它会让页面看起来没有动画。
-     只对会持续运动的元素（头像翻转、导航过渡）关闭。 */
   .cover-btn,
   .avatar-face,
-  .avatar-back,
-  .nav-home {
+  .avatar-back {
     transition: none !important;
     animation: none !important;
   }
