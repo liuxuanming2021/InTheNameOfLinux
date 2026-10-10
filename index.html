@@ -372,6 +372,26 @@
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
 
+  /* "更早版本"指引：居中显示，与卡片区留出间距 */
+  .whatsnew-more {
+    margin: 28px auto 0;
+    max-width: 560px;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-tertiary);
+  }
+
+  .whatsnew-more a {
+    color: var(--blue);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .whatsnew-more a:hover {
+    text-decoration: underline;
+  }
+
   .grid-3 {
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   }
@@ -915,7 +935,9 @@
 
     /* ===== 表格：允许换行，超宽时横向滚动而不是挤压 ===== */
     .table-wrap {
-      margin: 14px -16px;
+      /* ★ 与正文块对齐：不用负边距做通栏，
+         否则卡片会贴住屏幕左边缘，与其它模块错开 */
+      margin: 14px 0;
       border-radius: 0;
       border-left: none;
       border-right: none;
@@ -1168,14 +1190,14 @@
           <li>列表按 服主 → 副服主 → 协管 → 管理员 排序，标注在线状态</li>
         </ul>
       </div>
-
-        <div class="reveal" style="margin-top: 8px;">
-          <p style="color:var(--text-tertiary);font-size:.9rem;text-align:center;">
-            更早版本（26.11.3 及以前）的变更记录见
-            <a href="help.html#changelog">帮助中心 · 更新日志</a>。
-          </p>
-        </div>
       </div>
+
+      <!-- 更早版本指引：放在 grid 外层并居中，
+           否则会成为网格里孤零零的一个单元格，显得又偏又窄 -->
+      <p class="whatsnew-more reveal">
+        更早版本（26.11.3 及以前）的变更记录见
+        <a href="help.html#changelog">帮助中心 · 更新日志</a>
+      </p>
     </div>
 </section>
 

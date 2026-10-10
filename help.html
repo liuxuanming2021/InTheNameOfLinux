@@ -312,6 +312,22 @@
     border-left-color: var(--blue);
   }
 
+    /* 子层级目录项（如"完整配置参考"）：缩小并缩进，与父项区分 */
+    .sidebar a.sub {
+      padding-left: 26px;
+      font-size: 12.5px;
+      color: var(--text-tertiary);
+    }
+
+    .sidebar a.sub:hover {
+      color: var(--text);
+    }
+
+    .sidebar a.sub.active {
+      color: var(--blue);
+      border-left-color: var(--blue);
+    }
+
   .main-content {
     min-width: 0;
     width: 100%;
@@ -944,7 +960,9 @@
 
     /* 表格 */
     .table-scroll {
-      margin: 14px -16px;
+      /* ★ 与正文块（.tip / 段落）对齐：不用负边距做通栏，
+         否则卡片会贴住屏幕左边缘，和下面的提示块错开 14px */
+      margin: 14px 0;
       border-radius: 0;
       border-left: none;
       border-right: none;
@@ -1158,7 +1176,7 @@
     }
 
     .table-scroll {
-      margin: 12px -14px;
+      margin: 12px 0;
     }
 
     .help-table {
@@ -1256,25 +1274,26 @@
 
 <div class="container content-layout">
 
-  <aside class="sidebar">
-    <div class="sidebar-title">目录</div>
-    <ul>
-      <li><a href="#changelog" class="active">更新日志</a></li>
-      <li><a href="#quickstart">快速开始</a></li>
-      <li><a href="#commands">命令详解</a></li>
-      <li><a href="#report">举报系统</a></li>
-      <li><a href="#confirm">二次确认</a></li>
-      <li><a href="#permissions">权限说明</a></li>
-      <li><a href="#config">配置说明</a></li>
-      <li><a href="#nbt">非法 NBT 检测</a></li>
-      <li><a href="#integration">插件联动</a></li>
-      <li><a href="#troubleshooting">故障排查</a></li>
-      <li><a href="#faq">常见问题</a></li>
-      <li><a href="#expiry">到期与手动解除</a></li>
-      <li><a href="#uninstall">卸载与备份</a></li>
-      <li><a href="#credits">感谢列表</a></li>
-    </ul>
-  </aside>
+    <aside class="sidebar">
+      <div class="sidebar-title">目录</div>
+      <ul>
+        <li><a href="#changelog" class="active">更新日志</a></li>
+        <li><a href="#credits">感谢列表</a></li>
+        <li><a href="#quickstart">快速开始</a></li>
+        <li><a href="#commands">命令详解</a></li>
+        <li><a href="#report">举报系统</a></li>
+        <li><a href="#confirm">二次确认</a></li>
+        <li><a href="#permissions">权限说明</a></li>
+        <li><a href="#config">配置说明</a></li>
+        <li><a href="#config-ref" class="sub">↳ 完整配置参考</a></li>
+        <li><a href="#nbt">非法 NBT 检测</a></li>
+        <li><a href="#integration">插件联动</a></li>
+        <li><a href="#troubleshooting">故障排查</a></li>
+        <li><a href="#faq">常见问题</a></li>
+        <li><a href="#expiry">到期与手动解除</a></li>
+        <li><a href="#uninstall">卸载与备份</a></li>
+      </ul>
+    </aside>
 
   <main class="main-content">
 
@@ -2720,7 +2739,7 @@
         </div>
       </div>
 
-        <h3>完整配置参考</h3>
+        <h3 id="config-ref">完整配置参考</h3>
         <p>下表列出 <code>config.yml</code> 里的<strong>全部配置项</strong>与默认值，按插件里的顺序排列。缺项会在启动时自动补齐，已有项不会被覆盖。</p>
         <div class="table-scroll">
           <table class="help-table">
@@ -2813,8 +2832,18 @@
     });
   });
 
-  const sections = document.querySelectorAll('.help-section');
   const sidebarLinks = document.querySelectorAll('.sidebar a');
+    // 参与滚动高亮的锚点：各章节 + 侧栏指向的其它锚点（如 #config-ref）
+    const watched = [];
+    const seen = {};
+    sidebarLinks.forEach((link) => {
+      const href = link.getAttribute('href') || '';
+      if (href.charAt(0) !== '#') return;
+      const id = href.slice(1);
+      if (seen[id]) return;
+      const el = document.getElementById(id);
+      if (el) { watched.push(el); seen[id] = true; }
+    });
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -2830,7 +2859,7 @@
     threshold: 0
   });
 
-  sections.forEach((s) => observer.observe(s));
+  watched.forEach((s) => observer.observe(s));
 
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener('click', function (e) {
