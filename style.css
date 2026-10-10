@@ -2545,6 +2545,302 @@ color: var(--code-keyword);
   }
 }
 
+/* ============================================================
+   文档站布局（插件介绍页 / 帮助页）
+   ============================================================
+   按 GitBook 文档站规范：
+     · 三栏：侧栏导航 | 正文 | 本页目录
+     · 侧栏分组可折叠，当前项带强调条
+     · 长页面提供右侧「本页目录」，随滚动高亮
+     · 移动端侧栏变抽屉，由汉堡按钮唤出
+   ============================================================ */
+
+/* ---------- 三栏容器 ---------- */
+.content-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr) 200px;
+  gap: 40px;
+  padding: 40px 0 100px;
+  align-items: start;
+}
+
+/* 没有「本页目录」的页面退化为两栏 */
+.content-layout.no-toc {
+  grid-template-columns: 240px minmax(0, 1fr);
+}
+
+/* ---------- 侧栏 ---------- */
+.sidebar {
+  position: sticky;
+  top: 80px;
+  align-self: start;
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+  /* 滚动条做细，避免抢视觉 */
+  scrollbar-width: thin;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 2px;
+}
+
+.sidebar-title {
+  margin-bottom: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+/* 分组：用原生 details 实现折叠，无需 JS */
+.sidebar details {
+  margin-bottom: 4px;
+}
+
+.sidebar summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px 8px 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .6px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: color .2s ease;
+}
+
+.sidebar summary::-webkit-details-marker {
+  display: none;
+}
+
+.sidebar summary:hover {
+  color: var(--text-secondary);
+}
+
+/* 折叠箭头 */
+.sidebar summary::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translate(-2px, -2px);
+  transition: transform .2s ease;
+  flex: 0 0 auto;
+}
+
+.sidebar details[open] > summary::after {
+  transform: rotate(-135deg) translate(-2px, -2px);
+}
+
+.sidebar ul {
+  list-style: none;
+  padding-bottom: 6px;
+}
+
+.sidebar li {
+  margin-bottom: 1px;
+}
+
+.sidebar a {
+  display: block;
+  padding: 7px 12px;
+  border-left: 2px solid transparent;
+  border-radius: 0 8px 8px 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: background .18s ease, color .18s ease, border-color .18s ease;
+}
+
+.sidebar a:hover {
+  background: var(--bg-secondary);
+  color: var(--text);
+}
+
+/* 当前项：强调条 + 加粗 */
+.sidebar a.active {
+  background: var(--blue-light);
+  border-left-color: var(--blue);
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.sidebar a.sub {
+  padding-left: 24px;
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+}
+
+.sidebar a.sub.active {
+  color: var(--blue);
+  border-left-color: var(--blue);
+}
+
+/* ---------- 右侧「本页目录」 ---------- */
+.page-toc {
+  position: sticky;
+  top: 80px;
+  align-self: start;
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+  font-size: 12.5px;
+  scrollbar-width: thin;
+}
+
+.page-toc h2 {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.page-toc ul {
+  list-style: none;
+  border-left: 1px solid var(--border-light);
+}
+
+.page-toc a {
+  display: block;
+  padding: 5px 0 5px 12px;
+  margin-left: -1px;
+  border-left: 2px solid transparent;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  line-height: 1.5;
+  transition: color .18s ease, border-color .18s ease;
+}
+
+.page-toc a:hover {
+  color: var(--text);
+}
+
+.page-toc a.active {
+  border-left-color: var(--blue);
+  color: var(--blue);
+  font-weight: 500;
+}
+
+.page-toc a.sub {
+  padding-left: 26px;
+  font-size: 12px;
+}
+
+/* ---------- 正文 ---------- */
+.main-content {
+  min-width: 0;
+  width: 100%;
+}
+
+/* ---------- 中等屏：收掉本页目录 ---------- */
+@media (max-width: 1180px) {
+  .content-layout,
+  .content-layout.no-toc {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 32px;
+  }
+
+  .page-toc {
+    display: none;
+  }
+}
+
+/* ---------- 窄屏：侧栏变抽屉 ---------- */
+@media (max-width: 920px) {
+  .content-layout,
+  .content-layout.no-toc {
+    display: block;
+    padding: 16px 0 60px;
+  }
+
+  /* 抽屉式侧栏 */
+  .sidebar {
+    position: fixed;
+    top: 52px;
+    left: 0;
+    bottom: 0;
+    width: min(78vw, 300px);
+    max-height: none;
+    padding: 14px 16px 40px;
+    background: rgba(255, 255, 255, 0.82);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+    border-right: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 8px 0 32px rgba(15, 25, 35, 0.12);
+    transform: translateX(-102%);
+    transition: transform .28s cubic-bezier(.22, 1, .36, 1);
+    z-index: 940;
+    overflow-y: auto;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-title {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  /* 抽屉里恢复纵向列表（原本是横向胶囊） */
+  .sidebar ul {
+    display: block;
+    overflow-x: visible;
+    padding-bottom: 0;
+  }
+
+  .sidebar li {
+    margin-bottom: 1px;
+    flex-shrink: 1;
+  }
+
+  .sidebar a {
+    padding: 9px 12px;
+    border-radius: 0 8px 8px 0;
+    font-size: 14px;
+    white-space: normal;
+  }
+
+  .sidebar a.active {
+    background: var(--blue-light);
+  }
+
+  /* 抽屉遮罩 */
+  .sidebar-backdrop {
+    position: fixed;
+    inset: 52px 0 0 0;
+    background: rgba(15, 25, 35, 0.32);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .28s ease;
+    z-index: 935;
+  }
+
+  .sidebar-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .page-toc {
+    display: none;
+  }
+}
+
 /* ---- 减少动态效果：保留视频，只关动画 ---- */
 @media (prefers-reduced-motion: reduce) {
   .cover-btn,
