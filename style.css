@@ -3732,10 +3732,10 @@ color: var(--code-keyword);
 }
 
 /* ============================================================
-   综合帮助页：与主页同一套视觉
+   综合帮助页
    ============================================================
-   封面与主页一致；封面以下的内容区保持半透明，
-   卡片沿用全站玻璃规则（不加实白覆盖）。
+   内容区不加任何遮罩 —— 背景直接透上来，
+   卡片自己带玻璃，文字靠卡片的模糊保证可读。
    ============================================================ */
 
 .hub-wrap {
@@ -3743,19 +3743,39 @@ color: var(--code-keyword);
   z-index: 1;
   width: 100%;
   padding: 52px 0 64px;
-  /* 保持半透明：视频背景透上来，但被压暗保证文字可读 */
-  background: rgba(255, 255, 255, 0.62);
-  -webkit-backdrop-filter: blur(10px) saturate(150%);
-  backdrop-filter: blur(10px) saturate(150%);
+  /* 无背景、无模糊、无遮罩 */
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* 内容区本身没有背景，压在背景图上的是纯文字。
+   不给背景加任何东西，只用文字阴影提高可读性。 */
+.hub-wrap h2,
+.hub-wrap section > p,
+.hub-wrap .hub-note h3 {
+  color: #fff;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.hub-wrap .hub-note li,
+.hub-wrap .hub-note p {
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+}
+
+.hub-wrap .hub-note a {
+  color: #fff;
+  text-decoration: underline;
 }
 
 .hub-wrap ~ #get {
   position: relative;
   z-index: 1;
   padding: 0 0 72px;
-  background: rgba(255, 255, 255, 0.62);
-  -webkit-backdrop-filter: blur(10px) saturate(150%);
-  backdrop-filter: blur(10px) saturate(150%);
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 @media (max-width: 920px) {
