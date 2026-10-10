@@ -2402,7 +2402,6 @@ color: var(--code-keyword);
   .bg-video {
     display: none;
 
-
     /* body 需要成为定位参照 */
     body {
       position: relative;
@@ -2917,63 +2916,413 @@ color: var(--code-keyword);
 }
 
 /* ============================================================
-   落地页组件（插件介绍页）
+   介绍页样式（重写版）
    ============================================================
-   设计原则（营销落地页规范）：
-     · 玻璃只出现在 hero 与导航上；正文区块一律实底 + 细线边框
-     · 强调色是标点，不是壁纸 —— 每个大标题只给一个词上渐变
-     · 卡片入场错开 0–320ms
-     · 尊重 prefers-reduced-motion
+   设计：
+     · 背景完全透明 —— 视频 / mobile.jpg 直接就是页面背景，不加任何遮罩
+     · 文字用浅色 + 阴影（压在图上能读）
+     · 所有控件与模块用液态玻璃
    ============================================================ */
 
-/* ---------- 数据胶囊（hero 下方的事实条） ---------- */
-.fact-pills {
+/* ---------- 封面：结构沿用主页 .cover，只是不占满整屏 ---------- */
+.cover-page {
+  min-height: auto;
+  padding: 128px 24px 64px;
+}
+
+.cover-page .cover-title {
+  font-size: clamp(30px, 5vw, 46px);
+}
+
+.cover-page .cover-quote {
+  margin-bottom: 24px;
+}
+
+.cover-page .cover-btn {
+  display: inline-block;
+  padding: 10px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.18);
+  -webkit-backdrop-filter: blur(14px) saturate(170%);
+  backdrop-filter: blur(14px) saturate(170%);
+  color: #fff;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.cover-page .cover-btn:hover {
+  background: var(--blue);
+  border-color: var(--blue);
+}
+
+/* ---------- 正文标题与文字：浅色，压在背景上 ---------- */
+.intro-body h2,
+.intro-body h3,
+.intro-body h4,
+.intro-body .section-label,
+.intro-body .section-header p,
+.intro-body > section > .container > p {
+  color: #fff;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.7), 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.intro-body .section-label {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ---------- 通用玻璃：所有控件与模块 ---------- */
+.glass,
+.bento,
+.bento-item,
+.tile,
+.stat-row,
+.stat-cell,
+.card,
+.zz-panel,
+.faq-item,
+.table-wrap,
+.table-scroll,
+.intro-split .split-points li,
+.cta-band {
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.2),
+    0 10px 30px rgba(15, 25, 35, 0.14);
+}
+
+.bento-item:hover,
+.tile:hover,
+.card:hover,
+.faq-item:hover {
+  background: rgba(255, 255, 255, 0.68);
+}
+
+/* 表格本体透明，让外层的玻璃透出来 */
+.help-table,
+.help-table thead,
+.help-table tbody,
+.help-table tr,
+.help-table td,
+.help-table th {
+  background: transparent;
+}
+
+.help-table td:first-child {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* ---------- Bento 网格 ---------- */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 18px;
+  background: none;
+  border: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.bento-item {
+  grid-column: span 2;
+  padding: 26px 24px;
+  border-radius: 18px;
+}
+
+.bento-item.wide { grid-column: span 3; }
+.bento-item.full { grid-column: span 6; }
+
+.bento-icon {
+  width: 44px;
+  height: 44px;
+  margin-bottom: 14px;
+  border-radius: 12px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  align-items: center;
   justify-content: center;
-  margin-top: 26px;
+  font-size: 21px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.75);
 }
 
-.fact-pill {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 980px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.78);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+.bento-item h3 { margin-bottom: 8px; font-size: 17px; }
+
+.bento-item p,
+.bento-item li {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text-secondary);
 }
 
-.fact-pill b {
-  font-size: 15px;
+.bento-item ul { margin: 12px 0 0; padding-left: 18px; }
+
+.bento-item.wide .bento-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+/* ---------- 彩色 tile 网格（头衔页） ---------- */
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.tile {
+  position: relative;
+  padding: 16px 16px 14px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.tile::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--tile-accent, var(--blue));
+  opacity: 0.85;
+}
+
+.tile-emoji { font-size: 20px; line-height: 1; margin-bottom: 7px; }
+.tile-name  { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.tile-cond  { font-size: 12px; line-height: 1.45; color: var(--text-tertiary); }
+
+.tile--growth { --tile-accent: #4a7ba7; }
+.tile--skill  { --tile-accent: #7a6cb0; }
+.tile--social { --tile-accent: #4f9d8a; }
+.tile--event  { --tile-accent: #c07a4a; }
+.tile--daily  { --tile-accent: #b0567a; }
+
+/* ---------- 大数字统计条 ---------- */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.stat-cell {
+  padding: 24px 18px;
+  text-align: center;
+  background: none;
+  border: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.stat-cell:last-child { border-right: none; }
+
+.stat-cell b {
+  display: block;
+  font-size: 30px;
+  font-weight: 300;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 6px;
+  color: var(--blue);
+}
+
+.stat-cell span { font-size: 12.5px; color: var(--text-tertiary); }
+
+/* ---------- 编号章节（主插件页） ---------- */
+.chapter {
+  position: relative;
+  padding: 52px 0 52px 32px;
+  border-left: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.chapter:last-of-type { border-left-color: transparent; }
+
+.chapter::before {
+  content: '';
+  position: absolute;
+  left: -7px;
+  top: 58px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid var(--blue);
+}
+
+.chapter-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+
+.chapter-no {
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 12px;
   font-weight: 700;
+  letter-spacing: 1px;
   color: #fff;
 }
 
-/* ---------- 一句话说明区（55/45 双栏） ---------- */
+.chapter-title {
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  color: #fff;
+}
+
+.chapter-lede {
+  max-width: 620px;
+  margin-bottom: 24px;
+  font-size: 15px;
+  line-height: 1.85;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* ---------- 左右交错 ---------- */
+.zigzag {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 38px;
+  align-items: center;
+}
+
+.zigzag.reverse .zz-text  { order: 2; }
+.zigzag.reverse .zz-panel { order: 1; }
+
+.zz-text h4 { margin-bottom: 10px; font-size: 17px; font-weight: 600; color: #fff; }
+.zz-text p  { font-size: 14.5px; line-height: 1.8; color: rgba(255, 255, 255, 0.9); }
+.zz-text ul { margin: 12px 0 0; padding-left: 18px; font-size: 14px; line-height: 1.85; color: rgba(255, 255, 255, 0.9); }
+
+.zz-panel {
+  padding: 22px 24px;
+  border-radius: 16px;
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.zz-panel .panel-title {
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.zz-panel ul { margin: 0; padding-left: 18px; }
+.zz-panel li + li { margin-top: 6px; }
+
+/* ---------- 色带小标题 ---------- */
+.band-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 32px 0 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.band-title::before {
+  content: '';
+  width: 4px;
+  height: 18px;
+  border-radius: 2px;
+  background: var(--blue);
+}
+
+/* ---------- 对比条 ---------- */
+.compare-band {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.compare-col { padding: 28px 26px; background: none; }
+
+.compare-col.ours { border-left: 1px solid rgba(255, 255, 255, 0.5); }
+
+.compare-col h3 {
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.compare-col.typical h3 { color: var(--text-tertiary); }
+.compare-col.ours h3 { color: var(--blue); }
+
+.compare-col ul { list-style: none; display: grid; gap: 11px; }
+
+.compare-col li {
+  position: relative;
+  padding-left: 24px;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.compare-col li::before { position: absolute; left: 0; font-weight: 700; }
+.compare-col.typical li::before { content: '✕'; color: var(--text-tertiary); }
+.compare-col.ours li::before { content: '✓'; color: var(--blue); }
+
+/* ---------- 底部 CTA ---------- */
+.cta-band {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 52px 38px;
+  border-radius: 24px;
+  text-align: center;
+}
+
+.cta-band .cta-wordmark {
+  margin: 0 0 10px;
+  font-size: clamp(26px, 4vw, 38px);
+  font-weight: 300;
+  letter-spacing: 1px;
+  color: var(--text);
+}
+
+.cta-band p {
+  margin: 0 auto 26px;
+  max-width: 460px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.cta-band .cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* ---------- 双栏说明 ---------- */
 .intro-split {
   display: grid;
   grid-template-columns: 1.14fr 1fr;
-  gap: 56px;
+  gap: 52px;
   align-items: center;
 }
 
 .intro-split h2 {
-  font-size: clamp(24px, 3vw, 34px);
+  font-size: clamp(23px, 3vw, 32px);
   line-height: 1.25;
   letter-spacing: -0.5px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+  color: #fff;
 }
 
 .intro-split p {
   font-size: 16px;
   line-height: 1.85;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .intro-split .split-points {
@@ -2985,997 +3334,50 @@ color: var(--code-keyword);
 .intro-split .split-points li {
   padding: 16px 18px;
   border-radius: 14px;
-  background: #fff;
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-sm);
   font-size: 14.5px;
   line-height: 1.7;
   color: var(--text-secondary);
 }
 
-.intro-split .split-points strong {
-  color: var(--text);
-}
+.intro-split .split-points strong { color: var(--text); }
 
-/* ---------- Bento 功能网格 ---------- */
-.bento {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 18px;
-}
-
-.bento-item {
-  grid-column: span 2;
-  padding: 28px 26px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.30);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-sm);
-  transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-  backdrop-filter: blur(18px) saturate(180%);
-}
-
-.bento-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 18px 40px rgba(15, 25, 35, 0.10);
-  border-color: rgba(74, 123, 167, 0.28);
-}
-
-.bento-item.wide {
-  grid-column: span 3;
-}
-
-.bento-item.full {
-  grid-column: span 6;
-}
-
-.bento-icon {
-  width: 46px;
-  height: 46px;
-  margin-bottom: 16px;
-  border-radius: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  background: var(--blue-soft);
-  border: 1px solid var(--blue-border);
-}
-
-.bento-item h3 {
-  margin-bottom: 8px;
-  font-size: 17px;
-}
-
-.bento-item > p {
-  margin-bottom: 14px;
-  font-size: 14px;
-  line-height: 1.75;
-  color: var(--text-secondary);
-}
-
-.bento-item ul {
-  margin: 0;
-  padding-left: 18px;
-  font-size: 13.5px;
-  line-height: 1.8;
-  color: var(--text-secondary);
-}
-
-.bento-item ul code {
-  font-size: 12.5px;
-}
-
-/* 宽卡片里内容两列排 */
-.bento-item.wide .bento-cols {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
-
-/* ---------- 对比条（别家 vs 我们） ---------- */
-.compare-band {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  border-radius: 18px;
-  overflow: hidden;
-  border: 1px solid var(--border-light);
-}
-
-.compare-col {
-  padding: 30px 28px;
-}
-
-.compare-col.typical {
-  background: var(--bg-secondary);
-}
-
-.compare-col.ours {
-  background: linear-gradient(150deg, #eef4f9 0%, #e4edf5 100%);
-  border-left: 1px solid var(--border-light);
-}
-
-.compare-col h3 {
-  margin-bottom: 16px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.compare-col.typical h3 {
-  color: var(--text-tertiary);
-}
-
-.compare-col.ours h3 {
-  color: var(--blue);
-}
-
-.compare-col ul {
-  list-style: none;
-  display: grid;
-  gap: 12px;
-}
-
-.compare-col li {
-  position: relative;
-  padding-left: 26px;
-  font-size: 14.5px;
-  line-height: 1.7;
-  color: var(--text-secondary);
-}
-
-.compare-col li::before {
-  position: absolute;
-  left: 0;
-  font-weight: 700;
-}
-
-.compare-col.typical li::before {
-  content: '✕';
-  color: var(--text-tertiary);
-}
-
-.compare-col.ours li::before {
-  content: '✓';
-  color: var(--blue);
-}
-
-/* ---------- 底部 CTA 条 ---------- */
-.cta-band {
-  position: relative;
-  margin: 0 auto;
-  max-width: 1080px;
-  padding: 56px 40px;
-  border-radius: 24px;
-  text-align: center;
-  background: linear-gradient(150deg, var(--ink-700) 0%, var(--ink-800) 60%, var(--ink-900) 100%);
-  overflow: hidden;
-}
-
-.cta-band::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 70% at 50% 0%,
-              rgba(74, 123, 167, 0.34), transparent 70%);
-  pointer-events: none;
-}
-
-.cta-band > * {
-  position: relative;
-  z-index: 1;
-}
-
-.cta-band .cta-wordmark {
-  margin: 0 0 12px;
-  font-size: clamp(26px, 4vw, 40px);
-  font-weight: 300;
-  letter-spacing: 1px;
-  color: #fff;
-}
-
-.cta-band p {
-  margin: 0 auto 28px;
-  max-width: 460px;
-  font-size: 15px;
-  line-height: 1.8;
-  color: rgba(255, 255, 255, 0.72);
-}
-
-.cta-band .cta-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-}
-
-.cta-band .btn-primary {
-  background: #fff;
-  color: var(--ink-800);
-  border-color: #fff;
-}
-
-.cta-band .btn-primary:hover {
-  background: rgba(255, 255, 255, 0.88);
-}
-
-.cta-band .btn-secondary {
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.cta-band .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-}
-
-/* ---------- 入场错开动画 ---------- */
+/* ---------- 入场动画 ---------- */
 @keyframes rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.stagger > * {
-  animation: rise-in .6s cubic-bezier(.22, 1, .36, 1) both;
-}
-
+.stagger > * { animation: rise-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
 .stagger > *:nth-child(1) { animation-delay: 0ms; }
 .stagger > *:nth-child(2) { animation-delay: 60ms; }
 .stagger > *:nth-child(3) { animation-delay: 120ms; }
 .stagger > *:nth-child(4) { animation-delay: 180ms; }
 .stagger > *:nth-child(5) { animation-delay: 240ms; }
-.stagger > *:nth-child(6) { animation-delay: 300ms; }
-.stagger > *:nth-child(n+7) { animation-delay: 320ms; }
+.stagger > *:nth-child(n+6) { animation-delay: 300ms; }
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 1100px) {
-  .intro-split {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-
-  .bento {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .bento-item,
-  .bento-item.wide {
-    grid-column: span 2;
-  }
-
-  .bento-item.full {
-    grid-column: span 4;
-  }
+  .intro-split { grid-template-columns: 1fr; gap: 30px; }
+  .bento { grid-template-columns: repeat(4, 1fr); }
+  .bento-item, .bento-item.wide { grid-column: span 2; }
+  .bento-item.full { grid-column: span 4; }
 }
 
 @media (max-width: 920px) {
-  .bento {
-    grid-template-columns: 1fr;
-  }
-
-  .bento-item,
-  .bento-item.wide,
-  .bento-item.full {
-    grid-column: span 1;
-  }
-
-  .bento-item.wide .bento-cols {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  .compare-band {
-    grid-template-columns: 1fr;
-  }
-
-  .compare-col.ours {
-    border-left: none;
-    border-top: 1px solid var(--border-light);
-  }
-
-  .cta-band {
-    padding: 40px 22px;
-    border-radius: 18px;
-  }
-}
-
-/* ---------- 减少动态效果 ---------- */
-@media (prefers-reduced-motion: reduce) {
-  .stagger > * {
-    animation: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-  }
-
-  .bento-item {
-    transition: none;
-  }
-}
-
-/* ============================================================
-   介绍页风格 A：收藏展示风（LinuxTitle）
-   ============================================================
-   把「28 个头衔」当收藏品展示：
-     · 编号 + 渐变分隔线的章节头
-     · 彩色 tile 网格，每类一色
-     · 数字用大号字重强调
-   ============================================================ */
-
-/* ---------- 编号章节头 ---------- */
-.num-head {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 10px;
-}
-
-.num-head .num {
-  font-family: 'SF Mono', 'Menlo', Consolas, monospace;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  color: var(--blue);
-}
-
-.num-head .rule {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, var(--blue-border) 0%, transparent 100%);
-}
-
-/* ---------- 彩色 tile 网格 ---------- */
-.tile-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
-  gap: 12px;
-}
-
-.tile {
-  position: relative;
-  padding: 16px 16px 14px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.30);
-  border: 1px solid var(--border-light);
-  overflow: hidden;
-  transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-  backdrop-filter: blur(18px) saturate(180%);
-}
-
-.tile::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--tile-accent, var(--blue));
-  opacity: .8;
-}
-
-.tile:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 28px rgba(15, 25, 35, 0.10);
-  border-color: rgba(74, 123, 167, 0.28);
-}
-
-.tile-emoji {
-  font-size: 20px;
-  line-height: 1;
-  margin-bottom: 8px;
-}
-
-.tile-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-
-.tile-cond {
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--text-tertiary);
-}
-
-/* 分类配色 */
-.tile--growth   { --tile-accent: #4a7ba7; }
-.tile--skill    { --tile-accent: #7a6cb0; }
-.tile--social   { --tile-accent: #4f9d8a; }
-.tile--event    { --tile-accent: #c07a4a; }
-.tile--daily    { --tile-accent: #b0567a; }
-
-/* ---------- 大数字统计条 ---------- */
-.stat-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 0;
-  border-radius: 18px;
-  overflow: hidden;
-  border: 1px solid var(--border-light);
-  background: rgba(255, 255, 255, 0.30);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-  backdrop-filter: blur(18px) saturate(180%);
-}
-
-.stat-cell {
-  padding: 26px 20px;
-  text-align: center;
-  border-right: 1px solid var(--border-light);
-}
-
-.stat-cell:last-child {
-  border-right: none;
-}
-
-.stat-cell b {
-  display: block;
-  font-size: 32px;
-  font-weight: 300;
-  letter-spacing: -1px;
-  line-height: 1.1;
-  color: var(--blue);
-  margin-bottom: 6px;
-}
-
-.stat-cell span {
-  font-size: 12.5px;
-  color: var(--text-tertiary);
-  letter-spacing: .4px;
-}
-
-/* ============================================================
-   介绍页风格 B：编年主题风（InTheNameOfLinux）
-   ============================================================
-   主插件功能多，用「编号章节 + 左右交错图文」讲清：
-     · 章节头带 01/02… 编号与渐变线
-     · 奇数节文字在左、偶数节文字在右（zigzag）
-     · 每节左侧一根主题色带
-   ============================================================ */
-
-/* ---------- 编号大章节 ---------- */
-.chapter {
-  position: relative;
-  padding: 56px 0 56px 34px;
-  border-left: 2px solid var(--border-light);
-}
-
-.chapter:last-of-type {
-  border-left-color: transparent;
-}
-
-/* 节点圆点 */
-.chapter::before {
-  content: '';
-  position: absolute;
-  left: -7px;
-  top: 62px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #fff;
-  border: 2px solid var(--blue);
-}
-
-.chapter-head {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.chapter-no {
-  font-family: 'SF Mono', 'Menlo', Consolas, monospace;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: var(--blue);
-}
-
-.chapter-title {
-  font-size: clamp(20px, 2.4vw, 26px);
-  font-weight: 600;
-  letter-spacing: -0.4px;
-  color: var(--text);
-}
-
-.chapter-lede {
-  max-width: 620px;
-  margin-bottom: 26px;
-  font-size: 15px;
-  line-height: 1.85;
-  color: var(--text-secondary);
-}
-
-/* ---------- 左右交错图文 ---------- */
-.zigzag {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: center;
-}
-
-.zigzag.reverse .zz-text {
-  order: 2;
-}
-
-.zigzag.reverse .zz-panel {
-  order: 1;
-}
-
-.zz-text h4 {
-  margin-bottom: 10px;
-  font-size: 17px;
-  font-weight: 600;
-}
-
-.zz-text p {
-  font-size: 14.5px;
-  line-height: 1.8;
-  color: var(--text-secondary);
-}
-
-.zz-text ul {
-  margin: 14px 0 0;
-  padding-left: 18px;
-  font-size: 14px;
-  line-height: 1.85;
-  color: var(--text-secondary);
-}
-
-/* 右侧「面板」：用来放代码、列表、示意 */
-.zz-panel {
-  padding: 22px 24px;
-  border-radius: 16px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-light);
-  font-size: 13.5px;
-  line-height: 1.8;
-  color: var(--text-secondary);
-}
-
-.zz-panel .panel-title {
-  margin-bottom: 12px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-
-.zz-panel ul {
-  margin: 0;
-  padding-left: 18px;
-}
-
-.zz-panel li + li {
-  margin-top: 6px;
-}
-
-.zz-panel code {
-  font-size: 12.5px;
-}
-
-/* ---------- 主题色带标题（用于小分节） ---------- */
-.band-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 34px 0 18px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.band-title::before {
-  content: '';
-  width: 4px;
-  height: 18px;
-  border-radius: 2px;
-  background: var(--blue);
-}
-
-/* ---------- 响应式 ---------- */
-@media (max-width: 920px) {
-  .zigzag {
-    grid-template-columns: 1fr;
-    gap: 22px;
-  }
-
-  .zigzag.reverse .zz-text,
-  .zigzag.reverse .zz-panel {
-    order: initial;
-  }
-
-  .chapter {
-    padding: 40px 0 40px 24px;
-  }
-
-  .chapter::before {
-    top: 46px;
-  }
-
-  .stat-cell {
-    border-right: none;
-    border-bottom: 1px solid var(--border-light);
-  }
-
-  .stat-cell:last-child {
-    border-bottom: none;
-  }
-
-  .tile-grid {
-    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
-    gap: 10px;
-  }
-}
-
-/* ============================================================
-   综合帮助页
-   ============================================================
-   内容区不加任何遮罩 —— 背景直接透上来，
-   卡片自己带玻璃，文字靠卡片的模糊保证可读。
-   ============================================================ */
-
-.hub-wrap {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  padding: 52px 0 64px;
-  /* 无背景、无模糊、无遮罩 */
-  background: none;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-}
-
-/* 内容区本身没有背景，压在背景图上的是纯文字。
-   不给背景加任何东西，只用文字阴影提高可读性。 */
-.hub-wrap h2,
-.hub-wrap section > p,
-.hub-wrap .hub-note h3 {
-  color: #fff;
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.4);
-}
-
-.hub-wrap .hub-note li,
-.hub-wrap .hub-note p {
-  color: rgba(255, 255, 255, 0.92);
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
-}
-
-.hub-wrap .hub-note a {
-  color: #fff;
-  text-decoration: underline;
-}
-
-.hub-wrap ~ #get {
-  position: relative;
-  z-index: 1;
-  padding: 0 0 72px;
-  background: none;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-}
-
-@media (max-width: 920px) {
-  .hub-wrap {
-    padding: 34px 0 48px;
-  }
-}
-
-/* ============================================================
-   顶栏文字：底色是浅色玻璃，文字必须是深色才看得见
-   ============================================================ */
-.nav-home .nav-logo,
-.nav-home .nav-links a,
-.nav-home.scrolled .nav-logo,
-.nav-home.scrolled .nav-links a {
-  color: var(--text);
-}
-
-.nav-home .nav-logo:hover,
-.nav-home .nav-links a:hover,
-.nav-home.scrolled .nav-logo:hover,
-.nav-home.scrolled .nav-links a:hover {
-  color: var(--blue);
-}
-
-.nav-home .nav-toggle span,
-.nav-home.scrolled .nav-toggle span {
-  background: var(--text);
-}
-
-.nav-home .nav-links .nav-external,
-.nav-home.scrolled .nav-links .nav-external {
-  color: var(--blue);
-  background: transparent;
-  border-color: transparent;
-}
-
-.nav-home .nav-links .nav-external:hover,
-.nav-home.scrolled .nav-links .nav-external:hover {
-  color: #fff;
-  background: var(--blue);
-  border-color: var(--blue);
-}
-
-/* ============================================================
-   全站背景（照搬主页）：视频 / mobile.jpg 固定在底层
-   ============================================================
-   主页是深色文字压在视频上（封面区），但正文很长，
-   深色字压在浅色画面上读不清 —— 所以正文加一层浅玻璃底，
-   视频在上面留一点可见度。hero 区保持透明。
-   ============================================================ */
-.hero,
-.page-hero {
-  position: relative;
-}
-
-/* 正文各容器：浅玻璃底 */
-#plugins,
-#about,
-.main-content,
-.intro-wrap,
-.overview,
-.help-section,
-.help-hub-grid {
-  position: relative;
-}
-
-@media (max-width: 920px) {
-  /* 各页面 hero 高度不同，背景层按图片比例完整显示 */
-  .hero::before,
-  .page-hero::before {
-    background-attachment: fixed;
-  }
-
-}
-
-/* ============================================================
-   介绍页的封面：结构与主页一致，但不占满整屏
-   ============================================================ */
-.cover-page {
-  min-height: auto;
-  padding: 132px 24px 72px;
-}
-
-.cover-page .cover-title {
-  font-size: clamp(30px, 5vw, 46px);
-}
-
-.cover-page .cover-quote {
-  margin-bottom: 26px;
-}
-
-/* 介绍页的封面按钮用主页那套胶囊 */
-.cover-page .cover-btn {
-  display: inline-block;
-  padding: 10px 22px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 20px;
-  background: rgba(20, 20, 20, 0.4);
-  color: #fff;
-  font-size: 14px;
-  text-decoration: none;
-  transition: all 0.25s ease;
-}
-
-.cover-page .cover-btn:hover {
-  background: var(--blue);
-  border-color: var(--blue);
-}
-
-@media (max-width: 920px) {
-  .cover-page {
-    padding: 96px 20px 56px;
-  }
-}
-
-/* ============================================================
-   插件帮助页：正文纯白（不要玻璃、不要视频透底）
-   ============================================================
-   注意：顶栏（nav）与汉堡菜单（.nav-links）保持液态玻璃，不在此列。
-   linuxhelp.html（综合帮助）整体跟主页一样用玻璃，也不在此列。
-   ============================================================ */
-body.pure-white {
-  background: #fff;
-}
-
-/* 正文里所有玻璃控件改成实白 */
-body.pure-white .help-table,
-body.pure-white .help-table tr,
-body.pure-white .help-table td,
-body.pure-white .table-wrap,
-body.pure-white .table-scroll,
-body.pure-white .faq-item,
-body.pure-white .tip,
-body.pure-white .sidebar,
-body.pure-white .sidebar a,
-body.pure-white .card,
-body.pure-white .btn,
-body.pure-white .hero-btn {
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-}
-
-body.pure-white .help-section,
-body.pure-white .main-content,
-body.pure-white .content-layout {
-  background: #fff;
-}
-
-/* 手机端胶囊目录：纯白底 */
-@media (max-width: 920px) {
-  body.pure-white .sidebar {
-    background: #fff;
-    border-bottom: 1px solid var(--border-light);
-  }
-
-  body.pure-white .sidebar a {
-    background: #fff;
-    border: 1px solid var(--border-light);
-  }
-
-  body.pure-white .sidebar a.active {
-    background: var(--blue);
-    border-color: var(--blue);
-    color: #fff;
-  }
-
-}
-
-/* ============================================================
-   介绍页文字：压在视频背景上，用浅色（不加任何遮罩）
-   ============================================================
-   与主页同一套做法：不动背景，只把文字改成白色 + 阴影。
-   玻璃模块内部仍用深色（模块底是浅色）。
-   ============================================================ */
-body > section,
-body > section h2,
-body > section h3,
-body > section h4,
-body > section p,
-body > section li,
-body > section .chapter-title,
-body > section .chapter-lede,
-body > section .chapter-no,
-body > section .band-title,
-body > section .section-header h2,
-body > section .section-header p,
-body > section .section-label,
-body > section .stat-cell b,
-body > section .stat-cell span {
-  color: #fff;
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.45);
-}
-
-/* 玻璃模块内部恢复深色 */
-body > section .bento-item,
-body > section .bento-item *,
-body > section .tile,
-body > section .tile *,
-body > section .stat-cell,
-body > section .card,
-body > section .card *,
-body > section .zz-panel,
-body > section .zz-panel *,
-body > section .split-points li,
-body > section .split-points *,
-body > section .table-wrap,
-body > section .help-table,
-body > section .help-table *,
-body > section .faq-item,
-body > section .faq-item * {
-  color: var(--text);
-  text-shadow: none;
-}
-
-body > section .bento-item p,
-body > section .bento-item li,
-body > section .card p,
-body > section .card li,
-body > section .zz-panel,
-body > section .help-table td,
-body > section .faq-a,
-body > section .tile-cond,
-body > section .stat-cell span {
-  color: var(--text-secondary);
-}
-
-/* 章节竖线与节点 */
-body > section .chapter {
-  border-left-color: rgba(255, 255, 255, 0.45);
-}
-
-body > section .chapter::before {
-  background: rgba(255, 255, 255, 0.95);
-}
-
-/* ============================================================
-   介绍页模块：液态玻璃（一套规则，覆盖所有卡片类模块）
-   ============================================================ */
-.bento-item,
-.tile,
-.stat-row,
-.stat-cell,
-.card,
-.help-hub-card,
-.intro-split .split-points li,
-.zz-panel,
-.faq-item,
-.table-wrap,
-.table-scroll {
-  background: rgba(255, 255, 255, 0.55) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(180%) !important;
-  backdrop-filter: blur(22px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.75) !important;
-  box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.25),
-    0 10px 32px rgba(15, 25, 35, 0.16) !important;
-}
-
-/* 表格本体也跟着透，否则表格里还是实白 */
-.help-table,
-.help-table thead,
-.help-table tbody {
-  background: transparent !important;
-}
-
-.help-table tr,
-.help-table td,
-.help-table th {
-  background: transparent !important;
-}
-
-/* 首列原来是浅灰实底，改成很淡的透明白，保留分隔感 */
-.help-table td:first-child {
-  background: rgba(255, 255, 255, 0.28) !important;
-}
-
-/* 悬停加深一点 */
-.bento-item:hover,
-.tile:hover,
-.card:hover,
-.help-hub-card:hover,
-.faq-item:hover {
-  background: rgba(255, 255, 255, 0.72) !important;
-  box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 1),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.3),
-    0 18px 44px rgba(15, 25, 35, 0.22) !important;
-}
-
-/* 纯白页（插件帮助页）排除，保持纯白 */
-body.pure-white .bento-item,
-body.pure-white .tile,
-body.pure-white .stat-row,
-body.pure-white .stat-cell,
-body.pure-white .card,
-body.pure-white .help-hub-card,
-body.pure-white .zz-panel,
-body.pure-white .faq-item,
-body.pure-white .table-wrap,
-body.pure-white .table-scroll,
-body.pure-white .help-table,
-body.pure-white .help-table tr,
-body.pure-white .help-table td,
-body.pure-white .help-table th {
-  background: #fff !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-  border: 1px solid var(--border-light) !important;
-  box-shadow: 0 1px 3px rgba(15, 25, 35, 0.05) !important;
+  .cover-page { padding: 96px 20px 52px; }
+  .bento { grid-template-columns: 1fr; }
+  .bento-item, .bento-item.wide, .bento-item.full { grid-column: span 1; }
+  .bento-item.wide .bento-cols { grid-template-columns: 1fr; gap: 14px; }
+  .zigzag { grid-template-columns: 1fr; gap: 22px; }
+  .zigzag.reverse .zz-text, .zigzag.reverse .zz-panel { order: initial; }
+  .chapter { padding: 40px 0 40px 24px; }
+  .chapter::before { top: 46px; }
+  .compare-band { grid-template-columns: 1fr; }
+  .compare-col.ours { border-left: none; border-top: 1px solid rgba(255, 255, 255, 0.5); }
+  .cta-band { padding: 38px 22px; border-radius: 18px; }
+  .stat-cell { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.5); }
+  .stat-cell:last-child { border-bottom: none; }
+  .tile-grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
 }
 
 /* ---- 减少动态效果：保留视频，只关动画 ---- */
@@ -3995,7 +3397,6 @@ body.pure-white .help-table th {
     transform: none;
   }
 }
-
 
 /* ============================================================
    帮助页侧栏：手机端为胶囊样式横向滑动条
