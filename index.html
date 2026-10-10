@@ -813,7 +813,12 @@
     }
 
     .nav-links.open {
-      max-height: 500px;
+      /* 不再写死 500px：导航项已有 10 个，窄屏下每项约 48px，
+         写死高度会把最后一项（Nalxer 服务器）裁掉。
+         改为按视口高度自适应并允许内部滚动。 */
+      max-height: calc(100vh - 52px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       opacity: 1;
       padding: 12px 24px 20px;
       pointer-events: auto;
@@ -845,11 +850,18 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
       padding: 14px 4px;
       background: transparent;
       color: var(--blue);
       font-weight: 500;
       border-radius: 0;
+      /* 文字不换行、不被压缩，箭头图标固定在右侧 */
+      white-space: nowrap;
+    }
+
+    .nav-links .nav-external svg {
+      flex: 0 0 auto;
     }
 
     .nav-links .nav-external:hover {

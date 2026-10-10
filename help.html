@@ -1753,6 +1753,7 @@
             <tr><td><code>inthenameoflinux.penalty</code></td><td>完整惩罚权限（banblock / banmove / banmsg / banall 等）</td><td>OP</td></tr>
             <tr><td><code>inthenameoflinux.report</code></td><td>查看 / 处理举报（list / info / accept / reject）</td><td>OP / 协管</td></tr>
             <tr><td><code>inthenameoflinux.report.admin</code></td><td>清空举报记录（clear 系列命令）</td><td>OP</td></tr>
+            <tr><td><code>inthenameoflinux.nbtview</code></td><td>使用 <code>/linux nbtview</code> 手动扫描并清除非法 NBT 物品</td><td>OP</td></tr>
             <tr><td><code>inthenameoflinux.moderator</code></td><td>协管权限节点（XlandCore 未加载时的回退）</td><td>否</td></tr>
             <tr><td><code>inthenameoflinux.sudo.wildcard</code></td><td>允许使用 sudo 通配符（everyone / all / @a）驱动其他在线玩家执行命令</td><td>OP</td></tr>
           </tbody>
@@ -2496,11 +2497,15 @@
             </ul>
             命令条目本身也可以点击：带 <code>&lt;参数&gt;</code> 的命令会<strong>自动填充</strong>到聊天框，无参数的命令会<strong>直接执行</strong>。
           </div>
+        </div>
+      </div>
+    </section>
+
 <!-- ============================================================
      到期自动解除 vs 手动解除
      ============================================================ -->
 <section class="help-section" id="expiry">
-  <h2><span class="num">13</span>到期自动解除与手动解除</h2>
+  <h2><span class="num">11</span>到期自动解除与手动解除</h2>
 
   <p>两种解除方式对<strong>封禁记录</strong>的处理不同，这是本插件的一个明确设计。</p>
 
@@ -2537,12 +2542,9 @@
     </div>
   </div>
 </section>
-        </div>
-      </div>
-    </section>
 
     <section class="help-section" id="uninstall">
-      <h2><span class="num">11</span>卸载与备份</h2>
+      <h2><span class="num">12</span>卸载与备份</h2>
 
       <h3>备份</h3>
       <ol class="steps">
@@ -2578,7 +2580,7 @@
     </section>
 
     <section class="help-section" id="credits">
-      <h2><span class="num">12</span>感谢列表</h2>
+      <h2><span class="num">13</span>感谢列表</h2>
 
       <p>本插件的开发与维护离不开以下贡献者。</p>
 
@@ -2620,6 +2622,73 @@
           因此会同时显示 <strong>Linux582021</strong> 与 <strong>星白喵喵</strong>。
         </div>
       </div>
+
+        <h3>完整配置参考</h3>
+        <p>下表列出 <code>config.yml</code> 里的<strong>全部配置项</strong>与默认值，按插件里的顺序排列。缺项会在启动时自动补齐，已有项不会被覆盖。</p>
+        <div class="table-scroll">
+          <table class="help-table">
+            <thead>
+              <tr><th>配置项</th><th>默认值</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>保护对象与基础</strong></td></tr>
+            <tr><td><code>protected-player</code></td><td>Linux582021</td><td></td></tr>
+            <tr><td><code>blocked-player</code></td><td>fs1</td><td></td></tr>
+            <tr><td><code>appeal-group</code></td><td>925200745</td><td></td></tr>
+            <tr><td><code>broadcast-ban</code></td><td>true</td><td></td></tr>
+            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>命令拦截</strong></td></tr>
+            <tr><td><code>blocked-commands</code></td><td>xlcore ban, xlcore kick, ban, banip, kick, tempban, linux ban, xlban</td><td></td></tr>
+            <tr><td><code>refuse-enabled</code></td><td>true</td><td></td></tr>
+            <tr><td><code>console-cmd-enabled</code></td><td>true</td><td></td></tr>
+            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>提醒与定时任务</strong></td></tr>
+            <tr><td><code>tempban-reminder.enabled</code></td><td>true</td><td></td></tr>
+            <tr><td><code>tempban-reminder.advance-seconds</code></td><td>60</td><td></td></tr>
+            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>命令接管与权限</strong></td></tr>
+            <tr><td><code>command-takeover</code></td><td>true</td><td></td></tr>
+            <tr><td><code>command-takeover-exclude</code></td><td>[]</td><td></td></tr>
+            <tr><td><code>owner-force-permissions</code></td><td>true</td><td></td></tr>
+            <tr><td><code>fs1-protection-takeover</code></td><td>true</td><td></td></tr>
+            <tr><td><code>fs1-hide-join-message</code></td><td>true</td><td></td></tr>
+            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>数据同步</strong></td></tr>
+            <tr><td><code>penalty-sync.enabled</code></td><td>true</td><td></td></tr>
+            <tr><td><code>penalty-sync.interval-seconds</code></td><td>60</td><td></td></tr>
+            <tr><td><code>data-save.interval-seconds</code></td><td>30</td><td></td></tr>
+            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>假人插件联动</strong></td></tr>
+            <tr><td><code>fakeplayer.info-class</code></td><td>example.fakeplayer.FakePlayerInfo</td><td></td></tr>
+            <tr><td><code>fakeplayer.init-delay-seconds</code></td><td>20</td><td></td></tr>
+            <tr><td><code>fakeplayer.sync-interval-seconds</code></td><td>60</td><td></td></tr>
+            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>登录验证</strong></td></tr>
+            <tr><td><code>login.password-salt</code></td><td>""</td><td></td></tr>
+            <tr><td><code>login.password-hash</code></td><td>""</td><td></td></tr>
+            <tr><td><code>login.min-length</code></td><td>6</td><td></td></tr>
+            <tr><td><code>login.fail-delay-seconds</code></td><td>3</td><td></td></tr>
+            <tr><td><code>login.max-fails</code></td><td>5</td><td></td></tr>
+            <tr><td><code>login.lockout-seconds</code></td><td>300</td><td></td></tr>
+            <tr><td><code>login.timeout-seconds</code></td><td>90</td><td></td></tr>
+            <tr><td><code>login.lockout-until</code></td><td>0</td><td></td></tr>
+            <tr><td><code>login.fail-count</code></td><td>0</td><td></td></tr>
+            <tr><td><code>login.last-fail-time</code></td><td>0</td><td></td></tr>
+            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>协管</strong></td></tr>
+            <tr><td><code>moderator.enabled</code></td><td>true</td><td></td></tr>
+            <tr><td><code>moderator.max-duration-days</code></td><td>7</td><td></td></tr>
+            <tr><td><code>moderator.fallback-permission</code></td><td>inthenameoflinux.moderator</td><td></td></tr>
+            <tr><td colspan="3" style="background:var(--bg-secondary);"><strong>非法 NBT 检测</strong></td></tr>
+            <tr><td><code>nbt.enabled</code></td><td>true</td><td></td></tr>
+            <tr><td><code>nbt.scan-seconds</code></td><td>20</td><td></td></tr>
+            <tr><td><code>nbt.exempt-players</code></td><td>""</td><td></td></tr>
+            <tr><td><code>nbt.exempt-worlds</code></td><td>""</td><td></td></tr>
+            <tr><td><code>nbt.skip-charms</code></td><td>true</td><td></td></tr>
+            <tr><td><code>nbt.compress-resistance</code></td><td>true</td><td></td></tr>
+            <tr><td><code>nbt.max-enchant-level</code></td><td>20</td><td></td></tr>
+            <tr><td><code>nbt.max.attack-damage</code></td><td>50.0</td><td></td></tr>
+            <tr><td><code>nbt.max.knockback-resistance</code></td><td>1.0</td><td></td></tr>
+            <tr><td><code>nbt.max.max-health</code></td><td>10.0</td><td></td></tr>
+            <tr><td><code>nbt.max.movement-speed</code></td><td>0.5</td><td></td></tr>
+            <tr><td><code>nbt.max.armor</code></td><td>30.0</td><td></td></tr>
+            <tr><td><code>nbt.max.armor-toughness</code></td><td>20.0</td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
     </section>
 
   </main>
