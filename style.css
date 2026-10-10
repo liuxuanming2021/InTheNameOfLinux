@@ -3716,6 +3716,61 @@ html {
   }
 }
 
+/* ============================================================
+   页面切换动画
+   ============================================================ */
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 内容区进入 */
+body > main,
+body > .intro-body,
+body > .hub-wrap,
+body > section,
+body > header.cover,
+body > header.hero {
+  animation: page-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* 逐个错开，形成层次 */
+body > header.cover,
+body > header.hero                { animation-delay: 0s; }
+body > section:nth-of-type(1)     { animation-delay: 60ms; }
+body > section:nth-of-type(2)     { animation-delay: 110ms; }
+body > section:nth-of-type(3)     { animation-delay: 160ms; }
+body > section:nth-of-type(n+4)   { animation-delay: 200ms; }
+
+/* 即将离开：整体淡出 */
+html.page-leaving body {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.26s ease, transform 0.26s ease;
+}
+
+/* 顶栏不参与淡入，避免闪烁 */
+body > nav {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body > main,
+  body > .intro-body,
+  body > .hub-wrap,
+  body > section,
+  body > header.cover,
+  body > header.hero {
+    animation: none;
+  }
+
+  html.page-leaving body {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* ---- 减少动态效果：保留视频，只关动画 ---- */
 @media (prefers-reduced-motion: reduce) {
   /* 注意：.reveal 的入场动画保留 —— 去掉它会让页面看起来没有动画。
@@ -3851,4 +3906,54 @@ nav.nav-home.scrolled .nav-links a.nav-external:hover {
   -webkit-text-fill-color: var(--blue);
   background: transparent !important;
   border-color: transparent !important;
+}
+
+
+/* ============================================================
+   顶栏左侧那个「L」图标：白字蓝底（不要跟着顶栏变黑）
+   ============================================================
+   放在文件最后，优先级高于顶栏的黑色规则。
+   ============================================================ */
+nav .nav-logo .nav-logo-icon,
+nav .nav-logo .nav-logo-icon:hover,
+.nav-home .nav-logo .nav-logo-icon,
+.nav-home.scrolled .nav-logo .nav-logo-icon {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff;
+}
+
+
+/* ============================================================
+   页面切换动画（覆盖 prefers-reduced-motion 的关闭）
+   ============================================================
+   你明确要动画，所以这里用 !important 保住，
+   否则系统开了「减少动态效果」时会全被关掉。
+   ============================================================ */
+html.page-anim body > section,
+html.page-anim body > header.cover,
+html.page-anim body > header.hero,
+html.page-anim body > .intro-body,
+html.page-anim body > .hub-wrap,
+html.page-anim body > main {
+  animation: page-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both !important;
+}
+
+html.page-anim body > header.cover,
+html.page-anim body > header.hero       { animation-delay: 0s !important; }
+html.page-anim body > section:nth-of-type(1)   { animation-delay: 60ms !important; }
+html.page-anim body > section:nth-of-type(2)   { animation-delay: 110ms !important; }
+html.page-anim body > section:nth-of-type(3)   { animation-delay: 160ms !important; }
+html.page-anim body > section:nth-of-type(n+4) { animation-delay: 200ms !important; }
+
+/* 离开：整体淡出 + 轻微上移 */
+html.page-anim.page-leaving body {
+  opacity: 0 !important;
+  transform: translateY(-8px) !important;
+  transition: opacity 0.34s ease, transform 0.34s ease !important;
+  pointer-events: none;
+}
+
+/* 顶栏不参与，避免闪烁 */
+html.page-anim body > nav {
+  animation: none !important;
 }
