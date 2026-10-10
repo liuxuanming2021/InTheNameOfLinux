@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>LinuxTitle · 头衔系统插件</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* 本页专属微调 */
+  .plug-hero-ver {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 4px 12px;
+      border-radius: 980px;
+      background: var(--blue-light);
+      color: var(--blue);
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+  .plug-links {
+      display: flex;
+      gap: 10px;
+      margin-top: 26px;
+      flex-wrap: wrap;
+    }
+  .plug-links .btn {
+      padding: 10px 18px;
+      font-size: 13.5px;
+    }
+  .whatsnew-more {
+      margin: 28px auto 0;
+      max-width: 560px;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-tertiary);
+    }
+  .whatsnew-more a {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 500;
+    }
+  .whatsnew-more a:hover {
+      text-decoration: underline;
+    }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="#features">功能</a></li>
+      <li><a href="#commands">命令</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          Nalxer 服务器
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="plug-hero-ver">v26.11.2</span>
+    <h1>LinuxTitle</h1>
+    <p>头衔解锁与展示插件 · 让玩家的付出看得见</p>
+    <div class="plug-links">
+      <a href="titlehelp.html" class="btn btn-primary">使用帮助</a>
+      <a href="index.html#plugins" class="btn btn-secondary">← 插件列表</a>
+    
+      <a href="linuxhelp.html" class="btn btn-secondary">综合帮助</a></div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">FEATURES</span>
+      <h2>核心功能</h2>
+      <p>六大模块，覆盖头衔的解锁、展示与管理</p>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card reveal">
+        <div class="card-icon">🏅</div>
+        <h3>28 个头衔</h3>
+        <p>从「新人」到「传奇」，覆盖成长、技巧、社交与活动四大类。</p>
+        <ul>
+            <li>成长类：新人 / 常驻 / 元老</li>
+            <li>技巧类：PVP 之王 / 建筑大师 / 矿工</li>
+            <li>社交类：向导 / 守护者 / 赞助者</li>
+            <li>活动类：节日头衔 + 每日头衔</li>
+        </ul>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">⚙️</div>
+        <h3>自动解锁</h3>
+        <p>按条件自动判定，玩家无需申请，进服后自动检查。</p>
+        <ul>
+            <li>游玩时长达到门槛自动解锁</li>
+            <li>统计数据（击杀 / 挖掘 / 死亡等）达标解锁</li>
+            <li>管理员也可手动授予指定头衔</li>
+            <li>默认每 60 秒复查一次</li>
+        </ul>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">🎋</div>
+        <h3>节日活动</h3>
+        <p>内置农历换算，春节、端午、中秋自动按农历日期开放。</p>
+        <ul>
+            <li>春节 / 端午 / 中秋：农历自动换算</li>
+            <li>元旦 / 国庆：公历日期区间</li>
+            <li>节日期间自动解锁对应头衔</li>
+            <li>持续天数可配置</li>
+        </ul>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">📅</div>
+        <h3>每日头衔</h3>
+        <p>每天 0 点重置的活跃度头衔，鼓励玩家日常上线。</p>
+        <ul>
+            <li>每日活跃 / 每日硬核 / 每日传奇</li>
+            <li>按当日在线时长判定</li>
+            <li>重置时间可配置</li>
+            <li>第二天重新统计，不会永久保留</li>
+        </ul>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">💬</div>
+        <h3>聊天前缀</h3>
+        <p>解锁的头衔可显示在聊天前缀，玩家能自由切换或关闭。</p>
+        <ul>
+            <li>支持 PlaceholderAPI 变量</li>
+            <li>玩家可 /title use 切换</li>
+            <li>可 /title off 关闭显示</li>
+            <li>权限节点分流：玩家命令 / 管理命令</li>
+        </ul>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">🧭</div>
+        <h3>新人引导</h3>
+        <p>新玩家首次进服自动获得「新人」头衔。</p>
+        <ul>
+            <li>进服延迟 10 秒后自动授予</li>
+            <li>超过指定游玩时长后不再授予</li>
+            <li>避免老玩家重登被误判为新人</li>
+            <li>头衔 ID 与阈值可配置</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="titles" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">TITLES</span>
+      <h2>头衔一览</h2>
+      <p>共 28 个头衔，分为四类</p>
+    </div>
+
+    <div class="table-scroll reveal">
+      <table class="help-table">
+        <thead>
+          <tr><th>分类</th><th>头衔</th><th>解锁方式</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>成长</td><td>新人 / 常驻 / 元老</td><td>按累计游玩时长自动解锁</td></tr>
+          <tr><td>技巧</td><td>PVP 之王 / 建筑大师 / 矿工 / 匠人</td><td>按对应统计数据达标解锁</td></tr>
+          <tr><td>社交</td><td>向导 / 守护者 / 赞助者 / 收藏家</td><td>按行为统计或管理员授予</td></tr>
+          <tr><td>活动</td><td>春节 / 端午 / 中秋 / 国庆</td><td>节日期间自动开放</td></tr>
+          <tr><td>每日</td><td>每日活跃 / 每日硬核 / 每日传奇</td><td>按当日在线时长，每天重置</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="commands">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">COMMANDS</span>
+      <h2>命令一览</h2>
+      <p>主命令 <code>/title</code>，别名 <code>/titles</code>、<code>/lt</code></p>
+    </div>
+
+    <div class="table-scroll reveal">
+      <table class="help-table">
+        <thead>
+          <tr><th>命令</th><th>说明</th><th>权限</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><code>/title help [页码]</code></td><td>显示帮助菜单（按身份分流，可点击翻页）</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/title list [页码]</code></td><td>列出全部头衔及自己的解锁状态</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/title use &lt;头衔ID&gt;</code></td><td>使用 / 切换头衔</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/title off</code></td><td>关闭头衔显示</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/title info &lt;头衔ID&gt;</code></td><td>查看某个头衔的解锁条件与说明</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/title give &lt;玩家&gt; &lt;头衔ID&gt;</code></td><td>手动授予玩家头衔</td><td><span class="badge badge-op">linuxtitle.admin</span></td></tr>
+            <tr><td><code>/title revoke &lt;玩家&gt; &lt;头衔ID&gt;</code></td><td>收回玩家头衔</td><td><span class="badge badge-op">linuxtitle.admin</span></td></tr>
+            <tr><td><code>/title check [玩家]</code></td><td>立即复查解锁条件</td><td><span class="badge badge-op">linuxtitle.admin</span></td></tr>
+            <tr><td><code>/title reload</code></td><td>重载插件配置</td><td><span class="badge badge-op">linuxtitle.admin</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">LinuxTitle</div>
+    <p>头衔解锁与展示插件 · 让玩家的付出看得见</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v26.11.2 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+      <a href="index.html">← 插件列表</a>
+      &nbsp;·&nbsp;
+      <a href="title.html">插件介绍</a>
+      &nbsp;·&nbsp;
+      <a href="titlehelp.html">使用帮助</a>
+      &nbsp;·&nbsp;
+      <a href="linuxpluginhelp.html">Linux 帮助中心</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+  // 滚动淡入
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  });
+
+  document.querySelectorAll('.reveal').forEach((el) => {
+    observer.observe(el);
+  });
+
+  // 平滑滚动
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ============================================================
+  // 移动端汉堡菜单
+  // ============================================================
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>
