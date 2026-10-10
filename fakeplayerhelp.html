@@ -51,18 +51,75 @@
   </div>
 </section>
 
-<div class="container content-layout">
+<div class="container content-layout no-toc">
 
-  <aside class="sidebar">
-    <div class="sidebar-title">目录</div>
-    <ul>
-      <li><a href="#quickstart" class="active">快速开始</a></li>
-      <li><a href="#commands">命令详解</a></li>
-      <li><a href="#usage">使用技巧</a></li>
-      <li><a href="#config">配置与数据</a></li>
-      <li><a href="#faq">常见问题</a></li>
-    </ul>
-  </aside>
+      <aside class="sidebar" id="sidebar">
+
+
+        <div class="sidebar-title">文档目录</div>
+
+
+        <details open>
+
+
+          <summary>开始使用</summary>
+
+
+          <ul>
+
+
+            <li><a href="#quickstart">快速开始</a></li>
+
+
+            <li><a href="#commands">命令详解</a></li>
+
+
+          </ul>
+
+
+        </details>
+
+
+        <details>
+
+
+          <summary>功能说明</summary>
+
+
+          <ul>
+
+
+            <li><a href="#usage">使用技巧</a></li>
+
+
+          </ul>
+
+
+        </details>
+
+
+        <details>
+
+
+          <summary>参考与帮助</summary>
+
+
+          <ul>
+
+
+            <li><a href="#config">配置与数据</a></li>
+
+
+            <li><a href="#faq">常见问题</a></li>
+
+
+          </ul>
+
+
+        </details>
+
+
+      </aside>
 
   <main class="main-content">
 
@@ -70,7 +127,7 @@
     <h2><span class="num">1</span>快速开始</h2>
 
       <p>FakePlayerPlugin 用来在服务器里放置<strong>不会掉线的"假玩家"</strong>。
-         常用来占位、装饰、撑活跃度，或者给其它插件（如计分板、在线人数）提供"有人在线"的效果。</p>
+         常用来<strong>占住挂机位</strong>：本体不用一直开着，假人替你留在服务器里，保持在线状态并维持所在区块加载。</p>
 
       <h3>三步上手</h3>
       <ol class="steps">
@@ -219,7 +276,7 @@
         <div class="faq-q"><span>假人算在线人数吗？</span><span class="faq-icon"></span></div>
         <div class="faq-a-wrap"><div class="faq-a">
           取决于其它插件怎么统计。本插件不参与原版在线人数计算，
-          但很多统计类插件会把假人算进去 —— 这正是它常被用来"撑活跃度"的原因。
+          但很多统计类插件会把假人算进去 —— 这也是挂机时它能顶替真实玩家的原因。
         </div></div>
       </div>
 
@@ -263,6 +320,77 @@
 </footer>
 
 <script>
+    // 滚动高亮：侧栏 + 本页目录
+    (function () {
+      var links = document.querySelectorAll('.sidebar a, .page-toc a');
+      if (!links.length) return;
+
+      function activate(id) {
+        links.forEach(function (a) {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+        });
+      }
+
+      var targets = [];
+      links.forEach(function (a) {
+        var id = (a.getAttribute('href') || '').slice(1);
+        if (!id) return;
+        var el = document.getElementById(id);
+        if (el) targets.push(el);
+      });
+      if (!targets.length) return;
+
+      if (!('IntersectionObserver' in window)) {
+        activate(targets[0].id);
+        return;
+      }
+
+      var visible = {};
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          visible[en.target.id] = en.isIntersecting;
+        });
+        for (var i = 0; i < targets.length; i++) {
+          if (visible[targets[i].id]) { activate(targets[i].id); break; }
+        }
+      }, { rootMargin: '-90px 0px -70% 0px', threshold: 0 });
+
+      targets.forEach(function (t) { io.observe(t); });
+    })();
+
+    // 移动端侧栏抽屉
+    (function () {
+      var sb = document.getElementById('sidebar');
+      var tg = document.getElementById('navToggle');
+      if (!sb || !tg) return;
+
+      var bd = document.createElement('div');
+      bd.className = 'sidebar-backdrop';
+      document.body.appendChild(bd);
+
+      function close() {
+        sb.classList.remove('open');
+        bd.classList.remove('open');
+      }
+
+      tg.addEventListener('click', function (e) {
+        e.stopPropagation();
+        sb.classList.toggle('open');
+        bd.classList.toggle('open');
+      });
+
+      bd.addEventListener('click', close);
+      sb.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') close();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') close();
+      });
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 920) close();
+      });
+    })();
+
   document.querySelectorAll('.faq-q').forEach((q) => {
     q.addEventListener('click', () => {
       q.parentElement.classList.toggle('open');

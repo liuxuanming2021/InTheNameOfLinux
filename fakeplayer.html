@@ -46,13 +46,12 @@
 
 <section class="page-hero">
   <div class="container">
-    <span class="plug-hero-ver">v26.11.2</span>
+    <span class="plug-hero-ver">v26.11.2 · Paper 1.12.2</span>
     <h1>FakePlayerPlugin</h1>
-    <p>在服务器里放置不会掉线的"假玩家"</p>
+    <p>用假人占住挂机位 —— 保持在线、维持区块加载，本体不用一直开着</p>
     <div class="hero-buttons">
-      <a href="#features" class="btn btn-primary">查看功能</a>
-      <a href="#commands" class="btn btn-secondary">命令列表</a>
-      <a href="linuxhelp.html" class="btn btn-secondary">综合帮助中心</a>
+      <a href="fakeplayerhelp.html" class="btn btn-primary">查看使用帮助</a>
+      <a href="#features" class="btn btn-secondary">了解功能</a>
     </div>
   </div>
 </section>
@@ -69,67 +68,72 @@
       <div class="card reveal">
         <div class="card-icon">👥</div>
         <h3>创建假人</h3>
-        <p>一条命令即可在当前位置生成一个假玩家。</p>
+        <p>一条命令在当前位置生成一个假玩家，服务端会把它当作真实在线玩家。</p>
         <ul>
-            <li><code>/fp &lt;名字&gt;</code> 在脚下创建</li>
-            <li>假人有皮肤、会站在原地看着你</li>
-            <li>可作为占位、装饰或活跃度展示</li>
-            <li>创建者会被记录，便于追责</li>
+          <li><code>/fp &lt;名字&gt;</code> 在脚下创建</li>
+          <li>会出现在 TAB 列表里</li>
+          <li>可用于占住挂机位、维持在线</li>
+          <li>创建者会被记录，便于追责</li>
         </ul>
       </div>
+
       <div class="card reveal">
         <div class="card-icon">🧹</div>
         <h3>管理与移除</h3>
         <p>列出、移除单个或一键清空全部假人。</p>
         <ul>
-            <li><code>/fplist</code> 列出全部假人</li>
-            <li><code>/fpr &lt;名字&gt;</code> 移除指定假人</li>
-            <li><code>/fpr all</code> 移除全部假人</li>
-            <li>移除后立即从服务器消失</li>
+          <li><code>/fplist</code> 列出全部假人</li>
+          <li><code>/fpr &lt;名字&gt;</code> 移除指定假人</li>
+          <li><code>/fpr all</code> 移除全部假人</li>
+          <li>移除后立即从服务器消失</li>
         </ul>
       </div>
+
       <div class="card reveal">
         <div class="card-icon">💾</div>
         <h3>数据持久化</h3>
-        <p>假人配置存盘，服务器重启后自动恢复。</p>
+        <p>假人配置存盘，服务器重启后自动恢复到原位置。</p>
         <ul>
-            <li>假人数据写入配置文件</li>
-            <li><code>/fpsave</code> 手动保存</li>
-            <li>启动后分三次延迟加载，避免与其它插件抢时序</li>
-            <li>假人不会因为重启消失</li>
+          <li>假人数据写入配置文件</li>
+          <li><code>/fpsave</code> 手动保存</li>
+          <li>启动后分三次延迟加载，避免与其它插件抢时序</li>
+          <li>假人不会因为重启消失</li>
         </ul>
       </div>
+
       <div class="card reveal">
         <div class="card-icon">🧱</div>
-        <h3>区块保护</h3>
-        <p>强制加载假人所在区块，防止掉进虚空。</p>
+        <h3>区块强制加载</h3>
+        <p>假人所在区块会被强制加载，挂机时机器不会因为区块卸载停摆。</p>
         <ul>
-            <li>自动强制加载所在区块</li>
-            <li>区块卸载 / 世界卸载时自动处理</li>
-            <li>定期自检并修复异常假人</li>
-            <li>玩家传送后重新定位</li>
+          <li>自动强制加载所在区块</li>
+          <li>区块卸载 / 世界卸载时自动处理</li>
+          <li>定期自检并修复异常假人</li>
+          <li>玩家传送后重新定位</li>
         </ul>
       </div>
+
       <div class="card reveal">
         <div class="card-icon">🔐</div>
         <h3>AuthMe 兼容</h3>
-        <p>不会因为登录验证被踢下线。</p>
+        <p>不会因为登录验证被踢下线，长期挂机也不掉。</p>
         <ul>
-            <li>兼容 AuthMe 的登录检查</li>
-            <li>假人不参与登录验证流程</li>
-            <li>避免被其他登录插件误判</li>
-            <li>可与其它插件共存</li>
+          <li>兼容 AuthMe 的登录检查</li>
+          <li>假人不参与登录验证流程</li>
+          <li>避免被其他登录插件误判</li>
+          <li>可与其它插件共存</li>
         </ul>
       </div>
+
       <div class="card reveal">
         <div class="card-icon">🛠️</div>
         <h3>仅 OP 可用</h3>
         <p>所有命令都只对管理员开放，普通玩家无法创建。</p>
         <ul>
-            <li>命令默认需要 OP 权限</li>
-            <li>防止玩家刷假人占位</li>
-            <li><code>/fpreload</code> 热重载配置</li>
-            <li>帮助菜单列出全部可用命令</li>
+          <li>命令默认需要 OP 权限</li>
+          <li>防止普通玩家随意生成假人</li>
+          <li><code>/fpreload</code> 热重载配置</li>
+          <li>帮助菜单列出全部可用命令</li>
         </ul>
       </div>
     </div>
@@ -150,13 +154,14 @@
           <tr><th>命令</th><th>说明</th><th>权限</th></tr>
         </thead>
         <tbody>
-            <tr><td><code>/fp</code></td><td>显示插件信息</td><td><span class="badge badge-op">OP</span></td></tr>
-            <tr><td><code>/fp &lt;名字&gt;</code></td><td>在当前位置创建一个假人</td><td><span class="badge badge-op">OP</span></td></tr>
-            <tr><td><code>/fp help</code></td><td>显示帮助菜单</td><td><span class="badge badge-op">OP</span></td></tr>
-            <tr><td><code>/fplist</code></td><td>列出所有假人</td><td><span class="badge badge-op">OP</span></td></tr>
-            <tr><td><code>/fpr &lt;名字|all&gt;</code></td><td>移除指定假人，或移除全部</td><td><span class="badge badge-op">OP</span></td></tr>
-            <tr><td><code>/fpreload</code></td><td>重载插件配置</td><td><span class="badge badge-op">OP</span></td></tr>
-            <tr><td><code>/fpsave</code></td><td>手动保存假人数据</td><td><span class="badge badge-op">OP</span></td></tr>
+          <tr><td><code>/fp</code></td><td>显示插件信息</td><td><span class="badge badge-op">OP</span></td></tr>
+          <tr><td><code>/fp &lt;名字&gt;</code></td><td>在<strong>当前位置</strong>创建一个假人</td><td><span class="badge badge-op">OP</span></td></tr>
+          <tr><td><code>/fp help</code></td><td>显示帮助菜单</td><td><span class="badge badge-op">OP</span></td></tr>
+          <tr><td><code>/fplist</code></td><td>列出服务器上所有假人</td><td><span class="badge badge-op">OP</span></td></tr>
+          <tr><td><code>/fpr &lt;名字&gt;</code></td><td>移除指定假人</td><td><span class="badge badge-op">OP</span></td></tr>
+          <tr><td><code>/fpr all</code></td><td><strong>移除全部</strong>假人</td><td><span class="badge badge-op">OP</span></td></tr>
+          <tr><td><code>/fpreload</code></td><td>重载插件配置</td><td><span class="badge badge-op">OP</span></td></tr>
+          <tr><td><code>/fpsave</code></td><td>手动保存假人数据</td><td><span class="badge badge-op">OP</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -171,6 +176,10 @@
     </div>
   </div>
 </section>
+
+
+
+
 
 <footer>
   <div class="container">

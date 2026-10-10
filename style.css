@@ -2013,6 +2013,25 @@ color: var(--code-keyword);
   .help-hub-grid {
     grid-template-columns: 1fr;
   }
+  /* 窄屏：文档页 hero 太高，压缩为一行标题 */
+  .page-hero {
+    padding: 28px 0 18px;
+  }
+
+  .page-hero h1 {
+    font-size: clamp(22px, 6vw, 28px);
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .page-hero p {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .page-hero .plug-hero-ver {
+    margin-bottom: 8px;
+  }
 }
 
 /* ============================================================
@@ -2403,108 +2422,77 @@ color: var(--code-keyword);
   /* 隐藏视频 */
   .bg-video {
     display: none;
+
+    /* 封面之外的内容区需要遮住固定背景，否则滚动时图片透在文字下。
+       这层随页面滚动（不是 fixed），从封面底部开始往下铺。 */
+    body::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: min(100vw * 1920 / 1080, 100vh);
+      bottom: 0;
+      background: var(--bg);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* body 需要成为定位参照 */
+    body {
+      position: relative;
+    }
+
+    /* 封面自身的压暗层（随封面滚动） */
+    .cover-overlay {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg,
+        rgba(14, 22, 29, 0.30) 0%,
+        rgba(14, 22, 29, 0.12) 45%,
+        rgba(14, 22, 29, 0.42) 100%);
+    }
+
+    /* 封面内容要压在遮罩之上 */
+    .cover-inner {
+      z-index: 1;
+    }
   }
 
-  /* 用 mobile.jpg 作背景。
-       关键：让封面高度跟随图片比例（1080:1920），
-       否则 cover 会裁两侧、contain 会留上下，都无法完整显示 */
-    .cover {
-      min-height: 0;
-      aspect-ratio: 1080 / 1920;
-      max-height: 100vh;
-      background-image: url("mobile.jpg");
-      background-size: cover;
-      background-position: center center;
-      background-repeat: no-repeat;
-    }
-}
+  /* 手机端背景：用一个「固定层」承载 mobile.jpg，
+         与桌面端的 .bg-video 行为一致 —— 背景不动、文字滚动。
+         ::before 用 position: fixed 钉在视口，按图片比例完整显示。 */
+  .cover::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    /* 按图片比例定高，保证完整显示不裁剪 */
+    height: min(100vw * 1920 / 1080, 100vh);
+    background-image: url("mobile.jpg");
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-color: var(--ink-800);
+    z-index: -1;
+    pointer-events: none;
+  }
 
-/* ============================================================
-   液态玻璃（Liquid Glass）—— 按 Apple 设计语言校准
-   ============================================================
-   参考：
-     · Apple Liquid Glass 的 5 个光学要素中，CSS 能做的只有
-       「半透明 + 模糊」和「静态镜面高光」；折射与色散需要 WebGL
-     · 让面板读起来是"玻璃"而不是"染色薄膜"的，是那一条
-       顶部内高光（inset 0 1.5px 0），不是均匀描边
-     · backdrop-filter 需要背后有实际内容才采样，空背景上会发灰
-   ============================================================ */
-
-/* 玻璃的三个数值：模糊 / 通透度 / 描边亮度 */
-.glass-surface,
-#plugins .card,
-#about .author-box,
-.help-hub-card {
-  background: rgba(255, 255, 255, 0.26);
-  -webkit-backdrop-filter: blur(14px) saturate(170%);
-  backdrop-filter: blur(14px) saturate(170%);
-  /* 镜面高光边：顶部亮线（主）+ 底部弱反光（次）+ 投影 */
-  box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.85),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.14),
-    0 10px 30px rgba(15, 25, 35, 0.22);
-  border: 1px solid rgba(255, 255, 255, 0.34);
-}
-
-#plugins .card:hover,
-.help-hub-card:hover {
-  background: rgba(255, 255, 255, 0.38);
-  border-color: rgba(255, 255, 255, 0.55);
-  box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.2),
-    0 16px 40px rgba(15, 25, 35, 0.28);
-}
-
-/* 按钮：同一套玻璃，但高光更细 */
-.btn-primary,
-.btn-secondary,
-.card-links .btn {
-  -webkit-backdrop-filter: blur(14px) saturate(170%);
-  backdrop-filter: blur(14px) saturate(170%);
-  box-shadow:
-    inset 0 1.2px 0 rgba(255, 255, 255, 0.8),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.12),
-    0 6px 20px rgba(15, 25, 35, 0.18);
-}
-
-.btn-primary {
-  background: rgba(255, 255, 255, 0.26);
-  border: 1px solid rgba(255, 255, 255, 0.42);
-  color: var(--blue);
-}
-
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.20);
-  border: 1px solid rgba(255, 255, 255, 0.36);
-  color: var(--text-secondary);
-}
-
-/* 帮助页的表格卡片与折叠项 */
-.faq-item {
-  box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.85),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.14),
-    0 8px 26px rgba(15, 25, 35, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.34);
-}
-
-/* ============================================================
-   无障碍：用户要求「减少透明度」时，给真不透明底并关掉模糊
-   ============================================================ */
-@media (prefers-reduced-transparency: reduce) {
-  #plugins .card,
-  #about .author-box,
-  .help-hub-card,
-  .btn-primary,
-  .btn-secondary,
-  .card-links .btn,
-  .faq-item,
-  .help-table tr,
-  .help-table td:first-child {
-    background: #ffffff;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
+  /* .cover 自己不再承载背景图，也不再用 aspect-ratio 撑高 */
+  .cover {
+    min-height: 0;
+    aspect-ratio: auto;
+    max-height: none;
+    background-image: none;
+    background-color: transparent;
+    /* 高度取「图片比例」与「视口」的较小值，保证文字压在图上 */
+    min-height: min(100vw * 1920 / 1080, 100vh);
   }
 
   .btn-primary {
@@ -2838,6 +2826,518 @@ color: var(--code-keyword);
 
   .page-toc {
     display: none;
+  }
+}
+
+/* ============================================================
+   插件介绍页布局
+   ============================================================
+   介绍页是 landing page 性质，不用「侧栏 + 正文」的文档布局，
+   而是：hero 通栏 → 下方「本页目录 | 内容」两栏。
+   目录只做锚点跳转与跟随高亮，不承载导航职责。
+   ============================================================ */
+
+.intro-wrap {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: 52px;
+  align-items: start;
+  padding-top: 0;
+}
+
+/* 目录排在左侧，与内容同高 */
+.intro-wrap .intro-toc {
+  grid-column: 1;
+  grid-row: 1;
+  position: sticky;
+  top: 88px;
+  align-self: start;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding-top: 60px;
+  scrollbar-width: none;
+}
+
+.intro-wrap .intro-toc::-webkit-scrollbar {
+  display: none;
+}
+
+.intro-body {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+}
+
+/* 介绍页里的区块已经是 section，去掉重复的大内边距 */
+.intro-body > section {
+  padding: 60px 0;
+}
+
+.intro-body > section:first-child {
+  padding-top: 60px;
+}
+
+/* 区块之间的分隔线，让长页面有节奏 */
+.intro-body > section + section {
+  border-top: 1px solid var(--border-light);
+}
+
+/* 介绍页的区块头改为左对齐（原本是居中，长页面居中会显得散） */
+.intro-body .section-header {
+  text-align: left;
+  margin-bottom: 36px;
+}
+
+.intro-body .section-header p {
+  margin: 0;
+}
+
+/* ---------- 中等屏：目录移到顶部横排 ---------- */
+@media (max-width: 1100px) {
+  .intro-wrap {
+    display: block;
+  }
+
+  .intro-wrap .intro-toc {
+    position: static;
+    max-height: none;
+    padding: 24px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 14px;
+    margin-bottom: 8px;
+  }
+
+  .intro-wrap .intro-toc h2 {
+    margin: 0 6px 0 0;
+  }
+
+  .intro-wrap .intro-toc ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-left: none;
+  }
+
+  .intro-wrap .intro-toc a {
+    padding: 4px 12px;
+    border: 1px solid var(--border-light);
+    border-radius: 999px;
+    border-left: 1px solid var(--border-light);
+    margin-left: 0;
+    font-size: 12.5px;
+  }
+
+  .intro-wrap .intro-toc a.active {
+    background: var(--blue-light);
+    border-color: var(--blue-border);
+    color: var(--blue);
+  }
+
+  .intro-body > section {
+    padding: 44px 0;
+  }
+}
+
+/* ---------- 窄屏 ---------- */
+@media (max-width: 920px) {
+  .intro-wrap .intro-toc {
+    padding-top: 16px;
+  }
+
+  .intro-body > section {
+    padding: 36px 0;
+  }
+
+  .intro-body .section-header {
+    margin-bottom: 24px;
+  }
+}
+
+/* ============================================================
+   落地页组件（插件介绍页）
+   ============================================================
+   设计原则（营销落地页规范）：
+     · 玻璃只出现在 hero 与导航上；正文区块一律实底 + 细线边框
+     · 强调色是标点，不是壁纸 —— 每个大标题只给一个词上渐变
+     · 卡片入场错开 0–320ms
+     · 尊重 prefers-reduced-motion
+   ============================================================ */
+
+/* ---------- 数据胶囊（hero 下方的事实条） ---------- */
+.fact-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 26px;
+}
+
+.fact-pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 980px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.78);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.fact-pill b {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ---------- 一句话说明区（55/45 双栏） ---------- */
+.intro-split {
+  display: grid;
+  grid-template-columns: 1.14fr 1fr;
+  gap: 56px;
+  align-items: center;
+}
+
+.intro-split h2 {
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+  margin-bottom: 16px;
+}
+
+.intro-split p {
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--text-secondary);
+}
+
+.intro-split .split-points {
+  list-style: none;
+  display: grid;
+  gap: 14px;
+}
+
+.intro-split .split-points li {
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.intro-split .split-points strong {
+  color: var(--text);
+}
+
+/* ---------- Bento 功能网格 ---------- */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 18px;
+}
+
+.bento-item {
+  grid-column: span 2;
+  padding: 28px 26px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+
+.bento-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(15, 25, 35, 0.10);
+  border-color: rgba(74, 123, 167, 0.28);
+}
+
+.bento-item.wide {
+  grid-column: span 3;
+}
+
+.bento-item.full {
+  grid-column: span 6;
+}
+
+.bento-icon {
+  width: 46px;
+  height: 46px;
+  margin-bottom: 16px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  background: var(--blue-soft);
+  border: 1px solid var(--blue-border);
+}
+
+.bento-item h3 {
+  margin-bottom: 8px;
+  font-size: 17px;
+}
+
+.bento-item > p {
+  margin-bottom: 14px;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text-secondary);
+}
+
+.bento-item ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.bento-item ul code {
+  font-size: 12.5px;
+}
+
+/* 宽卡片里内容两列排 */
+.bento-item.wide .bento-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* ---------- 对比条（别家 vs 我们） ---------- */
+.compare-band {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.compare-col {
+  padding: 30px 28px;
+}
+
+.compare-col.typical {
+  background: var(--bg-secondary);
+}
+
+.compare-col.ours {
+  background: linear-gradient(150deg, #eef4f9 0%, #e4edf5 100%);
+  border-left: 1px solid var(--border-light);
+}
+
+.compare-col h3 {
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.compare-col.typical h3 {
+  color: var(--text-tertiary);
+}
+
+.compare-col.ours h3 {
+  color: var(--blue);
+}
+
+.compare-col ul {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.compare-col li {
+  position: relative;
+  padding-left: 26px;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.compare-col li::before {
+  position: absolute;
+  left: 0;
+  font-weight: 700;
+}
+
+.compare-col.typical li::before {
+  content: '✕';
+  color: var(--text-tertiary);
+}
+
+.compare-col.ours li::before {
+  content: '✓';
+  color: var(--blue);
+}
+
+/* ---------- 底部 CTA 条 ---------- */
+.cta-band {
+  position: relative;
+  margin: 0 auto;
+  max-width: 1080px;
+  padding: 56px 40px;
+  border-radius: 24px;
+  text-align: center;
+  background: linear-gradient(150deg, var(--ink-700) 0%, var(--ink-800) 60%, var(--ink-900) 100%);
+  overflow: hidden;
+}
+
+.cta-band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 70% at 50% 0%,
+              rgba(74, 123, 167, 0.34), transparent 70%);
+  pointer-events: none;
+}
+
+.cta-band > * {
+  position: relative;
+  z-index: 1;
+}
+
+.cta-band .cta-wordmark {
+  margin: 0 0 12px;
+  font-size: clamp(26px, 4vw, 40px);
+  font-weight: 300;
+  letter-spacing: 1px;
+  color: #fff;
+}
+
+.cta-band p {
+  margin: 0 auto 28px;
+  max-width: 460px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.cta-band .cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.cta-band .btn-primary {
+  background: #fff;
+  color: var(--ink-800);
+  border-color: #fff;
+}
+
+.cta-band .btn-primary:hover {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.cta-band .btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.cta-band .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+/* ---------- 入场错开动画 ---------- */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stagger > * {
+  animation: rise-in .6s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 60ms; }
+.stagger > *:nth-child(3) { animation-delay: 120ms; }
+.stagger > *:nth-child(4) { animation-delay: 180ms; }
+.stagger > *:nth-child(5) { animation-delay: 240ms; }
+.stagger > *:nth-child(6) { animation-delay: 300ms; }
+.stagger > *:nth-child(n+7) { animation-delay: 320ms; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 1100px) {
+  .intro-split {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .bento {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .bento-item,
+  .bento-item.wide {
+    grid-column: span 2;
+  }
+
+  .bento-item.full {
+    grid-column: span 4;
+  }
+}
+
+@media (max-width: 920px) {
+  .bento {
+    grid-template-columns: 1fr;
+  }
+
+  .bento-item,
+  .bento-item.wide,
+  .bento-item.full {
+    grid-column: span 1;
+  }
+
+  .bento-item.wide .bento-cols {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .compare-band {
+    grid-template-columns: 1fr;
+  }
+
+  .compare-col.ours {
+    border-left: none;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .cta-band {
+    padding: 40px 22px;
+    border-radius: 18px;
+  }
+}
+
+/* ---------- 减少动态效果 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .stagger > * {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .bento-item {
+    transition: none;
   }
 }
 
