@@ -2234,13 +2234,11 @@ color: var(--code-keyword);
   font-weight: 600;
 }
 
-/* 主页下方内容区：半透明玻璃，视频透出来（不是实心白） */
+/* 主页下方内容区：完全透明，视频直接透出（不加任何模糊） */
 #plugins,
 #about {
   position: relative;
-  background: rgba(255, 255, 255, 0.30);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  backdrop-filter: blur(16px) saturate(160%);
+  background: transparent;
 }
 
 #about {
@@ -2361,13 +2359,10 @@ color: var(--code-keyword);
    ============================================================ */
 
 /* 通用玻璃基类 */
-.glass,
+/* 液态玻璃只用于卡片 */
 #plugins .card,
 #about .author-box,
-.help-hub-card,
-.help-table,
-.card-links .btn,
-.cover-btn {
+.help-hub-card {
   -webkit-backdrop-filter: blur(18px) saturate(180%);
   backdrop-filter: blur(18px) saturate(180%);
 }
@@ -2391,23 +2386,6 @@ color: var(--code-keyword);
     0 20px 48px rgba(74, 123, 167, 0.22);
 }
 
-/* 卡片内的图标也做成玻璃小块 */
-#plugins .card-icon {
-  background: rgba(255, 255, 255, 0.55) !important;
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-}
-
-/* 卡片里的标签 */
-#plugins .badge {
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-}
-
 /* 关于作者区块 */
 #about .author-box {
   background: rgba(255, 255, 255, 0.5);
@@ -2416,13 +2394,6 @@ color: var(--code-keyword);
     inset 0 1px 0 rgba(255, 255, 255, 0.95),
     inset 0 -1px 0 rgba(255, 255, 255, 0.4),
     0 8px 32px rgba(30, 44, 56, 0.10);
-}
-
-/* 卡片按钮：玻璃胶囊 */
-.card-links .btn {
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 .card-links .btn-primary {
@@ -2458,33 +2429,12 @@ color: var(--code-keyword);
   background: rgba(255, 255, 255, 0.6);
 }
 
-/* 封面按钮：更"玻璃"一点 */
-.cover-btn {
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.38);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    0 4px 16px rgba(0, 0, 0, 0.12);
-}
-
 .cover-btn:hover {
   background: rgba(74, 123, 167, 0.75);
   border-color: rgba(255, 255, 255, 0.6);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.6),
     0 10px 28px rgba(74, 123, 167, 0.45);
-}
-
-/* 封面上方的信息条也做成玻璃 */
-.cover-remark {
-  display: inline-block;
-  padding: 8px 18px;
-  border-radius: 980px;
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
 }
 
 /* 不支持 backdrop-filter 的老浏览器：退回不透明底，保证可读 */
@@ -2504,11 +2454,6 @@ color: var(--code-keyword);
      · 文字加硬阴影
      · 按钮/信息条自带玻璃底
    ============================================================ */
-
-.bg-video {
-  /* 轻微降亮 + 提高对比，不盖灰罩也能看清白字 */
-  filter: brightness(0.62) contrast(1.10) saturate(1.06);
-}
 
 /* 文字加阴影 */
 .cover-title {
@@ -2532,30 +2477,6 @@ color: var(--code-keyword);
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
 }
 
-/* 按钮加更实的玻璃底 */
-.cover-btn {
-  background: rgba(20, 28, 36, 0.42);
-  border-color: rgba(255, 255, 255, 0.45);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    0 4px 18px rgba(0, 0, 0, 0.25);
-}
-
-/* 底部信息条 */
-.cover-remark {
-  background: rgba(20, 28, 36, 0.40);
-  border-color: rgba(255, 255, 255, 0.28);
-}
-
-/* 封面底部极淡的渐变，给按钮区一点依托（不是灰罩，只压底部 22%） */
-.cover-overlay {
-  display: block !important;
-  background: linear-gradient(180deg,
-    rgba(14, 22, 29, 0) 0%,
-    rgba(14, 22, 29, 0) 62%,
-    rgba(14, 22, 29, 0.30) 100%);
-}
-
 /* ---- 减少动态效果：保留视频，只关动画 ---- */
 @media (prefers-reduced-motion: reduce) {
   .cover-btn,
@@ -2572,5 +2493,4 @@ color: var(--code-keyword);
     transform: none;
   }
 }
-
 
