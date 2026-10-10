@@ -7,84 +7,6 @@
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="stylesheet" href="style.css">
-<style>
-  /* 本页专属微调 */
-  .help-hub-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-top: 8px;
-    }
-  .help-hub-grid {
-        grid-template-columns: 1fr;
-      }
-  .help-hub-card {
-      display: block;
-      padding: 26px 24px;
-      border-radius: 16px;
-      border: 1px solid var(--border-light);
-      background: #fff;
-      text-decoration: none;
-      color: inherit;
-      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-    }
-  .help-hub-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 16px 34px rgba(0, 113, 227, 0.12);
-      border-color: rgba(0, 113, 227, 0.3);
-    }
-  .help-hub-card h3 {
-      margin-bottom: 6px;
-      font-size: 18px;
-      color: var(--text);
-    }
-  .help-hub-card .hub-ver {
-      margin-bottom: 12px;
-      font-size: 12.5px;
-      color: var(--text-tertiary);
-    }
-  .help-hub-card p {
-      font-size: 14px;
-      line-height: 1.7;
-      color: var(--text-secondary);
-    }
-  .help-hub-card .hub-tags {
-      margin-top: 14px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-  .help-hub-card .hub-tags span {
-      padding: 3px 9px;
-      border-radius: 6px;
-      background: var(--bg-secondary);
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-  .help-hub-icon {
-      font-size: 30px;
-      line-height: 1;
-      margin-bottom: 14px;
-    }
-  .hub-note {
-      margin-top: 34px;
-      padding: 22px 24px;
-      border-radius: 14px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-light);
-    }
-  .hub-note h3 {
-      margin-bottom: 10px;
-      font-size: 16px;
-    }
-  .hub-note ul {
-      margin: 0;
-      padding-left: 20px;
-      color: var(--text-secondary);
-      line-height: 1.9;
-      font-size: 14px;
-    }
-</style>
 </head>
 <body>
 
@@ -137,7 +59,7 @@
     </p>
 
     <div class="help-hub-grid">
-        <a href="linuxpluginhelp.html" class="help-hub-card reveal">
+        <a href="linuxpluginhelp.html" class="help-hub-card">
           <div class="help-hub-icon">🛡️</div>
           <h3>InTheNameOfLinux</h3>
           <div class="hub-ver">v26.11.4正式版</div>
@@ -149,7 +71,7 @@
             <span>常见问题</span>
           </div>
         </a>
-        <a href="titlehelp.html" class="help-hub-card reveal">
+        <a href="titlehelp.html" class="help-hub-card">
           <div class="help-hub-icon">🏅</div>
           <h3>LinuxTitle</h3>
           <div class="hub-ver">v26.11.2</div>
@@ -161,7 +83,7 @@
             <span>权限节点</span>
           </div>
         </a>
-        <a href="fakeplayerhelp.html" class="help-hub-card reveal">
+        <a href="fakeplayerhelp.html" class="help-hub-card">
           <div class="help-hub-icon">👥</div>
           <h3>FakePlayerPlugin</h3>
           <div class="hub-ver">v26.11.2</div>
@@ -221,6 +143,28 @@
 </footer>
 
 <script>
+    // 滚动淡入
+    (function () {
+      var els = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window)) {
+        els.forEach(function (el) { el.classList.add('visible'); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+      els.forEach(function (el) { io.observe(el); });
+      // 兜底：2 秒后仍未显示的强制显示，避免任何情况下出现空白
+      setTimeout(function () {
+        els.forEach(function (el) { el.classList.add('visible'); });
+      }, 2000);
+    })();
+
   document.querySelectorAll('.faq-q').forEach((q) => {
     q.addEventListener('click', () => {
       q.parentElement.classList.toggle('open');
