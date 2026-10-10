@@ -52,26 +52,48 @@
 </section>
 
 <div class="container content-layout">
-
-    <aside class="sidebar">
-      <div class="sidebar-title">目录</div>
-      <ul>
-        <li><a href="#changelog" class="active">更新日志</a></li>
-        <li><a href="#credits">感谢列表</a></li>
-        <li><a href="#quickstart">快速开始</a></li>
-        <li><a href="#commands">命令详解</a></li>
-        <li><a href="#report">举报系统</a></li>
-        <li><a href="#confirm">二次确认</a></li>
-        <li><a href="#permissions">权限说明</a></li>
-        <li><a href="#config">配置说明</a></li>
-        <li><a href="#config-ref" class="sub">↳ 完整配置参考</a></li>
-        <li><a href="#nbt">非法 NBT 检测</a></li>
-        <li><a href="#integration">插件联动</a></li>
-        <li><a href="#troubleshooting">故障排查</a></li>
-        <li><a href="#faq">常见问题</a></li>
-        <li><a href="#expiry">到期与手动解除</a></li>
-        <li><a href="#uninstall">卸载与备份</a></li>
-      </ul>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-title">文档目录</div>
+      <details open>
+        <summary>开始使用</summary>
+        <ul>
+          <li><a href="#changelog">更新日志</a></li>
+          <li><a href="#credits">感谢列表</a></li>
+        </ul>
+      </details>
+      <details>
+        <summary>上手与命令</summary>
+        <ul>
+          <li><a href="#quickstart">快速开始</a></li>
+          <li><a href="#commands">命令详解</a></li>
+          <li><a href="#report">举报系统</a></li>
+          <li><a href="#confirm">二次确认</a></li>
+        </ul>
+      </details>
+      <details>
+        <summary>配置与权限</summary>
+        <ul>
+          <li><a href="#permissions">权限说明</a></li>
+          <li><a href="#config">配置说明</a></li>
+          <li><a href="#config-ref" class="sub">↳ 完整配置参考</a></li>
+        </ul>
+      </details>
+      <details>
+        <summary>功能说明</summary>
+        <ul>
+          <li><a href="#nbt">非法 NBT 检测</a></li>
+          <li><a href="#integration">插件联动</a></li>
+        </ul>
+      </details>
+      <details>
+        <summary>排查与卸载</summary>
+        <ul>
+          <li><a href="#troubleshooting">故障排查</a></li>
+          <li><a href="#faq">常见问题</a></li>
+          <li><a href="#expiry">到期与手动解除</a></li>
+          <li><a href="#uninstall">卸载与备份</a></li>
+        </ul>
+      </details>
     </aside>
 
   <main class="main-content">
@@ -1576,6 +1598,26 @@
     </section>
 
   </main>
+      <aside class="page-toc" id="pageToc">
+        <h2>本页目录</h2>
+        <ul>
+          <li><a href="#changelog">更新日志</a></li>
+          <li><a href="#credits">感谢列表</a></li>
+          <li><a href="#quickstart">快速开始</a></li>
+          <li><a href="#commands">命令详解</a></li>
+          <li><a href="#report">举报系统</a></li>
+          <li><a href="#confirm">二次确认</a></li>
+          <li><a href="#permissions">权限说明</a></li>
+          <li><a href="#config">配置说明</a></li>
+          <li><a href="#nbt">非法 NBT 检测</a></li>
+          <li><a href="#integration">插件联动</a></li>
+          <li><a href="#troubleshooting">故障排查</a></li>
+          <li><a href="#faq">常见问题</a></li>
+          <li><a href="#expiry">到期与手动解除</a></li>
+          <li><a href="#uninstall">卸载与备份</a></li>
+        </ul>
+      </aside>
+
 </div>
 
 <footer>
@@ -1598,6 +1640,77 @@
 </footer>
 
 <script>
+    // 滚动高亮：侧栏 + 本页目录
+    (function () {
+      var links = document.querySelectorAll('.sidebar a, .page-toc a');
+      if (!links.length) return;
+
+      function activate(id) {
+        links.forEach(function (a) {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+        });
+      }
+
+      var targets = [];
+      links.forEach(function (a) {
+        var id = (a.getAttribute('href') || '').slice(1);
+        if (!id) return;
+        var el = document.getElementById(id);
+        if (el) targets.push(el);
+      });
+      if (!targets.length) return;
+
+      if (!('IntersectionObserver' in window)) {
+        activate(targets[0].id);
+        return;
+      }
+
+      var visible = {};
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          visible[en.target.id] = en.isIntersecting;
+        });
+        for (var i = 0; i < targets.length; i++) {
+          if (visible[targets[i].id]) { activate(targets[i].id); break; }
+        }
+      }, { rootMargin: '-90px 0px -70% 0px', threshold: 0 });
+
+      targets.forEach(function (t) { io.observe(t); });
+    })();
+
+    // 移动端侧栏抽屉
+    (function () {
+      var sb = document.getElementById('sidebar');
+      var tg = document.getElementById('navToggle');
+      if (!sb || !tg) return;
+
+      var bd = document.createElement('div');
+      bd.className = 'sidebar-backdrop';
+      document.body.appendChild(bd);
+
+      function close() {
+        sb.classList.remove('open');
+        bd.classList.remove('open');
+      }
+
+      tg.addEventListener('click', function (e) {
+        e.stopPropagation();
+        sb.classList.toggle('open');
+        bd.classList.toggle('open');
+      });
+
+      bd.addEventListener('click', close);
+      sb.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') close();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') close();
+      });
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 920) close();
+      });
+    })();
+
   document.querySelectorAll('.faq-q').forEach((q) => {
     q.addEventListener('click', () => {
       q.parentElement.classList.toggle('open');

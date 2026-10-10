@@ -47,8 +47,8 @@
 <section class="page-hero">
   <div class="container">
     <span class="plug-hero-ver">v26.11.2 · Paper 1.12.2</span>
-    <h1>FakePlayerPlugin</h1>
-    <p>用假人占住挂机位 —— 保持在线、维持区块加载，本体不用一直开着</p>
+    <h1>让假人替你<strong>留在服务器里</strong></h1>
+    <p>用假人占住挂机位 —— 保持在线、维持区块加载，刷怪塔和农场照常运转，本体不用一直开着。</p>
     <div class="hero-buttons">
       <a href="fakeplayerhelp.html" class="btn btn-primary">查看使用帮助</a>
       <a href="#features" class="btn btn-secondary">了解功能</a>
@@ -56,90 +56,147 @@
   </div>
 </section>
 
-<section id="features">
+<!-- ── 一句话说明 ─────────────────────────────────────── -->
+<section id="what">
+  <div class="container">
+    <div class="intro-split">
+      <div class="reveal">
+        <h2>为什么要用假人挂机</h2>
+        <p>
+          刷怪塔、农场、熔炉阵列这些机器，只有在<strong>所在区块被加载</strong>、
+          并且服务器认为<strong>有人在线</strong>时才会运转。
+          一旦你退出游戏，区块卸载，机器就停了。
+        </p>
+        <p style="margin-top: 14px;">
+          假人解决的就是这件事：它让服务端把一个虚拟玩家当成真实在线玩家，
+          区块持续加载，机器照常跑 —— 而你的客户端可以关掉。
+        </p>
+      </div>
+      <ul class="split-points reveal stagger">
+        <li><strong>本体可以下线</strong><br>假人留在服务器里，你该干嘛干嘛</li>
+        <li><strong>区块保持加载</strong><br>挂机点周围的机器不会因为无人而停摆</li>
+        <li><strong>不会被登录插件踢</strong><br>兼容 AuthMe，长期挂着也稳定</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── Bento 功能网格 ─────────────────────────────────── -->
+<section id="features" class="alt">
   <div class="container">
     <div class="section-header reveal">
       <span class="section-label">FEATURES</span>
       <h2>核心功能</h2>
-      <p>创建、管理、持久化与兼容性</p>
+      <p>创建、挂机、持久化与兼容性</p>
     </div>
 
-    <div class="grid grid-3">
-      <div class="card reveal">
-        <div class="card-icon">👥</div>
-        <h3>创建假人</h3>
-        <p>一条命令在当前位置生成一个假玩家，服务端会把它当作真实在线玩家。</p>
+    <div class="bento">
+      <div class="bento-item wide reveal">
+        <div class="bento-icon">👥</div>
+        <h3>一条命令创建</h3>
+        <p>站在挂机点，输入名字即可。服务端会把它当成真实在线玩家，出现在 TAB 列表里。</p>
         <ul>
           <li><code>/fp &lt;名字&gt;</code> 在脚下创建</li>
-          <li>会出现在 TAB 列表里</li>
-          <li>可用于占住挂机位、维持在线</li>
+          <li>会出现在 TAB 列表与在线人数里</li>
           <li>创建者会被记录，便于追责</li>
         </ul>
       </div>
 
-      <div class="card reveal">
-        <div class="card-icon">🧹</div>
-        <h3>管理与移除</h3>
-        <p>列出、移除单个或一键清空全部假人。</p>
-        <ul>
-          <li><code>/fplist</code> 列出全部假人</li>
-          <li><code>/fpr &lt;名字&gt;</code> 移除指定假人</li>
-          <li><code>/fpr all</code> 移除全部假人</li>
-          <li>移除后立即从服务器消失</li>
-        </ul>
-      </div>
-
-      <div class="card reveal">
-        <div class="card-icon">💾</div>
-        <h3>数据持久化</h3>
-        <p>假人配置存盘，服务器重启后自动恢复到原位置。</p>
-        <ul>
-          <li>假人数据写入配置文件</li>
-          <li><code>/fpsave</code> 手动保存</li>
-          <li>启动后分三次延迟加载，避免与其它插件抢时序</li>
-          <li>假人不会因为重启消失</li>
-        </ul>
-      </div>
-
-      <div class="card reveal">
-        <div class="card-icon">🧱</div>
+      <div class="bento-item wide reveal">
+        <div class="bento-icon">🧱</div>
         <h3>区块强制加载</h3>
-        <p>假人所在区块会被强制加载，挂机时机器不会因为区块卸载停摆。</p>
+        <p>假人所在区块会被强制加载，这是挂机机器能持续运转的前提。</p>
         <ul>
           <li>自动强制加载所在区块</li>
           <li>区块卸载 / 世界卸载时自动处理</li>
           <li>定期自检并修复异常假人</li>
-          <li>玩家传送后重新定位</li>
         </ul>
       </div>
 
-      <div class="card reveal">
-        <div class="card-icon">🔐</div>
+      <div class="bento-item reveal">
+        <div class="bento-icon">💾</div>
+        <h3>数据持久化</h3>
+        <p>假人配置存盘，重启后自动恢复到原位置，不用重新摆一遍。</p>
+        <ul>
+          <li>数据写入配置文件</li>
+          <li><code>/fpsave</code> 手动保存</li>
+          <li>启动后分三次延迟加载，避免抢时序</li>
+        </ul>
+      </div>
+
+      <div class="bento-item reveal">
+        <div class="bento-icon">🔐</div>
         <h3>AuthMe 兼容</h3>
-        <p>不会因为登录验证被踢下线，长期挂机也不掉。</p>
+        <p>假人不参与登录验证，不会被登录插件误判后踢下线。</p>
         <ul>
           <li>兼容 AuthMe 的登录检查</li>
-          <li>假人不参与登录验证流程</li>
-          <li>避免被其他登录插件误判</li>
+          <li>长期挂机也不掉</li>
           <li>可与其它插件共存</li>
         </ul>
       </div>
 
-      <div class="card reveal">
-        <div class="card-icon">🛠️</div>
-        <h3>仅 OP 可用</h3>
-        <p>所有命令都只对管理员开放，普通玩家无法创建。</p>
+      <div class="bento-item reveal">
+        <div class="bento-icon">🧹</div>
+        <h3>集中管理</h3>
+        <p>列出全部假人，支持单个移除或一键清空。</p>
         <ul>
-          <li>命令默认需要 OP 权限</li>
-          <li>防止普通玩家随意生成假人</li>
-          <li><code>/fpreload</code> 热重载配置</li>
-          <li>帮助菜单列出全部可用命令</li>
+          <li><code>/fplist</code> 列出所有假人</li>
+          <li><code>/fpr &lt;名字&gt;</code> 移除指定假人</li>
+          <li><code>/fpr all</code> 一键移除全部</li>
         </ul>
+      </div>
+
+      <div class="bento-item full reveal">
+        <div class="bento-icon">🛠️</div>
+        <h3>仅 OP 可用</h3>
+        <p>所有命令默认只对管理员开放，普通玩家无法创建或移除假人。</p>
+        <div class="bento-cols">
+          <ul>
+            <li>防止普通玩家随意生成假人</li>
+            <li><code>/fpreload</code> 热重载配置，不用重启服务器</li>
+          </ul>
+          <ul>
+            <li><code>/fp help</code> 列出全部可用命令</li>
+            <li>移除操作立即生效，不需要等刷新</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ── 挂机场景 ───────────────────────────────────────── -->
+<section id="usecases">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">USE CASES</span>
+      <h2>常见挂机场景</h2>
+      <p>这几种情况用假人最合适</p>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card reveal">
+        <div class="card-icon">⚔️</div>
+        <h3>刷怪塔挂机</h3>
+        <p>把假人放在刷怪塔的挂机点，怪物持续生成，你下线时也在刷。</p>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🌾</div>
+        <h3>农场 / 熔炉运转</h3>
+        <p>农作物生长、熔炉烧炼都依赖区块加载，假人能保持这些机器一直跑。</p>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">📍</div>
+        <h3>守住远点位</h3>
+        <p>在离家很远的刷怪点、矿点放假人，区块不会因为没人而卸载。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 命令 ────────────────────────────────────────────── -->
 <section id="commands" class="alt">
   <div class="container">
     <div class="section-header reveal">
@@ -165,17 +222,22 @@
         </tbody>
       </table>
     </div>
+  </div>
+</section>
 
-    <div class="tip tip-warn reveal" style="margin-top: 24px;">
-      <span class="tip-icon">⚠️</span>
-      <div class="tip-body">
-        <strong>命令别名</strong>
-        每个命令都有简写：<code>/fp</code>、<code>/fplist</code>（或 <code>/fpl</code>）、
-        <code>/fpr</code>、<code>/fpreload</code>、<code>/fpsave</code>。
-      </div>
+<!-- ── 底部 CTA ───────────────────────────────────────── -->
+<section id="get">
+  <div class="cta-band reveal">
+    <p class="cta-wordmark">FakePlayerPlugin</p>
+    <p>放一个假人，机器就一直跑。</p>
+    <div class="cta-actions">
+      <a href="fakeplayerhelp.html" class="btn btn-primary">查看使用帮助</a>
+      <a href="index.html#plugins" class="btn btn-secondary">← 返回插件列表</a>
     </div>
   </div>
 </section>
+
+
 
 
 
