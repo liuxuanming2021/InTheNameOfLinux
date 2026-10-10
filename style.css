@@ -2553,12 +2553,11 @@ color: var(--code-keyword);
   /* 用 mobile.jpg 作固定背景：缩放到完整可见，不变形、不裁剪 */
   .cover {
     background-image: url("mobile.jpg");
-    background-size: contain;
+    /* cover：铺满整屏，不留空带（图片比例 9:16 比视口更宽，会裁掉两侧少量） */
+    background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    /* 图片上下留白处用深色填底，避免露出白边 */
-    background-color: var(--ink-800);
   }
 }
 
