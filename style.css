@@ -3771,6 +3771,36 @@ body > nav {
   }
 }
 
+/* ============================================================
+   手机端背景：改用真实元素（伪元素实测只在首屏可见）
+   ============================================================ */
+.bg-mobile {
+  display: none;
+}
+
+@media (max-width: 920px) {
+  .bg-mobile {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: min(100vw * 1920 / 1080, 100vh);
+    background-image: url("mobile.jpg");
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-color: var(--ink-800);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* 插件帮助页（纯白）不铺背景图 */
+  body.pure-white .bg-mobile {
+    display: none;
+  }
+}
+
 /* ---- 减少动态效果：保留视频，只关动画 ---- */
 @media (prefers-reduced-motion: reduce) {
   /* 注意：.reveal 的入场动画保留 —— 去掉它会让页面看起来没有动画。
@@ -4063,4 +4093,30 @@ html.page-anim body > nav {
 .band-title,
 .section-label {
   text-shadow: 0 1px 12px rgba(255, 255, 255, 0.9), 0 1px 4px rgba(255, 255, 255, 0.7) !important;
+}
+
+
+/* ============================================================
+   透明页面的 body 必须透明
+   ============================================================
+   固定背景层是 z-index:-1，body 若有实白底就会把它盖住 ——
+   这就是「手机端背景不动字动」失效的原因。
+   ============================================================ */
+body,
+body.intro-page,
+html.page-anim body {
+  background: transparent !important;
+}
+
+/* html 也不能有底色 */
+html,
+html.page-anim {
+  background: transparent !important;
+}
+
+/* 插件帮助页（纯白）例外：它们本来就没有背景图 */
+body.pure-white,
+body.pure-white.intro-page,
+html.page-anim body.pure-white {
+  background: #fff !important;
 }
