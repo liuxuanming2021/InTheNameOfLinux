@@ -2266,12 +2266,12 @@ color: var(--code-keyword);
 
 .nav-home .nav-logo,
 .nav-home .nav-links a {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text);
 }
 
 .nav-home .nav-links a:hover,
 .nav-home.scrolled .nav-links a:hover {
-  color: #fff;
+  color: var(--blue);
 }
 
 .nav-home .nav-logo-icon {
@@ -2290,7 +2290,7 @@ color: var(--code-keyword);
 }
 
 .nav-home .nav-toggle span {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--text);
 }
 
 .nav-home.scrolled {
