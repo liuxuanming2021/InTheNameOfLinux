@@ -3425,6 +3425,52 @@ body.intro-page .container {
   background: transparent;
 }
 
+/* ============================================================
+   顶栏：文字与汉堡图标任何状态下都是黑色
+   ============================================================
+   覆盖普通页 / 主页透明导航 / 滚动后三种状态，
+   以及 Nalxer 服务器那个外链（原来滚动后是 transparent）。
+   ============================================================ */
+nav .nav-logo,
+nav .nav-logo:hover,
+nav .nav-links a,
+nav .nav-links .nav-external,
+.nav-home .nav-logo,
+.nav-home .nav-links a,
+.nav-home .nav-links .nav-external,
+.nav-home.scrolled .nav-logo,
+.nav-home.scrolled .nav-links a,
+.nav-home.scrolled .nav-links .nav-external {
+  color: #000 !important;
+  -webkit-text-fill-color: #000;
+}
+
+/* 汉堡三条线 */
+nav .nav-toggle span,
+.nav-home .nav-toggle span,
+.nav-home.scrolled .nav-toggle span {
+  background: #000 !important;
+}
+
+/* 外链的胶囊底也去掉，免得看着像按钮 */
+nav .nav-links .nav-external,
+.nav-home .nav-links .nav-external,
+.nav-home.scrolled .nav-links .nav-external {
+  background: transparent !important;
+  border-color: transparent !important;
+}
+
+/* 悬停仍用蓝色，便于区分可点 */
+nav .nav-links a:hover,
+nav .nav-links .nav-external:hover,
+.nav-home .nav-links a:hover,
+.nav-home.scrolled .nav-links a:hover,
+.nav-home .nav-links .nav-external:hover,
+.nav-home.scrolled .nav-links .nav-external:hover {
+  color: var(--blue) !important;
+  -webkit-text-fill-color: var(--blue);
+}
+
 /* ---- 减少动态效果：保留视频，只关动画 ---- */
 @media (prefers-reduced-motion: reduce) {
   /* 注意：.reveal 的入场动画保留 —— 去掉它会让页面看起来没有动画。
