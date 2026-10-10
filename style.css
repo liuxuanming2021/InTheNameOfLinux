@@ -2428,37 +2428,7 @@ color: var(--code-keyword);
     z-index: 1;
   }
 
-  /* 手机端背景：用一个「固定层」承载 mobile.jpg，
-         与桌面端的 .bg-video 行为一致 —— 背景不动、文字滚动。
-         ::before 用 position: fixed 钉在视口，按图片比例完整显示。 */
-  .cover::before,
-  .hero::before,
-  .page-hero::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    /* 按图片比例定高，保证完整显示不裁剪 */
-    height: min(100vw * 1920 / 1080, 100vh);
-    background-image: url("mobile.jpg");
-    background-size: cover;
-    background-position: center top;
-    background-repeat: no-repeat;
-    background-color: var(--ink-800);
-    z-index: -1;
-    pointer-events: none;
-  }
-
-
-  /* 插件帮助页（纯白）不要背景图 */
-  body.pure-white .cover::before,
-  body.pure-white .hero::before,
-  body.pure-white .page-hero::before {
-    background-image: none;
-    background-color: #fff;
-  }
-
+  
   /* .cover 自己不再承载背景图，也不再用 aspect-ratio 撑高 */
   .cover {
     min-height: 0;
@@ -3460,8 +3430,6 @@ nav .nav-links a,
   -webkit-text-fill-color: #000;
 }
 
-
-
 /* 外链的胶囊底也去掉，免得看着像按钮 */
 nav .nav-links .nav-external,
 .nav-home .nav-links .nav-external,
@@ -3920,7 +3888,6 @@ body > nav {
   }
 }
 
-
 /* ============================================================
    Nalxer 服务器：不管什么状态都保持主题色
    ============================================================
@@ -3938,7 +3905,6 @@ nav.nav-home.scrolled .nav-links a.nav-external:hover {
   border-color: transparent !important;
 }
 
-
 /* ============================================================
    顶栏左侧那个「L」图标：白字蓝底（不要跟着顶栏变黑）
    ============================================================
@@ -3951,7 +3917,6 @@ nav .nav-logo .nav-logo-icon:hover,
   color: #fff !important;
   -webkit-text-fill-color: #fff;
 }
-
 
 /* ============================================================
    页面切换动画（覆盖 prefers-reduced-motion 的关闭）
@@ -3987,7 +3952,6 @@ html.page-anim.page-leaving body {
 html.page-anim body > nav {
   animation: none !important;
 }
-
 
 /* ============================================================
    透明页面的文字：一律黑色（背景是视频，白色看不清）
@@ -4066,7 +4030,6 @@ html.page-anim body > nav {
   color: #000 !important;
 }
 
-
 /* 统计条压在深色画面上，用更实的玻璃底 + 白晕，数字才清楚 */
 .stat-row {
   background: rgba(255, 255, 255, 0.62) !important;
@@ -4094,7 +4057,6 @@ html.page-anim body > nav {
 .section-label {
   text-shadow: 0 1px 12px rgba(255, 255, 255, 0.9), 0 1px 4px rgba(255, 255, 255, 0.7) !important;
 }
-
 
 /* ============================================================
    透明页面的 body 必须透明
