@@ -2366,89 +2366,6 @@ color: var(--code-keyword);
 }
 
 /* ============================================================
-   液态玻璃（Liquid Glass）
-   ============================================================
-   主页封面下方的内容卡片改为半透明玻璃：
-     · backdrop-filter 模糊背后的视频 / 背景
-     · 1px 内高光描边模拟玻璃边缘
-     · 多层柔光营造厚度感
-   ============================================================ */
-
-/* 通用玻璃基类 */
-/* 液态玻璃只用于卡片 */
-#plugins .card,
-#about .author-box,
-.help-hub-card {
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-  backdrop-filter: blur(18px) saturate(180%);
-}
-
-/* 插件卡片 */
-#plugins .card {
-  background: rgba(255, 255, 255, 0.28);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.35),
-    0 8px 32px rgba(30, 44, 56, 0.10);
-}
-
-#plugins .card:hover {
-  background: rgba(255, 255, 255, 0.42);
-  border-color: rgba(255, 255, 255, 0.9);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.5),
-    0 20px 48px rgba(74, 123, 167, 0.22);
-}
-
-/* 关于作者区块 */
-#about .author-box {
-  background: rgba(255, 255, 255, 0.28);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
-    0 8px 32px rgba(30, 44, 56, 0.10);
-}
-
-/* 帮助中心的卡片 */
-.help-hub-card {
-  background: rgba(255, 255, 255, 0.28);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 8px 32px rgba(30, 44, 56, 0.10);
-}
-
-.help-hub-card:hover {
-  background: rgba(255, 255, 255, 0.42);
-  border-color: rgba(255, 255, 255, 0.9);
-}
-
-/* 帮助页的表格卡片 */
-.help-table {
-  background: rgba(255, 255, 255, 0.30);
-}
-
-.cover-btn:hover {
-  background: rgba(74, 123, 167, 0.75);
-  border-color: rgba(255, 255, 255, 0.6);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    0 10px 28px rgba(74, 123, 167, 0.45);
-}
-
-/* 不支持 backdrop-filter 的老浏览器：退回不透明底，保证可读 */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  #plugins .card,
-  #about .author-box,
-  .help-hub-card {
-    background: rgba(255, 255, 255, 0.72);
-  }
-}
-
-/* ============================================================
    去掉灰罩后的可读性方案
    ============================================================
    不盖灰色遮罩（保留画面清晰），改为：
@@ -2480,68 +2397,6 @@ color: var(--code-keyword);
 }
 
 /* ============================================================
-   按钮：与卡片一致的液态玻璃
-   ============================================================ */
-
-.btn {
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-  backdrop-filter: blur(18px) saturate(180%);
-}
-
-/* 主按钮：玻璃底 + 主题色文字 */
-.btn-primary {
-  background: rgba(255, 255, 255, 0.28);
-  color: var(--blue);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.35),
-    0 8px 32px rgba(30, 44, 56, 0.10);
-}
-
-.btn-primary:hover {
-  background: rgba(255, 255, 255, 0.45);
-  color: var(--blue-hover);
-  border-color: rgba(255, 255, 255, 0.95);
-  transform: translateY(-1px);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    0 12px 36px rgba(74, 123, 167, 0.22);
-}
-
-/* 次按钮：同一套玻璃，文字用次级色 */
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.22);
-  color: var(--text-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    0 8px 32px rgba(30, 44, 56, 0.08);
-}
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.38);
-  color: var(--text);
-  border-color: rgba(255, 255, 255, 0.9);
-  transform: translateY(-1px);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    0 12px 36px rgba(74, 123, 167, 0.18);
-}
-
-/* 老浏览器回退：不支持模糊时给不透明底，保证可读 */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .btn-primary {
-    background: rgba(74, 123, 167, 0.92);
-    color: #fff;
-  }
-
-  .btn-secondary {
-    background: rgba(255, 255, 255, 0.9);
-  }
-}
-
-/* ============================================================
    手机端背景：改用 mobile.jpg（不加载视频，节省流量）
    ============================================================ */
 @media (max-width: 920px) {
@@ -2550,14 +2405,143 @@ color: var(--code-keyword);
     display: none;
   }
 
-  /* 用 mobile.jpg 作固定背景：缩放到完整可见，不变形、不裁剪 */
-  .cover {
-    background-image: url("mobile.jpg");
-    /* cover：铺满整屏，不留空带（图片比例 9:16 比视口更宽，会裁掉两侧少量） */
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+  /* 用 mobile.jpg 作背景。
+       关键：让封面高度跟随图片比例（1080:1920），
+       否则 cover 会裁两侧、contain 会留上下，都无法完整显示 */
+    .cover {
+      min-height: 0;
+      aspect-ratio: 1080 / 1920;
+      max-height: 100vh;
+      background-image: url("mobile.jpg");
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+}
+
+/* ============================================================
+   液态玻璃（Liquid Glass）—— 按 Apple 设计语言校准
+   ============================================================
+   参考：
+     · Apple Liquid Glass 的 5 个光学要素中，CSS 能做的只有
+       「半透明 + 模糊」和「静态镜面高光」；折射与色散需要 WebGL
+     · 让面板读起来是"玻璃"而不是"染色薄膜"的，是那一条
+       顶部内高光（inset 0 1.5px 0），不是均匀描边
+     · backdrop-filter 需要背后有实际内容才采样，空背景上会发灰
+   ============================================================ */
+
+/* 玻璃的三个数值：模糊 / 通透度 / 描边亮度 */
+.glass-surface,
+#plugins .card,
+#about .author-box,
+.help-hub-card {
+  background: rgba(255, 255, 255, 0.26);
+  -webkit-backdrop-filter: blur(14px) saturate(170%);
+  backdrop-filter: blur(14px) saturate(170%);
+  /* 镜面高光边：顶部亮线（主）+ 底部弱反光（次）+ 投影 */
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.14),
+    0 10px 30px rgba(15, 25, 35, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+}
+
+#plugins .card:hover,
+.help-hub-card:hover {
+  background: rgba(255, 255, 255, 0.38);
+  border-color: rgba(255, 255, 255, 0.55);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.2),
+    0 16px 40px rgba(15, 25, 35, 0.28);
+}
+
+/* 按钮：同一套玻璃，但高光更细 */
+.btn-primary,
+.btn-secondary,
+.card-links .btn {
+  -webkit-backdrop-filter: blur(14px) saturate(170%);
+  backdrop-filter: blur(14px) saturate(170%);
+  box-shadow:
+    inset 0 1.2px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12),
+    0 6px 20px rgba(15, 25, 35, 0.18);
+}
+
+.btn-primary {
+  background: rgba(255, 255, 255, 0.26);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  color: var(--blue);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.20);
+  border: 1px solid rgba(255, 255, 255, 0.36);
+  color: var(--text-secondary);
+}
+
+/* 帮助页的表格卡片与折叠项 */
+.faq-item {
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.14),
+    0 8px 26px rgba(15, 25, 35, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+}
+
+/* ============================================================
+   无障碍：用户要求「减少透明度」时，给真不透明底并关掉模糊
+   ============================================================ */
+@media (prefers-reduced-transparency: reduce) {
+  #plugins .card,
+  #about .author-box,
+  .help-hub-card,
+  .btn-primary,
+  .btn-secondary,
+  .card-links .btn,
+  .faq-item,
+  .help-table tr,
+  .help-table td:first-child {
+    background: #ffffff;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .btn-primary {
+    background: var(--blue);
+    color: #fff;
+  }
+
+  .help-table td:first-child {
+    background: var(--bg-secondary);
+  }
+
+  #plugins .card,
+  #about .author-box,
+  .help-hub-card,
+  .faq-item {
+    box-shadow: 0 6px 20px rgba(15, 25, 35, 0.12);
+  }
+}
+
+/* ============================================================
+   回退：浏览器不支持 backdrop-filter 时，用不透明底保证可读
+   ============================================================ */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  #plugins .card,
+  #about .author-box,
+  .help-hub-card {
+    background: #ffffff;
+  }
+
+  .btn-primary {
+    background: var(--blue);
+    color: #fff;
+  }
+
+  .btn-secondary,
+  .card-links .btn {
+    background: #ffffff;
   }
 }
 
