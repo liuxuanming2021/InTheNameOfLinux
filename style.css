@@ -3683,10 +3683,108 @@ color: var(--code-keyword);
   }
 }
 
-/* 帮助页侧栏：手机端不显示（目录已由顶栏下方的横滑项承担） */
+
+/* ============================================================
+   帮助页侧栏：手机端为胶囊样式横向滑动条
+   ============================================================ */
 @media (max-width: 920px) {
-  .sidebar,
+  .content-layout,
+  .content-layout.no-toc {
+    display: block;
+    padding: 16px 0 60px;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 52px;
+    z-index: 20;
+    max-height: none;
+    overflow: visible;
+    margin: 0 0 18px;
+    padding: 10px 0;
+    background: rgba(255, 255, 255, 0.42);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .sidebar-title {
+    display: none;
+  }
+
+  /* 横排一行，超出横向滑动 */
+  .sidebar ul {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    align-items: center;
+    padding: 0 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .sidebar ul::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sidebar li {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+  }
+
+  /* 每项是胶囊 */
+  .sidebar a {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border: 1px solid var(--border-light);
+    border-left: 1px solid var(--border-light);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.66);
+    font-size: 13.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--text-secondary);
+  }
+
+  .sidebar a:hover {
+    color: var(--blue);
+    border-color: var(--blue-border);
+    background: var(--blue-light);
+  }
+
+  .sidebar a.active {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .sidebar a.sub {
+    padding-left: 16px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .sidebar a.sub.active {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+  }
+
+  /* 分组折叠：手机端直接展开成一行，隐藏分组头 */
+  .sidebar details {
+    display: contents;
+  }
+
+  .sidebar summary {
+    display: none;
+  }
+
+  /* 抽屉遮罩在手机端不再使用 */
   .sidebar-backdrop {
-    display: none !important;
+    display: none;
   }
 }
