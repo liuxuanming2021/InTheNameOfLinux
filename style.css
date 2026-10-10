@@ -3834,6 +3834,141 @@ body.pure-white .content-layout {
 
 }
 
+/* ============================================================
+   介绍页文字：压在视频背景上，用浅色（不加任何遮罩）
+   ============================================================
+   与主页同一套做法：不动背景，只把文字改成白色 + 阴影。
+   玻璃模块内部仍用深色（模块底是浅色）。
+   ============================================================ */
+body > section,
+body > section h2,
+body > section h3,
+body > section h4,
+body > section p,
+body > section li,
+body > section .chapter-title,
+body > section .chapter-lede,
+body > section .chapter-no,
+body > section .band-title,
+body > section .section-header h2,
+body > section .section-header p,
+body > section .section-label,
+body > section .stat-cell b,
+body > section .stat-cell span {
+  color: #fff;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.45);
+}
+
+/* 玻璃模块内部恢复深色 */
+body > section .bento-item,
+body > section .bento-item *,
+body > section .tile,
+body > section .tile *,
+body > section .stat-cell,
+body > section .card,
+body > section .card *,
+body > section .zz-panel,
+body > section .zz-panel *,
+body > section .split-points li,
+body > section .split-points *,
+body > section .table-wrap,
+body > section .help-table,
+body > section .help-table *,
+body > section .faq-item,
+body > section .faq-item * {
+  color: var(--text);
+  text-shadow: none;
+}
+
+body > section .bento-item p,
+body > section .bento-item li,
+body > section .card p,
+body > section .card li,
+body > section .zz-panel,
+body > section .help-table td,
+body > section .faq-a,
+body > section .tile-cond,
+body > section .stat-cell span {
+  color: var(--text-secondary);
+}
+
+/* 章节竖线与节点 */
+body > section .chapter {
+  border-left-color: rgba(255, 255, 255, 0.45);
+}
+
+body > section .chapter::before {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* ============================================================
+   介绍页模块：液态玻璃（一套规则，覆盖所有卡片类模块）
+   ============================================================ */
+.bento-item,
+.tile,
+.stat-row,
+.stat-cell,
+.card,
+.help-hub-card,
+.intro-split .split-points li,
+.zz-panel,
+.faq-item,
+.table-wrap {
+  background: rgba(255, 255, 255, 0.55) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(180%) !important;
+  backdrop-filter: blur(22px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.75) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.25),
+    0 10px 32px rgba(15, 25, 35, 0.16) !important;
+}
+
+/* 表格本体也跟着透，否则表格里还是实白 */
+.help-table {
+  background: transparent !important;
+}
+
+.help-table tr,
+.help-table td,
+.help-table th {
+  background: transparent !important;
+}
+
+/* 悬停加深一点 */
+.bento-item:hover,
+.tile:hover,
+.card:hover,
+.help-hub-card:hover,
+.faq-item:hover {
+  background: rgba(255, 255, 255, 0.72) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.3),
+    0 18px 44px rgba(15, 25, 35, 0.22) !important;
+}
+
+/* 纯白页（插件帮助页）排除，保持纯白 */
+body.pure-white .bento-item,
+body.pure-white .tile,
+body.pure-white .stat-row,
+body.pure-white .stat-cell,
+body.pure-white .card,
+body.pure-white .help-hub-card,
+body.pure-white .zz-panel,
+body.pure-white .faq-item,
+body.pure-white .table-wrap,
+body.pure-white .help-table,
+body.pure-white .help-table tr,
+body.pure-white .help-table td,
+body.pure-white .help-table th {
+  background: #fff !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border: 1px solid var(--border-light) !important;
+  box-shadow: 0 1px 3px rgba(15, 25, 35, 0.05) !important;
+}
+
 /* ---- 减少动态效果：保留视频，只关动画 ---- */
 @media (prefers-reduced-motion: reduce) {
   /* 注意：.reveal 的入场动画保留 —— 去掉它会让页面看起来没有动画。
