@@ -3434,23 +3434,15 @@ body.intro-page .container {
 nav .nav-logo,
 nav .nav-logo:hover,
 nav .nav-links a,
-nav .nav-links .nav-external,
 .nav-home .nav-logo,
 .nav-home .nav-links a,
-.nav-home .nav-links .nav-external,
 .nav-home.scrolled .nav-logo,
-.nav-home.scrolled .nav-links a,
-.nav-home.scrolled .nav-links .nav-external {
+.nav-home.scrolled .nav-links a {
   color: #000 !important;
   -webkit-text-fill-color: #000;
 }
 
-/* 汉堡三条线 */
-nav .nav-toggle span,
-.nav-home .nav-toggle span,
-.nav-home.scrolled .nav-toggle span {
-  background: #000 !important;
-}
+
 
 /* 外链的胶囊底也去掉，免得看着像按钮 */
 nav .nav-links .nav-external,
@@ -3462,14 +3454,8 @@ nav .nav-links .nav-external,
 
 /* 悬停仍用蓝色，便于区分可点 */
 nav .nav-links a:hover,
-nav .nav-links .nav-external:hover,
 .nav-home .nav-links a:hover,
 .nav-home.scrolled .nav-links a:hover,
-.nav-home .nav-links .nav-external:hover,
-.nav-home.scrolled .nav-links .nav-external:hover {
-  color: var(--blue) !important;
-  -webkit-text-fill-color: var(--blue);
-}
 
 /* ---- 减少动态效果：保留视频，只关动画 ---- */
 @media (prefers-reduced-motion: reduce) {
@@ -3588,4 +3574,22 @@ nav .nav-links .nav-external:hover,
   .sidebar-backdrop {
     display: none;
   }
+}
+
+
+/* ============================================================
+   Nalxer 服务器：不管什么状态都保持主题色
+   ============================================================
+   放在文件最后 + 更高优先级，避免被 nav .nav-links a 的黑色规则盖住。
+   ============================================================ */
+nav .nav-links a.nav-external,
+nav.nav-home .nav-links a.nav-external,
+nav.nav-home.scrolled .nav-links a.nav-external,
+nav .nav-links a.nav-external:hover,
+nav.nav-home .nav-links a.nav-external:hover,
+nav.nav-home.scrolled .nav-links a.nav-external:hover {
+  color: var(--blue) !important;
+  -webkit-text-fill-color: var(--blue);
+  background: transparent !important;
+  border-color: transparent !important;
 }
