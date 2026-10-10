@@ -3913,7 +3913,8 @@ body > section .chapter::before {
 .intro-split .split-points li,
 .zz-panel,
 .faq-item,
-.table-wrap {
+.table-wrap,
+.table-scroll {
   background: rgba(255, 255, 255, 0.55) !important;
   -webkit-backdrop-filter: blur(22px) saturate(180%) !important;
   backdrop-filter: blur(22px) saturate(180%) !important;
@@ -3925,7 +3926,9 @@ body > section .chapter::before {
 }
 
 /* 表格本体也跟着透，否则表格里还是实白 */
-.help-table {
+.help-table,
+.help-table thead,
+.help-table tbody {
   background: transparent !important;
 }
 
@@ -3933,6 +3936,11 @@ body > section .chapter::before {
 .help-table td,
 .help-table th {
   background: transparent !important;
+}
+
+/* 首列原来是浅灰实底，改成很淡的透明白，保留分隔感 */
+.help-table td:first-child {
+  background: rgba(255, 255, 255, 0.28) !important;
 }
 
 /* 悬停加深一点 */
@@ -3958,6 +3966,7 @@ body.pure-white .help-hub-card,
 body.pure-white .zz-panel,
 body.pure-white .faq-item,
 body.pure-white .table-wrap,
+body.pure-white .table-scroll,
 body.pure-white .help-table,
 body.pure-white .help-table tr,
 body.pure-white .help-table td,
