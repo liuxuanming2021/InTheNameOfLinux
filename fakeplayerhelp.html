@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>帮助 · FakePlayerPlugin</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* 本页专属微调 */
+  .plug-hero-ver {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 4px 12px;
+      border-radius: 980px;
+      background: var(--blue-light);
+      color: var(--blue);
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="fakeplayer.html">FakePlayerPlugin 介绍</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          Nalxer 服务器
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="plug-hero-ver">v26.11.2</span>
+    <h1>FakePlayerPlugin 帮助中心</h1>
+    <p>命令详解、假人管理与常见问题</p>
+  </div>
+</section>
+
+<div class="container content-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-title">目录</div>
+    <ul>
+      <li><a href="#quickstart" class="active">快速开始</a></li>
+      <li><a href="#commands">命令详解</a></li>
+      <li><a href="#usage">使用技巧</a></li>
+      <li><a href="#config">配置与数据</a></li>
+      <li><a href="#faq">常见问题</a></li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+
+<section class="help-section" id="quickstart">
+    <h2><span class="num">1</span>快速开始</h2>
+
+      <p>FakePlayerPlugin 用来在服务器里放置<strong>不会掉线的"假玩家"</strong>。
+         常用来占位、装饰、撑活跃度，或者给其它插件（如计分板、在线人数）提供"有人在线"的效果。</p>
+
+      <h3>三步上手</h3>
+      <ol class="steps">
+        <li>把 <code>FakePlayerPlugin.jar</code> 放入 <code>plugins/</code> 目录并重启服务器。</li>
+        <li>站在你想放假人的位置，执行 <code>/fp 假人名字</code>。</li>
+        <li>用 <code>/fplist</code> 确认已创建；不想要了就 <code>/fpr 名字</code> 移除。</li>
+      </ol>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>所有命令都只对 OP 开放</strong>
+          普通玩家无法创建或移除假人。这是为了防止刷假人占位、破坏服务器秩序。
+        </div>
+      </div>
+    
+  </section>
+
+<section class="help-section" id="commands">
+    <h2><span class="num">2</span>命令详解</h2>
+
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>命令</th><th>说明</th><th>权限</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/fp</code></td><td>显示插件信息</td><td><span class="badge badge-op">OP</span></td></tr>
+            <tr><td><code>/fp &lt;名字&gt;</code></td><td>在<strong>当前位置</strong>创建一个假人</td><td><span class="badge badge-op">OP</span></td></tr>
+            <tr><td><code>/fp help</code></td><td>显示帮助菜单</td><td><span class="badge badge-op">OP</span></td></tr>
+            <tr><td><code>/fplist</code></td><td>列出服务器上所有假人</td><td><span class="badge badge-op">OP</span></td></tr>
+            <tr><td><code>/fpr &lt;名字&gt;</code></td><td>移除指定假人</td><td><span class="badge badge-op">OP</span></td></tr>
+            <tr><td><code>/fpr all</code></td><td><strong>移除全部</strong>假人</td><td><span class="badge badge-op">OP</span></td></tr>
+            <tr><td><code>/fpreload</code></td><td>重载插件配置</td><td><span class="badge badge-op">OP</span></td></tr>
+            <tr><td><code>/fpsave</code></td><td>手动保存假人数据</td><td><span class="badge badge-op">OP</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>完整命令名</h3>
+      <p>上面都是简写，完整命令名如下（两套都可以用）：</p>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>简写</th><th>完整命令名</th><th>其它别名</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/fp</code></td><td><code>/fakeplayer</code></td><td>—</td></tr>
+            <tr><td><code>/fplist</code></td><td><code>/fakeplayerlist</code></td><td><code>/fpl</code></td></tr>
+            <tr><td><code>/fpr</code></td><td><code>/fakeplayerremove</code></td><td><code>/fpremove</code></td></tr>
+            <tr><td><code>/fpreload</code></td><td><code>/fakeplayerreload</code></td><td>—</td></tr>
+            <tr><td><code>/fpsave</code></td><td><code>/fakeplayersave</code></td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    
+  </section>
+
+<section class="help-section" id="usage">
+    <h2><span class="num">3</span>使用技巧</h2>
+
+      <h3>假人会一直在原地吗</h3>
+      <p>会。假人创建在你<strong>执行命令时所站的位置</strong>，之后不会自己走动。
+         插件会强制加载它所在的区块，所以不会因为区块卸载而掉进虚空。</p>
+
+      <h3>怎么让假人换个位置</h3>
+      <p>直接 <code>/fpr 名字</code> 移除，然后走到新位置重新 <code>/fp 名字</code> 创建。
+         目前不支持直接移动已有假人。</p>
+
+      <h3>服务器重启后假人还在吗</h3>
+      <p>在。假人数据会写入配置文件，启动后插件<strong>分三次延迟加载</strong>
+         （40 / 100 / 200 tick），避免和其它插件抢加载时序。
+         如果发现假人没回来，先执行 <code>/fplist</code> 确认，再 <code>/fpsave</code> 手动存一次。</p>
+
+      <h3>会不会被登录插件踢掉</h3>
+      <p>不会。插件<strong>兼容 AuthMe</strong>，假人不参与登录验证流程，
+         不会被登录插件判定为"未登录玩家"而踢下线。</p>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>和 InTheNameOfLinux 联动</strong>
+          装了 InTheNameOfLinux 的话，<code>/linux lookup &lt;假人名&gt;</code> 会识别出这是假人，
+          并显示<strong>创建者</strong>；<code>/linux fp</code> 可以查看假人联动状态，
+          <code>/linux fpsync</code> 手动同步假人数据。
+        </div>
+      </div>
+    
+  </section>
+
+<section class="help-section" id="config">
+    <h2><span class="num">4</span>配置与数据</h2>
+
+      <h3>数据文件</h3>
+      <p>假人数据保存在插件目录下，一般不需要手动编辑：</p>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>文件</th><th>内容</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>fakeplayers.yml</code></td><td>所有假人的名字、位置、创建者</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>手动保存</h3>
+      <p>插件会在数据变化时自动保存。如果刚做了大量增删、想立刻落盘，
+         执行 <code>/fpsave</code>。</p>
+
+      <h3>重载</h3>
+      <p>改了配置后执行 <code>/fpreload</code>，<strong>不会</strong>删除已有假人。</p>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>不要手动改位置坐标</strong>
+          直接编辑 <code>fakeplayers.yml</code> 里的坐标容易把假人放到未加载的区块，
+          导致它卡在墙里或掉出世界。要换位置请用命令重新创建。
+        </div>
+      </div>
+    
+  </section>
+
+<section class="help-section" id="faq">
+    <h2><span class="num">5</span>常见问题</h2>
+
+      <div class="faq-item">
+        <div class="faq-q"><span>创建假人提示失败？</span><span class="faq-icon"></span></div>
+        <div class="faq-a-wrap"><div class="faq-a">
+          常见原因：名字已被占用（包括真实玩家名）；名字含有非法字符；
+          当前区块无法加载。换个名字重试即可。
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q"><span>假人不见了？</span><span class="faq-icon"></span></div>
+        <div class="faq-a-wrap"><div class="faq-a">
+          先 <code>/fplist</code> 确认它是否还在记录里。
+          如果记录里有但看不到，多为区块未加载或客户端视野问题；
+          如果记录里也没有，说明数据没保存成功，重新创建并用 <code>/fpsave</code> 存一次。
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q"><span>假人算在线人数吗？</span><span class="faq-icon"></span></div>
+        <div class="faq-a-wrap"><div class="faq-a">
+          取决于其它插件怎么统计。本插件不参与原版在线人数计算，
+          但很多统计类插件会把假人算进去 —— 这正是它常被用来"撑活跃度"的原因。
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q"><span>能一次创建很多假人吗？</span><span class="faq-icon"></span></div>
+        <div class="faq-a-wrap"><div class="faq-a">
+          没有批量命令，需要一条一条 <code>/fp 名字</code> 创建。
+          数量很多时注意服务器性能，每个假人都会占用少量资源并强制加载所在区块。
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q"><span>怎么一次性清空所有假人？</span><span class="faq-icon"></span></div>
+        <div class="faq-a-wrap"><div class="faq-a">
+          执行 <code>/fpr all</code>。该操作<strong>不可撤销</strong>，会立即移除全部假人。
+        </div></div>
+      </div>
+    
+  </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">FakePlayerPlugin</div>
+    <p>在服务器里放置不会掉线的"假玩家"</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v26.11.2 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+      <a href="index.html">← 插件列表</a>
+      &nbsp;·&nbsp;
+      <a href="fakeplayer.html">插件介绍</a>
+      &nbsp;·&nbsp;
+      <a href="linuxpluginhelp.html">Linux 帮助中心</a>
+      &nbsp;·&nbsp;
+      <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.faq-q').forEach((q) => {
+    q.addEventListener('click', () => {
+      q.parentElement.classList.toggle('open');
+    });
+  });
+
+  const sidebarLinks = document.querySelectorAll('.sidebar a');
+    // 参与滚动高亮的锚点：各章节 + 侧栏指向的其它锚点（如 #config-ref）
+    const watched = [];
+    const seen = {};
+    sidebarLinks.forEach((link) => {
+      const href = link.getAttribute('href') || '';
+      if (href.charAt(0) !== '#') return;
+      const id = href.slice(1);
+      if (seen[id]) return;
+      const el = document.getElementById(id);
+      if (el) { watched.push(el); seen[id] = true; }
+    });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        sidebarLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, {
+    rootMargin: '-80px 0px -60% 0px',
+    threshold: 0
+  });
+
+  watched.forEach((s) => observer.observe(s));
+
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>
