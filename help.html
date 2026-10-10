@@ -1173,6 +1173,7 @@
       <li><a href="#integration">插件联动</a></li>
       <li><a href="#troubleshooting">故障排查</a></li>
       <li><a href="#faq">常见问题</a></li>
+      <li><a href="#expiry">到期与手动解除</a></li>
       <li><a href="#uninstall">卸载与备份</a></li>
       <li><a href="#credits">感谢列表</a></li>
     </ul>
@@ -1520,7 +1521,7 @@
             <tr><td><code>/linux history &lt;玩家&gt;</code></td><td>查看玩家完整封禁历史</td><td><span class="badge badge-op">history</span></td></tr>
             <tr><td><code>/linux clearhistory &lt;玩家&gt;</code></td><td>清除玩家全部历史（需二次确认）</td><td><span class="badge badge-op">clearhistory</span></td></tr>
             <tr><td><code>/banlist [页码]</code></td><td>查看所有封禁记录（账号 + 功能），可点击翻页</td><td><span class="badge badge-op">ban</span></td></tr>
-            <tr><td><code>/linux op [list]</code></td><td>检查自己身份 / 列出所有管理员</td><td><span class="badge badge-op">lookup</span></td></tr>
+            <tr><td><code>/linux checkop</code></td><td>检查自己的身份与管理权限（服主 / 管理员 / 协管都能用）</td><td><span class="badge badge-op">lookup</span></td></tr>
             <tr><td><code>/hide</code></td><td>切换隐身（等价于执行 <code>/vanish</code>），不带参数。仅保护对象本人可用</td><td><span class="badge badge-op">仅 Linux582021</span></td></tr>
             <tr><td><code>/linux plugins</code></td><td><strong>插件联动状态一览</strong>：XlandCore 身份识别、假人插件（含假人数量）、XlandStop 监听、LinuxTitle 头衔、命令接管状态、非法 NBT 检测状态。主页可点击直达</td><td><span class="badge badge-op">lookup</span></td></tr>
             <tr><td><code>/linux nbtview</code></td><td><strong>立即扫描并清除</strong>在线玩家的非法 NBT 物品（不等周期扫描）。结果播报到控制台与服主，物品名带悬浮详情</td><td><span class="badge badge-op">nbtview</span></td></tr>
@@ -1820,7 +1821,7 @@
           <div class="tip-body">
             <strong>完整使用说明</strong>
             插件压缩包内附两份纯文本说明，可直接发给对应人员：
-            <code>协管使用说明.txt</code> 与 <code>管理员使用说明.txt</code>。
+            <code>协管使用说明-26.11.4正式版.txt</code> 与 <code>管理员使用说明-26.11.4正式版.txt</code>。
           </div>
         </div>
     </section>
@@ -2083,7 +2084,7 @@
 
       <h3>问题：封禁命令没有生效</h3>
       <ul class="steps">
-        <li>检查是否拥有对应权限（<code>/linux op</code> 检查自己身份）。</li>
+        <li>检查是否拥有对应权限（<code>/linux checkop</code> 检查自己的身份与管理权限）。</li>
         <li>检查 <code>config.yml</code> 里的 <code>refuse-enabled</code> 是否为 true。</li>
         <li>查看控制台是否有错误堆栈。</li>
       </ul>
@@ -2468,6 +2469,47 @@
             </ul>
             命令条目本身也可以点击：带 <code>&lt;参数&gt;</code> 的命令会<strong>自动填充</strong>到聊天框，无参数的命令会<strong>直接执行</strong>。
           </div>
+<!-- ============================================================
+     到期自动解除 vs 手动解除
+     ============================================================ -->
+<section class="help-section" id="expiry">
+  <h2><span class="num">13</span>到期自动解除与手动解除</h2>
+
+  <p>两种解除方式对<strong>封禁记录</strong>的处理不同，这是本插件的一个明确设计。</p>
+
+  <div class="table-scroll">
+    <table class="help-table">
+      <thead>
+        <tr><th>方式</th><th>触发场景</th><th>封禁记录</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>到期自动解除</strong></td>
+            <td>临时封禁 / 功能封禁设定的时间到了，系统自动解除</td>
+            <td><strong>保留记录</strong>，并写入解除时间；
+                可在 <code>/linux history</code>、<code>/linux lookup</code> 中查到，
+                显示为 <code>[已解除 时间]</code></td></tr>
+        <tr><td><strong>手动解除</strong></td>
+            <td><code>/unban</code>、<code>/unbanip</code>、
+                <code>/linux unbanmsg</code>、<code>/linux unbanall</code> 等</td>
+            <td><strong>删除记录</strong>（视为误封或提前解封）</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tip tip-info">
+    <span class="tip-icon">💡</span>
+    <div class="tip-body">
+      <strong>为什么自动到期要保留记录</strong>
+      到期解封是<strong>正常流程</strong>，记录本身就是「该玩家曾被处罚」的履历，
+      删掉会丢失追溯依据。所以自动解除只把记录标记为「已解除」：
+      <ul>
+        <li>玩家<strong>不再受限</strong> —— 是否生效由到期时间决定</li>
+        <li><code>/banlist</code> <strong>不会</strong>把它列为生效中的封禁</li>
+        <li>记录保留在 <code>data.yml</code> / <code>penalty.yml</code> 里，可事后追溯</li>
+      </ul>
+    </div>
+  </div>
+</section>
         </div>
       </div>
     </section>

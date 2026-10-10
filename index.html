@@ -1065,135 +1065,15 @@
         </ul>
       </div>
 
-      <div class="card reveal">
-        <h3>🛡️ fs1 保护接管 <span class="badge badge-new">NEW</span></h3>
-        <p>插件 <code>x1</code>（<code>FastMenu.jar</code>）会对<strong>任何</strong>提到 fs1 的命令直接取消事件，
-           连保护对象本人和控制台都拦 —— 光靠本插件"放行"是没用的，命令早被它取消。</p>
-        <ul>
-          <li>运行时注销 x1 的监听器，保护改由本插件承担</li>
-          <li><strong>不修改、不删除任何 jar</strong>，重启即恢复</li>
-          <li><strong>fs1 本人</strong>与<strong>服主</strong>直接放行，其余玩家照样拦</li>
-          <li>顺带接管 x1 的"隐藏 fs1 进服提示"</li>
-          <li><span style="color:var(--text-tertiary);">此项<strong>不可关闭</strong>：关掉后 x1 会抢先取消事件，服主将无法管理 fs1</span></li>
-        </ul>
-      </div>
 
-      <div class="card reveal">
-        <h3>🚧 控制台与玩家 fs1 保护 <span class="badge badge-new">NEW</span></h3>
-        <p>26.11.3 之前，控制台这条线其实是<strong>关着的</strong>：保护判定被登录检查挡在后面，
-           只有你已登录时才拦得住；判定目标还错成了保护对象名。</p>
-        <ul>
-          <li><strong>控制台 / Rcon</strong> 提到 fs1 一律拦截，<strong>与登录态无关</strong>，没有例外</li>
-          <li><strong>其他玩家</strong>对 fs1 使用命令同样拦截（<code>/say</code>、<code>/msg</code>、
-              <code>/tpa</code>、<code>/xlcore ban fs1</code> …）</li>
-          <li>判定按<strong>独立参数</strong>匹配，<code>/say fs1x</code> 不会误拦</li>
-          <li>触发时<strong>双向通知</strong>：服主与 fs1 各收到一条"谁 做了什么（已拦截）"</li>
-          <li>保护优先级<strong>绝对高于</strong>其它判定，且不因"已被其他插件取消"而跳过</li>
-        </ul>
-      </div>
-
-      <div class="card reveal">
-        <h3>🎯 命令接管 <span class="badge badge-new">NEW</span></h3>
-        <p>Bukkit 的纯名命令是"谁先加载谁占有"。本服 Essentials / AdvancedBan 加载更早，
-           把 <code>/ban</code>、<code>/tempban</code>、<code>/banip</code>、
-           <code>/unban</code>、<code>/unbanip</code>、<code>/banlist</code> 全占走了，
-           导致拦截列表里的这些命令<strong>实际拦不到</strong>。</p>
-        <ul>
-          <li>启动时把被占用的命令<strong>抢回本插件</strong></li>
-          <li>支持排除名单，不想抢的插件可跳过</li>
-          <li>拦截判定同时基于原始命令字符串，不依赖命令归属</li>
-        </ul>
-      </div>
-
-      <div class="card reveal">
-        <h3>👑 插件所有权 <span class="badge badge-new">NEW</span></h3>
-        <p>即使权限插件漏配节点、或有人通过权限插件剥夺节点，服主本人也一定能管理自己的插件。</p>
-        <ul>
-          <li>保护对象上线即强制授予 <code>plugin.yml</code> 里声明的<strong>全部权限节点</strong></li>
-          <li>权限附件层优先级高于权限插件计算值</li>
-          <li>退出时移除附件，恢复权限插件正常计算</li>
-          <li><code>/linux logs</code> 显示"授予结果 成功/失败"</li>
-        </ul>
-      </div>
-
-      <div class="card reveal">
-        <h3>🔍 审计防篡改 <span class="badge badge-new">NEW</span></h3>
-        <p>审计日志是明文 YAML，任何能写文件的东西都能把它改坏或精确删掉几条记录，
-           而旧版会<strong>静默从 0 条开始</strong> —— 看起来只是"没记录过"，痕迹被无声抹除。</p>
-        <ul>
-          <li>整库无法解析 / 结构被改写 → 控制台 SEVERE 告警</li>
-          <li>条目格式损坏、解析数与文件行数不符 → 告警</li>
-          <li>运行时文件被替换或截断（条目数变少）→ 告警</li>
-          <li><code>/linux logs</code> 显示"审计完整性 ⚠"</li>
-        </ul>
-      </div>
-
-      <div class="card reveal">
-        <h3>💓 监听器自检 <span class="badge badge-new">NEW</span></h3>
-        <p>任何插件都能用 <code>HandlerList.unregisterAll</code> 一行摘掉本插件的全部监听器，
-           那时登录门禁、fs1 保护、命令拦截会同时<strong>静默失效</strong>，而服务器看起来一切正常。</p>
-        <ul>
-          <li>每 30 秒自检监听器数量</li>
-          <li>数量下降即重新注册 + 大声告警 + 写审计</li>
-          <li>完全防不住，但<strong>不会再有静默失效</strong></li>
-        </ul>
-      </div>
-
-      <div class="card reveal">
-        <h3>🧩 变量扩展修复 <span class="badge badge-new">NEW</span></h3>
-        <p>旧版把 PlaceholderAPI 的 <code>PlaceholderHook</code> 当接口做动态代理，
-           但它是<strong>抽象类</strong>，运行时必然报错，
-           12 个 <code>%inl_*%</code> 变量<strong>全部不生效</strong>。</p>
-        <ul>
-          <li>改为真正的 <code>PlaceholderExpansion</code> 子类</li>
-          <li>没装 PAPI 的服务器仍不会加载该类（无 NoClassDefFoundError）</li>
-          <li>身份 / 封禁 / 在线 / 假人 / 版本 / fs1 等 12 个变量可用</li>
-        </ul>
-      </div>
-
-      <div class="card reveal">
-        <h3>⚖️ 尊重他人取消 <span class="badge badge-new">NEW</span></h3>
-        <p>原先监听器带 <code>ignoreCancelled = true</code>：任何插件先取消事件，
-           本插件的登录门禁与 fs1 保护就被<strong>整段跳过</strong>（x1 正是这么干掉我们的）。</p>
-        <ul>
-          <li>保护判定不再被"已取消"跳过</li>
-          <li>但"代为执行"仍尊重他人的取消，不覆盖对方的安全判决</li>
-          <li>玩家路径与控制台路径行为一致</li>
-        </ul>
-      </div>
-
-      <div class="card reveal">
-        <h3>🔑 口令存储升级 <span class="badge badge-new">新</span></h3>
-        <ul>
-          <li><strong>PBKDF2-HMAC-SHA256 · 12 万次迭代</strong>，替代原 SHA-256 单轮</li>
-          <li>哈希自带算法标识，旧哈希登录成功后<strong>自动升级</strong></li>
-          <li>登录失败冷却 + 锁定，且计数状态持久化</li>
-          <li>启动时若仍使用默认口令会持续告警</li>
-        </ul>
-      </div>
-
-      <div class="card reveal">
-        <h3>👤 普通玩家帮助菜单 <span class="badge badge-new">新</span></h3>
-        <p>以前普通玩家打开 <code>/linux help</code>，看到的是一整份<strong>管理员帮助</strong>
-           （封禁、解封、查询 IP…）—— 既用不了，也让人以为服务器管理很随意。</p>
-        <ul>
-          <li>补上<strong>普通玩家</strong>这一档，只列 5 条真正可用的命令</li>
-          <li>帮助菜单改为<strong>四档分流</strong>：服主 / 管理员 / 协管 / 玩家</li>
-          <li>只显示该身份<strong>确实能用</strong>的命令，不再列出会报"无权限"的项</li>
-        </ul>
-      </div>
-
-      <div class="card reveal">
-        <h3>🗑️ 移除提权通道 <span class="badge badge-new">改</span></h3>
-        <p>原「突破 fs1 拦截」通道能<strong>借 fs1 / 控制台身份</strong>执行任意含 fs1 的命令，
-           本质是个提权面。</p>
-        <ul>
-          <li>fs1 本人与服主现在<strong>直接放行</strong>，这条通道已无意义</li>
-          <li>攻击面更小 —— 少一条"能以他人身份执行命令"的路径</li>
-        </ul>
+        <div class="reveal" style="margin-top: 8px;">
+          <p style="color:var(--text-tertiary);font-size:.9rem;text-align:center;">
+            更早版本（26.11.3 及以前）的变更记录见
+            <a href="help.html#changelog">帮助中心 · 更新日志</a>。
+          </p>
+        </div>
       </div>
     </div>
-  </div>
 </section>
 
 <!-- ============================================================
@@ -1650,7 +1530,8 @@
             <tr><td><code>/linux chargepw &lt;新密码&gt;</code></td><td>修改登录密码（初始密码见控制台）</td></tr>
             <tr><td><code>/linux hide</code></td><td>切换隐身（调用 /vanish，仅服主可用）</td></tr>
             <tr><td><code>/linux cmd &lt;玩家&gt; &lt;命令&gt;</code></td><td>以指定玩家身份执行命令</td></tr>
-            <tr><td><code>/linux op [list]</code></td><td>检查身份 / 列出管理员</td></tr>
+            <tr><td><code>/linux checkop</code></td><td>检查自己的身份与管理权限（<strong>服主 / 管理员 / 协管都能用</strong>）</td></tr>
+            <tr><td><code>/linux checkop list</code></td><td>列出所有管理员（需 <code>lookup</code> 权限）</td></tr>
             <tr><td><code>/linux refuse</code></td><td>查看 / 修改命令拦截列表</td></tr>
             <tr><td><code>/banlist [页码]</code></td><td>查看封禁列表（可点击翻页）</td></tr>
           </tbody>
@@ -1793,6 +1674,7 @@
           <li>reload 幂等化</li>
           <li>异常兜底（try/catch + isEnabled）</li>
           <li>控制台与玩家分流（UI 适配）</li>
+          <li>到期自动解除<strong>保留记录</strong>，手动解除才删除</li>
         </ul>
       </div>
     </div>
@@ -1882,7 +1764,7 @@
       <div class="tip-body">
         <strong>可直接分发的使用说明</strong>
         插件包内附两份纯文本说明，发给对应人员即可：
-        <code>协管使用说明-26.11.4.txt</code>、<code>管理员使用说明-26.11.4.txt</code>。
+        <code>协管使用说明-26.11.4正式版.txt</code>、<code>管理员使用说明-26.11.4正式版.txt</code>。
         详细权限对照见 <a href="help.html#permissions">帮助中心 · 权限说明</a>。
       </div>
     </div>
