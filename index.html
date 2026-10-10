@@ -10,10 +10,8 @@
 </head>
 <body>
 
-<video class="bg-video" autoplay loop muted playsinline
-       preload="auto" aria-hidden="true" poster="me.jpg">
-  <source src="video.mp4" type="video/mp4">
-</video>
+<video class="bg-video" id="bgVideo" loop muted playsinline
+       preload="none" aria-hidden="true" poster="mobile.jpg"></video>
 
 <nav class="nav-home">
   <div class="container nav-inner">
@@ -217,6 +215,36 @@
 </footer>
 
 <script>
+    // 背景视频：只在宽屏加载，手机端（≤920px）完全不下载
+    (function () {
+      var v = document.getElementById('bgVideo');
+      if (!v) return;
+      var mq = window.matchMedia('(min-width: 921px)');
+
+      function apply() {
+        if (mq.matches) {
+          if (!v.getAttribute('src')) {
+            v.setAttribute('src', 'video.mp4');
+            v.load();
+            var pr = v.play();
+            if (pr && pr.catch) { pr.catch(function () {}); }
+          }
+        } else {
+          // 窄屏：停止并清空，避免继续占用流量
+          try { v.pause(); } catch (e) {}
+          v.removeAttribute('src');
+          try { v.load(); } catch (e) {}
+        }
+      }
+
+      apply();
+      if (mq.addEventListener) {
+        mq.addEventListener('change', apply);
+      } else if (mq.addListener) {
+        mq.addListener(apply);
+      }
+    })();
+
     // 主页封面：滚动后导航变实色
     (function () {
       var nav = document.querySelector('.nav-home');

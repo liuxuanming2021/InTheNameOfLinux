@@ -2550,13 +2550,15 @@ color: var(--code-keyword);
     display: none;
   }
 
-  /* 用 mobile.jpg 作固定背景，保持与桌面端一致的视差（背景不动、文字滚） */
+  /* 用 mobile.jpg 作固定背景：缩放到完整可见，不变形、不裁剪 */
   .cover {
     background-image: url("mobile.jpg");
-    background-size: cover;
-    background-position: center top;
+    background-size: contain;
+    background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    /* 图片上下留白处用深色填底，避免露出白边 */
+    background-color: var(--ink-800);
   }
 }
 
