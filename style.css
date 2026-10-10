@@ -1836,6 +1836,19 @@ color: var(--code-keyword);
   font-size: 13.5px;
 }
 
+/* 主页卡片里的按钮组：与 .plug-links 同款，但左对齐（卡片内不需要居中） */
+.card-links {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.card-links .btn {
+  padding: 9px 16px;
+  font-size: 13px;
+}
+
 .plug-ver {
   margin: -6px 0 10px;
   font-size: 12.5px;
