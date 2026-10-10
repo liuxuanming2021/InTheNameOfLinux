@@ -1827,6 +1827,8 @@ color: var(--code-keyword);
   gap: 10px;
   margin-top: 26px;
   flex-wrap: wrap;
+  /* 按钮组居中：.page-hero 只设了 text-align，对 flex 子项无效 */
+  justify-content: center;
 }
 
 .plug-links .btn {
