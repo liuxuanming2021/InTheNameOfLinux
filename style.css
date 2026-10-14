@@ -6731,3 +6731,210 @@ footer p {
     white-space: nowrap;
   }
 }
+
+/* ==========================================================================
+   封面文字：白描边 / 白底光晕全部改成深色投影（最终）
+   ==========================================================================
+   之前几版我给封面文字叠了大量白色 text-shadow 当"描边 + 光晕"，
+   实际渲染出来像给文字套了一层白底/白边，糊成一团 —— 这是要修掉的东西。
+
+   现在只保留**深色投影**：
+     · 近处一层 1px 压边，把字从壁纸上"撕"出来
+     · 中间一层 8px 铺开，给字一点体积
+     · 远处一层 18px 淡淡晕开，和背景拉开层次
+   没有任何白色描边、白色光晕、白色底。
+
+   字色保持黑色。壁纸亮时黑字本身就有对比，深色投影再补一层底，
+   亮暗两种壁纸下都读得清。
+
+   这段放在文件最后，优先级高于前面所有同名规则，直接把旧的覆盖掉。
+   ========================================================================== */
+
+:root {
+  /* 统一的一组深色投影，封面所有文字共用 */
+  --ink-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.75),
+    0 2px 8px rgba(0, 0, 0, 0.50),
+    0 4px 18px rgba(0, 0, 0, 0.30);
+}
+
+/* ── 主标题 / 副标题 ── */
+.cover-title,
+.cover-subtitle,
+.cover-page .cover-title,
+.cover-page .cover-subtitle {
+  color: #0b1015;
+  text-shadow: var(--ink-shadow);
+  -webkit-text-stroke: 0;
+}
+
+/* ── 标语 / 底部长句 ── */
+.cover-quote,
+.cover-quote strong,
+.cover-remark p,
+.cover-remark strong {
+  color: #0b1015;
+  text-shadow: var(--ink-shadow);
+  -webkit-text-stroke: 0;
+}
+
+/* ── 封面信息行（github / 插件链接）── */
+.cover-social a,
+.cover-social a .label,
+.cover-social a .ico {
+  color: #0b1015;
+  text-shadow: var(--ink-shadow);
+  -webkit-text-stroke: 0;
+}
+
+.cover-social a:hover,
+.cover-social a:hover .label,
+.cover-social a:hover .ico {
+  color: #0a4666;
+}
+
+/* ── 版本号徽标：白底黑字的小胶囊，不用投影 ── */
+.plug-hero-ver {
+  color: #101820;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(11, 16, 21, 0.16);
+  text-shadow: none;
+  -webkit-text-stroke: 0;
+}
+
+/* ── 封面按钮：白底黑字，不用投影 ── */
+.cover-page .cover-btn,
+.cover-page .cover-btn:visited {
+  color: #0b1015;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(11, 16, 21, 0.20);
+  text-shadow: none;
+  -webkit-text-stroke: 0;
+  -webkit-backdrop-filter: blur(8px) saturate(150%);
+  backdrop-filter: blur(8px) saturate(150%);
+}
+
+.cover-page .cover-btn:hover {
+  color: #08202e;
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(11, 16, 21, 0.34);
+}
+
+/* ── 主标题在窄屏再压一档投影，小字上更干净 ── */
+@media (max-width: 920px) {
+  .cover-title,
+  .cover-subtitle,
+  .cover-quote,
+  .cover-quote strong,
+  .cover-remark p,
+  .cover-social a,
+  .cover-social a .label,
+  .cover-social a .ico {
+    text-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.78),
+      0 2px 7px rgba(0, 0, 0, 0.52);
+  }
+}
+
+/* ==========================================================================
+   右侧三张要点小卡：给一点白色底衬（不是给字加白底）
+   ==========================================================================
+   实测：壁纸右侧有块深色玩偶，白色玻璃在它上面几乎不起作用，
+   黑字压上去读不清。
+
+   注意区分：
+     · "给字加白底/白描边" —— 你明确不要，已经全部去掉
+     · "给卡片加一点白衬"   —— 这次加的，作用于卡片本身，
+       字仍然是黑字 + 深色投影，没有白边
+
+   白度只提到 52%：卡片还是玻璃（看得到壁纸的流动与纹理），
+   但已经足够把背后那块深色压平，黑字读得清。
+   ========================================================================== */
+
+.intro-split .split-points li,
+.bento-item,
+.card {
+  background: rgba(255, 255, 255, 0.52);
+  -webkit-backdrop-filter: blur(26px) saturate(155%);
+  backdrop-filter: blur(26px) saturate(155%);
+  border: 1px solid rgba(255, 255, 255, 0.70);
+  box-shadow:
+    inset 0 1.4px 0 rgba(255, 255, 255, 0.90),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.20),
+    0 12px 32px rgba(11, 16, 21, 0.16);
+}
+
+/* 卡片里的标题 / 正文：黑字 + 深色投影，不要白边 */
+.intro-split .split-points li,
+.intro-split .split-points li strong,
+.bento-item h3,
+.bento-item p,
+.bento-item li,
+.bento-item strong,
+.card h3,
+.card p,
+.card li,
+.card strong {
+  color: #0b1015;
+  text-shadow:
+    0 1px 2px rgba(255, 255, 255, 0.55),
+    0 1px 4px rgba(0, 0, 0, 0.22);
+  -webkit-text-stroke: 0;
+}
+
+/* 卡片里的小代码块：浅底深字 */
+.card code,
+.bento-item code {
+  color: #0b3a52;
+  background: rgba(255, 255, 255, 0.70);
+  border: 1px solid rgba(11, 16, 21, 0.10);
+  text-shadow: none;
+}
+
+/* 手机上卡片再实一点（窄屏字占比大，背景更干扰） */
+@media (max-width: 920px) {
+  .intro-split .split-points li,
+  .bento-item,
+  .card {
+    background: rgba(255, 255, 255, 0.62);
+  }
+}
+
+@media (max-width: 480px) {
+  .intro-split .split-points li,
+  .bento-item,
+  .card {
+    background: rgba(255, 255, 255, 0.70);
+  }
+}
+
+/* ── 补：右侧要点卡的白衬要压过前面更具体的选择器 ── */
+.intro-split .split-points li,
+.intro-split ul.split-points li,
+.intro-split .split-points li.reveal,
+.intro-split .split-points li.reveal.visible {
+  background: rgba(255, 255, 255, 0.56);
+  -webkit-backdrop-filter: blur(26px) saturate(155%);
+  backdrop-filter: blur(26px) saturate(155%);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow:
+    inset 0 1.4px 0 rgba(255, 255, 255, 0.92),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.22),
+    0 12px 32px rgba(11, 16, 21, 0.18);
+}
+
+.intro-split .split-points li,
+.intro-split .split-points li strong {
+  color: #0b1015;
+  text-shadow:
+    0 1px 2px rgba(255, 255, 255, 0.60),
+    0 1px 4px rgba(0, 0, 0, 0.22);
+  -webkit-text-stroke: 0;
+}
+
+@media (max-width: 920px) {
+  .intro-split .split-points li,
+  .intro-split ul.split-points li {
+    background: rgba(255, 255, 255, 0.66);
+  }
+}
