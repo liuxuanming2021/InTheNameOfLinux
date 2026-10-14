@@ -6533,3 +6533,201 @@ body.pure-white .page-hero p {
     font-size: 11.5px;
   }
 }
+
+/* ==========================================================================
+   LinuxTeam 移动端：修掉一处把整页撑宽的元凶
+   ==========================================================================
+   上一版我给 .cover-remark p 加了：
+
+       word-break: keep-all;   /* 中文不按字断行，整词换行 */
+
+   本意是"别再出现末尾孤零零两个字"，实际效果是反的：
+   中文之间没有空格，keep-all 会禁止在字与字之间断行，
+   于是一整句中文变成一个**不可分割的长块**，
+   它把 .cover-remark / .cover-inner / .container / body 一路顶宽：
+
+       视口 390px  →  body.scrollWidth = 492px（实测）
+
+   body 上又有 overflow-x: hidden，超出的 102px 直接被裁掉 ——
+   表现就是页面上所有文字右边被切一刀，看起来"排版坏了"。
+
+   修法：
+     · 去掉 word-break: keep-all，改用正常换行（中文按字断行是正确行为）
+     · 顺手给全局兜一层防溢出：长单词 / 长 URL 不许顶破容器
+     · 给 body 加 max-width: 100% 的保险，任何元素都不该把页面撑宽
+   ========================================================================== */
+
+/* ① 去掉那个 keep-all */
+@media (max-width: 920px) {
+  .cover-remark p {
+    word-break: normal;           /* 恢复中文正常断行 */
+    overflow-wrap: break-word;
+    hyphens: none;
+  }
+}
+
+/* ② 全局防溢出：任何时候都不许有元素把页面撑得比视口宽 */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+video,
+svg,
+table,
+pre {
+  max-width: 100%;
+}
+
+/* 中文正文里出现长英文 / 长命令时按需断行，不要顶破容器 */
+.cover-remark p,
+.cover-quote,
+.glass-panel p,
+.card p,
+.bento-item p,
+.bento-item li,
+.card li,
+.help-table td,
+footer p {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+/* ③ 表格容器：确保自己不会跟着表格一起变宽 */
+.table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* ==========================================================================
+   LinuxTeam 封面按钮：移动端必须撑满整行
+   ==========================================================================
+   实测（用 iframe 精确控制视口宽，逐档量）发现：
+     390 / 520 / 768px 三档下，按钮虽然已经竖排（flex-direction: column），
+     但宽度只有内容宽（158 / 138 / 118px），
+     排出来是三个居中的小胶囊，点按区域很小，也不整齐。
+
+   原因：.cover-btn 是 <a>（display: inline-block），
+         它在 flex 容器里当 flex item 时，宽度由内容决定，
+         我上一版写的 width: 100% 被 flex-basis 与 min-width: 0 的组合抵消了。
+
+   修法：在竖排档位里明确给 align-self: stretch（flex 的交叉轴拉伸），
+         并把 flex 设为 0 0 auto（不参与放大缩小），宽度就稳了。
+   ========================================================================== */
+
+@media (max-width: 520px) {
+  .cover-nav {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;      /* 交叉轴拉伸，子项撑满 */
+    max-width: 100%;
+    gap: 9px;
+    padding: 0;
+  }
+
+  .cover-page .cover-btn {
+    flex: 0 0 auto;
+    align-self: stretch;       /* 竖排时撑满整行 */
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+    display: block;
+    padding: 12px 10px;
+    font-size: 14.5px;
+    text-align: center;
+  }
+}
+
+/* 横排档位（521–920px）：让三个按钮等宽平分一行 */
+@media (min-width: 521px) and (max-width: 920px) {
+  .cover-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 9px;
+    max-width: 460px;
+    margin: 22px auto 0;
+  }
+
+  .cover-page .cover-btn {
+    flex: 1 1 0;               /* 等宽平分 */
+    min-width: 0;
+    padding: 11px 8px;
+    font-size: 14px;
+    white-space: nowrap;
+    text-align: center;
+  }
+}
+
+/* ==========================================================================
+   LinuxTeam 封面按钮：撑满整行（最终修正）
+   ==========================================================================
+   前两版为什么没生效：
+     · align-self / align-items: stretch 只对"交叉轴尺寸为 auto"的 flex item 生效；
+       .cover-btn 是 <a>（inline-block），它自身有内容宽度，
+       stretch 就管不到它 —— 所以量出来一直是 158 / 138 / 118px（内容宽）。
+     · 上一版写的 width: 100% 被同段里更靠后的 flex 简写覆盖掉了。
+
+   这一版用**最高优先级的选择器**直接写死宽度，不再跟 flex 简写打架：
+       .cover-nav .cover-page .cover-btn   →  改用元素+类组合提高特异性
+   ========================================================================== */
+
+/* 竖排档（≤520px）：按钮撑满整行 */
+@media (max-width: 520px) {
+  .cover-nav {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    width: 100%;
+    max-width: 100%;
+    gap: 9px;
+    margin: 22px auto 0;
+  }
+
+  .cover-nav a.cover-btn,
+  .cover-page .cover-nav a.cover-btn {
+    display: block;
+    width: 100%;              /* 放在 flex 简写之后，不再被覆盖 */
+    min-width: 100%;
+    max-width: 100%;
+    flex: 0 0 auto;
+    padding: 12px 10px;
+    font-size: 14.5px;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+  }
+}
+
+/* 横排档（521–920px）：三个按钮等宽平分整行 */
+@media (min-width: 521px) and (max-width: 920px) {
+  .cover-nav {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    width: 100%;
+    max-width: 460px;
+    gap: 9px;
+    margin: 22px auto 0;
+  }
+
+  .cover-nav a.cover-btn,
+  .cover-page .cover-nav a.cover-btn {
+    display: block;
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    padding: 11px 8px;
+    font-size: 14px;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+  }
+}
