@@ -87,7 +87,7 @@
     <section class="help-section" id="changelog">
       <h2>更新日志</h2>
 
-      <h3>26.11.4正式版</h3>
+      <h3>26.11.5-Alpha</h3>
       <p>本版集中在<strong>物品安全</strong>与<strong>信息可读性</strong>：把独立的 BanNbt 插件整体合并进来，
          查询能直接给出维度坐标，主页与帮助页改为点击即执行。</p>
 
@@ -141,7 +141,7 @@
               <td><strong>🧹 其他</strong></td>
               <td>移除已废弃的 <code>/linux dumpholders</code> 调试命令；
                   作者显示修复（读取 plugin.yml 的作者列表）；
-                  版本号由 <code>26.11.4-Beta</code> 定为 <code>26.11.4正式版</code></td>
+                  版本号由 <code>26.11.4-Beta</code> 定为 <code>26.11.5-Alpha</code></td>
             </tr>
           </tbody>
         </table>
@@ -424,9 +424,10 @@
             <tr><th>命令</th><th>说明</th><th>权限</th></tr>
           </thead>
           <tbody>
-            <tr><td><code>/ban &lt;玩家&gt; [原因]</code></td><td>永久封禁玩家账号</td><td><span class="badge badge-op">ban</span></td></tr>
-            <tr><td><code>/linux ban &lt;玩家&gt; [原因]</code></td><td>与 <code>/ban</code> 等价（拦截列表统一按 <code>/linux ban</code> 口径处理）</td><td><span class="badge badge-op">ban</span></td></tr>
-            <tr><td><code>/tempban &lt;玩家&gt; &lt;时间&gt; [原因]</code></td><td>临时封禁，到期自动解封</td><td><span class="badge badge-op">tempban</span></td></tr>
+            <tr><td><code>/ban &lt;玩家&gt; [时间] [原因]</code></td><td>封禁玩家。<strong>省略时间 = 永久封禁</strong>；写了时间（如 <code>30m</code> / <code>12h</code> / <code>7d</code> / 裸秒数）则是临时封禁，到期自动解封</td><td><span class="badge badge-op">ban</span></td></tr>
+            <tr><td><code>/report &lt;玩家&gt; &lt;理由&gt;</code></td><td>举报玩家。<strong>NalxerPDR 装了且举报开关开启时由它接管</strong>，否则由本插件处理；两者都会在举报后自动记录被举报人的行为</td><td><span class="badge badge-op">report</span></td></tr>
+            <tr><td><code>/linux ban &lt;玩家&gt; [时间] [原因]</code></td><td>与 <code>/ban</code> 等价；省略时间 = 永久（拦截列表统一按 <code>/linux ban</code> 口径处理）</td><td><span class="badge badge-op">ban</span></td></tr>
+            <tr><td><code>/tempban &lt;玩家&gt; &lt;时间&gt; [原因]</code></td><td>临时封禁，到期自动解封（<code>/ban</code> 已支持同样写法，此命令保留兼容）</td><td><span class="badge badge-op">tempban</span></td></tr>
             <tr><td><code>/banip &lt;玩家/IP&gt; [原因]</code></td><td>封禁 IP 地址，同 IP 玩家会被踢出</td><td><span class="badge badge-op">banip</span></td></tr>
             <tr><td><code>/unban &lt;玩家&gt;</code></td><td>解封玩家（同时删除最近一条封禁历史）</td><td><span class="badge badge-op">unban</span></td></tr>
             <tr><td><code>/unbanip &lt;IP&gt;</code></td><td>解封 IP</td><td><span class="badge badge-op">unbanip</span></td></tr>
@@ -1592,7 +1593,7 @@
     <div class="footer-brand">InTheNameOfLinux 插件帮助</div>
     <p>以 Linux 之名 · 守护你的服务器</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v26.11.4正式版 · by Linux582021 &amp; 星白喵喵 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+      v26.11.5-Alpha · by Linux582021 &amp; 星白喵喵 · Minecraft 1.12.2 · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
 <a href="index.html">← 插件列表</a>
