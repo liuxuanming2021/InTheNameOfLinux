@@ -417,6 +417,17 @@
         </div>
       </div>
 
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>与 NalxerPDR 的分工（软依赖）</strong>
+          举报由本插件负责（编号、接受/驳回、回执、分流通知）；
+          <strong>行为记录</strong>交给 NalxerPDR。举报一旦提交，被举报人会
+          自动进入录制，事后用 <code>/nar rcd &lt;编号&gt;</code> 逐页回放。<br>
+          没装 NalxerPDR 时举报照常工作，只是不做自动录制 —— 两者互相独立。
+        </div>
+      </div>
+
       <h3>封禁相关</h3>
       <div class="table-scroll">
         <table class="help-table">
@@ -425,7 +436,7 @@
           </thead>
           <tbody>
             <tr><td><code>/ban &lt;玩家&gt; [时间] [原因]</code></td><td>封禁玩家。<strong>省略时间 = 永久封禁</strong>；写了时间（如 <code>30m</code> / <code>12h</code> / <code>7d</code> / 裸秒数）则是临时封禁，到期自动解封</td><td><span class="badge badge-op">ban</span></td></tr>
-            <tr><td><code>/report &lt;玩家&gt; &lt;理由&gt;</code></td><td>举报玩家。<strong>NalxerPDR 装了且举报开关开启时由它接管</strong>，否则由本插件处理；两者都会在举报后自动记录被举报人的行为</td><td><span class="badge badge-op">report</span></td></tr>
+            <tr><td><code>/report &lt;玩家&gt; &lt;理由&gt;</code></td><td>举报玩家（本插件自己的入口，也是推荐入口）。提交后<strong>自动让 NalxerPDR 记录被举报人的行为</strong>（位置 / 破坏与放置方块 / 造成伤害 / 指令 / 聊天），用 <code>/nar rcd &lt;编号&gt;</code> 回放。NalxerPDR 自带的 /report 默认关闭，避免两套举报并存</td><td><span class="badge badge-op">report</span></td></tr>
             <tr><td><code>/linux ban &lt;玩家&gt; [时间] [原因]</code></td><td>与 <code>/ban</code> 等价；省略时间 = 永久（拦截列表统一按 <code>/linux ban</code> 口径处理）</td><td><span class="badge badge-op">ban</span></td></tr>
             <tr><td><code>/tempban &lt;玩家&gt; &lt;时间&gt; [原因]</code></td><td>临时封禁，到期自动解封（<code>/ban</code> 已支持同样写法，此命令保留兼容）</td><td><span class="badge badge-op">tempban</span></td></tr>
             <tr><td><code>/banip &lt;玩家/IP&gt; [原因]</code></td><td>封禁 IP 地址，同 IP 玩家会被踢出</td><td><span class="badge badge-op">banip</span></td></tr>
