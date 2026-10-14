@@ -543,78 +543,126 @@
 <section class="help-section" id="faq">
     <h2><span class="num">10</span>常见问题</h2>
 
+      <h3>玩家常问</h3>
+
       <div class="faq-item">
-        <div class="faq-q">玩家说 <code>/team join</code> 之后没进队？</div>
+        <div class="faq-q">我打了 <code>/team join</code>，为什么没进队？</div>
         <div class="faq-a">
-          这是<strong>申请制</strong>的正常表现：申请已提交，需要队长执行
-          <code>/team accept &lt;玩家&gt;</code> 批准。
-          队长会收到一条提示，告诉他用哪条命令放行。
-          想让所有人免批准加入，把 <code>team.public-join</code> 改成 <code>true</code>。
+          这是<strong>申请制</strong>的正常表现：申请已经提交，需要队长批准。
+          队长会收到一条提示，告诉他用 <code>/team accept &lt;你的名字&gt;</code> 放行。<br>
+          服主想让所有人免批准直接加入，把 <code>team.public-join</code> 改成 <code>true</code>。
         </div>
       </div>
 
       <div class="faq-item">
-        <div class="faq-q">面板里的图标拿不出来？</div>
+        <div class="faq-q">开了队伍频道，但我说话别人还是看得见？</div>
         <div class="faq-a">
-          这是<strong>有意设计</strong>：面板里的图标是按钮，不能拿走也不会掉到地上。
-          你自己的背包不受影响，正常整理即可。
+          先确认三件事：<br>
+          ① 频道确实开着（<code>/team chat</code> 会提示"已开启"或"已关闭"）；<br>
+          ② 消息没有以"绕过前缀"开头 —— 默认配置下以 <code>!</code> 开头会走公共频道；<br>
+          ③ 你确实在队伍里。没队伍时插件会自动关掉频道并提示你。<br>
+          都不是的话，看服务端有没有别的聊天插件也在改接收人列表。
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">退出队伍后频道还开着？</div>
+        <div class="faq-a">
+          不用手动关，会自动关：<strong>自己退队、被踢、队伍解散、队长关掉队伍聊天</strong>
+          这四种情况都会立刻关闭频道并给你一句提示。
+          如果你还在打字却发现没人回，先看聊天栏有没有那条提示。
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">面板里的图标为什么拿不出来？</div>
+        <div class="faq-a">
+          这是<strong>有意设计</strong>：面板里的图标是按钮，不是给你拿的物品。
+          无论左键、右键、Shift 点还是拖拽都拿不走，也不会掉到地上。
+          你自己背包里的东西不受影响，正常整理即可。
         </div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q">改了队标，头顶却没变？</div>
         <div class="faq-a">
-          正常情况会<strong>立刻刷新</strong>。如果没变，检查两点：
-          一是 <code>team-tag.prefix</code> 里是否有 <code>%tag%</code> 占位；
-          二是有没有其它 TAB / 计分板插件也在改同一批玩家的名前缀 ——
-          两者会互相覆盖，只能选一个来管头顶显示。
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q">队伍频道里发消息，服务器禁言没生效？</div>
-        <div class="faq-a">
-          队伍消息会正常经过服务器的禁言 / 过滤插件，所以被禁言时也发不出队伍消息。
-          如果发现相反的情况，请确认禁言插件监听的是
-          <code>AsyncPlayerChatEvent</code> 的 <code>NORMAL</code> 及之后优先级。
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q">附魔共享没有反应？</div>
-        <div class="faq-a">
-          按顺序检查：① 服务器是否装了 CrazyEnchantments；
-          ② <code>crazy-enchantments.enabled</code> 是否为 true；
-          ③ <code>share.enabled</code> 是否为 true；
-          ④ 触发的附魔是否在 <code>share.triggers</code> 名单里；
-          ⑤ 队友是否在 <code>share.radius</code> 范围内。
-          面板第一行的「疯狂附魔联动」页会显示当前生效的配置。
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q">队伍人数上限改不动？</div>
-        <div class="faq-a">
-          上限取<strong>权限节点</strong>与 <code>team.default-max-size</code> 里的较大值。
-          给玩家 <code>linuxtream.limit.20</code> 即可提到 20 人；
-          <code>linuxtream.limit.unlimited</code> 视为 100 人。
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q">玩家退队后一直占着队伍名额？</div>
-        <div class="faq-a">
-          把 <code>members.offline-kick-hours</code> 设成一个小时间值（例如 <code>72</code>），
-          插件会每 30 分钟扫一次，把超过该时长未上线的成员自动移出队伍。
-          默认 <code>0</code> 表示不清理。
+          正常情况下改完<strong>立刻刷新</strong>，不需要重新上线。如果没变，检查两点：<br>
+          ① <code>team-tag.prefix</code> 里是否有 <code>%tag%</code> 占位
+          （默认是 <code>&amp;7[%tag%] &amp;r</code>）；<br>
+          ② 有没有别的 TAB / 计分板插件也在改同一批玩家的名前缀 ——
+          两边会互相覆盖，头顶显示只能交给其中一个管。
         </div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q">能只让某些玩家用队伍聊天吗？</div>
         <div class="faq-a">
-          可以。用 LuckPerms 给对应组设置 <code>-linuxtream.chat</code>。
-          面板按钮、命令、聊天分流三处都会拦，绕不过去。
+          可以。用 LuckPerms 给对应组设置 <code>-linuxtream.chat</code>。<br>
+          被关掉之后：面板上的队伍聊天按钮会提示无权限，
+          已经开着的频道也会在下次发言时自动关闭 —— 三处都会拦，绕不过去。
+        </div>
+      </div>
+
+      <h3>服主常问</h3>
+
+      <div class="faq-item">
+        <div class="faq-q">想查某个玩家在哪个队、是不是队长？</div>
+        <div class="faq-a">
+          装了 InTheNameOfLinux 的话，用 <code>/linux lookup &lt;玩家&gt;</code>，
+          资料里会多一行：<br>
+          <code>所属队伍: 攻坚队（队长）· 在线 3 人 · 编制 3/8 ✔队长</code><br>
+          <strong>玩家离线也能查</strong>，不要求他在线。
+          没组队时会显示"无（未组队）"。
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">怎么一次看全服的队伍？</div>
+        <div class="faq-a">
+          <code>/linux teams</code> —— 显示 LinuxTeam 的版本、联动状态、
+          全服队伍总数，以及每支队伍的队名、在线人数与编制。<br>
+          <code>/team list</code> 也能看，输出更适合玩家阅读。
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">想整体关掉队伍聊天功能？</div>
+        <div class="faq-a">
+          把 <code>linuxtream.chat</code> 权限从所有人身上收回（例如
+          <code>/lp group default permission set linuxtream.chat false</code>）。
+          收回后普通玩家开不了频道，只有给了权限的组能用。
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">玩家退队后一直占着队伍名额？</div>
+        <div class="faq-a">
+          把 <code>members.offline-kick-hours</code> 设成一个小时数（例如 <code>72</code>），
+          插件会<strong>每 30 分钟扫一次</strong>，把超过该时长没上线的成员自动移出队伍。
+          默认 <code>0</code> 表示不清理，队伍名额会被离线玩家一直占着。
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">队伍人数上限改不动？</div>
+        <div class="faq-a">
+          上限取<strong>权限节点</strong>与 <code>team.default-max-size</code> 里<strong>较大</strong>的那个。<br>
+          给玩家 <code>linuxtream.limit.20</code> 即可提到 20 人；
+          <code>linuxtream.limit.unlimited</code>（或 <code>linuxtream.limit.*</code>）视为 100 人。<br>
+          改小的方向改不动，是因为权限节点那边数字更大 —— 要先收回节点。
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">附魔共享没有反应？</div>
+        <div class="faq-a">
+          按顺序查：<br>
+          ① 服务器装了 CrazyEnchantments 吗；<br>
+          ② <code>crazy-enchantments.enabled</code> 是 true 吗；<br>
+          ③ <code>share.enabled</code> 是 true 吗；<br>
+          ④ 触发的那个附魔在 <code>share.triggers</code> 名单里吗；<br>
+          ⑤ 队友在 <code>share.radius</code> 范围内吗（默认 16 格）。<br>
+          这些都能在 <code>/linux teams</code> 对应的面板页与 config.yml 里核对。
         </div>
       </div>
 
@@ -622,9 +670,10 @@
         <div class="faq-q">服务器崩溃会丢队伍数据吗？</div>
         <div class="faq-a">
           不会。<code>teams.yml</code> 采用<strong>原子落盘</strong>：
-          先写 <code>teams.yml.tmp</code> 再原子改名覆盖，
-          写入过程中原文件始终完好。异步保存也先在主线程拍快照，
-          不会出现"保存到一半"的半个文件。
+          先写 <code>teams.yml.tmp</code>，写完整了再原子改名覆盖原文件 ——
+          写入过程中原文件始终是完好的一份，崩在中间也不会留下半个文件。
+          另外异步保存会先在主线程拍一份快照再交给后台线程，
+          不会出现"边改边存"的错乱。
         </div>
       </div>
 
