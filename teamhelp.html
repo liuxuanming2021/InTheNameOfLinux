@@ -512,8 +512,8 @@
             <tr><th>命令</th><th>作用</th></tr>
           </thead>
           <tbody>
-            <tr><td><code>/linux plugins</code></td><td>查看插件联动状态（含本插件是否绑定成功）</td></tr>
-            <tr><td><code>/linux linked</code></td><td>完整联动清单</td></tr>
+            <tr><td><code>/linux plugins</code></td><td>查看插件联动状态、已装插件清单，以及 LinuxTeam 的全服队伍总数</td></tr>
+            <tr><td><code>/linux lookup &lt;玩家&gt;</code></td><td>查询玩家资料时一并显示他<strong>所属队伍</strong>与<strong>是否为队长</strong>（离线也能查）</td></tr>
             <tr><td><code>/linux team</code></td><td>查看全服队伍列表（队长、在线人数）</td></tr>
             <tr><td><code>/linux team self</code></td><td>查看自己的队伍与头衔信息</td></tr>
           </tbody>
@@ -522,6 +522,16 @@
       <p>另外它还会注册 <code>%inl_team%</code>、<code>%inl_team_tag%</code>、
          <code>%inl_in_team%</code>、<code>%inl_title%</code> 变量，
          用哪一套取决于你的展示需求。</p>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>查询玩家时会看到他属于哪支队</strong>
+          <code>/linux lookup &lt;玩家&gt;</code> 的队伍那一行长这样：<br>
+          <code>所属队伍: 攻坚队（队长）· 在线 3 人 · 编制 3/8 ✔队长</code><br>
+          没组队时显示"无（未组队）"。玩家离线也能查出来，不要求他在线。
+        </div>
+      </div>
 
   </section>
 
