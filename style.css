@@ -6938,3 +6938,129 @@ footer p {
     background: rgba(255, 255, 255, 0.66);
   }
 }
+
+/* ==========================================================================
+   手风琴（FAQ）：展开动画改用 max-height 方案
+   ==========================================================================
+   原实现用 .faq-a-wrap { display: grid; grid-template-rows: 0fr → 1fr }
+   来做展开过渡。这是最优雅的写法，但：
+     · grid-template-rows 的 fr 插值在部分浏览器/内核版本上不生效，
+       会变成"瞬间展开"，看起来就是没有动画
+     · .faq-a 上还挂着 opacity/padding 过渡，两者混在一起容易出现
+       "文字先出来、容器后撑开"的错位
+
+   改法：容器用 max-height 过渡（兼容性最好），配合 opacity 做淡入。
+   上限给 1200px —— 比最长的答案还长不少，够用且不会出现"撑开后回弹"。
+   缓动沿用站内那套 cubic-bezier(0.22, 1, 0.36, 1)（先快后缓，像抽屉拉出）。
+   ========================================================================== */
+
+.faq-a-wrap {
+  display: block;
+  max-height: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.24s ease;
+  opacity: 0;
+}
+
+.faq-item.open .faq-a-wrap {
+  max-height: 1200px;
+  opacity: 1;
+}
+
+/* 答案本体：只保留淡入，padding 由 open 状态给 */
+.faq-a {
+  overflow: hidden;
+  transition: opacity 0.26s ease, padding 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.faq-item.open .faq-a {
+  opacity: 1;
+}
+
+/* 问句里的文字块：占满剩余宽度，左对齐 —— 
+   否则 flex 会把多个子项（文字 + <code>）撑开成分散的几块 */
+.faq-q > span:first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
+}
+
+/* 图标：固定在右侧，展开时旋转 180° */
+.faq-q .faq-icon {
+  flex: 0 0 auto;
+}
+
+/* 问句里的小代码块不要因为 flex 而被拉长 */
+.faq-q code {
+  white-space: nowrap;
+}
+
+/* 减少动态效果：直接开合，不做过渡 */
+@media (prefers-reduced-motion: reduce) {
+  .faq-a-wrap,
+  .faq-a {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   FAQ 窄屏修正
+   ==========================================================================
+   实测 420px 一张截图时发现：问句右边的 ＋/－ 图标被挤出屏幕外。
+
+   原因：展开的那一条里，答案文字很长，把 .faq-q 里那个
+   flex: 1 1 auto 的文字 span 撑到超过容器宽度，图标被顶出去。
+
+   修法：
+     · 文字 span 加 min-width: 0（flex 子项默认 min-width 是 auto，
+       内容长了就不肯收缩 —— 这是 flex 里最经典的一个坑）
+     · 窄屏把问句字号与内距收一点，并允许在必要时折成两行
+       （单行放不下时折行，比把图标挤出去好）
+   ========================================================================== */
+
+.faq-q > span:first-child {
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+@media (max-width: 520px) {
+  .faq-q {
+    padding: 14px 14px;
+    font-size: 14.5px;
+    line-height: 1.55;
+    gap: 8px;
+  }
+
+  .faq-q > span:first-child {
+    /* 窄屏内容优先：问句太长就折行，不再强行挤成一行 */
+    white-space: normal;
+    text-overflow: clip;
+  }
+
+  .faq-q .faq-icon {
+    align-self: flex-start;
+    margin-top: 2px;
+  }
+
+  .faq-item.open .faq-a {
+    padding: 0 14px 14px;
+  }
+
+  .faq-a {
+    padding: 0 14px;
+    font-size: 13.5px;
+    line-height: 1.72;
+  }
+}
+
+/* 桌面端：问句一行放得下就一行，放不下也不许把图标挤出去 */
+@media (min-width: 521px) {
+  .faq-q > span:first-child {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
