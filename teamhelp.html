@@ -512,18 +512,16 @@
             <tr><th>命令</th><th>作用</th></tr>
           </thead>
           <tbody>
-            <tr><td><code>/linux teams</code></td><td>查看 LinuxTeam 的版本、联动状态与<strong>全服队伍总数</strong></td></tr>
-            <tr><td><code>/linux plugins</code></td><td>插件联动状态总览</td></tr>
+            <tr><td><code>/linux teams</code></td><td>LinuxTeam 详情：版本、联动状态、<strong>全服队伍总数与队伍列表</strong></td></tr>
+            <tr><td><code>/linux plugins</code></td><td>只看 <strong>Linux 系插件</strong>的联动状态（LinuxTeam / LinuxTitle / FakePlayerPlugin）</td></tr>
             <tr><td><code>/linux lookup &lt;玩家&gt;</code></td><td>查询玩家资料时一并显示他<strong>所属队伍</strong>与<strong>是否为队长</strong>（离线也能查）</td></tr>
-            <tr><td><code>/linux team</code></td><td>查看全服队伍列表（队长、在线人数）</td></tr>
-            <tr><td><code>/linux team self</code></td><td>查看自己的队伍与头衔信息</td></tr>
           </tbody>
         </table>
       </div>
-      <p>只有 <strong>Linux 系列插件</strong>会占一条子命令：
-         装了 <strong>LinuxTeam</strong> 就有 <code>/linux teams</code>、
-         <strong>LinuxTitle</strong> 就有 <code>/linux titles</code>、
-         <strong>FakePlayerPlugin</strong> 就有 <code>/linux fakeplayer</code>。
+      <p>只有 <strong>Linux 系插件</strong>会占一条子命令，而且详情都在子命令里：
+         <code>/linux teams</code>（LinuxTeam，含全服队伍列表）、
+         <code>/linux titles</code>（LinuxTitle）、
+         <code>/linux fakeplayer</code>（FakePlayerPlugin，含当前假人数）。
          没装的插件不会留下命令，<code>/linux help</code> 里也不会出现 ——
          帮助列表始终等于"当前真正可用的命令"。</p>
       <p>另外它还会注册 <code>%inl_team%</code>、<code>%inl_team_tag%</code>、
