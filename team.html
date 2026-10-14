@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>LinuxTeam · 组队插件</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css?v=4e62472c">
+</head>
+<body class="intro-page">
+
+<div class="bg-mobile" aria-hidden="true"></div>
+
+<!-- 壁纸压暗罩：只在 LinuxTeam 页面使用，保证玻璃上的文字可读 -->
+<div class="page-scrim" aria-hidden="true"></div>
+
+<video class="bg-video" id="bgVideo" loop muted playsinline
+       preload="none" aria-hidden="true" poster="mobile.jpg"></video>
+
+<nav class="nav-home">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="team.html">LinuxTeam 介绍</a></li>
+      <li><a href="#features">功能</a></li>
+      <li><a href="#enchant">附魔联动</a></li>
+      <li><a href="#commands">命令</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          Nalxer 服务器
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<header class="cover cover-page has-video">
+  <div class="cover-overlay"></div>
+
+  <div class="cover-inner">
+    <span class="plug-hero-ver">v26.11.4 · Paper 1.12.2</span>
+
+    <h1 class="cover-title">LinuxTeam</h1>
+    <p class="cover-subtitle">TEAM SYSTEM</p>
+
+    <hr class="cover-divider">
+
+    <p class="cover-quote">
+      一块面板管好整支队伍
+      <br>
+      <strong>组队 · 队聊 · 免误伤 · 附魔共享</strong>
+    </p>
+
+    <div class="cover-nav">
+        <a href="teamhelp.html" class="cover-btn">查看使用帮助</a>
+        <a href="#features" class="cover-btn">了解功能</a>
+        <a href="linuxhelp.html" class="cover-btn">综合帮助中心</a>
+    </div>
+
+    <div class="cover-remark">
+      <p><strong>1</strong> 条命令开面板 · 队友免误伤 · 队伍聊天频道 · 疯狂附魔联动</p>
+    </div>
+  </div>
+</header>
+
+<div class="intro-body">
+
+<!-- ── 一句话说明 ─────────────────────────────────────── -->
+<section id="what">
+  <div class="container">
+    <div class="intro-split">
+      <!-- 左栏也放进玻璃里：直接压在壁纸上的正文在亮区读不出来 -->
+      <div class="glass-panel reveal">
+        <h2>为什么需要一个组队插件</h2>
+        <p>
+          在多人服里，"一起玩"这件事其实很难落地：谁和谁一队、队友之间能不能互相打到、
+          怎么在公共聊天里说一句只给队友看的话 —— 这些东西原版一个都没有。
+        </p>
+        <p style="margin-top: 14px;">
+          LinuxTeam 把这些补上：<strong>一块 GUI 面板</strong>管住成员、设置与队标，
+          <strong>一个聊天频道</strong>让队友单独说话，
+          <strong>一层免误伤</strong>让团战不再互相打断，
+          再顺手把 <strong>疯狂附魔</strong> 的效果接进队伍里。
+        </p>
+      </div>
+      <ul class="split-points reveal stagger">
+        <li><strong>不用记命令</strong><br>输入 <code>/team</code> 打开面板，点图标就能做完所有事</li>
+        <li><strong>队友打不到你</strong><br>同队成员之间的伤害默认关闭，范围伤害也不会误伤</li>
+        <li><strong>队伍有自己的频道</strong><br>开启后你打的字只发给队友，公共频道看不到</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── Bento 功能网格 ─────────────────────────────────── -->
+<section id="features">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">FEATURES</span>
+      <h2>核心功能</h2>
+      <p>队伍管理、聊天、战斗保护与附魔联动</p>
+    </div>
+
+    <div class="bento">
+      <div class="bento-item wide reveal">
+        <div class="bento-icon">🗂️</div>
+        <h3>GUI 管理面板</h3>
+        <p>整支队伍的操作都收在一块箱子界面里，不需要背命令。</p>
+        <ul>
+          <li>创建 / 邀请 / 加入 / 踢出 / 解散一站完成</li>
+          <li>成员卡片显示在线状态与入队时间，右键可转交队长</li>
+          <li>队伍设置里可开关队友伤害与队伍聊天</li>
+          <li>浏览列表能看到全服所有队伍与在线人数</li>
+        </ul>
+      </div>
+
+      <div class="bento-item wide reveal">
+        <div class="bento-icon">💬</div>
+        <h3>队伍聊天频道</h3>
+        <p>用 <code>/team chat</code> 切换频道，之后你打的字只发给队友。</p>
+        <ul>
+          <li>公共频道里完全看不到队伍消息</li>
+          <li>退出 / 被踢 / 队伍解散时自动关闭频道并提示</li>
+          <li>单发一条用 <code>/tc &lt;内容&gt;</code>，不切换频道</li>
+          <li>管理员可用 <code>/team spy</code> 查看队伍聊天</li>
+        </ul>
+      </div>
+
+      <div class="bento-item reveal">
+        <div class="bento-icon">🛡️</div>
+        <h3>队友免误伤</h3>
+        <p>同队成员之间的伤害默认关闭，团战不再互相打断。</p>
+        <ul>
+          <li>近战、弓箭、投掷物、药水全部覆盖</li>
+          <li>队长可在设置里放开队友伤害</li>
+          <li>拦截时只给攻击者一条提示，不刷屏</li>
+        </ul>
+      </div>
+
+      <div class="bento-item reveal">
+        <div class="bento-icon">🏷️</div>
+        <h3>头顶队标</h3>
+        <p>队伍标记直接显示在名字前面，一眼看出谁和谁一组。</p>
+        <ul>
+          <li><code>/team tag &lt;标记&gt;</code> 设置，支持颜色代码</li>
+          <li>改完立刻刷新，不需要重新上线</li>
+          <li>字符有白名单，防止伪造管理员前缀</li>
+        </ul>
+      </div>
+
+      <div class="bento-item wide reveal">
+        <div class="bento-icon">⚔️</div>
+        <h3>疯狂附魔联动</h3>
+        <p>把 CrazyEnchantments 的附魔效果接进队伍体系，队友之间互相增益。</p>
+        <ul>
+          <li><strong>队伍加成</strong>：同队在线人数越多，附魔触发概率越高</li>
+          <li><strong>附魔共享</strong>：触发共享类附魔时，附近队友同步吃到增益</li>
+          <li><strong>附魔免误伤</strong>：进攻类附魔打到队友身上直接取消</li>
+        </ul>
+      </div>
+
+      <div class="bento-item wide reveal">
+        <div class="bento-icon">🔧</div>
+        <h3>申请制入队</h3>
+        <p>默认不再"谁都能进" —— 玩家提交申请，由队长批准。</p>
+        <ul>
+          <li>退掉自己队伍就能潜入敌对队伍的口子已经堵上</li>
+          <li>队长用 <code>/team accept &lt;玩家&gt;</code> 放行</li>
+          <li>服主可在配置里改回"公开加入"模式</li>
+        </ul>
+      </div>
+
+      <div class="bento-item full reveal">
+        <div class="bento-icon">🔗</div>
+        <h3>与其它插件配合</h3>
+        <p>本插件默认与服务器上的其它自研插件共用同一套信息。</p>
+        <div class="bento-cols">
+          <ul>
+            <li><strong>PlaceholderAPI</strong>：<code>%linuxtream_team%</code> 等 14 个变量，
+                可用于 TAB、记分板、聊天格式</li>
+            <li><strong>Vault</strong>：可配置创建队伍收费</li>
+          </ul>
+          <ul>
+            <li><strong>InTheNameOfLinux</strong>：<code>/linux team</code> 直接读取队伍信息，
+                封禁与举报界面会显示玩家所属队伍</li>
+            <li><strong>LuckPerms</strong>：全部功能按权限节点控制</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 附魔联动细节 ───────────────────────────────────── -->
+<section id="enchant" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">CRAZY ENCHANTMENTS</span>
+      <h2>疯狂附魔联动怎么算</h2>
+      <p>三项能力，各自可单独开关</p>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card reveal">
+        <div class="card-icon">📈</div>
+        <h3>队伍加成</h3>
+        <p>每多一名在附近的队友，附魔触发概率就高一点，有上限。</p>
+        <ul>
+          <li>默认每名队友 <strong>+15%</strong>，最多 <strong>+60%</strong></li>
+          <li>只统计 32 格内的队友（距离可配置，0 = 不限）</li>
+          <li>可配白名单 / 黑名单指定哪些附魔吃加成</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">✨</div>
+        <h3>附魔共享</h3>
+        <p>触发共享类附魔时，把对应的增益效果同步给附近队友。</p>
+        <ul>
+          <li>默认覆盖 9 种附魔：吸血 / 生命窃取 / 祝福 / 恢复 …</li>
+          <li>队友拿到的是缩放版：时长 ×0.8，等级可降</li>
+          <li>3 秒冷却，避免连击时刷屏</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🚫</div>
+        <h3>附魔免误伤</h3>
+        <p>进攻类附魔打到队友身上时直接取消，不会因为附魔效果伤到队友。</p>
+        <ul>
+          <li>与队友免误伤共用一套判定</li>
+          <li>范围类附魔同样处理</li>
+          <li>面板里有独立的联动说明页</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="glass-stage reveal" style="margin-top: 22px;">
+      <div class="glass-panel">
+        <div class="glass-titlebar">
+          <span class="glass-dot"></span><span class="glass-dot"></span><span class="glass-dot"></span>
+          <span class="glass-title">队伍附魔 · 共享示意</span>
+        </div>
+        <ul class="glass-flow">
+          <li><span class="flow-tag">你</span> 触发 <strong>吸血</strong>，周围有 3 名队友</li>
+          <li><span class="flow-tag ok">加成</span> 触发概率 <strong>+45%</strong>（3 × 15%，未超上限）</li>
+          <li><span class="flow-tag ok">共享</span> 附近队友获得 <strong>生命恢复</strong>，时长 ×0.8</li>
+          <li><span class="flow-tag no">拦截</span> 该附魔打到队友 → 伤害被取消</li>
+        </ul>
+        <div class="glass-caption">
+          数值全部来自 <code>config.yml → crazy-enchantments</code>，可随时调整。
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 命令 ────────────────────────────────────────────── -->
+<section id="commands">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">COMMANDS</span>
+      <h2>命令一览</h2>
+      <p>主命令 <code>/team</code>，简写 <code>/lt</code>，不带参数直接开面板</p>
+    </div>
+
+    <div class="table-scroll reveal">
+      <table class="help-table">
+        <thead>
+          <tr><th>命令</th><th>说明</th><th>权限</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>/team</code></td><td>打开 GUI 管理面板（不带参数即可）</td><td><span class="badge badge-op">所有人</span></td></tr>
+          <tr><td><code>/team create &lt;队名&gt;</code></td><td>创建一支队伍，自己成为队长</td><td><span class="badge badge-op">所有人</span></td></tr>
+          <tr><td><code>/team invite &lt;玩家&gt;</code></td><td>邀请玩家入队（默认 60 秒有效）</td><td><span class="badge badge-op">所有人</span></td></tr>
+          <tr><td><code>/team join &lt;队名&gt;</code></td><td>提交入队申请，由队长批准</td><td><span class="badge badge-op">所有人</span></td></tr>
+          <tr><td><code>/team accept</code></td><td>接受别人发来的邀请</td><td><span class="badge badge-op">所有人</span></td></tr>
+          <tr><td><code>/team accept &lt;玩家&gt;</code></td><td>队长批准某人的入队申请</td><td><span class="badge badge-op">队长</span></td></tr>
+          <tr><td><code>/team kick &lt;玩家&gt;</code></td><td>把成员移出队伍（被踢者频道自动关闭）</td><td><span class="badge badge-op">队长</span></td></tr>
+          <tr><td><code>/team transfer &lt;玩家&gt;</code></td><td>把队长转交给指定成员</td><td><span class="badge badge-op">队长</span></td></tr>
+          <tr><td><code>/team tag &lt;标记&gt;</code></td><td>设置头顶队标（支持颜色代码，留空清除）</td><td><span class="badge badge-op">队长</span></td></tr>
+          <tr><td><code>/team leave</code></td><td>退出当前队伍</td><td><span class="badge badge-op">所有人</span></td></tr>
+          <tr><td><code>/team disband</code></td><td>解散队伍（15 秒内再输一次确认）</td><td><span class="badge badge-op">队长</span></td></tr>
+          <tr><td><code>/team list</code></td><td>列出服务器上的所有队伍</td><td><span class="badge badge-op">所有人</span></td></tr>
+          <tr><td><code>/team info [队名]</code></td><td>查看队伍详情（不填则看自己的）</td><td><span class="badge badge-op">所有人</span></td></tr>
+          <tr><td><code>/team chat</code></td><td>开关队伍聊天频道</td><td><span class="badge badge-op">所有人</span></td></tr>
+          <tr><td><code>/tc &lt;内容&gt;</code></td><td>单发一条队伍消息（不切换频道）</td><td><span class="badge badge-op">所有人</span></td></tr>
+          <tr><td><code>/team spy</code></td><td>偷看全服队伍聊天</td><td><span class="badge badge-op">OP</span></td></tr>
+          <tr><td><code>/team reload</code></td><td>重载配置与队伍数据</td><td><span class="badge badge-op">OP</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── 底部 CTA ───────────────────────────────────────── -->
+<section id="get" class="alt">
+  <div class="cta-band cta-band--ink reveal">
+    <p class="cta-wordmark">LinuxTeam</p>
+    <p>一块面板，把"一起玩"这件事落到实处。</p>
+    <div class="cta-actions">
+      <a href="teamhelp.html" class="btn btn-primary">查看使用帮助</a>
+      <a href="index.html#plugins" class="btn btn-secondary">← 返回插件列表</a>
+    </div>
+  </div>
+</section>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">LinuxTeam</div>
+    <p>GUI 组队管理 · 队伍聊天频道 · 队友免误伤 · 疯狂附魔联动</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v26.11.4 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+<a href="index.html">← 插件列表</a>
+        &nbsp;·&nbsp;
+<a href="teamhelp.html">使用帮助</a>
+        &nbsp;·&nbsp;
+<a href="linuxhelp.html">综合帮助</a>
+        &nbsp;·&nbsp;
+<a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+    // 页面切换动画：进入淡入 + 离开淡出
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('page-anim');
+
+      // 从 bfcache 返回时清掉淡出状态，否则页面会是半透明的
+      window.addEventListener('pageshow', function () {
+        root.classList.remove('page-leaving');
+      });
+
+      function isInternal(a) {
+        if (!a || !a.href) return false;
+        if (a.target && a.target !== '_self') return false;
+        if (a.hasAttribute('download')) return false;
+        var h = a.getAttribute('href') || '';
+        if (h.charAt(0) === '#') return false;
+        if (a.hostname && a.hostname !== location.hostname) return false;
+        return true;
+      }
+
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a') : null;
+        if (!isInternal(a)) return;
+        if (a.pathname === location.pathname && a.hash) return;
+        e.preventDefault();
+        root.classList.add('page-leaving');
+        setTimeout(function () { location.href = a.href; }, 340);
+      }, true);
+    })();
+
+    // 背景视频：只在宽屏加载（与主页一致）
+    (function () {
+      var v = document.getElementById('bgVideo');
+      if (!v) return;
+      var mq = window.matchMedia('(min-width: 921px)');
+      function apply() {
+        if (mq.matches) {
+          if (!v.getAttribute('src')) {
+            v.setAttribute('src', 'video.mp4');
+            v.load();
+            var pr = v.play();
+            if (pr && pr.catch) { pr.catch(function () {}); }
+          }
+        } else {
+          try { v.pause(); } catch (e) {}
+          v.removeAttribute('src');
+          try { v.load(); } catch (e) {}
+        }
+      }
+      apply();
+      if (mq.addEventListener) { mq.addEventListener('change', apply); }
+      else if (mq.addListener) { mq.addListener(apply); }
+    })();
+
+  // 滚动淡入
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // 触发一次就撤掉监听，避免反复播放
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    // 不能用 0.1：比视口高的元素永远凑不满 10%，会一直 opacity:0
+    threshold: 0,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  document.querySelectorAll('.reveal').forEach((el) => {
+    observer.observe(el);
+  });
+
+  // 兜底：滚动结束后仍未显示的，直接显示（防止某些浏览器不触发）
+  setTimeout(function () {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) {
+        el.classList.add('visible');
+      }
+    });
+  }, 1200);
+
+  // 平滑滚动
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ============================================================
+  // 移动端汉堡菜单
+  // ============================================================
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>

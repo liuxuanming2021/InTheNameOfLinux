@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>帮助 · LinuxTeam</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css?v=4e62472c">
+</head>
+<body class="pure-white">
+
+<div class="bg-mobile" aria-hidden="true"></div>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="team.html">LinuxTeam 介绍</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          Nalxer 服务器
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="plug-hero-ver">v26.11.4</span>
+    <h1>LinuxTeam 帮助中心</h1>
+    <p>GUI 面板操作、命令详解、权限、变量与疯狂附魔联动配置</p>
+  </div>
+</section>
+
+<div class="container content-layout no-toc">
+
+      <aside class="sidebar" id="sidebar">
+            <div class="sidebar-track">
+        <ul class="sidebar-flat">
+          <li class="sidebar-group-label" data-group="开始使用">开始使用</li>
+          <li><a href="#quickstart">快速开始</a></li>
+          <li><a href="#panel">GUI 面板怎么点</a></li>
+          <li><a href="#commands">命令详解</a></li>
+          <li class="sidebar-group-label" data-group="功能说明">功能说明</li>
+          <li><a href="#chat">队伍聊天频道</a></li>
+          <li><a href="#combat">队友免误伤</a></li>
+          <li><a href="#enchant">疯狂附魔联动</a></li>
+          <li class="sidebar-group-label" data-group="配置与权限">配置与权限</li>
+          <li><a href="#config">配置说明</a></li>
+          <li><a href="#permissions">权限节点</a></li>
+          <li class="sidebar-group-label" data-group="参考与帮助">参考与帮助</li>
+          <li><a href="#placeholders">变量与联动</a></li>
+          <li><a href="#faq">常见问题</a></li>
+        </ul>
+      </div>
+    </aside>
+
+  <main class="main-content">
+
+<section class="help-section" id="quickstart">
+    <h2><span class="num">1</span>快速开始</h2>
+
+      <p>LinuxTeam 是一个<strong>组队系统</strong>插件：把"一起玩"需要的功能收在一处 ——
+         队伍管理、队伍聊天、队友免误伤、头顶队标，再把疯狂附魔接进来。</p>
+
+      <p>它<strong>不需要预先配置</strong>，装好就能用。默认只有一条规则值得先知道：
+         加入队伍采用<strong>申请制</strong>（玩家申请、队长批准），
+         而不是"谁都能进"。</p>
+
+      <h3>三步上手</h3>
+      <ol class="steps">
+        <li>把 <code>LinuxTeam.jar</code> 放入 <code>plugins/</code> 目录并重启服务器。</li>
+        <li>玩家输入 <code>/team</code> 打开面板，点「创建队伍」并输入队名。</li>
+        <li>队长点「邀请玩家」拉人；被邀请的人输入 <code>/team accept</code> 即可入队。</li>
+      </ol>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>全部功能都是可选的</strong>
+          没装 CrazyEnchantments / PlaceholderAPI / Vault 也能正常运行，
+          只是对应的联动项自动关闭，不会报错也不会影响其它功能。
+        </div>
+      </div>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>默认是申请制</strong>
+          玩家执行 <code>/team join &lt;队名&gt;</code> 只会<strong>提交申请</strong>，
+          需要队长用 <code>/team accept &lt;玩家&gt;</code> 批准。
+          想让所有人随时自由加入，把 <code>config.yml</code> 里的
+          <code>team.public-join</code> 改成 <code>true</code>。
+        </div>
+      </div>
+
+  </section>
+
+<section class="help-section" id="panel">
+    <h2><span class="num">2</span>GUI 面板怎么点</h2>
+
+      <p>输入 <code>/team</code>（或 <code>/lt</code>）即可打开面板。
+         界面分三种：<strong>主面板</strong>、<strong>成员管理</strong>、<strong>队伍设置</strong>，
+         另外还有邀请、浏览两个列表页。</p>
+
+      <h3>主面板（54 格）</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>位置</th><th>图标</th><th>作用</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>第 1 行</td><td>附魔联动说明</td><td>查看疯狂附魔联动的当前配置</td></tr>
+            <tr><td>第 2 行</td><td>邀请玩家</td><td>列出未组队的在线玩家，点头像发邀请</td></tr>
+            <tr><td>第 2 行</td><td>成员管理</td><td>成员列表，可踢人 / 转交队长</td></tr>
+            <tr><td>第 2 行</td><td>队伍设置</td><td>队友伤害、队伍聊天开关</td></tr>
+            <tr><td>第 2 行</td><td>队伍列表</td><td>浏览全服队伍，可申请加入</td></tr>
+            <tr><td>第 2 行</td><td>队伍聊天</td><td>一键开关队伍聊天频道</td></tr>
+            <tr><td>第 3 行</td><td>成员头像</td><td>显示成员，点一下进入成员管理</td></tr>
+            <tr><td>底部</td><td>退出 / 解散</td><td>退出队伍 / 解散队伍（需二次确认）</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>成员管理里能做什么</h3>
+      <ul>
+        <li><strong>左键</strong>成员头像 → 把他移出队伍（需要 <code>linuxtream.kick</code>）</li>
+        <li><strong>右键</strong>成员头像 → 把队长转交给他（对方必须在线）</li>
+        <li>底部箭头翻页；自己的头像点了没有反应，防止误操作</li>
+      </ul>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>拿不走的图标</strong>
+          面板里的图标是"按钮"而不是物品：无论怎么点、怎么拖、怎么按 Shift，
+          都拿不出来也不会掉到地上。菜单以外的地方（你自己的背包）不受影响。
+        </div>
+      </div>
+
+  </section>
+
+<section class="help-section" id="commands">
+    <h2><span class="num">3</span>命令详解</h2>
+
+      <p>主命令 <code>/team</code>，可用别名 <code>/lt</code>、<code>/teams</code>、<code>/linuxtream</code>。
+         不带参数直接打开 GUI 面板。</p>
+
+      <h3>队伍管理</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>命令</th><th>说明</th><th>权限</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/team</code></td><td>打开 GUI 管理面板</td><td><span class="badge badge-op">linuxtream.use</span></td></tr>
+            <tr><td><code>/team create &lt;队名&gt;</code></td><td>创建队伍（2–12 字，自己成为队长）</td><td><span class="badge badge-op">linuxtream.create</span></td></tr>
+            <tr><td><code>/team join &lt;队名&gt;</code></td><td>提交入队申请，等队长批准</td><td><span class="badge badge-op">linuxtream.join</span></td></tr>
+            <tr><td><code>/team accept</code></td><td>接受别人发给你的邀请</td><td><span class="badge badge-op">linuxtream.join</span></td></tr>
+            <tr><td><code>/team accept &lt;玩家&gt;</code></td><td>队长批准某人的入队申请</td><td><span class="badge badge-op">linuxtream.join</span></td></tr>
+            <tr><td><code>/team deny</code></td><td>拒绝待处理的邀请</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/team leave</code></td><td>退出队伍（队长退出会自动转交）</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/team invite &lt;玩家&gt;</code></td><td>邀请玩家入队，默认 60 秒有效</td><td><span class="badge badge-op">linuxtream.invite</span></td></tr>
+            <tr><td><code>/team kick &lt;玩家&gt;</code></td><td>把成员移出队伍</td><td><span class="badge badge-op">linuxtream.kick</span></td></tr>
+            <tr><td><code>/team transfer &lt;玩家&gt;</code></td><td>把队长转交给指定成员</td><td><span class="badge badge-op">队长</span></td></tr>
+            <tr><td><code>/team disband</code></td><td>解散队伍（15 秒内再输一次确认）</td><td><span class="badge badge-op">linuxtream.disband</span></td></tr>
+            <tr><td><code>/team tag &lt;标记&gt;</code></td><td>设置头顶队标；不填参数则清除</td><td><span class="badge badge-op">队长</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>查看信息</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>命令</th><th>说明</th><th>权限</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/team list</code></td><td>列出服务器上所有队伍及在线人数</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/team info</code></td><td>查看自己队伍的详情</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/team info &lt;队名&gt;</code></td><td>查看指定队伍的详情与成员名单</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/team help</code></td><td>命令帮助</td><td><span class="badge badge-op">所有人</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>聊天</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>命令</th><th>说明</th><th>权限</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/team chat</code></td><td>开关队伍聊天频道（开/关会提示）</td><td><span class="badge badge-op">linuxtream.chat</span></td></tr>
+            <tr><td><code>/team chat on|off</code></td><td>显式设置开或关</td><td><span class="badge badge-op">linuxtream.chat</span></td></tr>
+            <tr><td><code>/tc &lt;内容&gt;</code></td><td>单发一条队伍消息，不切换频道</td><td><span class="badge badge-op">linuxtream.chat</span></td></tr>
+            <tr><td><code>/tchat</code></td><td>等同于 <code>/team chat</code></td><td><span class="badge badge-op">linuxtream.chat</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>管理员命令</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>命令</th><th>说明</th><th>权限</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/team spy</code></td><td>开启 / 关闭队伍聊天偷看，消息带 <code>[队伍偷看]</code> 前缀</td><td><span class="badge badge-op">linuxtream.admin</span></td></tr>
+            <tr><td><code>/team reload</code></td><td>重载 <code>config.yml</code> 与 <code>teams.yml</code></td><td><span class="badge badge-op">linuxtream.admin</span></td></tr>
+            <tr><td><code>/team force-disband &lt;队名&gt;</code></td><td>强制解散任意队伍</td><td><span class="badge badge-op">linuxtream.admin</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>队伍标记写什么</strong>
+          <code>/team tag &amp;6★</code> 会显示成金色的 ★。
+          支持 <code>&amp;</code> 颜色代码，长度上限 6 个<strong>可见字符</strong>；
+          不允许只写颜色代码（那样头顶会是一片空白）。
+        </div>
+      </div>
+
+  </section>
+
+<section class="help-section" id="chat">
+    <h2><span class="num">4</span>队伍聊天频道</h2>
+
+      <p>开启频道后，你在公共聊天栏打的字<strong>只会发给队友</strong>，
+         别人在公共频道完全看不到。</p>
+
+      <h3>怎么用</h3>
+      <ol class="steps">
+        <li>输入 <code>/team chat</code> 开启频道，会提示「组队聊天频道已开启」。</li>
+        <li>之后直接打字即可，消息只发给队友（队友那边带 <code>[队伍]</code> 前缀）。</li>
+        <li>再输一次 <code>/team chat</code> 关闭，回到公共频道。</li>
+        <li>只想单发一条消息时用 <code>/tc &lt;内容&gt;</code>，不用切换频道。</li>
+      </ol>
+
+      <h3>这些情况会自动关闭频道并提示你</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>情况</th><th>提示</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>自己退出队伍</td><td>已退出队伍，组队聊天频道已自动关闭</td></tr>
+            <tr><td>被队长踢出</td><td>你已被移出队伍，组队聊天频道已自动关闭</td></tr>
+            <tr><td>队伍被解散</td><td>队伍已解散，组队聊天频道已自动关闭</td></tr>
+            <tr><td>队长在设置里关掉了队伍聊天</td><td>队伍的聊天频道已被队长关闭</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>被禁言的玩家不能在队伍频道发言</strong>
+          队伍消息仍然会经过服务器的禁言 / 聊天过滤插件，
+          所以禁言期间也发不出队伍消息。这是有意这么做的。
+        </div>
+      </div>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>不想让某句话进队伍频道</strong>
+          在消息前面加 <code>!</code> 即可临时走公共频道
+          （前缀在 <code>chat.bypass-prefixes</code> 里配置）。
+        </div>
+      </div>
+
+  </section>
+
+<section class="help-section" id="combat">
+    <h2><span class="num">5</span>队友免误伤</h2>
+
+      <p>同一支队伍的成员之间，伤害<strong>默认关闭</strong>，
+         免得团战时一刀砍到自己人。</p>
+
+      <h3>覆盖范围</h3>
+      <ul>
+        <li>近战攻击、弓箭、投掷物（雪球 / 鸡蛋 / 末影珍珠等）</li>
+        <li>药水（喷溅 / 滞留）对队友的负面效果</li>
+        <li>范围伤害（TNT、爆炸等）</li>
+        <li>疯狂附魔的进攻类附魔打到队友身上</li>
+      </ul>
+
+      <h3>队长可以放开</h3>
+      <p>进入「队伍设置」，点「队友伤害」即可切换。
+         开启后队友之间恢复正常的 PVP 伤害，适合想内部切磋的队伍。</p>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>拦截提示不会刷屏</strong>
+          同一个攻击者每 2 秒最多收到一条「不要攻击队友」提示，
+          攻速快的时候也不会把聊天栏刷爆。
+        </div>
+      </div>
+
+  </section>
+
+<section class="help-section" id="enchant">
+    <h2><span class="num">6</span>疯狂附魔联动</h2>
+
+      <p>装了 <strong>CrazyEnchantments</strong> 后，本插件会把附魔效果接进队伍体系。
+         三项能力各自独立开关，都在 <code>config.yml</code> 的
+         <code>crazy-enchantments</code> 段里。</p>
+
+      <h3>① 队伍加成：人越多，触发越猛</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>配置项</th><th>默认值</th><th>含义</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>team-bonus.chance-per-member</code></td><td>0.15</td><td>每名附近队友增加 15% 触发概率</td></tr>
+            <tr><td><code>team-bonus.max-bonus</code></td><td>0.60</td><td>加成上限 +60%</td></tr>
+            <tr><td><code>team-bonus.min-members</code></td><td>1</td><td>至少 1 名队友才开始加成</td></tr>
+            <tr><td><code>team-bonus.radius</code></td><td>32</td><td>只统计这个距离内的队友，0 = 不限距离</td></tr>
+            <tr><td><code>team-bonus.whitelist</code></td><td>空</td><td>留空 = 所有附魔都吃加成</td></tr>
+            <tr><td><code>team-bonus.blacklist</code></td><td>Blast, Rage</td><td>这些附魔不吃加成（优先于白名单）</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>② 附魔共享：触发时顺手惠及队友</h3>
+      <p>触发下面这些附魔时，附近的队友会同步获得对应的增益效果：</p>
+      <div class="code-block">
+        <div>share:</div>
+        <div>  enabled: true</div>
+        <div>  radius: 16              <span class="comment"># 共享半径（格）</span></div>
+        <div>  duration-ratio: 0.8     <span class="comment"># 队友吃到的时长比例</span></div>
+        <div>  level-reduction: 0      <span class="comment"># 队友吃到的等级降低多少</span></div>
+        <div>  cooldown-seconds: 3     <span class="comment"># 共享冷却，防刷屏</span></div>
+        <div>  triggers:</div>
+        <div>    - Vampire</div>
+        <div>    - LifeSteal</div>
+        <div>    - Blessed</div>
+        <div>    - Recover</div>
+        <div>    - Savior</div>
+        <div>    - Angel</div>
+        <div>    - Fortify</div>
+        <div>    - Valor</div>
+        <div>    - Enlightened</div>
+      </div>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>为什么要手写效果表</strong>
+          CrazyEnchantments 的 API 不告诉外挂插件"这次触发了什么药水效果"，
+          所以共享的具体效果由服主在 <code>share-effects</code> 里定义：
+          一行一条，格式为 <code>效果名:持续tick:等级</code>，例如
+          <code>REGENERATION:100:0</code>。
+        </div>
+      </div>
+
+      <h3>③ 附魔免误伤</h3>
+      <p>进攻类附魔打到队友身上时会被直接取消，
+         队友之间不会因为附魔效果互相伤害。</p>
+
+      <h3>怎么验证联动生效了</h3>
+      <ol class="steps">
+        <li>面板第一行有「疯狂附魔联动」图标，点开能看到当前生效的配置。</li>
+        <li>组队后触发一次共享类附魔，队友那边会收到
+            <code>[队伍附魔]</code> 提示。</li>
+        <li>服务器启动日志里会打印一道 <code>LinuxTeam 已启动 —— 疯狂附魔联动: 已启用</code>。</li>
+      </ol>
+
+  </section>
+
+<section class="help-section" id="config">
+    <h2><span class="num">7</span>配置说明</h2>
+
+      <p>配置文件：<code>plugins/LinuxTeam/config.yml</code>。
+         改完执行 <code>/team reload</code> 即可生效，不用重启。</p>
+
+      <h3>常用项</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>配置项</th><th>默认值</th><th>说明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>team.default-max-size</code></td><td>8</td><td>默认队伍人数上限</td></tr>
+            <tr><td><code>team.name-min-length</code></td><td>2</td><td>队名最短长度</td></tr>
+            <tr><td><code>team.name-max-length</code></td><td>12</td><td>队名最长长度</td></tr>
+            <tr><td><code>team.allow-color</code></td><td>true</td><td>队名是否允许颜色代码</td></tr>
+            <tr><td><code>team.public-join</code></td><td>false</td><td>true = 无需批准即可加入</td></tr>
+            <tr><td><code>team.tag-max-length</code></td><td>6</td><td>队标可见字符上限</td></tr>
+            <tr><td><code>team.invite-seconds</code></td><td>60</td><td>邀请有效期</td></tr>
+            <tr><td><code>team.disband-confirm-seconds</code></td><td>15</td><td>解散二次确认窗口</td></tr>
+            <tr><td><code>team.create-cost</code></td><td>0</td><td>创建队伍收费（需要 Vault），0 = 免费</td></tr>
+            <tr><td><code>team.rejoin-cooldown</code></td><td>0</td><td>退队后再加入的冷却秒数</td></tr>
+            <tr><td><code>members.offline-kick-hours</code></td><td>0</td><td>离线多久自动移出队伍，0 = 不移出</td></tr>
+            <tr><td><code>chat.default-channel</code></td><td>false</td><td>玩家进服是否默认开队伍频道</td></tr>
+            <tr><td><code>chat.log-to-console</code></td><td>true</td><td>队伍消息是否也打进控制台</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>队伍人数上限按权限分配</h3>
+      <p>给玩家 LuckPerms 节点 <code>linuxtream.limit.20</code> 即可让他创建上限 20 人的队伍。
+         同时拥有多个节点时取<strong>最大值</strong>，
+         <code>linuxtream.limit.unlimited</code> 或 <code>linuxtream.limit.*</code> 视为上限 100。</p>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>数据文件</strong>
+          队伍数据存在 <code>plugins/LinuxTeam/teams.yml</code>。
+          插件采用<strong>原子落盘</strong>（写临时文件再改名），
+          所以服务器崩溃不会把队伍文件写坏。
+        </div>
+      </div>
+
+  </section>
+
+<section class="help-section" id="permissions">
+    <h2><span class="num">8</span>权限节点</h2>
+
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>权限节点</th><th>默认</th><th>作用</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>linuxtream.use</code></td><td>所有人</td><td>基础使用权（打开面板）</td></tr>
+            <tr><td><code>linuxtream.create</code></td><td>所有人</td><td>允许创建队伍</td></tr>
+            <tr><td><code>linuxtream.join</code></td><td>所有人</td><td>允许加入队伍（申请或接受邀请）</td></tr>
+            <tr><td><code>linuxtream.chat</code></td><td>所有人</td><td>允许使用队伍聊天频道</td></tr>
+            <tr><td><code>linuxtream.invite</code></td><td>所有人</td><td>允许邀请玩家</td></tr>
+            <tr><td><code>linuxtream.kick</code></td><td>所有人</td><td>允许踢出成员</td></tr>
+            <tr><td><code>linuxtream.disband</code></td><td>所有人</td><td>允许解散队伍</td></tr>
+            <tr><td><code>linuxtream.limit.N</code></td><td>关闭</td><td>队伍人数上限为 N（取持有的最大值）</td></tr>
+            <tr><td><code>linuxtream.admin</code></td><td>OP</td><td>偷看队聊 / 重载 / 强制解散</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>给某个组关掉组队聊天</h3>
+      <p>用 LuckPerms 给该组设置 <code>-linuxtream.chat</code> 即可。
+         关闭后：面板上的队伍聊天按钮会提示无权限，
+         已经开着的频道也会在下次发言时自动关掉。</p>
+
+      <div class="code-block">
+        <div>/lp group default permission set linuxtream.chat false</div>
+      </div>
+
+  </section>
+
+<section class="help-section" id="placeholders">
+    <h2><span class="num">9</span>变量与联动</h2>
+
+      <p>装了 <strong>PlaceholderAPI</strong> 后可用下列变量，
+         常见用法是放进 TAB、记分板或聊天格式里显示队伍名。</p>
+
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>变量</th><th>内容</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>%linuxtream_team%</code></td><td>队伍名（无颜色代码）</td></tr>
+            <tr><td><code>%linuxtream_team_plain%</code></td><td>同上</td></tr>
+            <tr><td><code>%linuxtream_tag%</code></td><td>队伍标记</td></tr>
+            <tr><td><code>%linuxtream_leader%</code></td><td>队长名字</td></tr>
+            <tr><td><code>%linuxtream_size%</code></td><td>队伍总人数</td></tr>
+            <tr><td><code>%linuxtream_online%</code></td><td>队伍在线人数</td></tr>
+            <tr><td><code>%linuxtream_max%</code></td><td>队伍人数上限</td></tr>
+            <tr><td><code>%linuxtream_in_team%</code></td><td>是否在队伍里</td></tr>
+            <tr><td><code>%linuxtream_chat%</code></td><td>队伍频道是否开启</td></tr>
+            <tr><td><code>%linuxtream_rank%</code></td><td>自己在队伍里的身份（队长 / 成员）</td></tr>
+            <tr><td><code>%linuxtream_contribution%</code></td><td>队伍贡献值</td></tr>
+            <tr><td><code>%linuxtream_team_list%</code></td><td>队伍成员名单</td></tr>
+            <tr><td><code>%linuxtream_team_online_list%</code></td><td>在线成员名单</td></tr>
+            <tr><td><code>%linuxtream_flag%</code></td><td>队伍标识</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>与 InTheNameOfLinux 联动</h3>
+      <p>装了综合管理插件 <strong>InTheNameOfLinux</strong> 后，它会自动探测本插件并接管显示：</p>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>命令</th><th>作用</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/linux plugins</code></td><td>查看插件联动状态（含本插件是否绑定成功）</td></tr>
+            <tr><td><code>/linux linked</code></td><td>完整联动清单</td></tr>
+            <tr><td><code>/linux team</code></td><td>查看全服队伍列表（队长、在线人数）</td></tr>
+            <tr><td><code>/linux team self</code></td><td>查看自己的队伍与头衔信息</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>另外它还会注册 <code>%inl_team%</code>、<code>%inl_team_tag%</code>、
+         <code>%inl_in_team%</code>、<code>%inl_title%</code> 变量，
+         用哪一套取决于你的展示需求。</p>
+
+  </section>
+
+<section class="help-section" id="faq">
+    <h2><span class="num">10</span>常见问题</h2>
+
+      <div class="faq-item">
+        <div class="faq-q">玩家说 <code>/team join</code> 之后没进队？</div>
+        <div class="faq-a">
+          这是<strong>申请制</strong>的正常表现：申请已提交，需要队长执行
+          <code>/team accept &lt;玩家&gt;</code> 批准。
+          队长会收到一条提示，告诉他用哪条命令放行。
+          想让所有人免批准加入，把 <code>team.public-join</code> 改成 <code>true</code>。
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">面板里的图标拿不出来？</div>
+        <div class="faq-a">
+          这是<strong>有意设计</strong>：面板里的图标是按钮，不能拿走也不会掉到地上。
+          你自己的背包不受影响，正常整理即可。
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">改了队标，头顶却没变？</div>
+        <div class="faq-a">
+          正常情况会<strong>立刻刷新</strong>。如果没变，检查两点：
+          一是 <code>team-tag.prefix</code> 里是否有 <code>%tag%</code> 占位；
+          二是有没有其它 TAB / 计分板插件也在改同一批玩家的名前缀 ——
+          两者会互相覆盖，只能选一个来管头顶显示。
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">队伍频道里发消息，服务器禁言没生效？</div>
+        <div class="faq-a">
+          队伍消息会正常经过服务器的禁言 / 过滤插件，所以被禁言时也发不出队伍消息。
+          如果发现相反的情况，请确认禁言插件监听的是
+          <code>AsyncPlayerChatEvent</code> 的 <code>NORMAL</code> 及之后优先级。
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">附魔共享没有反应？</div>
+        <div class="faq-a">
+          按顺序检查：① 服务器是否装了 CrazyEnchantments；
+          ② <code>crazy-enchantments.enabled</code> 是否为 true；
+          ③ <code>share.enabled</code> 是否为 true；
+          ④ 触发的附魔是否在 <code>share.triggers</code> 名单里；
+          ⑤ 队友是否在 <code>share.radius</code> 范围内。
+          面板第一行的「疯狂附魔联动」页会显示当前生效的配置。
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">队伍人数上限改不动？</div>
+        <div class="faq-a">
+          上限取<strong>权限节点</strong>与 <code>team.default-max-size</code> 里的较大值。
+          给玩家 <code>linuxtream.limit.20</code> 即可提到 20 人；
+          <code>linuxtream.limit.unlimited</code> 视为 100 人。
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">玩家退队后一直占着队伍名额？</div>
+        <div class="faq-a">
+          把 <code>members.offline-kick-hours</code> 设成一个小时间值（例如 <code>72</code>），
+          插件会每 30 分钟扫一次，把超过该时长未上线的成员自动移出队伍。
+          默认 <code>0</code> 表示不清理。
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">能只让某些玩家用队伍聊天吗？</div>
+        <div class="faq-a">
+          可以。用 LuckPerms 给对应组设置 <code>-linuxtream.chat</code>。
+          面板按钮、命令、聊天分流三处都会拦，绕不过去。
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">服务器崩溃会丢队伍数据吗？</div>
+        <div class="faq-a">
+          不会。<code>teams.yml</code> 采用<strong>原子落盘</strong>：
+          先写 <code>teams.yml.tmp</code> 再原子改名覆盖，
+          写入过程中原文件始终完好。异步保存也先在主线程拍快照，
+          不会出现"保存到一半"的半个文件。
+        </div>
+      </div>
+
+  </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">LinuxTeam</div>
+    <p>GUI 组队管理 · 队伍聊天频道 · 队友免误伤 · 疯狂附魔联动</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v26.11.4 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+<a href="index.html">← 插件列表</a>
+        &nbsp;·&nbsp;
+<a href="team.html">插件介绍</a>
+        &nbsp;·&nbsp;
+<a href="linuxhelp.html">综合帮助</a>
+        &nbsp;·&nbsp;
+<a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+  // 移动端侧栏抽屉
+  (function () {
+    var sb = document.getElementById('sidebar');
+    var tg = document.getElementById('navToggle');
+    if (!sb || !tg) return;
+
+    var bd = document.createElement('div');
+    bd.className = 'sidebar-backdrop';
+    document.body.appendChild(bd);
+
+    function close() {
+      sb.classList.remove('open');
+      bd.classList.remove('open');
+    }
+
+    tg.addEventListener('click', function (e) {
+      e.stopPropagation();
+      sb.classList.toggle('open');
+      bd.classList.toggle('open');
+    });
+
+    bd.addEventListener('click', close);
+    sb.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') close();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 920) close();
+    });
+  })();
+
+  document.querySelectorAll('.faq-q').forEach((q) => {
+    q.addEventListener('click', () => {
+      q.parentElement.classList.toggle('open');
+    });
+  });
+
+  const sidebarLinks = document.querySelectorAll('.sidebar a');
+  const watched = [];
+  const seen = {};
+  sidebarLinks.forEach((link) => {
+    const href = link.getAttribute('href') || '';
+    if (href.charAt(0) !== '#') return;
+    const id = href.slice(1);
+    if (seen[id]) return;
+    const el = document.getElementById(id);
+    if (el) { watched.push(el); seen[id] = true; }
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        sidebarLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, {
+    rootMargin: '-80px 0px -60% 0px',
+    threshold: 0
+  });
+
+  watched.forEach((s) => observer.observe(s));
+
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>

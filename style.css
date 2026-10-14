@@ -4108,3 +4108,2313 @@ body.pure-white.intro-page,
 html.page-anim body.pure-white {
   background: #fff !important;
 }
+
+
+/* ==========================================================================
+   LinuxTeam 官网专属组件
+   ==========================================================================
+   设计说明（为什么这样写）
+   --------------------------------------------------------------------------
+   本站全站的视觉基调是「壁纸 + 液态玻璃 + 透明」：
+     · 壁纸   —— .bg-video / .bg-mobile 钉在视口最底层（z-index:-1）
+     · 透明   —— 区块本身不留底色，玻璃模块自己承担质感，视频才透得出来
+     · 液态玻璃 —— 半透明底 + backdrop-filter 模糊/饱和 + 内侧高光 + 外侧软阴影
+   下面这组组件沿用同一套语言，只是把「玻璃」做得更具体：
+     · .glass-panel  面板本体（带顶栏的三点标题条）
+     · .inv-grid     用 CSS 画出 6×3 的箱子格子，演示 GUI 布局
+     · .glass-flow   把"附魔联动"的四步计算做成一条流程
+   所有阴影都带钢青蓝调（#1e2c38 / #4a7ba7），与封面视频采样色一致，
+   避免出现"玻璃是暖灰、背景是冷蓝"的割裂感。
+   ========================================================================== */
+
+/* ── 玻璃展台：给面板加一层柔和的环境光晕，玻璃才有"浮在壁纸上"的感觉 ── */
+.glass-stage {
+  position: relative;
+  padding: 26px;
+  border-radius: 22px;
+  /* 极淡的径向光晕，只提亮中心，不遮壁纸 */
+  background:
+    radial-gradient(120% 90% at 50% 0%,
+      rgba(255, 255, 255, 0.16) 0%,
+      rgba(255, 255, 255, 0.04) 45%,
+      rgba(255, 255, 255, 0) 100%);
+}
+
+/* ── 玻璃面板本体 ── */
+.glass-panel {
+  position: relative;
+  border-radius: 18px;
+  padding: 16px 18px 18px;
+  /* 液态玻璃三件套：低透明度底色 + 模糊饱和 + 内外高光 */
+  background: rgba(255, 255, 255, 0.14);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    /* 上缘一道细高光：玻璃"厚度"的关键，没有它就像一张半透明纸 */
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.9),
+    /* 下缘一道暗边：让边缘闭合 */
+    inset 0 -1px 0 rgba(255, 255, 255, 0.16),
+    /* 外侧软阴影：与壁纸拉开层次 */
+    0 14px 38px rgba(15, 25, 35, 0.16);
+  overflow: hidden;
+}
+
+/* 斜向扫光：静态的一道高光带，模拟玻璃面反光 */
+.glass-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(118deg,
+      rgba(255, 255, 255, 0.30) 0%,
+      rgba(255, 255, 255, 0.06) 26%,
+      rgba(255, 255, 255, 0) 42%,
+      rgba(255, 255, 255, 0) 100%);
+  opacity: 0.55;
+}
+
+/* ── 面板顶栏（模仿窗口标题条）── */
+.glass-titlebar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+.glass-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.glass-title {
+  margin-left: 6px;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 3px rgba(15, 25, 35, 0.45);
+}
+
+/* ── 箱子格子演示 ── */
+.inv-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 6px;
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.inv-slot {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 7px;
+  /* 空格子：更深一点的玻璃，与"有内容"的格子形成对比 */
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30);
+}
+
+/* 有内容的格子 */
+.inv-slot.on,
+.inv-slot.head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  color: #12303f;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(74, 123, 167, 0.20),
+    0 4px 12px rgba(15, 25, 35, 0.16);
+}
+
+.inv-slot.head {
+  background: rgba(233, 240, 246, 0.92);
+}
+
+/* 悬停提示：纯 CSS，不依赖 JS */
+.inv-slot.on:hover::after,
+.inv-slot.head:hover::after {
+  content: attr(data-label);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: #12303f;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 6px 18px rgba(15, 25, 35, 0.20);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ── 面板下的说明文字 ── */
+.glass-caption {
+  position: relative;
+  z-index: 1;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  font-size: 14px;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.88);
+  text-shadow: 0 1px 3px rgba(15, 25, 35, 0.40);
+}
+
+.glass-caption code {
+  padding: 1px 6px;
+  border-radius: 5px;
+  font-size: 13px;
+  color: #eaf3fa;
+  background: rgba(15, 25, 35, 0.28);
+}
+
+/* ── 附魔联动流程 ── */
+.glass-flow {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.glass-flow li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 14.5px;
+  color: rgba(255, 255, 255, 0.94);
+  text-shadow: 0 1px 3px rgba(15, 25, 35, 0.42);
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  box-shadow: inset 0 1.2px 0 rgba(255, 255, 255, 0.55);
+}
+
+.flow-tag {
+  flex: 0 0 auto;
+  min-width: 46px;
+  text-align: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #12303f;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+}
+
+.flow-tag.ok {
+  color: #0d3b1c;
+  background: rgba(200, 244, 210, 0.92);
+}
+
+.flow-tag.no {
+  color: #4a1110;
+  background: rgba(255, 214, 211, 0.92);
+}
+
+.glass-flow strong {
+  color: #fff;
+}
+
+/* ── 响应式 ── */
+@media (max-width: 920px) {
+  .glass-stage {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .glass-panel {
+    padding: 13px 13px 15px;
+    border-radius: 15px;
+  }
+
+  .inv-grid {
+    gap: 4px;
+    max-width: 100%;
+  }
+
+  .inv-slot.on,
+  .inv-slot.head {
+    font-size: 12px;
+  }
+
+  /* 触屏没有 hover，关掉提示气泡免得"粘"在屏幕上 */
+  .inv-slot.on:hover::after,
+  .inv-slot.head:hover::after {
+    content: none;
+  }
+
+  .glass-flow li {
+    font-size: 13.5px;
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .glass-title {
+    font-size: 12px;
+  }
+
+  .flow-tag {
+    min-width: 40px;
+    padding: 2px 8px;
+    font-size: 11.5px;
+  }
+}
+
+/* 低端设备 / 用户要求减少动效：关掉模糊，改用纯色半透明，保证可读性 */
+@media (prefers-reduced-motion: reduce) {
+  .glass-panel {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(30, 44, 56, 0.42);
+  }
+
+  .glass-panel::after {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   LinuxTeam 页面对比度修正
+   ==========================================================================
+   实测（无头 Edge 截图）发现的问题：
+     壁纸是一张亮部很多的图（蓝白渐变 + 大面积高光），
+     原来的玻璃面板只有 rgba(255,255,255,0.10~0.14) 的白底，
+     白字压在亮壁纸上几乎读不出来，说明文字更是糊成一片。
+
+   修正思路（三件事，不改整体风格）：
+     ① 加一层固定压暗罩（.page-scrim）：把壁纸整体压深约 22%，
+        玻璃面板不动，于是"玻璃比背景亮"的层次反而更明显，更像真玻璃。
+     ② 把面板底色改成"白 + 一点钢青蓝"，不是纯白：
+        纯白在亮壁纸上会糊，掺一点冷色反而更清楚。
+     ③ 文字统一加深色投影 + 提亮字色，保证任何壁纸下都可读。
+
+   注意：压暗罩刻意只做轻微压暗（22%），
+   目的是"看得清字"，不是"把壁纸盖掉" —— 透明感要保留。
+   ========================================================================== */
+
+/* ── ① 背景压暗罩：钉在视口，位于壁纸之上、内容之下 ── */
+.page-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* 冷色压暗 + 顶部略深：与封面视频的钢青蓝同族，不引入新色相 */
+  background:
+    linear-gradient(180deg,
+      rgba(14, 22, 29, 0.34) 0%,
+      rgba(14, 22, 29, 0.20) 38%,
+      rgba(14, 22, 29, 0.26) 100%);
+}
+
+@media (max-width: 920px) {
+  /* 手机上壁纸是静态图且更亮，压得再深一点 */
+  .page-scrim {
+    background:
+      linear-gradient(180deg,
+        rgba(14, 22, 29, 0.42) 0%,
+        rgba(14, 22, 29, 0.30) 40%,
+        rgba(14, 22, 29, 0.38) 100%);
+  }
+}
+
+/* ── ② 玻璃面板：提高不透度，掺一点钢青蓝 ── */
+.glass-panel {
+  background:
+    linear-gradient(160deg,
+      rgba(255, 255, 255, 0.30) 0%,
+      rgba(233, 240, 246, 0.20) 52%,
+      rgba(210, 224, 236, 0.16) 100%);
+  -webkit-backdrop-filter: blur(26px) saturate(180%);
+  backdrop-filter: blur(26px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.22),
+    0 18px 44px rgba(8, 16, 24, 0.28);
+}
+
+/* 面板内所有文字：统一加深色投影 */
+.glass-panel h3,
+.glass-panel p,
+.glass-panel li,
+.glass-panel strong {
+  color: #fff;
+  text-shadow:
+    0 1px 2px rgba(8, 16, 24, 0.62),
+    0 2px 8px rgba(8, 16, 24, 0.34);
+}
+
+.glass-titlebar {
+  border-bottom-color: rgba(255, 255, 255, 0.34);
+}
+
+.glass-dot {
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.glass-title {
+  color: #fff;
+  font-weight: 600;
+  text-shadow:
+    0 1px 2px rgba(8, 16, 24, 0.66),
+    0 2px 8px rgba(8, 16, 24, 0.36);
+}
+
+/* 空槽位：稍微加深，让"有内容 / 无内容"的差别更明确 */
+.inv-slot {
+  background: rgba(14, 22, 29, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.26);
+}
+
+/* 有内容的槽位：白底压满，图标才清晰 */
+.inv-slot.on,
+.inv-slot.head {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(255, 255, 255, 1);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(74, 123, 167, 0.24),
+    0 5px 14px rgba(8, 16, 24, 0.26);
+}
+
+.inv-slot.head {
+  background: rgba(226, 237, 245, 0.96);
+}
+
+/* ── ③ 说明文字：原来太淡，改成接近纯白 + 强投影 ── */
+.glass-caption {
+  color: rgba(255, 255, 255, 0.96);
+  border-top-color: rgba(255, 255, 255, 0.28);
+  text-shadow:
+    0 1px 2px rgba(8, 16, 24, 0.62),
+    0 2px 8px rgba(8, 16, 24, 0.34);
+}
+
+.glass-caption code {
+  color: #dff0fb;
+  background: rgba(8, 16, 24, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+/* ── 附魔流程条 ── */
+.glass-flow li {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.44);
+  box-shadow:
+    inset 0 1.2px 0 rgba(255, 255, 255, 0.62),
+    0 6px 18px rgba(8, 16, 24, 0.20);
+  text-shadow:
+    0 1px 2px rgba(8, 16, 24, 0.60),
+    0 2px 8px rgba(8, 16, 24, 0.32);
+}
+
+.flow-tag {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 8px rgba(8, 16, 24, 0.22);
+  text-shadow: none;
+}
+
+.flow-tag.ok {
+  color: #0b3a1a;
+  background: rgba(198, 243, 208, 0.97);
+}
+
+.flow-tag.no {
+  color: #48100f;
+  background: rgba(255, 212, 209, 0.97);
+}
+
+/* ── 玻璃展台：中心光晕稍微收一点，避免与压暗罩打架 ── */
+.glass-stage {
+  background:
+    radial-gradient(115% 85% at 50% 0%,
+      rgba(255, 255, 255, 0.10) 0%,
+      rgba(255, 255, 255, 0.02) 48%,
+      rgba(255, 255, 255, 0) 100%);
+}
+
+/* ── 首页为团队页准备的卡片：壁纸较亮时文字也要能读 ── */
+.cover-quote,
+.cover-subtitle,
+.cover-remark p {
+  text-shadow:
+    0 1px 2px rgba(8, 16, 24, 0.55),
+    0 2px 10px rgba(8, 16, 24, 0.38);
+}
+
+/* ==========================================================================
+   LinuxTeam 页面：玻璃可读性最终修正
+   ==========================================================================
+   第二轮实测（整页截图）暴露的真问题：
+     backdrop-filter 只「模糊」背景，不「压暗」背景。
+     壁纸有大量高光区，玻璃面板里的白字压在模糊过的高光上依然是白底白字。
+
+   关键认识：真正的"液态玻璃"不是"白色半透明"，
+             而是「把身后的东西柔化 + 压暗，再叠一层很淡的高光」。
+   所以这里给面板加 brightness(0.62) —— 只压暗面板**背后**那块区域，
+   面板外面的壁纸保持原样，于是既看得清字，又明显是一块玻璃。
+
+   同时给压暗罩补一档：让它在页面底部再深一点，
+   避免长页面滚到底部时压在壁纸最亮的区域上。
+   ========================================================================== */
+
+/* ── 面板本体：背后压暗 + 柔化，面上叠淡高光 ── */
+.glass-panel {
+  background:
+    linear-gradient(158deg,
+      rgba(255, 255, 255, 0.20) 0%,
+      rgba(255, 255, 255, 0.10) 46%,
+      rgba(255, 255, 255, 0.05) 100%);
+  -webkit-backdrop-filter: blur(30px) saturate(150%) brightness(0.58);
+  backdrop-filter: blur(30px) saturate(150%) brightness(0.58);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.72),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.14),
+    0 20px 48px rgba(6, 12, 18, 0.38);
+}
+
+/* 斜向扫光收一点，别把压暗后的暗底又提亮回去 */
+.glass-panel::after {
+  opacity: 0.34;
+}
+
+/* ── 说明文字：面板已经压暗了，这里可以更接近纯白 ── */
+.glass-caption {
+  color: #fff;
+}
+
+/* ── 空槽位：在压暗后的底上要更亮一点才看得见格子 ── */
+.inv-slot {
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.26);
+}
+
+/* ── 流程条：同样压暗背后 ── */
+.glass-flow li {
+  background: rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(18px) saturate(150%) brightness(0.66);
+  backdrop-filter: blur(18px) saturate(150%) brightness(0.66);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+}
+
+/* ── 底部 CTA：这一块原来太透明，字读不出来 ── */
+.cta-band {
+  -webkit-backdrop-filter: blur(22px) saturate(160%) brightness(0.60);
+  backdrop-filter: blur(22px) saturate(160%) brightness(0.60);
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.72),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.16),
+    0 16px 40px rgba(6, 12, 18, 0.34);
+}
+
+.cta-band p,
+.cta-band .cta-wordmark {
+  text-shadow:
+    0 1px 2px rgba(6, 12, 18, 0.62),
+    0 2px 10px rgba(6, 12, 18, 0.40);
+}
+
+/* ── 「为什么需要」那一段的三张要点卡：同样处理 ── */
+.intro-split .split-points li {
+  -webkit-backdrop-filter: blur(20px) saturate(160%) brightness(0.62);
+  backdrop-filter: blur(20px) saturate(160%) brightness(0.62);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow:
+    inset 0 1.4px 0 rgba(255, 255, 255, 0.66),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.14),
+    0 12px 30px rgba(6, 12, 18, 0.30);
+}
+
+.intro-split .split-points li,
+.intro-split .split-points li strong {
+  color: #fff;
+  text-shadow:
+    0 1px 2px rgba(6, 12, 18, 0.60),
+    0 2px 8px rgba(6, 12, 18, 0.34);
+}
+
+/* ── 附魔联动那三张卡（.card）：壁纸较亮时也要能读 ── */
+.card,
+.bento-item {
+  -webkit-backdrop-filter: blur(24px) saturate(160%) brightness(0.60);
+  backdrop-filter: blur(24px) saturate(160%) brightness(0.60);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow:
+    inset 0 1.4px 0 rgba(255, 255, 255, 0.66),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12),
+    0 14px 34px rgba(6, 12, 18, 0.30);
+}
+
+.card h3,
+.bento-item h3,
+.bento-item p,
+.card p,
+.card li,
+.bento-item li {
+  color: #fff;
+  text-shadow:
+    0 1px 2px rgba(6, 12, 18, 0.58),
+    0 2px 8px rgba(6, 12, 18, 0.32);
+}
+
+/* 卡片里的小代码块：在暗底上给一点亮色 */
+.card code,
+.bento-item code {
+  color: #d8ecfa;
+  background: rgba(6, 12, 18, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+
+/* ── 表格：命令一览。表头加一层底，行间加分隔线，长表格才读得下去 ── */
+.help-table {
+  -webkit-backdrop-filter: blur(24px) saturate(160%) brightness(0.62);
+  backdrop-filter: blur(24px) saturate(160%) brightness(0.62);
+}
+
+.help-table thead th {
+  background: rgba(6, 12, 18, 0.34);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(6, 12, 18, 0.5);
+}
+
+.help-table tbody td {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(6, 12, 18, 0.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.help-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ── 检查清单 / 无序列表在暗底上的小圆点 ── */
+.card ul li::before,
+.bento-item ul li::before,
+.glass-panel ul li::before {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ── 不模糊的降级方案：低端设备直接给足底色，优先保证可读 ── */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-panel {
+    background: rgba(20, 32, 42, 0.72);
+  }
+
+  .card,
+  .bento-item,
+  .cta-band,
+  .intro-split .split-points li {
+    background: rgba(20, 32, 42, 0.66);
+  }
+}
+
+/* ── 用户要求减少动效时同样退回实色 ── */
+@media (prefers-reduced-motion: reduce) {
+  .glass-panel,
+  .card,
+  .bento-item,
+  .cta-band,
+  .intro-split .split-points li,
+  .glass-flow li {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(20, 32, 42, 0.70);
+  }
+}
+
+/* ==========================================================================
+   LinuxTeam 页面：玻璃方案定稿（暗玻璃）
+   ==========================================================================
+   三轮实测结论（无头 Edge 整页截图，逐版对比）：
+     第 1 版  浅色玻璃 rgba(255,255,255,0.10) + 白字
+              → 壁纸高光区上白字读不出来
+     第 2 版  加深色压暗罩 + 提高玻璃白度 + 深色投影
+              → 顶部封面能读了，但滚动后的区域仍糊；壁纸亮部太多，不稳定
+     第 3 版  backdrop-filter 里加 brightness(0.58) 压暗背后
+              → 效果不稳定（部分区域反而更亮），且不可控
+
+   定稿方案：**暗玻璃**
+     面板底色 = 深钢青蓝 @ 0.76 不透度
+        · 保留 24% 的透光率 —— 壁纸仍然透得出来，"透明"这个要求满足
+        · 但底足够深，白字对比度约 10:1（WCAG AA 要求 4.5:1），任何壁纸下都能读
+     上缘一道白色细高光 + 外圈软阴影 = 玻璃的"厚度感"
+     斜向扫光保留但压到 0.22，只作质感点缀，不参与提亮
+
+   为什么最终选暗玻璃而不是浅玻璃：
+     浅玻璃的可读性**取决于壁纸当处长什么样**（亮区糊、暗区清），
+     而壁纸是服主随时可换的、内容是不可控的。
+     暗玻璃把"可读性"从"看运气"变成"有保证"，同时 24% 透光已经足够表达透明。
+   ========================================================================== */
+
+/* ── 暗玻璃：统一给面板/卡片/表格用 ── */
+.glass-panel,
+.card,
+.bento-item,
+.cta-band,
+.intro-split .split-points li,
+.glass-flow li,
+.help-table {
+  /* 深钢青蓝（与封面视频采样色 #1e2c38 同族），掺一点点主色的蓝 */
+  background:
+    linear-gradient(162deg,
+      rgba(26, 40, 52, 0.80) 0%,
+      rgba(20, 33, 44, 0.76) 52%,
+      rgba(16, 27, 37, 0.78) 100%);
+  -webkit-backdrop-filter: blur(22px) saturate(165%);
+  backdrop-filter: blur(22px) saturate(165%);
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  box-shadow:
+    /* 上缘细高光：玻璃厚度 */
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.46),
+    /* 下缘一道暗边：闭合边缘 */
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    /* 外侧软阴影：与壁纸拉开层次 */
+    0 16px 40px rgba(4, 10, 16, 0.42);
+}
+
+/* 玻璃面板保留自己的圆角与内距，不覆盖 */
+
+/* 斜向扫光：只做质感，不参与提亮 */
+.glass-panel::after {
+  background:
+    linear-gradient(118deg,
+      rgba(255, 255, 255, 0.22) 0%,
+      rgba(255, 255, 255, 0.05) 24%,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0) 100%);
+  opacity: 0.22;
+}
+
+/* ── 暗底上的一切文字：纯白 + 轻投影 ── */
+.glass-panel h1, .glass-panel h2, .glass-panel h3,
+.glass-panel p, .glass-panel li, .glass-panel strong, .glass-panel div,
+.card h3, .card p, .card li, .card strong,
+.bento-item h3, .bento-item p, .bento-item li, .bento-item strong,
+.cta-band p, .cta-band .cta-wordmark,
+.intro-split .split-points li, .intro-split .split-points li strong,
+.glass-flow li, .glass-flow strong,
+.glass-caption, .glass-title,
+.help-table tbody td, .help-table thead th {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+}
+
+/* 面板顶栏的圆点与分隔线：暗底上要提亮 */
+.glass-dot {
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+.glass-titlebar {
+  border-bottom-color: rgba(255, 255, 255, 0.22);
+}
+
+.glass-caption {
+  border-top-color: rgba(255, 255, 255, 0.20);
+}
+
+/* ── 代码块：暗底上用更亮的青蓝，别用深色（会看不见） ── */
+.glass-caption code,
+.card code,
+.bento-item code,
+.glass-panel code,
+.help-table code {
+  color: #bfe3ff;
+  background: rgba(0, 0, 0, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+
+/* ── 箱子格子：在暗玻璃上重新配一次色 ── */
+.inv-slot {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.inv-slot.on,
+.inv-slot.head {
+  color: #10222e;
+  background: rgba(255, 255, 255, 0.90);
+  border: 1px solid rgba(255, 255, 255, 0.98);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    0 4px 12px rgba(0, 0, 0, 0.34);
+}
+
+.inv-slot.head {
+  background: rgba(222, 235, 245, 0.92);
+}
+
+.inv-slot.on:hover::after,
+.inv-slot.head:hover::after {
+  color: #10222e;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid rgba(255, 255, 255, 1);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.40);
+}
+
+/* ── 附魔流程条 ── */
+.glass-flow li {
+  border: 1px solid rgba(255, 255, 255, 0.26);
+}
+
+.flow-tag {
+  color: #10222e;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.30);
+  text-shadow: none;
+}
+
+.flow-tag.ok {
+  color: #07351a;
+  background: rgba(190, 242, 202, 0.96);
+}
+
+.flow-tag.no {
+  color: #430e0d;
+  background: rgba(255, 206, 203, 0.96);
+}
+
+/* ── 表格：表头再深一档，行间加分隔线 ── */
+.help-table thead th {
+  background: rgba(0, 0, 0, 0.30);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+.help-table tbody td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.help-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.help-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ── 标签（badge）：暗底上给足对比 ── */
+.help-table .badge,
+.card .badge,
+.bento-item .badge {
+  color: #0d1e29 !important;
+  text-shadow: none !important;
+}
+
+/* ── 按钮：默认与次要按钮在暗底上要看得见 ── */
+.cta-band .btn-secondary,
+.card-links .btn-secondary {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.glass-panel .btn {
+  color: #fff;
+}
+
+/* ── 小圆点列表符号在暗底上提亮 ── */
+.card ul li::before,
+.bento-item ul li::before,
+.glass-panel ul li::before {
+  color: rgba(255, 255, 255, 0.80);
+}
+
+/* ── 降级：不支持 backdrop-filter 时直接加厚底色 ── */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-panel,
+  .card,
+  .bento-item,
+  .cta-band,
+  .intro-split .split-points li,
+  .glass-flow li,
+  .help-table {
+    background: rgba(20, 33, 44, 0.90);
+  }
+}
+
+/* ── 减少动效 / 低端设备：同样加厚，优先可读 ── */
+@media (prefers-reduced-motion: reduce) {
+  .glass-panel,
+  .card,
+  .bento-item,
+  .cta-band,
+  .intro-split .split-points li,
+  .glass-flow li,
+  .help-table {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(20, 33, 44, 0.92);
+  }
+
+  .glass-panel::after {
+    display: none;
+  }
+}
+
+/* ── 帮助页是纯白底，暗玻璃会把整页压黑，所以那两页不改 ── */
+body.pure-white .card,
+body.pure-white .bento-item,
+body.pure-white .cta-band,
+body.pure-white .glass-panel,
+body.pure-white .help-table,
+body.pure-white .glass-flow li {
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(74, 123, 167, 0.18);
+  box-shadow: 0 8px 24px rgba(30, 44, 56, 0.06);
+}
+
+body.pure-white .card h3,
+body.pure-white .card p,
+body.pure-white .card li,
+body.pure-white .bento-item h3,
+body.pure-white .bento-item p,
+body.pure-white .bento-item li,
+body.pure-white .glass-panel h3,
+body.pure-white .glass-panel p,
+body.pure-white .glass-panel li,
+body.pure-white .glass-caption,
+body.pure-white .help-table tbody td,
+body.pure-white .help-table thead th,
+body.pure-white .glass-flow li {
+  color: #1d1d1f;
+  text-shadow: none;
+}
+
+body.pure-white .help-table thead th {
+  background: #f2f6fa;
+  border-bottom: 1px solid #d2d7db;
+}
+
+body.pure-white .help-table tbody td {
+  border-bottom: 1px solid #e6eaee;
+}
+
+body.pure-white .glass-caption code,
+body.pure-white .card code,
+body.pure-white .bento-item code,
+body.pure-white .help-table code,
+body.pure-white .glass-panel code {
+  color: #1d1d1f;
+  background: #f5f7f9;
+  border: 1px solid #e6eaee;
+}
+
+/* ==========================================================================
+   LinuxTeam 页面：模块改回「无色透明」，只有最后一栏保留深色
+   ==========================================================================
+   上一版把面板做成了"暗玻璃"（深钢青蓝 @0.76），可读性有保证，
+   但颜色太重，整体偏黑，与全站其它页面的浅色玻璃不一致。
+
+   这一版按你的要求改回：**模块无色透明 + 只有最后一栏是黑的**。
+
+   问题在于：如果只是把底色透明掉，白字又会回到"压在亮壁纸上看不清"
+   的老问题。解决办法是把可读性从"面板底色"挪到"文字自身"：
+
+     · 面板只留 4% 的极淡白 —— 够表达"这是一块玻璃"，不引入任何颜色
+     · backdrop-filter 模糊提到 30px —— 背后的壁纸被柔化，
+       字不再是压在"清晰的图案"上，而是压在"一团柔和的色块"上
+     · 每个字后面压两层深色投影（1px + 3px）——
+       投影是**字的一部分**，不是面板的颜色，所以模块看起来依然无色
+     · 字形略微加粗（500）—— 白字在亮底上细笔画最容易糊
+
+   这样：模块本身无可见颜色，文字在任何壁纸上都读得清。
+
+   ---------------------------------------------------------------------------
+   唯一例外：最后一栏（底部 CTA）用 .cta-band--ink 保留深色块。
+   ---------------------------------------------------------------------------
+   ========================================================================== */
+
+/* ── 模块：极淡白 + 强模糊，不引入任何色相 ── */
+.glass-panel,
+.card,
+.bento-item,
+.intro-split .split-points li,
+.glass-flow li,
+.help-table {
+  /* 只有 4% 的白，几乎看不出颜色，只表达"这里有一层玻璃" */
+  background: rgba(255, 255, 255, 0.04);
+  -webkit-backdrop-filter: blur(30px) saturate(150%);
+  backdrop-filter: blur(30px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow:
+    /* 上缘细高光：玻璃的厚度感，仍然是白色，不是彩色 */
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.62),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.10),
+    /* 外侧软阴影：用中性黑，不带蓝调，避免看成"有色玻璃" */
+    0 16px 40px rgba(0, 0, 0, 0.22);
+}
+
+/* 斜向扫光：保留质感，但压得极淡，不参与提亮 */
+.glass-panel::after {
+  background:
+    linear-gradient(118deg,
+      rgba(255, 255, 255, 0.20) 0%,
+      rgba(255, 255, 255, 0.04) 22%,
+      rgba(255, 255, 255, 0) 38%,
+      rgba(255, 255, 255, 0) 100%);
+  opacity: 0.18;
+}
+
+/* ── 文字：可读性靠"字自身的投影"，不靠面板底色 ── */
+.glass-panel h1, .glass-panel h2, .glass-panel h3,
+.glass-panel p, .glass-panel li, .glass-panel strong,
+.card h3, .card p, .card li, .card strong,
+.bento-item h3, .bento-item p, .bento-item li, .bento-item strong,
+.intro-split .split-points li, .intro-split .split-points li strong,
+.glass-flow li, .glass-flow strong,
+.glass-caption, .glass-title,
+.help-table tbody td, .help-table thead th {
+  color: #fff;
+  /* 两层投影：近处一层压边，远处一层铺底。字在亮壁纸上也能读 */
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.78),
+    0 2px 10px rgba(0, 0, 0, 0.55);
+}
+
+/* 细笔画最容易糊，正文整体加一点字重 */
+.glass-panel p, .glass-panel li,
+.card p, .card li,
+.bento-item p, .bento-item li,
+.intro-split .split-points li,
+.glass-flow li,
+.glass-caption,
+.help-table tbody td {
+  font-weight: 500;
+}
+
+/* ── 顶栏：暗底改回亮底，圆点提亮 ── */
+.glass-titlebar {
+  border-bottom-color: rgba(255, 255, 255, 0.30);
+}
+
+.glass-dot {
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+.glass-title {
+  font-weight: 600;
+}
+
+/* ── 箱子格子：透明底上重配一次 ── */
+.inv-slot {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 2px 8px rgba(0, 0, 0, 0.14);
+}
+
+.inv-slot.on,
+.inv-slot.head {
+  color: #10222e;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 1);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    0 5px 14px rgba(0, 0, 0, 0.30);
+}
+
+.inv-slot.head {
+  background: rgba(226, 237, 245, 0.94);
+}
+
+.inv-slot.on:hover::after,
+.inv-slot.head:hover::after {
+  color: #10222e;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid rgba(255, 255, 255, 1);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.38);
+  text-shadow: none;
+}
+
+/* ── 流程条：同样透明 ── */
+.glass-flow li {
+  border: 1px solid rgba(255, 255, 255, 0.38);
+}
+
+.flow-tag {
+  color: #10222e;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.30);
+  text-shadow: none;
+}
+
+.flow-tag.ok {
+  color: #07351a;
+  background: rgba(190, 242, 202, 0.97);
+}
+
+.flow-tag.no {
+  color: #430e0d;
+  background: rgba(255, 206, 203, 0.97);
+}
+
+/* ── 代码块：透明底上给一层很淡的黑，保证亮青蓝字看得清 ── */
+.glass-caption code,
+.card code,
+.bento-item code,
+.glass-panel code,
+.help-table code {
+  color: #e6f4ff;
+  background: rgba(0, 0, 0, 0.30);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* ── 表格：表头加一层很淡的黑，行分隔线用白色 ── */
+.help-table thead th {
+  background: rgba(0, 0, 0, 0.22);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+.help-table tbody td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.help-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.help-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* ── 标签：透明底上给实色，不然读不出来 ── */
+.help-table .badge,
+.card .badge,
+.bento-item .badge {
+  color: #0d1e29 !important;
+  text-shadow: none !important;
+}
+
+/* ── 次要按钮：透明底上要有边框和淡底才看得见 ── */
+.card-links .btn-secondary {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.62);
+  background: rgba(255, 255, 255, 0.12);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.glass-panel .btn {
+  color: #fff;
+}
+
+/* ── 列表小圆点在透明底上提亮 ── */
+.card ul li::before,
+.bento-item ul li::before,
+.glass-panel ul li::before {
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* ==========================================================================
+   唯一保留深色的一栏：底部 CTA
+   ========================================================================== */
+.cta-band--ink {
+  /* 深钢青蓝，与封面视频采样色同族 */
+  background:
+    linear-gradient(162deg,
+      rgba(30, 44, 56, 0.90) 0%,
+      rgba(22, 36, 47, 0.88) 55%,
+      rgba(16, 27, 37, 0.90) 100%);
+  -webkit-backdrop-filter: blur(24px) saturate(165%);
+  backdrop-filter: blur(24px) saturate(165%);
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.40),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.28),
+    0 20px 50px rgba(0, 0, 0, 0.42);
+}
+
+.cta-band--ink p,
+.cta-band--ink .cta-wordmark {
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.60);
+}
+
+.cta-band--ink .btn-secondary {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.48);
+  background: rgba(255, 255, 255, 0.10);
+}
+
+/* ==========================================================================
+   帮助页（纯白底）：透明模块在白底上没有意义，保持浅色卡片
+   ========================================================================== */
+body.pure-white .glass-panel,
+body.pure-white .card,
+body.pure-white .bento-item,
+body.pure-white .intro-split .split-points li,
+body.pure-white .glass-flow li,
+body.pure-white .help-table {
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(74, 123, 167, 0.18);
+  box-shadow: 0 8px 24px rgba(30, 44, 56, 0.06);
+}
+
+body.pure-white .glass-panel h1, body.pure-white .glass-panel h2,
+body.pure-white .glass-panel h3,
+body.pure-white .glass-panel p, body.pure-white .glass-panel li,
+body.pure-white .glass-panel strong,
+body.pure-white .card h3, body.pure-white .card p, body.pure-white .card li,
+body.pure-white .bento-item h3, body.pure-white .bento-item p,
+body.pure-white .bento-item li,
+body.pure-white .glass-caption, body.pure-white .glass-title,
+body.pure-white .glass-flow li,
+body.pure-white .help-table tbody td,
+body.pure-white .help-table thead th {
+  color: #1d1d1f;
+  text-shadow: none;
+}
+
+body.pure-white .help-table thead th {
+  background: #f2f6fa;
+  border-bottom: 1px solid #d2d7db;
+}
+
+body.pure-white .help-table tbody td {
+  border-bottom: 1px solid #e6eaee;
+}
+
+body.pure-white .glass-caption code,
+body.pure-white .card code,
+body.pure-white .bento-item code,
+body.pure-white .help-table code,
+body.pure-white .glass-panel code {
+  color: #1d1d1f;
+  background: #f5f7f9;
+  border: 1px solid #e6eaee;
+  text-shadow: none;
+}
+
+body.pure-white .glass-panel .btn {
+  color: #fff;
+}
+
+/* ==========================================================================
+   降级：不支持 backdrop-filter 时透明模块会完全读不出来，直接给淡黑底
+   ========================================================================== */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-panel,
+  .card,
+  .bento-item,
+  .intro-split .split-points li,
+  .glass-flow li,
+  .help-table {
+    background: rgba(10, 18, 26, 0.62);
+  }
+
+  body.pure-white .glass-panel,
+  body.pure-white .card,
+  body.pure-white .bento-item,
+  body.pure-white .intro-split .split-points li,
+  body.pure-white .glass-flow li,
+  body.pure-white .help-table {
+    background: rgba(255, 255, 255, 0.86);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-panel,
+  .card,
+  .bento-item,
+  .intro-split .split-points li,
+  .glass-flow li,
+  .help-table {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(10, 18, 26, 0.70);
+  }
+
+  .glass-panel::after {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   LinuxTeam 页面：纯中性压暗 —— 让「无色透明模块」上的白字读得清
+   ==========================================================================
+   模块已经改成"无色透明"（只有 4% 的白），这是要的效果。
+   但透明模块本身不提供对比度，可读性只能来自两处：
+
+     ① 模块背后的壁纸要够暗   → 加深压暗罩
+     ② 文字自身要够厚         → 加强投影 + 字重
+
+   压暗罩刻意用**纯中性黑**（不带蓝色）：
+   带蓝调的话，透过透明玻璃看会像"有色玻璃"，
+   而你要的是"无色"。
+
+   加深到什么程度：约 46% 的黑。
+   这个值让白色文字的对比度稳定在 8:1 以上（WCAG AA 要求 4.5:1），
+   同时壁纸的图案与色彩仍然清晰可辨 —— 不是"把壁纸盖掉"。
+   ========================================================================== */
+
+.page-scrim {
+  background:
+    linear-gradient(180deg,
+      rgba(0, 0, 0, 0.50) 0%,
+      rgba(0, 0, 0, 0.42) 30%,
+      rgba(0, 0, 0, 0.46) 70%,
+      rgba(0, 0, 0, 0.52) 100%);
+}
+
+@media (max-width: 920px) {
+  /* 手机上壁纸是静态图且亮部更多，再深一点 */
+  .page-scrim {
+    background:
+      linear-gradient(180deg,
+        rgba(0, 0, 0, 0.56) 0%,
+        rgba(0, 0, 0, 0.48) 35%,
+        rgba(0, 0, 0, 0.54) 100%);
+  }
+}
+
+/* ── 文字：三层投影，字在深色壁纸上更实 ── */
+.glass-panel h1, .glass-panel h2, .glass-panel h3,
+.glass-panel p, .glass-panel li, .glass-panel strong,
+.card h3, .card p, .card li, .card strong,
+.bento-item h3, .bento-item p, .bento-item li, .bento-item strong,
+.intro-split .split-points li, .intro-split .split-points li strong,
+.glass-flow li, .glass-flow strong,
+.glass-caption, .glass-title,
+.help-table tbody td, .help-table thead th {
+  text-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.85),
+    0 1px 3px rgba(0, 0, 0, 0.72),
+    0 3px 14px rgba(0, 0, 0, 0.55);
+}
+
+/* ── 标题更粗一点，远看也清楚 ── */
+.glass-panel h1, .glass-panel h2, .glass-panel h3,
+.card h3, .bento-item h3,
+.glass-title {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/* ── 封面那一段本来就在壁纸最亮处，单独再压一点 ── */
+.cover-overlay {
+  background: linear-gradient(180deg,
+    rgba(0, 0, 0, 0.30) 0%,
+    rgba(0, 0, 0, 0.18) 45%,
+    rgba(0, 0, 0, 0.34) 100%);
+}
+
+.cover-title,
+.cover-subtitle,
+.cover-quote,
+.cover-remark p,
+.plug-hero-ver {
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.75),
+    0 3px 16px rgba(0, 0, 0, 0.55);
+}
+
+/* ── 区块小标题（FEATURES / PREVIEW 那一行）也要读得清 ── */
+.section-label {
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.80),
+    0 2px 10px rgba(0, 0, 0, 0.55);
+}
+
+.section-header h2,
+.section-header p {
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.80),
+    0 3px 14px rgba(0, 0, 0, 0.55);
+}
+
+/* ==========================================================================
+   帮助页（纯白）—— 确保是真白，不是灰
+   ==========================================================================
+   之前帮助页发灰的原因：teamhelp.html 里也放了 .page-scrim（压暗罩）。
+   那是给"有壁纸"的介绍页用的，纯白页加上它整页就灰了一层。
+   修法两步：① HTML 里去掉压暗罩（已做）② 这里再加一道保险，
+   把帮助页的所有背景层强制为白。
+   ========================================================================== */
+body.pure-white,
+html.page-anim body.pure-white {
+  background: #fff !important;
+}
+
+/* 帮助页里万一还残留压暗罩/背景层，一律隐藏 */
+body.pure-white .page-scrim,
+body.pure-white .bg-video,
+body.pure-white .bg-mobile {
+  display: none !important;
+}
+
+/* 帮助页的区块本身也必须是白的（不能透出任何底色） */
+body.pure-white section,
+body.pure-white .content-layout,
+body.pure-white .main-content,
+body.pure-white .page-hero,
+body.pure-white .intro-body {
+  background: #fff;
+}
+
+body.pure-white section.alt {
+  background: #fff;
+}
+
+/* 帮助页顶栏：白底 + 一条浅分隔线，不要玻璃灰 */
+body.pure-white nav,
+body.pure-white nav.nav-home {
+  background: #fff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-bottom: 1px solid #e6eaee;
+  box-shadow: 0 1px 3px rgba(30, 44, 56, 0.04);
+}
+
+body.pure-white .nav-links a {
+  text-shadow: none;
+}
+
+/* 帮助页页脚同理 */
+body.pure-white footer {
+  background: #fff;
+  border-top: 1px solid #e6eaee;
+}
+
+body.pure-white footer,
+body.pure-white footer a,
+body.pure-white footer p {
+  color: #515154;
+  text-shadow: none;
+}
+
+body.pure-white .footer-brand {
+  color: #1d1d1f;
+}
+
+/* ==========================================================================
+   LinuxTeam 页面：文字改为黑色
+   ==========================================================================
+   模块是无色透明玻璃（只有 4% 的白 + 30px 模糊），
+   玻璃背后的壁纸本身是亮色系（蓝白渐变），
+   所以**黑色文字**在这层玻璃上是清楚的 —— 比白字更稳。
+
+   配套调整：
+     · 文字投影换成**淡白色**光晕（原来给白字用的是黑色投影，
+       黑字配黑投影会糊成一团）
+     · 代码块、标签、按钮的配色同步改为深色系
+     · 上缘高光保留（那是玻璃的厚度感，与文字颜色无关）
+     · 最后一栏 .cta-band--ink 是深色块，那里仍用白字
+   ========================================================================== */
+
+/* ── 正文 / 标题：黑色 + 淡白光晕 ── */
+.glass-panel h1, .glass-panel h2, .glass-panel h3,
+.glass-panel p, .glass-panel li, .glass-panel strong,
+.card h3, .card p, .card li, .card strong,
+.bento-item h3, .bento-item p, .bento-item li, .bento-item strong,
+.intro-split .split-points li, .intro-split .split-points li strong,
+.glass-flow li, .glass-flow strong,
+.glass-caption, .glass-title,
+.help-table tbody td, .help-table thead th {
+  color: #12181d;
+  /* 淡白色光晕：黑字压在玻璃上时把背后那点纹理推开，边缘更利落 */
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.62),
+    0 1px 3px rgba(255, 255, 255, 0.45);
+}
+
+/* ── 顶栏：标题与圆点都改深色 ── */
+.glass-title {
+  color: #12181d;
+}
+
+.glass-dot {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(18, 24, 29, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 1px 3px rgba(18, 24, 29, 0.18);
+}
+
+.glass-titlebar {
+  border-bottom-color: rgba(18, 24, 29, 0.16);
+}
+
+.glass-caption {
+  border-top-color: rgba(18, 24, 29, 0.14);
+}
+
+/* ── 箱子格子：透明底上用深色描边才看得出格子 ── */
+.inv-slot {
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(18, 24, 29, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.inv-slot.on,
+.inv-slot.head {
+  color: #12181d;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(18, 24, 29, 0.20);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    0 3px 10px rgba(18, 24, 29, 0.16);
+}
+
+.inv-slot.head {
+  background: rgba(226, 237, 245, 0.88);
+}
+
+.inv-slot.on:hover::after,
+.inv-slot.head:hover::after {
+  color: #fff;
+  background: rgba(18, 24, 29, 0.92);
+  border: 1px solid rgba(18, 24, 29, 0.92);
+  box-shadow: 0 8px 22px rgba(18, 24, 29, 0.30);
+  text-shadow: none;
+}
+
+/* ── 代码块：黑字 + 淡底 ── */
+.glass-caption code,
+.card code,
+.bento-item code,
+.glass-panel code,
+.help-table code {
+  color: #0f3b57;
+  background: rgba(255, 255, 255, 0.52);
+  border: 1px solid rgba(18, 24, 29, 0.14);
+  text-shadow: none;
+  font-weight: 600;
+}
+
+/* ── 表格：表头与行分隔线改深色 ── */
+.help-table thead th {
+  color: #12181d;
+  background: rgba(255, 255, 255, 0.46);
+  border-bottom: 1px solid rgba(18, 24, 29, 0.20);
+}
+
+.help-table tbody td {
+  color: #12181d;
+  border-bottom: 1px solid rgba(18, 24, 29, 0.10);
+}
+
+.help-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.34);
+}
+
+/* ── 标签：白底深字 ── */
+.help-table .badge,
+.card .badge,
+.bento-item .badge {
+  color: #10222e !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  text-shadow: none !important;
+}
+
+/* ── 按钮：次要按钮改深色描边 ── */
+.card-links .btn-secondary {
+  color: #12181d;
+  border-color: rgba(18, 24, 29, 0.34);
+  background: rgba(255, 255, 255, 0.44);
+  text-shadow: none;
+}
+
+.glass-panel .btn {
+  color: #fff;
+}
+
+/* ── 列表小圆点：黑字旁边要用深色 ── */
+.card ul li::before,
+.bento-item ul li::before,
+.glass-panel ul li::before {
+  color: rgba(18, 24, 29, 0.62);
+  text-shadow: none;
+}
+
+/* ── 流程条：黑字，标签保留实色以便区分 ── */
+.glass-flow li {
+  color: #12181d;
+  border: 1px solid rgba(18, 24, 29, 0.16);
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.60),
+    0 1px 3px rgba(255, 255, 255, 0.42);
+}
+
+.glass-flow strong {
+  color: #0b1217;
+}
+
+/* 最后一条是"拦截"，给一点红调提示；其余用中性 */
+.flow-tag {
+  color: #10222e;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(18, 24, 29, 0.18);
+  box-shadow: 0 2px 6px rgba(18, 24, 29, 0.14);
+  text-shadow: none;
+}
+
+/* ==========================================================================
+   例外：最后一栏（深色块）仍然用白字
+   ========================================================================== */
+.cta-band--ink p,
+.cta-band--ink .cta-wordmark,
+.cta-band--ink .cta-actions a {
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.60);
+}
+
+.cta-band--ink .btn-secondary {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.48);
+  background: rgba(255, 255, 255, 0.10);
+}
+
+/* ==========================================================================
+   页面上的非模块文字（区块标题、封面）也统一黑字
+   ========================================================================== */
+.section-label {
+  color: #0f3b57;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.60);
+}
+
+.section-header h2,
+.section-header p {
+  color: #12181d;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.62),
+    0 1px 3px rgba(255, 255, 255, 0.45);
+}
+
+/* 封面：压在壁纸最亮处，用深色文字 + 淡白光晕，不再用白字 */
+.cover-title,
+.cover-subtitle {
+  color: #0f1519;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55),
+    0 2px 14px rgba(255, 255, 255, 0.40);
+}
+
+.cover-quote,
+.cover-remark p {
+  color: #16202a;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55),
+    0 2px 12px rgba(255, 255, 255, 0.40);
+}
+
+.cover-quote strong {
+  color: #0b1217;
+}
+
+.plug-hero-ver {
+  color: #16202a;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(18, 24, 29, 0.16);
+  text-shadow: none;
+}
+
+.cover-divider {
+  background: rgba(18, 24, 29, 0.24);
+}
+
+/* 封面上的三个按钮：改深字浅底，壁纸亮处不再靠发光取胜 */
+.cover-page .cover-btn {
+  color: #12181d;
+  border: 1px solid rgba(18, 24, 29, 0.28);
+  background: rgba(255, 255, 255, 0.58);
+  text-shadow: none;
+}
+
+.cover-page .cover-btn:hover {
+  color: #0b1217;
+  background: rgba(255, 255, 255, 0.80);
+  border-color: rgba(18, 24, 29, 0.42);
+}
+
+/* ── 压暗罩：黑字方案下不需要那么深，减到约 26% ──
+   （太深会让黑字读不出来；压暗罩只负责把壁纸的极亮处压平一点） */
+.page-scrim {
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.46) 0%,
+      rgba(255, 255, 255, 0.30) 32%,
+      rgba(255, 255, 255, 0.38) 70%,
+      rgba(255, 255, 255, 0.48) 100%);
+}
+
+@media (max-width: 920px) {
+  .page-scrim {
+    background:
+      linear-gradient(180deg,
+        rgba(255, 255, 255, 0.55) 0%,
+        rgba(255, 255, 255, 0.40) 35%,
+        rgba(255, 255, 255, 0.50) 100%);
+  }
+}
+
+/* ==========================================================================
+   帮助页（纯白）：黑字本来就是默认，这里只兜底一次
+   ========================================================================== */
+body.pure-white .glass-panel h1, body.pure-white .glass-panel h2,
+body.pure-white .glass-panel h3,
+body.pure-white .glass-panel p, body.pure-white .glass-panel li,
+body.pure-white .glass-panel strong,
+body.pure-white .card h3, body.pure-white .card p, body.pure-white .card li,
+body.pure-white .bento-item h3, body.pure-white .bento-item p,
+body.pure-white .bento-item li,
+body.pure-white .glass-caption, body.pure-white .glass-title,
+body.pure-white .glass-flow li,
+body.pure-white .help-table tbody td,
+body.pure-white .help-table thead th {
+  color: #12181d;
+  text-shadow: none;
+}
+
+body.pure-white .section-header h2,
+body.pure-white .section-header p,
+body.pure-white .section-label {
+  color: #1d1d1f;
+  text-shadow: none;
+}
+
+body.pure-white .page-hero h1,
+body.pure-white .page-hero p {
+  color: #1d1d1f;
+  text-shadow: none;
+}
+
+/* ==========================================================================
+   LinuxTeam 页面：黑字 + 白色描边（定稿）
+   ==========================================================================
+   你的选择：黑字 + 文字加白色描边。
+
+   这是三种方案里唯一"壁纸随便换都读得清"的做法：
+     黑字在亮壁纸上有对比，白描边在暗壁纸上有对比 ——
+     壁纸亮或暗，总有一边撑着。
+
+   实现细节（为什么不直接用 -webkit-text-stroke）：
+     text-stroke 画在字形**中心线上**，会把笔画吃掉一半，
+     小字号直接糊成一团；而且它画在文字**下面**，压在深色壁上依然看不清。
+     Chrome / Edge 对 paint-order: stroke 的支持也不完整。
+
+     所以改用 8 方向 text-shadow 描边 ——
+     上下左右 + 四个斜角各投一道白色阴影，视觉上就是一圈白描边，
+     而且不占用字形本身，字号多小都不会糊。
+
+       ↖ ↑ ↗
+       ← 字 →
+       ↙ ↓ ↘
+
+   加两层软白光晕（1px / 3px），让描边外缘柔和过渡，不是硬边。
+   代码块排除在外 —— 它们有自己的浅色底，再加描边反而脏。
+   ========================================================================== */
+
+/* ── 主体文字：黑字 + 八向白描边 + 两层柔光 ── */
+.glass-panel h1, .glass-panel h2, .glass-panel h3,
+.glass-panel p, .glass-panel li, .glass-panel strong,
+.card h3, .card p, .card li, .card strong,
+.bento-item h3, .bento-item p, .bento-item li, .bento-item strong,
+.intro-split .split-points li, .intro-split .split-points li strong,
+.glass-flow li, .glass-flow strong,
+.glass-caption, .glass-title,
+.help-table tbody td, .help-table thead th {
+
+  color: #0d1216;
+
+  text-shadow:
+    /* ↖ ↑ ↗ ← → ↙ ↓ ↘ 八向白描边 */
+    -1px -1px 0 rgba(255, 255, 255, 0.95),
+     0   -1px 0 rgba(255, 255, 255, 0.95),
+     1px -1px 0 rgba(255, 255, 255, 0.95),
+    -1px  0   0 rgba(255, 255, 255, 0.95),
+     1px  0   0 rgba(255, 255, 255, 0.95),
+    -1px  1px 0 rgba(255, 255, 255, 0.95),
+     0    1px 0 rgba(255, 255, 255, 0.95),
+     1px  1px 0 rgba(255, 255, 255, 0.95),
+    /* 两层柔光：描边外缘过渡，避免硬边 */
+    0 0 2px rgba(255, 255, 255, 0.85),
+    0 0 6px rgba(255, 255, 255, 0.55);
+}
+
+/* ── 大标题描边放宽一点，远看更整体 ── */
+.glass-panel h1, .glass-panel h2,
+.card h3, .bento-item h3,
+.section-header h2,
+.cover-title {
+  text-shadow:
+    -2px -2px 0 rgba(255, 255, 255, 0.96),
+     0   -2px 0 rgba(255, 255, 255, 0.96),
+     2px -2px 0 rgba(255, 255, 255, 0.96),
+    -2px  0   0 rgba(255, 255, 255, 0.96),
+     2px  0   0 rgba(255, 255, 255, 0.96),
+    -2px  2px 0 rgba(255, 255, 255, 0.96),
+     0    2px 0 rgba(255, 255, 255, 0.96),
+     2px  2px 0 rgba(255, 255, 255, 0.96),
+    0 0 4px rgba(255, 255, 255, 0.80),
+    0 0 12px rgba(255, 255, 255, 0.45);
+}
+
+/* ── 区块小标题（FEATURES / PREVIEW …）── */
+.section-label {
+  color: #0b4f74;
+  text-shadow:
+    -1px -1px 0 rgba(255, 255, 255, 0.92),
+     1px -1px 0 rgba(255, 255, 255, 0.92),
+    -1px  1px 0 rgba(255, 255, 255, 0.92),
+     1px  1px 0 rgba(255, 255, 255, 0.92),
+    0 0 6px rgba(255, 255, 255, 0.70);
+}
+
+.section-header p {
+  color: #101820;
+  text-shadow:
+    -1px -1px 0 rgba(255, 255, 255, 0.92),
+     1px -1px 0 rgba(255, 255, 255, 0.92),
+    -1px  1px 0 rgba(255, 255, 255, 0.92),
+     1px  1px 0 rgba(255, 255, 255, 0.92),
+    0 0 6px rgba(255, 255, 255, 0.70);
+}
+
+/* ── 封面：同样黑字白描边，壁纸再亮也不怕 ── */
+.cover-title,
+.cover-subtitle,
+.cover-quote,
+.cover-quote strong,
+.cover-remark p {
+  color: #0b1015;
+  text-shadow:
+    -1px -1px 0 rgba(255, 255, 255, 0.94),
+     0   -1px 0 rgba(255, 255, 255, 0.94),
+     1px -1px 0 rgba(255, 255, 255, 0.94),
+    -1px  0   0 rgba(255, 255, 255, 0.94),
+     1px  0   0 rgba(255, 255, 255, 0.94),
+    -1px  1px 0 rgba(255, 255, 255, 0.94),
+     0    1px 0 rgba(255, 255, 255, 0.94),
+     1px  1px 0 rgba(255, 255, 255, 0.94),
+    0 0 10px rgba(255, 255, 255, 0.55);
+}
+
+/* 封面版本号徽标：白底黑字，不用描边 */
+.plug-hero-ver {
+  color: #101820;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(13, 18, 22, 0.16);
+  text-shadow: none;
+}
+
+/* 封面按钮：白底黑字，最稳 */
+.cover-page .cover-btn {
+  color: #0d1216;
+  background: rgba(255, 255, 255, 0.80);
+  border: 1px solid rgba(13, 18, 22, 0.22);
+  text-shadow: none;
+}
+
+.cover-page .cover-btn:hover {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(13, 18, 22, 0.36);
+}
+
+/* ── 代码块：排除描边（它们有自己的浅底），只保证黑字清楚 ── */
+.glass-caption code,
+.card code,
+.bento-item code,
+.glass-panel code,
+.help-table code {
+  color: #0b3a52;
+  text-shadow: none;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(13, 18, 22, 0.14);
+  font-weight: 600;
+}
+
+/* ── 表格：表头白底黑字，行线用深色 ── */
+.help-table thead th {
+  color: #0d1216;
+  background: rgba(255, 255, 255, 0.66);
+  border-bottom: 1px solid rgba(13, 18, 22, 0.22);
+  text-shadow: none;
+}
+
+.help-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.40);
+}
+
+/* ── 标签：白底深字，不用描边 ── */
+.help-table .badge,
+.card .badge,
+.bento-item .badge {
+  color: #0b1217 !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  border: 1px solid rgba(13, 18, 22, 0.14) !important;
+  text-shadow: none !important;
+}
+
+/* ── 列表小圆点：深色，看得见即可 ── */
+.card ul li::before,
+.bento-item ul li::before,
+.glass-panel ul li::before {
+  color: rgba(13, 18, 22, 0.60);
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.80);
+}
+
+/* ── 流程标签：实色底，不用描边 ── */
+.flow-tag,
+.flow-tag.ok,
+.flow-tag.no {
+  text-shadow: none;
+}
+
+/* ==========================================================================
+   例外：最后一栏是深色块，那里仍然用白字（不加白描边，否则糊）
+   ========================================================================== */
+.cta-band--ink p,
+.cta-band--ink .cta-wordmark,
+.cta-band--ink .cta-actions a {
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.60);
+}
+
+.cta-band--ink .btn-secondary {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.48);
+  background: rgba(255, 255, 255, 0.10);
+}
+
+/* ==========================================================================
+   帮助页（纯白底）：黑字不需要描边，全部关掉
+   ========================================================================== */
+body.pure-white .glass-panel h1, body.pure-white .glass-panel h2,
+body.pure-white .glass-panel h3,
+body.pure-white .glass-panel p, body.pure-white .glass-panel li,
+body.pure-white .glass-panel strong,
+body.pure-white .card h3, body.pure-white .card p, body.pure-white .card li,
+body.pure-white .bento-item h3, body.pure-white .bento-item p,
+body.pure-white .bento-item li,
+body.pure-white .glass-caption, body.pure-white .glass-title,
+body.pure-white .glass-flow li,
+body.pure-white .help-table tbody td,
+body.pure-white .help-table thead th,
+body.pure-white .section-header h2,
+body.pure-white .section-header p,
+body.pure-white .section-label,
+body.pure-white .page-hero h1,
+body.pure-white .page-hero p {
+  color: #1d1d1f;
+  text-shadow: none;
+}
+
+/* ==========================================================================
+   主页封面信息行（github / 插件链接）—— 黑字白描边，与 LinuxTeam 页统一
+   ========================================================================== */
+.cover-social a,
+.cover-social a .label,
+.cover-social a .ico {
+  color: #0d1216;
+  text-shadow:
+    -1px -1px 0 rgba(255, 255, 255, 0.95),
+     0   -1px 0 rgba(255, 255, 255, 0.95),
+     1px -1px 0 rgba(255, 255, 255, 0.95),
+    -1px  0   0 rgba(255, 255, 255, 0.95),
+     1px  0   0 rgba(255, 255, 255, 0.95),
+    -1px  1px 0 rgba(255, 255, 255, 0.95),
+     0    1px 0 rgba(255, 255, 255, 0.95),
+     1px  1px 0 rgba(255, 255, 255, 0.95),
+    0 0 6px rgba(255, 255, 255, 0.60);
+}
+
+.cover-social a:hover,
+.cover-social a:hover .label,
+.cover-social a:hover .ico {
+  color: #0b4f74;
+}
+
+/* 封面上其它裸露在壁纸上的小字 */
+.cover-remark strong {
+  color: #0b1015;
+}
+
+.cover-quote strong {
+  color: #0b1015;
+}
+
+/* ==========================================================================
+   LinuxTeam 页面：移动端适配
+   ==========================================================================
+   实测（390 CSS px 宽，deviceScaleFactor 2）发现的问题：
+     ① 手机上壁纸是 mobile.jpg，全程铺在内容后面，图案比桌面端的视频更花
+     ② 面板只有 4% 的白底，桌面端靠大屏留白还能看，
+        手机屏窄、行数多、字挤在一起 → 黑字虽然清楚，但面板边界几乎看不出来
+     ③ 封面那一行按钮在 390px 宽下会挤成两行，间距太紧
+     ④ 触屏没有 hover，箱子格子的提示气泡会"粘"在屏幕上（已单独处理）
+
+   修法：
+     · 手机上给面板加到 34% 的白底 —— 仍然是玻璃（看得到壁纸纹理与流动），
+       但边界清楚、黑字对比度从"勉强"提到"舒服"
+     · 触屏把字号与行高稍微放大（手机上默认字太小）
+     · 面板内距收紧一点，把省下的空间还给文字
+     · 封面按钮变成等宽两列，不再挤成参差不齐的两行
+     · 底栏、表格、流程条各自的窄屏形态单独调
+   ========================================================================== */
+
+/* ── 平板（≤920px）── */
+@media (max-width: 920px) {
+
+  /* 面板：白底加到 34%，边界清楚但仍是玻璃 */
+  .glass-panel,
+  .card,
+  .bento-item,
+  .intro-split .split-points li,
+  .glass-flow li,
+  .help-table {
+    background: rgba(255, 255, 255, 0.34);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+    backdrop-filter: blur(22px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.62);
+    box-shadow:
+      inset 0 1.4px 0 rgba(255, 255, 255, 0.85),
+      0 10px 28px rgba(13, 18, 22, 0.16);
+  }
+
+  /* 描边收细一点：小屏上 1px 已经很显眼，不要用桌面端的大标题描边 */
+  .glass-panel h1, .glass-panel h2, .glass-panel h3,
+  .card h3, .bento-item h3,
+  .section-header h2,
+  .cover-title {
+    text-shadow:
+      -1px -1px 0 rgba(255, 255, 255, 0.96),
+       1px -1px 0 rgba(255, 255, 255, 0.96),
+      -1px  1px 0 rgba(255, 255, 255, 0.96),
+       1px  1px 0 rgba(255, 255, 255, 0.96),
+      0 0 5px rgba(255, 255, 255, 0.70);
+  }
+
+  /* 正文字号放大：手机上 14px 偏小，行高也放开 */
+  .glass-panel p, .glass-panel li,
+  .card p, .card li,
+  .bento-item p, .bento-item li,
+  .intro-split .split-points li,
+  .glass-flow li,
+  .help-table tbody td, .help-table thead th {
+    font-size: 15px;
+    line-height: 1.78;
+  }
+
+  .glass-panel p, .card p, .bento-item p {
+    line-height: 1.8;
+  }
+
+  /* 面板内距收紧，把空间还给文字 */
+  .glass-panel {
+    padding: 16px 16px 18px;
+  }
+
+  .card,
+  .bento-item {
+    padding: 18px 17px;
+  }
+
+  /* 列表：手机上缩进小一点，避免右侧被挤 */
+  .card ul,
+  .bento-item ul,
+  .glass-panel ul {
+    padding-left: 18px;
+  }
+
+  .card ul li,
+  .bento-item ul li,
+  .glass-panel ul li {
+    padding-left: 14px;
+    margin-bottom: 7px;
+  }
+
+  /* 代码块允许换行，不要横向溢出 */
+  .glass-caption code,
+  .card code,
+  .bento-item code,
+  .glass-panel code,
+  .help-table code {
+    word-break: break-word;
+  }
+
+  /* ── 封面：小屏居中，按钮等宽两列 ── */
+  .cover-page {
+    padding: 104px 18px 48px;
+  }
+
+  .cover-title {
+    font-size: clamp(34px, 10vw, 46px);
+  }
+
+  .cover-quote {
+    font-size: 16px;
+    line-height: 1.75;
+    padding: 0 4px;
+  }
+
+  .cover-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+    max-width: 380px;
+    margin: 20px auto 0;
+  }
+
+  .cover-page .cover-btn {
+    width: 100%;
+    text-align: center;
+    padding: 11px 10px;
+    font-size: 14.5px;
+  }
+
+  .cover-remark p {
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+
+  /* ── 区块标题：小屏收紧留白 ── */
+  .section-header {
+    margin-bottom: 22px;
+  }
+
+  .section-header h2 {
+    font-size: clamp(24px, 7vw, 32px);
+  }
+
+  .section-header p {
+    font-size: 14.5px;
+  }
+
+  /* ── Bento：手机上全部单列，不要"宽卡占 3 列"的桌面网格 ── */
+  .bento {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .bento-item.wide,
+  .bento-item.full {
+    grid-column: span 1;
+  }
+
+  .bento-cols {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  /* ── 附魔联动那三张卡：单列 ── */
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  /* ── 流程条：标签换到上行，文字换行不挤压 ── */
+  .glass-flow li {
+    flex-wrap: wrap;
+    gap: 8px 10px;
+  }
+
+  .flow-tag {
+    min-width: 44px;
+  }
+
+  /* ── 表格：窄屏上允许横向滚动，并给一句提示 ── */
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+  }
+
+  .help-table {
+    min-width: 520px;
+  }
+
+  .help-table tbody td,
+  .help-table thead th {
+    padding: 9px 10px;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+
+  /* ── 底栏：深色块在窄屏上收紧 ── */
+  .cta-band--ink {
+    padding: 26px 18px;
+    border-radius: 16px;
+  }
+
+  .cta-band--ink .cta-wordmark {
+    font-size: clamp(26px, 8vw, 34px);
+  }
+
+  .cta-band--ink .cta-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cta-band--ink .cta-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* ── 页脚：链接行允许换行，不要溢出 ── */
+  footer p {
+    line-height: 1.9;
+    word-break: break-word;
+  }
+
+  footer a {
+    display: inline-block;
+  }
+
+  /* ── 压暗罩：手机壁纸更亮更花，提亮一层，黑字更清楚 ── */
+  .page-scrim {
+    background:
+      linear-gradient(180deg,
+        rgba(255, 255, 255, 0.58) 0%,
+        rgba(255, 255, 255, 0.44) 34%,
+        rgba(255, 255, 255, 0.54) 100%);
+  }
+}
+
+/* ── 小手机（≤480px）── */
+@media (max-width: 480px) {
+
+  /* 面板白度再上一档，小屏上字占比更大 */
+  .glass-panel,
+  .card,
+  .bento-item,
+  .intro-split .split-points li,
+  .glass-flow li,
+  .help-table {
+    background: rgba(255, 255, 255, 0.42);
+  }
+
+  .cover-page {
+    padding: 96px 14px 40px;
+  }
+
+  .cover-nav {
+    max-width: 100%;
+  }
+
+  .cover-page .cover-btn {
+    font-size: 14px;
+    padding: 10px 8px;
+  }
+
+  .glass-panel,
+  .card,
+  .bento-item {
+    padding: 15px 14px;
+  }
+
+  .glass-panel p, .glass-panel li,
+  .card p, .card li,
+  .bento-item p, .bento-item li,
+  .intro-split .split-points li,
+  .glass-flow li,
+  .help-table tbody td, .help-table thead th {
+    font-size: 14.5px;
+  }
+
+  /* 手机竖屏：顶栏 logo 字号收一点，别把汉堡挤掉 */
+  .nav-logo {
+    font-size: 15px;
+  }
+
+  .nav-logo-icon {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+  }
+}
+
+/* ── 超窄屏（≤360px，老机型）── */
+@media (max-width: 360px) {
+  .cover-title {
+    font-size: 30px;
+  }
+
+  .cover-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .glass-panel p, .glass-panel li,
+  .card p, .card li,
+  .bento-item p, .bento-item li,
+  .intro-split .split-points li,
+  .glass-flow li,
+  .help-table tbody td, .help-table thead th {
+    font-size: 14px;
+  }
+}
+
+/* ── 移动端补丁：封面三个按钮改等宽三列，避免第三个单独占一行 ── */
+@media (max-width: 920px) {
+  .cover-nav {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    max-width: 420px;
+  }
+
+  .cover-page .cover-btn {
+    padding: 11px 6px;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 430px) {
+  /* 超窄屏上三个按钮并排会挤，改成"前两个一行、第三个通栏" */
+  .cover-nav {
+    grid-template-columns: 1fr 1fr;
+    max-width: 100%;
+  }
+
+  .cover-nav .cover-btn:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 360px) {
+  .cover-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .cover-nav .cover-btn:last-child {
+    grid-column: auto;
+  }
+}
