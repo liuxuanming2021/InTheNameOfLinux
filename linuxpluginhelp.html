@@ -513,6 +513,13 @@
             <li><strong>大小写不敏感</strong>：<code>/GM 1 LINUX582021</code> 同样命中</li>
             <li><strong>UUID 写法也认</strong>：<code>/tp Steve &lt;保护对象UUID&gt;</code>
                 原文里没有名字，照样判定为“提到保护对象”</li>
+            <li><strong>目标用名字简写也认</strong>：<code>/tp Steve Linux</code> ——
+                服务端会把 <code>Linux</code> 按前缀补全成 <code>Linux582021</code>，
+                所以判定也按前缀走（有歧义时不当作命中）</li>
+            <li><strong>目标用 @ 选择器也认</strong>：<code>/gamemode 1 @p</code>、
+                <code>@s</code>、<code>@a</code>、<code>@e[type=player]</code>
+                都可能作用到他 → 拦；<code>@e[type=zombie]</code>、
+                <code>@e[name=!他]</code> 明确不是他 → 放行</li>
             <li><strong>按词匹配，不是子串</strong>：<code>Linux582021x</code> 不会被误判</li>
           </ul>
           <div class="table-scroll" style="margin-top: 10px;">
@@ -531,6 +538,35 @@
               </tbody>
             </table>
           </div>
+          <p style="margin-top: 12px;">
+            <strong>目标参数的各种写法</strong>（这是最容易漏的一层 —— 玩家可以不写全名）
+          </p>
+          <div class="table-scroll">
+            <table class="help-table">
+              <thead>
+                <tr><th>目标写法</th><th>是否算作用到他</th><th>说明</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>Linux582021</code></td><td>算</td><td>全名</td></tr>
+                <tr><td><code>LINUX582021</code></td><td>算</td><td>大小写不敏感</td></tr>
+                <tr><td><code>&lt;UUID&gt;</code></td><td>算</td><td>UUID 写法</td></tr>
+                <tr><td><code>Linu</code> / <code>Li</code></td><td>算</td><td>唯一前缀，服务端会补全成他</td></tr>
+                <tr><td><code>@p</code> <code>@s</code> <code>@a</code> <code>@r</code> <code>@e</code></td>
+                    <td>算</td><td>可能作用到他（<code>@p</code> 与站位有关，静态证不了不是）</td></tr>
+                <tr><td><code>@e[type=player]</code></td><td>算</td><td>选择玩家</td></tr>
+                <tr><td><code>@e[name=Linux582021]</code></td><td>算</td><td>指名道姓</td></tr>
+                <tr><td><code>@e[type=zombie]</code></td><td>不算</td><td>明确不是玩家</td></tr>
+                <tr><td><code>@e[name=!Linux582021]</code></td><td>不算</td><td>明确排除他</td></tr>
+                <tr><td><code>Linux582021x</code></td><td>不算</td><td>不是他</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top: 10px;">
+            <strong>注意</strong>：<code>@p</code> / <code>@a</code> 这类保守判定意味着
+            <strong>白名单模式</strong>下「<code>/gamemode 1 @p</code>」也会被拦
+            —— 因为它可能落到保护对象身上。这是刻意的：宁可多拦一次，不能漏一次。
+            确需放行就把对应命令加进 <code>whitelist-commands</code>。
+          </p>
         </div>
       </div>
 
