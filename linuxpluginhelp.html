@@ -499,6 +499,41 @@
         </div>
       </div>
 
+      <div class="tip tip-warn">
+        <span class="tip-icon">🛡️</span>
+        <div class="tip-body">
+          <strong>防绕过：按“实际执行的目标”判定，不看玩家敲的原文</strong>
+          列表只按字面比对是能被绕开的，所以判定做了这几层：
+          <ul style="margin: 8px 0 0 0;">
+            <li><strong>命令简写 / 别名会被还原</strong>：名单里写 <code>gamemode</code>，
+                玩家敲 <code>/gm</code> 一样命中；写 <code>teleport</code>，
+                <code>/tp</code> 一样命中（走 CommandMap 解析实际命令名）</li>
+            <li><strong>命名空间前缀被剥掉</strong>：<code>/minecraft:ban</code>、
+                <code>/essentials:msg</code> 与裸名等价</li>
+            <li><strong>大小写不敏感</strong>：<code>/GM 1 LINUX582021</code> 同样命中</li>
+            <li><strong>UUID 写法也认</strong>：<code>/tp Steve &lt;保护对象UUID&gt;</code>
+                原文里没有名字，照样判定为“提到保护对象”</li>
+            <li><strong>按词匹配，不是子串</strong>：<code>Linux582021x</code> 不会被误判</li>
+          </ul>
+          <div class="table-scroll" style="margin-top: 10px;">
+            <table class="help-table">
+              <thead>
+                <tr><th>写法</th><th>是否命中保护对象</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>/gamemode 1 Linux582021</code></td><td>命中</td></tr>
+                <tr><td><code>/gm 1 Linux582021</code>（简写）</td><td>命中</td></tr>
+                <tr><td><code>/minecraft:gamemode 1 Linux582021</code></td><td>命中</td></tr>
+                <tr><td><code>/GM 1 LINUX582021</code></td><td>命中</td></tr>
+                <tr><td><code>/tp Steve &lt;UUID&gt;</code></td><td>命中</td></tr>
+                <tr><td><code>/gamemode 1 Linux582021x</code></td><td>不命中（不是他）</td></tr>
+                <tr><td><code>/gamemode 1 SomeoneElse</code></td><td>不命中</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <h3>封禁相关</h3>
       <div class="table-scroll">
         <table class="help-table">
