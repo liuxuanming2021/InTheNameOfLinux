@@ -428,6 +428,77 @@
         </div>
       </div>
 
+      <h3>命令拦截：黑名单 / 白名单两种模式</h3>
+      <p>
+        拦截规则是<strong>“命令里提到保护对象（<code>protected-player</code>）时才判断”</strong>，
+        所以不会牵连其它无关命令。保护对象本人不受限制。
+        按词匹配，<code>Linux582021x</code> 这类不会被误认为保护对象。
+      </p>
+
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>配置项</th><th>默认</th><th>作用</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>command-filter-mode</code></td>
+              <td><code>blacklist</code></td>
+              <td>拦截模式。<code>blacklist</code> = 命中名单就拦；
+                  <code>whitelist</code> = 不在名单就拦</td>
+            </tr>
+            <tr>
+              <td><code>blocked-commands</code></td>
+              <td>ban / tempban / banip / kick / linux ban / xlban …</td>
+              <td><strong>黑名单模式</strong>使用：命中的命令会被拦下</td>
+            </tr>
+            <tr>
+              <td><code>whitelist-commands</code></td>
+              <td><code>[]</code></td>
+              <td><strong>白名单模式</strong>使用：只有这些命令被允许，
+                  其余提到保护对象的命令一律拦下</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>两种模式对照（保护对象 = Linux582021，白名单只放行 list / help）</strong>
+          <div class="table-scroll" style="margin-top: 10px;">
+            <table class="help-table">
+              <thead>
+                <tr><th>命令</th><th>白名单模式</th><th>黑名单模式（默认）</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>/list</code></td><td>放行（在白名单里）</td><td>放行</td></tr>
+                <tr><td><code>/spawn</code></td><td>放行（没提到保护对象）</td><td>放行</td></tr>
+                <tr><td><code>/gamemode 1 Linux582021</code></td><td><strong>拦</strong></td><td>放行</td></tr>
+                <tr><td><code>/tp Steve Linux582021</code></td><td><strong>拦</strong></td><td>放行</td></tr>
+                <tr><td><code>/tp Linux582021 Steve</code></td><td><strong>拦</strong>（提到了就拦）</td><td>放行</td></tr>
+                <tr><td><code>/give Linux582021 diamond</code></td><td><strong>拦</strong></td><td>放行</td></tr>
+                <tr><td><code>/kill Linux582021</code></td><td><strong>拦</strong></td><td>放行</td></tr>
+                <tr><td><code>/msg Linux582021 hi</code></td><td><strong>拦</strong></td><td>放行</td></tr>
+                <tr><td><code>/ban Linux582021 原因</code></td><td><strong>拦</strong></td><td><strong>拦</strong></td></tr>
+                <tr><td><code>/gamemode 1 Linux582021x</code></td><td>放行（不是保护对象）</td><td>放行</td></tr>
+              </tbody>
+            </table>
+          </div>
+          保护对象本人执行任何命令都放行，不受限制。
+        </div>
+      </div>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>白名单别留空</strong>
+          <code>command-filter-mode: whitelist</code> 而
+          <code>whitelist-commands</code> 为空时，任何提到保护对象的命令都会被拦下。
+          配置校验会就此告警（<code>/linux reload</code> 时会打印）。
+        </div>
+      </div>
+
       <h3>封禁相关</h3>
       <div class="table-scroll">
         <table class="help-table">
