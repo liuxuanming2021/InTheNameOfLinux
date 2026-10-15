@@ -1,0 +1,153 @@
+/* ==========================================================================
+   Linux 官网 · 液态玻璃（真折射）
+   ==========================================================================
+   ★ 这是对现有玻璃的**升级**，不是换风格：
+     原来所有玻璃面板用的是 `backdrop-filter: blur(...)` ——
+     那是磨砂玻璃：背景只是被糊掉，玻璃本身没有"形体"。
+     这里给它们加上**折射层**：透过玻璃边缘看背景会被掰弯、拉伸，
+     并带一点色散（边缘泛彩），这才有"一块厚玻璃"的观感。
+
+   做法（与 Nalxer 官网同一套）
+   --------------------------------------------------------------------------
+   1. SVG 滤镜当"玻璃厚度场"：
+        feGaussianBlur(SourceAlpha) → feOffset ±8 → feComposite 相减
+          得到"中心为 0、越靠边越强"的带符号梯度 = 位移贴图
+        写进 R/G 通道，交给 feDisplacementMap 去掰弯背景
+        同一条链按不同 scale 跑三次合成 → 边缘色散
+      滤镜内联在页面里（id: lw-glass / lw-glass-thick / lw-glass-thin）。
+   2. 挂到 backdrop-filter，**顺序是"先位移、后模糊"**：
+        backdrop-filter: url(#lw-glass) blur(14px) saturate(180%)
+      反过来会把弯折抹平，又退回磨砂。
+   3. 只改 backdrop-filter，**不动**原有底色、描边、阴影 ——
+      所以桌面端观感几乎不变，只是玻璃"活"了。
+
+   浏览器差异
+   --------------------------------------------------------------------------
+   只有 Chromium 认 backdrop-filter 里的 url()。
+   Safari / Firefox 落回原有的 blur 玻璃（原样式仍生效，不会坏）。
+
+   ★ 手机端同样启用（按服主要求：不考虑性能，直接上液态玻璃）
+   ========================================================================== */
+
+/* 需要折射的元素：与现有玻璃面板一致 */
+@supports (backdrop-filter: url("#lw-glass")) {
+
+    .card,
+    .table-wrap,
+    .faq-item,
+    .hub-note,
+    .help-hub-card,
+    .glass-panel,
+    .bento-item,
+    .stat-strip,
+    .chapter,
+    .intro-split .split-points li,
+    .plug-card,
+    .cover-btn,
+    .cta-band--ink,
+    .help-table tr,
+    .card-links .btn,
+    .nav-links,
+    .nav-home,
+    .nav-home.scrolled,
+    nav {
+        backdrop-filter: url(#lw-glass) blur(14px) saturate(170%);
+    }
+
+    /* 封面上的玻璃卡是"最厚"的，折射最强 */
+    .hub-note,
+    .help-hub-card,
+    .cover-page .card,
+    .bento-item {
+        backdrop-filter: url(#lw-glass-thick) blur(16px) saturate(175%);
+    }
+
+    /* 按钮 / 标签这类小元素：折射要薄，否则形状会糊 */
+    .card-links .btn,
+    .cover-btn,
+    .cover-nav a.cover-btn,
+    .help-table tr,
+    .tag,
+    .badge,
+    .plug-hero-ver,
+    .hub-ver {
+        backdrop-filter: url(#lw-glass-thin) blur(8px) saturate(160%);
+    }
+
+    /* 顶栏保持它原本的 24px 磨砂手感，只把折射叠上去 */
+    nav,
+    .nav-home,
+    .nav-home.scrolled {
+        backdrop-filter: url(#lw-glass) blur(24px) saturate(180%);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   手机端：解除"为了性能关掉玻璃"的降级
+   --------------------------------------------------------------------------
+   原样式在窄屏下把一些面板改成近实色（提高可读性/省性能）。
+   服主要求手机端也用完整液态玻璃，所以这里覆盖回去。
+   注意：**只**覆盖"玻璃被压成实色"的情况，
+        纯白帮助页（body.pure-white）的白色底是刻意设计，保持不动。
+   -------------------------------------------------------------------------- */
+@media (max-width: 920px) {
+
+    /* 这些原来在窄屏下可能退化成实色底，恢复成玻璃 */
+    html:not(.pure-white) body:not(.pure-white) .card,
+    html:not(.pure-white) body:not(.pure-white) .table-wrap,
+    html:not(.pure-white) body:not(.pure-white) .faq-item,
+    html:not(.pure-white) body:not(.pure-white) .hub-note,
+    html:not(.pure-white) body:not(.pure-white) .help-hub-card,
+    html:not(.pure-white) body:not(.pure-white) .glass-panel,
+    html:not(.pure-white) body:not(.pure-white) .bento-item,
+    html:not(.pure-white) body:not(.pure-white) .chapter,
+    html:not(.pure-white) body:not(.pure-white) .plug-card,
+    html:not(.pure-white) body:not(.pure-white) .help-table tr,
+    html:not(.pure-white) body:not(.pure-white) .intro-split .split-points li {
+        background: rgba(255, 255, 255, 0.30);
+    }
+
+    /* 顶栏玻璃：手机端不换成实白（纯白帮助页除外） */
+    html:not(.pure-white) body:not(.pure-white) nav,
+    html:not(.pure-white) body:not(.pure-white) nav.nav-home,
+    html:not(.pure-white) body:not(.pure-white) .nav-home.scrolled {
+        background: rgba(255, 255, 255, 0.62);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        backdrop-filter: blur(24px) saturate(180%);
+    }
+
+    @supports (backdrop-filter: url("#lw-glass")) {
+        html:not(.pure-white) body:not(.pure-white) .card,
+        html:not(.pure-white) body:not(.pure-white) .table-wrap,
+        html:not(.pure-white) body:not(.pure-white) .faq-item,
+        html:not(.pure-white) body:not(.pure-white) .hub-note,
+        html:not(.pure-white) body:not(.pure-white) .help-hub-card,
+        html:not(.pure-white) body:not(.pure-white) .glass-panel,
+        html:not(.pure-white) body:not(.pure-white) .bento-item,
+        html:not(.pure-white) body:not(.pure-white) .chapter,
+        html:not(.pure-white) body:not(.pure-white) .plug-card,
+        html:not(.pure-white) body:not(.pure-white) .help-table tr,
+        html:not(.pure-white) body:not(.pure-white) .intro-split .split-points li {
+            backdrop-filter: url(#lw-glass) blur(14px) saturate(170%);
+        }
+
+        html:not(.pure-white) body:not(.pure-white) nav,
+        html:not(.pure-white) body:not(.pure-white) nav.nav-home,
+        html:not(.pure-white) body:not(.pure-white) .nav-home.scrolled {
+            backdrop-filter: url(#lw-glass) blur(24px) saturate(180%);
+        }
+
+        /* 汉堡展开的面板也要玻璃（原来提到 0.86 太实） */
+        html:not(.pure-white) body:not(.pure-white) .nav-links {
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: url(#lw-glass) blur(28px) saturate(180%);
+        }
+    }
+}
+
+/* --------------------------------------------------------------------------
+   动画偏好：只关动效，不关玻璃
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    /* 保留 backdrop-filter，不做任何降级 */
+}
