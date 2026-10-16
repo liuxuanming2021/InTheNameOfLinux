@@ -601,10 +601,19 @@
                 <tr><td><code>/msg Linux582021 hi</code></td><td><strong>拦</strong></td><td>放行</td></tr>
                 <tr><td><code>/ban Linux582021 原因</code></td><td><strong>拦</strong></td><td><strong>拦</strong></td></tr>
                 <tr><td><code>/gamemode 1 Linux582021x</code></td><td>放行（不是保护对象）</td><td>放行</td></tr>
+                <tr><td><code>/kill @e</code> · <code>/gamemode 1 @e</code> · <code>/tp @s ...</code></td>
+                    <td><strong>放行</strong>（没点名，黑名单不认选择器）</td><td><strong>拦</strong></td></tr>
+                <tr><td><code>/s</code> · <code>/e</code> · <code>/linux help</code></td>
+                    <td>放行</td><td>放行</td></tr>
               </tbody>
             </table>
           </div>
-          保护对象本人执行任何命令都放行，不受限制。
+          保护对象本人执行任何命令都放行，不受限制。<br>
+          <strong>注意</strong>：黑名单模式只认<strong>明确点名</strong>（全名 / UUID），
+          不认 <code>@</code> 选择器与名字前缀 —— 所以 <code>/kill @e</code> 这类
+          在黑名单模式下会放行（原生里它确实会作用到保护对象）。
+          要连这类一起防住，请把 <code>command-filter-mode</code> 改成
+          <code>whitelist</code>；白名单模式仍然判定选择器与前缀。
         </div>
       </div>
 
