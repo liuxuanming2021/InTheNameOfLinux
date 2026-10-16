@@ -7064,3 +7064,171 @@ footer p {
     text-overflow: ellipsis;
   }
 }
+
+
+/* ============================================================
+   顶栏下划线：只画在文字下面
+   ============================================================
+   /Nalxer 服务器/ 那个外链带左右内边距，下划线如果挂在整条 <a> 上，
+   会比文字两边各长出去一截、还贴在框底。这里把下划线挂到文字本身
+   （.nav-text），宽度就等于文字宽度，位置也贴着文字。
+   ============================================================ */
+nav .nav-links a .nav-text {
+  position: relative;
+  display: inline-block;
+}
+
+nav .nav-links a .nav-text::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* 贴着文字下沿：1px 是给中文字形留的一点呼吸，不压到笔画上 */
+  bottom: -1px;
+  height: 2px;
+  background: var(--blue);
+  border-radius: 1px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+nav .nav-links a:hover .nav-text::after,
+nav .nav-links a:focus-visible .nav-text::after {
+  transform: scaleX(1);
+}
+
+/* 外链的箭头不要跟着下划线一起被拉长 */
+nav .nav-links a .nav-text + svg {
+  flex: 0 0 auto;
+  margin-left: 4px;
+}
+
+/* 去掉可能残留的文字下划线（外链在部分浏览器会被 UA 样式加下划线） */
+nav .nav-links a.nav-external,
+nav .nav-links a.nav-external:hover {
+  text-decoration: none;
+}
+
+
+/* ============================================================
+   外链（Nalxer 服务器）：内边距归零 + 只保留文字下面那条下划线
+   ============================================================
+   量测过：原来 padding 5px 12px 让 <a> 宽 127px，而文字只有 83px，
+   挂在 <a> 上的下划线自然比文字两边各长 12px、还离得远。
+   内边距去掉后 <a> 宽度就等于文字宽度，几何上直接对齐。
+   ============================================================ */
+nav .nav-links a.nav-external,
+nav.nav-home .nav-links a.nav-external,
+nav.nav-home.scrolled .nav-links a.nav-external {
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* 外链不再用挂在整条 <a> 上的下划线（那是给无 span 的项兜底的） */
+nav .nav-links a.nav-external::after {
+  content: none !important;
+}
+
+/* 只保留文字下方这条 */
+nav .nav-links a.nav-external .nav-text::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--blue);
+  border-radius: 1px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+nav .nav-links a.nav-external:hover .nav-text::after,
+nav .nav-links a.nav-external:focus-visible .nav-text::after {
+  transform: scaleX(1);
+}
+
+
+/* ============================================================
+   顶栏下划线：普通项与外链项几何完全一致
+   ============================================================
+   CDP 量测确认：
+     普通项  a 无内边距，a::after  bottom:2px height:1.5px
+     外链项  已把内边距归零，下划线在 .nav-text::after
+   两条线都用「距所在盒子底边 2px、高 1.5px」，看起来就是同一条线。
+   ============================================================ */
+nav .nav-links a::after,
+nav .nav-links a .nav-text::after {
+  height: 1.5px !important;
+  bottom: 2px !important;
+  border-radius: 1px;
+}
+
+nav .nav-links a.nav-external {
+  padding: 0 !important;
+}
+
+
+/* ============================================================
+   全站顶栏统一（10 个页面同一套）  [FINAL]
+   ============================================================
+   量测出的差异：
+     7 页（nav.nav-home）  bg=rgba(255,255,255,.62) backdrop=blur24
+     3 个帮助页(pure-white) bg=#fff backdrop=none
+   帮助页那几条规则在文件更后面，所以这里必须带 !important 才压得住。
+   ============================================================ */
+nav,
+nav.nav-home,
+nav.nav-home.scrolled,
+body.pure-white nav,
+body.pure-white nav.nav-home,
+body.pure-white nav.nav-home.scrolled {
+  background: rgba(255, 255, 255, 0.66) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55) !important;
+  box-shadow:
+    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
+    0 4px 24px rgba(15, 25, 35, 0.07) !important;
+}
+
+/* 帮助页是纯白底：透明一点会显脏，抬到 0.78 并补一条浅分隔线 */
+body.pure-white nav,
+body.pure-white nav.nav-home,
+body.pure-white nav.nav-home.scrolled {
+  background: rgba(255, 255, 255, 0.78) !important;
+  border-bottom: 1px solid rgba(206, 215, 224, 0.85) !important;
+}
+
+/* 顶栏文字统一黑色（玻璃上发灰就不好看） */
+nav .nav-links a,
+body.pure-white nav .nav-links a,
+body.pure-white .nav-links a,
+nav .nav-logo,
+body.pure-white nav .nav-logo {
+  color: var(--text) !important;
+  -webkit-text-fill-color: var(--text);
+  text-shadow: none !important;
+}
+
+/* 外链保持主题蓝（必须在黑色规则之后） */
+nav .nav-links a.nav-external,
+nav.nav-home .nav-links a.nav-external,
+nav.nav-home.scrolled .nav-links a.nav-external,
+body.pure-white nav .nav-links a.nav-external,
+body.pure-white .nav-links a.nav-external {
+  color: var(--blue) !important;
+  -webkit-text-fill-color: var(--blue);
+}
+
+/* 「L」图标：白字蓝底，不跟着顶栏变黑 */
+nav .nav-logo .nav-logo-icon,
+.nav-home .nav-logo .nav-logo-icon,
+.nav-home.scrolled .nav-logo .nav-logo-icon,
+body.pure-white nav .nav-logo .nav-logo-icon {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff;
+}
