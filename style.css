@@ -7338,3 +7338,184 @@ body.pure-white nav .nav-logo .nav-logo-icon {
   color: #fff !important;
   -webkit-text-fill-color: #fff;
 }
+
+
+/* ============================================================
+   插件卡片：版本号改成徽章
+   ============================================================
+   原来是 <p class="plug-ver">26.11.5-Alpha</p> —— 一行灰色小字，
+   和正文挤在一起分不出来。改成主题蓝胶囊：
+     · 等宽字体（版本号本来就该对齐着看）
+     · 与卡片里其它 .badge 同一套圆角与内边距
+     · 左对齐独立成行，不跟标题挤
+   ============================================================ */
+.card .plug-ver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  /* 固定一个下限宽度，让并排卡片的版本徽章左右对齐 */
+  min-width: 132px;
+  margin: 2px 0 12px;
+  padding: 3px 11px 3px 9px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  /* 等宽字体本身字距偏开，这里收一点更紧凑 */
+  letter-spacing: -0.01em;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas,
+               "Liberation Mono", Menlo, monospace;
+  color: #2f5f8a;
+  background: rgba(74, 123, 167, 0.12);
+  border: 1px solid rgba(74, 123, 167, 0.26);
+  border-radius: 980px;
+  text-shadow: none;
+  white-space: nowrap;
+}
+
+/* 前面加一个 "v"，版本号看起来才完整 */
+.card .plug-ver::before {
+  content: 'v';
+  font-weight: 700;
+  opacity: 0.72;
+}
+
+/* 小圆点：像状态灯，一眼看出这是版本信息 */
+.card .plug-ver::after {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.55;
+  margin-left: 1px;
+}
+
+/* 悬停卡片时徽章稍微提亮，和卡片的 hover 呼应 */
+.card:hover .plug-ver {
+  background: rgba(74, 123, 167, 0.18);
+  border-color: rgba(74, 123, 167, 0.38);
+}
+
+/* Alpha / Beta 这类预发布版：用暖色区分，免得和正式版混淆 */
+.card .plug-ver.is-prerelease {
+  color: #8a5a1f;
+  background: rgba(214, 158, 61, 0.14);
+  border-color: rgba(214, 158, 61, 0.32);
+}
+
+/* 帮助页顶部的版本号（hub-ver / plug-hero-ver）也顺手统一成同款 */
+.hub-ver,
+.plug-hero-ver {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas,
+               "Liberation Mono", Menlo, monospace;
+  letter-spacing: 0.02em;
+}
+
+
+/* ============================================================
+   版本号样式统一（全站一套）  [VER BADGE]
+   ============================================================
+   三类位置原本各不相同：
+     .plug-ver      主页卡片      灰字，无徽章
+     .plug-hero-ver 介绍页封面    白底黑字胶囊（在壁纸上看还行，但和卡片不同色）
+     .hub-ver       帮助中心卡片  灰字，无徽章
+   统一为：浅蓝胶囊 + 等宽 + 前置 v + 小圆点；预发布用琥珀色。
+   颜色按所在地的底色分两套，保证对比度都够：
+     浅底（卡片）  文字 #2f5f8a，底 rgba(74,123,167,.12)
+     深底（封面）  文字 #16202a，底 rgba(255,255,255,.86)（同原来，够清楚）
+   ============================================================ */
+
+/* ---- 浅底：卡片 / 帮助中心 ---- */
+.card .plug-ver,
+.help-hub-card .hub-ver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 132px;
+  margin: 2px 0 12px;
+  padding: 3px 11px 3px 9px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas,
+               "Liberation Mono", Menlo, monospace;
+  color: #2f5f8a !important;
+  background: rgba(74, 123, 167, 0.12) !important;
+  border: 1px solid rgba(74, 123, 167, 0.26) !important;
+  border-radius: 980px !important;
+  text-shadow: none !important;
+  -webkit-text-stroke: 0 !important;
+  white-space: nowrap;
+}
+
+.card .plug-ver::before,
+.help-hub-card .hub-ver::before {
+  content: 'v';
+  font-weight: 700;
+  opacity: 0.72;
+}
+
+.card .plug-ver::after,
+.help-hub-card .hub-ver::after {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.55;
+  margin-left: 1px;
+}
+
+.card:hover .plug-ver,
+.help-hub-card:hover .hub-ver {
+  background: rgba(74, 123, 167, 0.18) !important;
+  border-color: rgba(74, 123, 167, 0.38);
+}
+
+/* 预发布版（Alpha / Beta）用琥珀色区分，别和正式版混淆 */
+.card .plug-ver.is-prerelease,
+.help-hub-card .hub-ver.is-prerelease {
+  color: #8a5a1f !important;
+  background: rgba(214, 158, 61, 0.14) !important;
+  border-color: rgba(214, 158, 61, 0.32) !important;
+}
+
+/* ---- 深底（介绍页封面）：保持白底深字，只统一字体与结构 ---- */
+.page-hero .plug-hero-ver,
+.cover .plug-hero-ver,
+.plug-hero-ver {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas,
+               "Liberation Mono", Menlo, monospace;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #16202a !important;
+  background: rgba(255, 255, 255, 0.86) !important;
+  border: 1px solid rgba(13, 18, 22, 0.14);
+  border-radius: 980px;
+  text-shadow: none !important;
+  -webkit-text-stroke: 0;
+  white-space: nowrap;
+}
+
+.plug-hero-ver::before {
+  content: 'v';
+  font-weight: 700;
+  opacity: 0.66;
+}
+
+.plug-hero-ver::after {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+  margin-left: 1px;
+}
