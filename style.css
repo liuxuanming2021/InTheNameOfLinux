@@ -7232,3 +7232,109 @@ body.pure-white nav .nav-logo .nav-logo-icon {
   color: #fff !important;
   -webkit-text-fill-color: #fff;
 }
+
+
+/* ============================================================
+   顶栏色调统一（全站唯一一套）  [UNIFIED TONE]
+   ============================================================
+   原来用 0.66 / 0.78 两档半透明白，结果顶栏颜色由"背后是什么"决定：
+     壁纸页 rgb(182,186,195)，帮助页 rgb(224,224,225)，差 47 级。
+   现在把色调钉死成一个固定的极浅冷白（0.94 不透明度）：
+     壁纸页透上来 ~6% 的深色插画，帮助页透上来 ~6% 的白，
+     两者算下来只差几级，全站看起来是同一个色调。
+   ============================================================ */
+nav,
+nav.nav-home,
+nav.nav-home.scrolled,
+body.pure-white nav,
+body.pure-white nav.nav-home,
+body.pure-white nav.nav-home.scrolled {
+  background: rgba(247, 249, 251, 0.94) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+  backdrop-filter: blur(20px) saturate(150%) !important;
+  border-bottom: 1px solid rgba(214, 222, 230, 0.9) !important;
+  box-shadow:
+    inset 0 -1px 0 rgba(255, 255, 255, 0.6),
+    0 2px 16px rgba(15, 25, 35, 0.05) !important;
+}
+
+/* 顶栏文字：统一的深墨色（比纯黑柔和一点，和浅底更搭） */
+nav .nav-links a,
+nav .nav-logo,
+body.pure-white nav .nav-links a,
+body.pure-white .nav-links a,
+body.pure-white nav .nav-logo {
+  color: #111820 !important;
+  -webkit-text-fill-color: #111820;
+  text-shadow: none !important;
+}
+
+/* 外链保持主题蓝 */
+nav .nav-links a.nav-external,
+nav.nav-home .nav-links a.nav-external,
+nav.nav-home.scrolled .nav-links a.nav-external,
+body.pure-white nav .nav-links a.nav-external,
+body.pure-white .nav-links a.nav-external {
+  color: var(--blue) !important;
+  -webkit-text-fill-color: var(--blue);
+}
+
+/* 「L」图标：白字蓝底 */
+nav .nav-logo .nav-logo-icon,
+.nav-home .nav-logo .nav-logo-icon,
+.nav-home.scrolled .nav-logo .nav-logo-icon,
+body.pure-white nav .nav-logo .nav-logo-icon {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff;
+}
+
+
+/* ============================================================
+   顶栏定色（全站唯一色）  [SOLID]
+   ============================================================
+   实测：透明度 0.55~0.97 时，顶栏颜色都会被背后的内容带偏
+   （浅底与深底最多差 99 级，0.94 也还差 14 级）。
+   只有实色才能保证 10 个页面顶栏完全同色 —— 故取实色。
+   ============================================================ */
+nav,
+nav.nav-home,
+nav.nav-home.scrolled,
+body.pure-white nav,
+body.pure-white nav.nav-home,
+body.pure-white nav.nav-home.scrolled {
+  background: rgb(247, 249, 251) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border-bottom: 1px solid rgb(226, 232, 238) !important;
+  box-shadow: 0 1px 2px rgba(15, 25, 35, 0.04) !important;
+}
+
+/* 文字：统一深墨色 */
+nav .nav-links a,
+nav .nav-logo,
+body.pure-white nav .nav-links a,
+body.pure-white .nav-links a,
+body.pure-white nav .nav-logo {
+  color: #10161d !important;
+  -webkit-text-fill-color: #10161d;
+  text-shadow: none !important;
+}
+
+/* 外链：主题蓝 */
+nav .nav-links a.nav-external,
+nav.nav-home .nav-links a.nav-external,
+nav.nav-home.scrolled .nav-links a.nav-external,
+body.pure-white nav .nav-links a.nav-external,
+body.pure-white .nav-links a.nav-external {
+  color: var(--blue) !important;
+  -webkit-text-fill-color: var(--blue);
+}
+
+/* 「L」图标：白字蓝底 */
+nav .nav-logo .nav-logo-icon,
+.nav-home .nav-logo .nav-logo-icon,
+.nav-home.scrolled .nav-logo .nav-logo-icon,
+body.pure-white nav .nav-logo .nav-logo-icon {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff;
+}
