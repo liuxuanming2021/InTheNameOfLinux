@@ -198,6 +198,61 @@
   <main class="main-content">
 
 <section class="help-section" id="quickstart">
+
+      <h2 id="multi-team">多队伍</h2>
+      <p>一个人可以同时加入多支队伍（默认上限 3 支，可由权限 <code>linuxtream.teams.&lt;数字&gt;</code> 调整，
+      <code>linuxtream.teams.unlimited</code> 不限制）。为此区分两个概念：</p>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>概念</th><th>决定什么</th><th>怎么设置</th></tr></thead>
+          <tbody>
+            <tr><td><b>主队</b></td>
+                <td>头顶队标、PlaceholderAPI 变量里的队伍信息</td>
+                <td><code>/team setmain &lt;队伍&gt;</code></td></tr>
+            <tr><td><b>当前队</b></td>
+                <td>/team 系列命令作用在哪支队、队伍聊天发到哪支队、GUI 打开展示哪支队</td>
+                <td><code>/team use &lt;队伍&gt;</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>两者互不影响：切当前队不会改主队，设主队也不会改当前队。</p>
+
+      <h3>切换队伍</h3>
+      <ul>
+        <li>输入 <code>/team use</code>（或 <code>/team teams</code>）会弹出<b>可点击</b>的「我的队伍」列表。</li>
+        <li>点<b>队名</b> = 切换当前队；点 <b>[主]</b> = 设为主队；点 <b>[看]</b> = 查看详情。</li>
+        <li>GUI 里：主界面左上角「切换队伍」按钮；<b>左键</b>切换当前队，<b>右键</b>设为主队。</li>
+      </ul>
+
+      <h3>防误伤</h3>
+      <p>只要两人有<b>任意一支共同队伍</b>，队友伤害就会被拦下（不只看主队或当前队），
+      疯狂附魔的进攻类附魔同样适用。</p>
+
+      <h3>加入方式</h3>
+      <p>每支队伍各自有一个「加入方式」开关，队长可在 GUI 队伍设置里切换，或用命令：</p>
+      <ul>
+        <li><code>/team setting public-join on</code> → <b>可直接加入</b>：玩家 <code>/team join &lt;队名&gt;</code> 立刻进队</li>
+        <li><code>/team setting public-join off</code> → <b>需要申请</b>：玩家提交申请，队长 <code>/team accept &lt;玩家&gt;</code> 批准</li>
+      </ul>
+      <p>队伍列表（<code>/team list</code> 与 GUI 的队伍列表）会显示每支队的当前状态。</p>
+
+      <h3>人数上限</h3>
+      <ul>
+        <li>默认 <b>10</b> 人；权限 <code>linuxtream.limit.&lt;数字&gt;</code> 可覆盖</li>
+        <li>用服务器货币购买：<code>/team upgrade</code>，每次 +5，最高 <b>30</b></li>
+        <li>用点券提升：<code>/team upgrade points</code>，上限直接到 <b>100</b>，
+            需要 1200 点券，且必须先买到 30</li>
+        <li>只有队长可以购买；GUI 队伍设置界面里有对应按钮</li>
+      </ul>
+
+      <h3>数据备份</h3>
+      <p><code>teams.yml</code> 会自动备份到 <code>plugins/LinuxTeam/backups/</code>：</p>
+      <ul>
+        <li>启动时备份一份（文件名带 <code>-startup</code>）</li>
+        <li>每 60 分钟自动备份一次（可配置）</li>
+        <li>只保留最近 10 份，超出自动清理最旧的</li>
+        <li>备份前会校验：文件不存在、0 字节、YAML 解析失败都不会被当成"好版本"存下来</li>
+      </ul>
     <h2><span class="num">1</span>快速开始</h2>
 
       <p>LinuxTeam 是一个<strong>组队系统</strong>插件：把"一起玩"需要的功能收在一处 ——
@@ -295,11 +350,18 @@
           <tbody>
             <tr><td><code>/team</code></td><td>打开 GUI 管理面板（不带参数即可）</td><td><span class="badge badge-op">linuxtream.use</span></td></tr>
             <tr><td><code>/team create &lt;队名&gt;</code></td><td>创建队伍（2–12 字，自己成为队长）</td><td><span class="badge badge-op">linuxtream.create</span></td></tr>
-            <tr><td><code>/team join &lt;队名&gt;</code></td><td>提交入队申请，等队长批准</td><td><span class="badge badge-op">linuxtream.join</span></td></tr>
+            <tr><td><code>/team join &lt;队名&gt;</code></td><td>加入队伍。<b>可直接加入</b>的队立刻进；<b>需要申请</b>的队需队长批准</td><td><span class="badge badge-op">linuxtream.join</span></td></tr>
             <tr><td><code>/team accept</code></td><td>接受别人发给你的邀请</td><td><span class="badge badge-op">linuxtream.join</span></td></tr>
             <tr><td><code>/team accept &lt;玩家&gt;</code></td><td>队长批准某人的入队申请</td><td><span class="badge badge-op">linuxtream.join</span></td></tr>
             <tr><td><code>/team deny</code></td><td>拒绝待处理的邀请</td><td><span class="badge badge-op">所有人</span></td></tr>
-            <tr><td><code>/team leave</code></td><td>退出队伍（队长退出会自动转交）</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/team leave [队伍]</code></td><td>退出队伍；在多支队伍里必须指定退哪个（队长退出会自动转交）</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/team teams</code></td><td>「我的队伍」：列出我加入的全部队伍，标出主队 / 当前队 / 在线人数</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/team use &lt;队伍&gt;</code></td><td>切换<b>当前队</b>（命令与聊天都作用在它上面）；不带参数弹出可点击切换列表</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/team setmain &lt;队伍&gt;</code></td><td>设置<b>主队</b>（头顶队标与变量显示哪个队）</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/team info [序号或队名]</code></td><td>不带参数列出我加入的全部队伍信息；带参数只看一支</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/team setting</code></td><td>查看本队设置；<code>/team setting &lt;项&gt; &lt;on|off&gt;</code> 修改</td><td><span class="badge badge-op">队长</span></td></tr>
+            <tr><td><code>/team upgrade</code></td><td>用服务器货币购买人数上限（每次 +5，最高 30）</td><td><span class="badge badge-op">队长</span></td></tr>
+            <tr><td><code>/team upgrade points</code></td><td>用点券把上限提到 100（需先到 30，1200 点券）</td><td><span class="badge badge-op">队长</span></td></tr>
             <tr><td><code>/team invite &lt;玩家&gt;</code></td><td>邀请玩家入队，默认 60 秒有效</td><td><span class="badge badge-op">linuxtream.invite</span></td></tr>
             <tr><td><code>/team kick &lt;玩家&gt;</code></td><td>把成员移出队伍</td><td><span class="badge badge-op">linuxtream.kick</span></td></tr>
             <tr><td><code>/team transfer &lt;玩家&gt;</code></td><td>把队长转交给指定成员</td><td><span class="badge badge-op">队长</span></td></tr>
@@ -331,9 +393,9 @@
             <tr><th>命令</th><th>说明</th><th>权限</th></tr>
           </thead>
           <tbody>
-            <tr><td><code>/team chat</code></td><td>开关队伍聊天频道（开/关会提示）</td><td><span class="badge badge-op">linuxtream.chat</span></td></tr>
+            <tr><td><code>/team chat [队伍]</code></td><td>开关队伍聊天频道；带队伍名可把频道切到指定队（不带参数 = 当前队）</td><td><span class="badge badge-op">linuxtream.chat</span></td></tr>
             <tr><td><code>/team chat on|off</code></td><td>显式设置开或关</td><td><span class="badge badge-op">linuxtream.chat</span></td></tr>
-            <tr><td><code>/tc &lt;内容&gt;</code></td><td>单发一条队伍消息，不切换频道</td><td><span class="badge badge-op">linuxtream.chat</span></td></tr>
+            <tr><td><code>/tc [队伍] &lt;内容&gt;</code></td><td>单发一条队伍消息，不切换频道；带队伍名可发到指定队</td><td><span class="badge badge-op">linuxtream.chat</span></td></tr>
             <tr><td><code>/tchat</code></td><td>等同于 <code>/team chat</code></td><td><span class="badge badge-op">linuxtream.chat</span></td></tr>
           </tbody>
         </table>
@@ -619,6 +681,12 @@
             <tr><td><code>%linuxtream_team_list%</code></td><td>队伍成员名单</td></tr>
             <tr><td><code>%linuxtream_team_online_list%</code></td><td>在线成员名单</td></tr>
             <tr><td><code>%linuxtream_flag%</code></td><td>队伍标识</td></tr>
+            <tr><td colspan="2" style="padding-top:14px;opacity:.75"><b>多队伍相关</b></td></tr>
+            <tr><td><code>%linuxtream_teams_count%</code></td><td>我加入的队伍数量</td></tr>
+            <tr><td><code>%linuxtream_teams_limit%</code></td><td>我的队伍数上限</td></tr>
+            <tr><td><code>%linuxtream_teams_list%</code></td><td>我加入的全部队名（逗号分隔）</td></tr>
+            <tr><td><code>%linuxtream_primary%</code></td><td>主队名（别名 <code>%linuxtream_primary_team%</code>）</td></tr>
+            <tr><td><code>%linuxtream_current%</code></td><td>当前队名（别名 <code>%linuxtream_current_team%</code>）</td></tr>
           </tbody>
         </table>
       </div>

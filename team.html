@@ -224,6 +224,7 @@
         <li><strong>不用记命令</strong><br>输入 <code>/team</code> 打开面板，点图标就能做完所有事</li>
         <li><strong>队友打不到你</strong><br>同队成员之间的伤害默认关闭，范围伤害也不会误伤</li>
         <li><strong>队伍有自己的频道</strong><br>开启后你打的字只发给队友，公共频道看不到</li>
+        <li><strong>一个人可以进多支队</strong><br>主队决定头顶队标，当前队决定命令与聊天作用在哪支，随时切换</li>
       </ul>
     </div>
   </div>
@@ -247,7 +248,9 @@
           <li>创建 / 邀请 / 加入 / 踢出 / 解散一站完成</li>
           <li>成员卡片显示在线状态与入队时间，右键可转交队长</li>
           <li>队伍设置里可开关队友伤害与队伍聊天</li>
-          <li>浏览列表能看到全服所有队伍与在线人数</li>
+          <li>浏览列表能看到全服所有队伍、在线人数与加入方式</li>
+          <li>主界面左上角「切换队伍」，左键切当前队、右键设为主队</li>
+          <li>设置界面可直接购买人数上限（货币 / 点券）</li>
         </ul>
       </div>
 
@@ -259,6 +262,7 @@
           <li>公共频道里完全看不到队伍消息</li>
           <li>退出 / 被踢 / 队伍解散时自动关闭频道并提示</li>
           <li>单发一条用 <code>/tc &lt;内容&gt;</code>，不切换频道</li>
+          <li>在多支队里可以指定：<code>/team chat &lt;队伍&gt;</code>、<code>/tc &lt;队伍&gt; &lt;内容&gt;</code></li>
           <li>管理员可用 <code>/team spy</code> 查看队伍聊天</li>
         </ul>
       </div>
@@ -282,6 +286,32 @@
           <li><code>/team tag &lt;标记&gt;</code> 设置，支持颜色代码</li>
           <li>改完立刻刷新，不需要重新上线</li>
           <li>字符有白名单，防止伪造管理员前缀</li>
+        </ul>
+      </div>
+
+      <div class="bento-item reveal">
+        <div class="bento-icon">👥</div>
+        <h3>多队伍</h3>
+        <p>一个人可以同时加入多支队伍，默认 3 支，权限可调。</p>
+        <ul>
+          <li><strong>主队</strong>决定头顶队标与变量：<code>/team setmain &lt;队伍&gt;</code></li>
+          <li><strong>当前队</strong>决定命令与聊天作用对象：<code>/team use &lt;队伍&gt;</code></li>
+          <li><code>/team teams</code> 弹出可点击列表，点一下就能切</li>
+          <li>防误伤按「任意共同队伍」判断，两队重叠也照样拦住</li>
+        </ul>
+      </div>
+
+      <div class="bento-item reveal">
+        <div class="bento-icon">📈</div>
+        <h3>人数上限与购买</h3>
+        <p>上限可以按需扩容，用服务器货币或点券都行。</p>
+        <ul>
+          <li>默认 <strong>10</strong> 人，权限 <code>linuxtream.limit.&lt;数字&gt;</code> 可覆盖</li>
+          <li>货币购买：<code>/team upgrade</code>，每次 +5，最高 <strong>30</strong></li>
+          <li>点券提升：<code>/team upgrade points</code>，最高 <strong>100</strong>
+              （1200 点券，需先到 30）</li>
+          <li>只有队长能买，GUI 里点一下即可，买完立刻刷新</li>
+          <li><code>teams.yml</code> 自动备份，启动 + 每 60 分钟，保留最近 10 份</li>
         </ul>
       </div>
 
