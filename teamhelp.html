@@ -284,6 +284,8 @@
         <li>用点券提升：<code>/team upgrade points</code>，上限直接到 <b>100</b>，
             需要 1200 点券，且必须先买到 30</li>
         <li>只有队长可以购买；GUI 队伍设置界面里有对应按钮</li>
+        <li><code>team.max-size-cap</code> 是硬顶（默认 100）：权限 <code>linuxtream.limit.*</code> / <code>linuxtream.limit.unlimited</code> 最多给到这么多人</li>
+        <li>建队成功后聊天栏会显示「队伍人数上限：N 人」，可以直接确认权限有没有生效</li>
       </ul>
 
       <h3>数据备份</h3>
@@ -582,6 +584,8 @@
 
       <p>配置文件：<code>plugins/LinuxTeam/config.yml</code>。
          改完执行 <code>/team reload</code> 即可生效，不用重启。</p>
+      <p><code>/team reload</code> 会一并重载：<code>config.yml</code>、消息文本、疯狂附魔联动缓存、GUI，以及<b>队伍数据 <code>teams.yml</code></b>。也就是说手工改了 <code>plugins/LinuxTeam/teams.yml</code>（例如把某队的 <code>max-size</code> 调大）之后直接 <code>/team reload</code> 就会生效，不需要重启服务器。</p>
+      <p>重载前会自动把当前 <code>teams.yml</code> 备份一份（文件名带 <code>-beforereload</code>），改坏了可以找回。</p>
 
       <h3>常用项</h3>
       <div class="table-scroll">
@@ -590,11 +594,12 @@
             <tr><th>配置项</th><th>默认值</th><th>说明</th></tr>
           </thead>
           <tbody>
-            <tr><td><code>team.default-max-size</code></td><td>8</td><td>默认队伍人数上限</td></tr>
-            <tr><td><code>team.name-min-length</code></td><td>2</td><td>队名最短长度</td></tr>
+                        <tr><td><code>team.name-min-length</code></td><td>2</td><td>队名最短长度</td></tr>
             <tr><td><code>team.name-max-length</code></td><td>12</td><td>队名最长长度</td></tr>
             <tr><td><code>team.allow-color</code></td><td>true</td><td>队名是否允许颜色代码</td></tr>
             <tr><td><code>team.default-max-size</code></td><td>10</td><td>默认队伍人数上限；权限 <code>linuxtream.limit.&lt;数字&gt;</code> 可覆盖</td></tr>
+            <tr><td><code>team.max-size-cap</code></td><td>100</td><td>人数上限的硬顶：<code>linuxtream.limit.*</code> / <code>unlimited</code> 最多给到这么多人</td></tr>
+            <tr><td><code>backup.keep</code></td><td>10</td><td>保留最近多少份 <code>teams.yml</code> 备份</td></tr>
             <tr><td><code>team.create-cost</code></td><td>10000</td><td>创建队伍收费（需 Vault 经济）</td></tr>
             <tr><td><code>team.upgrade.money</code></td><td>step 5 / max 30 / price 8000</td><td>货币购买人数上限</td></tr>
             <tr><td><code>team.upgrade.points</code></td><td>cost 1200 / max 100 / require-max 30</td><td>点券购买人数上限</td></tr>
@@ -602,8 +607,7 @@
             <tr><td><code>team.tag-max-length</code></td><td>6</td><td>队标可见字符上限</td></tr>
             <tr><td><code>team.invite-seconds</code></td><td>60</td><td>邀请有效期</td></tr>
             <tr><td><code>team.disband-confirm-seconds</code></td><td>15</td><td>解散二次确认窗口</td></tr>
-            <tr><td><code>team.create-cost</code></td><td>0</td><td>创建队伍收费（需要 Vault），0 = 免费</td></tr>
-            <tr><td><code>team.rejoin-cooldown</code></td><td>0</td><td>退队后再加入的冷却秒数</td></tr>
+                        <tr><td><code>team.rejoin-cooldown</code></td><td>0</td><td>退队后再加入的冷却秒数</td></tr>
             <tr><td><code>members.offline-kick-hours</code></td><td>0</td><td>离线多久自动移出队伍，0 = 不移出</td></tr>
             <tr><td><code>chat.default-channel</code></td><td>false</td><td>玩家进服是否默认开队伍频道</td></tr>
             <tr><td><code>chat.log-to-console</code></td><td>true</td><td>队伍消息是否也打进控制台</td></tr>
