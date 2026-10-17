@@ -179,6 +179,7 @@
         <ul class="sidebar-flat">
           <li class="sidebar-group-label" data-group="开始使用">开始使用</li>
           <li><a href="#quickstart">快速开始</a></li>
+          <li><a href="#multi-team">多队伍</a></li>
           <li><a href="#panel">GUI 面板怎么点</a></li>
           <li><a href="#commands">命令详解</a></li>
           <li class="sidebar-group-label" data-group="功能说明">功能说明</li>
@@ -199,7 +200,47 @@
 
 <section class="help-section" id="quickstart">
 
-      <h2 id="multi-team">多队伍</h2>
+    <h2><span class="num">1</span>快速开始</h2>
+
+      <p>LinuxTeam 是一个<strong>组队系统</strong>插件：把"一起玩"需要的功能收在一处 ——
+         队伍管理、队伍聊天、队友免误伤、头顶队标，再把疯狂附魔接进来。</p>
+
+      <p>它<strong>不需要预先配置</strong>，装好就能用。默认只有一条规则值得先知道：
+         每支队伍各自决定<strong>加入方式</strong> —— 默认<strong>可直接加入</strong>，
+          队长也可以把自己的队改成<strong>需要申请</strong>。</p>
+
+      <h3>三步上手</h3>
+      <ol class="steps">
+        <li>把 <code>LinuxTeam.jar</code> 放入 <code>plugins/</code> 目录并重启服务器。</li>
+        <li>玩家输入 <code>/team</code> 打开面板，点「创建队伍」并输入队名。</li>
+        <li>队长点「邀请玩家」拉人；被邀请的人输入 <code>/team accept</code> 即可入队。</li>
+      </ol>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>全部功能都是可选的</strong>
+          没装 CrazyEnchantments / PlaceholderAPI / Vault 也能正常运行，
+          只是对应的联动项自动关闭，不会报错也不会影响其它功能。
+        </div>
+      </div>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">👥</span>
+        <div class="tip-body">
+          <strong>加入方式：每支队伍自己决定</strong>
+          默认 <b>可直接加入</b>：玩家执行 <code>/team join &lt;队名&gt;</code> 就立刻进队。<br>
+          队长想让队伍需要批准，可在 GUI 队伍设置里切到「需要申请」，
+          或用 <code>/team setting public-join off</code>；之后玩家
+          <code>/team join</code> 只会提交申请，需要队长
+          <code>/team accept &lt;玩家&gt;</code> 批准。
+        </div>
+      </div>
+
+  </section>
+
+<section class="help-section" id="panel">
+      <h2 id="multi-team"><span class="num">·</span>多队伍</h2>
       <p>一个人可以同时加入多支队伍（默认上限 3 支，可由权限 <code>linuxtream.teams.&lt;数字&gt;</code> 调整，
       <code>linuxtream.teams.unlimited</code> 不限制）。为此区分两个概念：</p>
       <div class="table-scroll">
@@ -253,45 +294,6 @@
         <li>只保留最近 10 份，超出自动清理最旧的</li>
         <li>备份前会校验：文件不存在、0 字节、YAML 解析失败都不会被当成"好版本"存下来</li>
       </ul>
-    <h2><span class="num">1</span>快速开始</h2>
-
-      <p>LinuxTeam 是一个<strong>组队系统</strong>插件：把"一起玩"需要的功能收在一处 ——
-         队伍管理、队伍聊天、队友免误伤、头顶队标，再把疯狂附魔接进来。</p>
-
-      <p>它<strong>不需要预先配置</strong>，装好就能用。默认只有一条规则值得先知道：
-         加入队伍采用<strong>申请制</strong>（玩家申请、队长批准），
-         而不是"谁都能进"。</p>
-
-      <h3>三步上手</h3>
-      <ol class="steps">
-        <li>把 <code>LinuxTeam.jar</code> 放入 <code>plugins/</code> 目录并重启服务器。</li>
-        <li>玩家输入 <code>/team</code> 打开面板，点「创建队伍」并输入队名。</li>
-        <li>队长点「邀请玩家」拉人；被邀请的人输入 <code>/team accept</code> 即可入队。</li>
-      </ol>
-
-      <div class="tip tip-info">
-        <span class="tip-icon">💡</span>
-        <div class="tip-body">
-          <strong>全部功能都是可选的</strong>
-          没装 CrazyEnchantments / PlaceholderAPI / Vault 也能正常运行，
-          只是对应的联动项自动关闭，不会报错也不会影响其它功能。
-        </div>
-      </div>
-
-      <div class="tip tip-warn">
-        <span class="tip-icon">⚠️</span>
-        <div class="tip-body">
-          <strong>默认是申请制</strong>
-          玩家执行 <code>/team join &lt;队名&gt;</code> 只会<strong>提交申请</strong>，
-          需要队长用 <code>/team accept &lt;玩家&gt;</code> 批准。
-          想让所有人随时自由加入，把 <code>config.yml</code> 里的
-          <code>team.public-join</code> 改成 <code>true</code>。
-        </div>
-      </div>
-
-  </section>
-
-<section class="help-section" id="panel">
     <h2><span class="num">2</span>GUI 面板怎么点</h2>
 
       <p>输入 <code>/team</code>（或 <code>/lt</code>）即可打开面板。
@@ -592,7 +594,11 @@
             <tr><td><code>team.name-min-length</code></td><td>2</td><td>队名最短长度</td></tr>
             <tr><td><code>team.name-max-length</code></td><td>12</td><td>队名最长长度</td></tr>
             <tr><td><code>team.allow-color</code></td><td>true</td><td>队名是否允许颜色代码</td></tr>
-            <tr><td><code>team.public-join</code></td><td>false</td><td>true = 无需批准即可加入</td></tr>
+            <tr><td><code>team.default-max-size</code></td><td>10</td><td>默认队伍人数上限；权限 <code>linuxtream.limit.&lt;数字&gt;</code> 可覆盖</td></tr>
+            <tr><td><code>team.create-cost</code></td><td>10000</td><td>创建队伍收费（需 Vault 经济）</td></tr>
+            <tr><td><code>team.upgrade.money</code></td><td>step 5 / max 30 / price 8000</td><td>货币购买人数上限</td></tr>
+            <tr><td><code>team.upgrade.points</code></td><td>cost 1200 / max 100 / require-max 30</td><td>点券购买人数上限</td></tr>
+            <tr><td><code>backup.interval-minutes</code></td><td>60</td><td><code>teams.yml</code> 自动备份间隔，0 = 只在启动时备份</td></tr>
             <tr><td><code>team.tag-max-length</code></td><td>6</td><td>队标可见字符上限</td></tr>
             <tr><td><code>team.invite-seconds</code></td><td>60</td><td>邀请有效期</td></tr>
             <tr><td><code>team.disband-confirm-seconds</code></td><td>15</td><td>解散二次确认窗口</td></tr>
@@ -735,9 +741,10 @@
       <div class="faq-item">
         <div class="faq-q"><span>我打了 <code>/team join</code>，为什么没进队？</span><span class="faq-icon"></span></div>
         <div class="faq-a-wrap"><div class="faq-a">
-          这是<strong>申请制</strong>的正常表现：申请已经提交，需要队长批准。
+          这是<strong>需要申请</strong>的正常表现：申请已经提交，需要队长批准。
           队长会收到一条提示，告诉他用 <code>/team accept &lt;你的名字&gt;</code> 放行。<br>
-          服主想让所有人免批准直接加入，把 <code>team.public-join</code> 改成 <code>true</code>。
+          队长想让队伍免批准直接加入，在 GUI 队伍设置里把「加入方式」切到
+         <strong>可直接加入</strong>，或用 <code>/team setting public-join on</code>。
         </div></div>
       </div>
 
