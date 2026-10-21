@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<title>LinuxACE · 使用帮助</title>
+<title>LinuxACE · 反作弊插件 · 使用帮助</title>
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="stylesheet" href="style.css?v=4e62472c">
     <link rel="stylesheet" href="liquid-glass.css">
 </head>
-<body class="intro-page">
+<body class="pure-white">
 
 <!-- ===== 液态玻璃折射滤镜（被 liquid-glass.css 的 backdrop-filter 引用） =====
      这是"玻璃的厚度场"：把背景按边缘梯度掰弯，
@@ -131,10 +131,7 @@
 
 <div class="bg-mobile" aria-hidden="true"></div>
 
-<video class="bg-video" id="bgVideo" loop muted playsinline
-       preload="none" aria-hidden="true" poster="mobile.jpg"></video>
-
-<nav class="nav-home">
+<nav>
   <div class="container nav-inner">
     <a href="index.html" class="nav-logo">
       <span class="nav-logo-icon">L</span>
@@ -143,9 +140,8 @@
 
     <ul class="nav-links" id="navLinks">
       <li><a href="index.html#plugins">插件列表</a></li>
-      <li><a href="ace.html">LinuxACE 介绍</a></li>
-      <li><a href="ace.html#features">功能</a></li>
-      <li><a href="ace.html#commands">命令</a></li>
+      <li><a href="team.html">LinuxTeam 介绍</a></li>
+      <li><a href="fakeplayer.html">FakePlayerPlugin 介绍</a></li>
       <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
       <li>
         <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
@@ -167,278 +163,257 @@
       <span></span>
     </button>
   </div>
-</nav><header class="cover cover-page has-video">
-  <div class="cover-overlay"></div>
-  <div class="cover-inner">
-    <span class="plug-hero-ver">LinuxACE · 使用帮助</span>
-    <h1 class="cover-title">LinuxACE Help</h1>
-    <p class="cover-subtitle">REFERENCE</p>
-    <hr class="cover-divider">
-    <p class="cover-quote">
-      22 项检测 · 七档强度 · 完整配置说明
-      <br>
-      <strong>看完就会调</strong>
-    </p>
-    <div class="cover-nav">
-        <a href="ace.html" class="cover-btn">返回插件介绍</a>
-        <a href="#checks" class="cover-btn">检测项</a>
-        <a href="#config" class="cover-btn">配置</a>
-    </div>
-    <div class="cover-remark">
-      <p>建议先读「误报怎么处理」再做调整</p>
-    </div>
-  </div>
-</header>
-<div class="intro-body">
+</nav>
 
-<!-- ── 检测项全表 ─────────────────────────────────────── -->
-<section id="checks">
+<section class="page-hero">
   <div class="container">
-    <div class="section-header reveal">
-      <span class="section-label">CHECKS</span>
-      <h2>22 项检测</h2>
-      <p>风险 = 记一次违规加多少危险等级；容忍 = 连续命中几次才算一次</p>
-    </div>
-
-    <table class="help-table reveal">
-      <thead><tr><th>分类</th><th>检查</th><th>说明</th><th>风险</th><th>容忍</th></tr></thead>
-      <tbody>
-        <tr><td rowspan="7">移动</td><td><b>加速</b> Speed</td><td>水平移动速度超过可能的极限</td><td>3</td><td>4</td></tr>
-        <tr><td><b>飞行</b> Fly</td><td>空中长时间不受重力影响</td><td>4</td><td>4</td></tr>
-        <tr><td><b>水上行走</b> Jesus</td><td>在水面上停留而没有下沉</td><td>4</td><td>3</td></tr>
-        <tr><td><b>爬墙</b> Spider</td><td>贴着墙垂直上升</td><td>4</td><td>3</td></tr>
-        <tr><td><b>穿墙</b> Phase</td><td>穿过无法穿过的方块</td><td>7</td><td>2</td></tr>
-        <tr><td><b>变速</b> Timer</td><td>移动包频率超过 1.005 倍</td><td>3</td><td>5</td></tr>
-        <tr><td><b>自动跳跃</b> Step</td><td>无跳跃直接上升超过 1 格</td><td>3</td><td>3</td></tr>
-
-        <tr><td rowspan="5">战斗</td><td><b>攻击距离</b> Reach</td><td>近战攻击距离超过正常范围</td><td>4</td><td>3</td></tr>
-        <tr><td><b>范围攻击</b> KillAura</td><td>同时攻击多个目标或攻击角度异常</td><td>6</td><td>2</td></tr>
-        <tr><td><b>连点器</b> AutoClicker</td><td>点击频率异常稳定且偏高</td><td>3</td><td>4</td></tr>
-        <tr><td><b>刀刀暴击</b> Criticals</td><td>无跳跃条件下持续暴击</td><td>3</td><td>5</td></tr>
-        <tr><td><b>击退免疫</b> Velocity</td><td>受击后位移明显不足</td><td>4</td><td>4</td></tr>
-
-        <tr><td rowspan="5">方块</td><td><b>秒挖</b> FastBreak</td><td>破坏方块耗时低于任何工具可能达到的值</td><td>5</td><td>3</td></tr>
-        <tr><td><b>范围挖掘</b> Nuker</td><td>极短时间内破坏大量方块</td><td>6</td><td>2</td></tr>
-        <tr><td><b>快速放置</b> FastPlace</td><td>放置频率超过可能范围</td><td>3</td><td>4</td></tr>
-        <tr><td><b>自动搭桥</b> Scaffold</td><td>视角未朝下却在脚下放置方块</td><td>4</td><td>3</td></tr>
-        <tr><td><b>液体放置</b> LiquidPlace</td><td>在水/岩浆上放置方块</td><td>2</td><td>6</td></tr>
-
-        <tr><td rowspan="5">其它</td><td><b>秒射</b> FastBow</td><td>拉弓时间不足</td><td>4</td><td>3</td></tr>
-        <tr><td><b>背包移动</b> InventoryMove</td><td>打开背包时仍在移动</td><td>3</td><td>4</td></tr>
-        <tr><td><b>秒吃</b> FastConsume</td><td>进食/喝药时间不足</td><td>2</td><td>6</td></tr>
-        <tr><td><b>快速回血</b> Regen</td><td>生命恢复速度异常</td><td>3</td><td>6</td></tr>
-        <tr><td><b>自动换工具</b> AutoTool</td><td>每次挖掘都精确切换到最优工具</td><td>2</td><td>5</td></tr>
-      </tbody>
-    </table>
-
-    <p class="reveal" style="margin-top: 20px; color: #8b949e;">
-      容忍次数会再乘以强度倍率 —— 强度 Pro 时就是上表数值，Lowest 时会翻倍。
-    </p>
+    <span class="plug-hero-ver">26.11.2</span>
+    <h1>FakePlayerPlugin 帮助中心</h1>
+    <p>命令详解、假人管理与常见问题</p>
   </div>
 </section>
 
-<!-- ── 检测强度 ───────────────────────────────────────── -->
-<section id="strength" class="alt">
-  <div class="container">
-    <div class="section-header reveal">
-      <span class="section-label">STRENGTH</span>
-      <h2>七档检测强度</h2>
-      <p>一条命令切换松紧</p>
-    </div>
+<div class="container content-layout no-toc">
 
-    <table class="help-table reveal">
-      <thead><tr><th>级别</th><th>中文</th><th>阈值倍率</th><th>容忍倍率</th><th>适用场景</th></tr></thead>
-      <tbody>
-        <tr><td><b>Lowest</b></td><td>最宽松</td><td>×1.35</td><td>×2.0</td><td>误报几乎为零，明显作弊也会放过一部分</td></tr>
-        <tr><td><b>Low</b></td><td>宽松</td><td>×1.20</td><td>×1.6</td><td>客户端差异大、插件多的服务器</td></tr>
-        <tr><td><b>Medium</b></td><td>中等</td><td>×1.10</td><td>×1.3</td><td>比推荐值再松一点</td></tr>
-        <tr><td><b>Pro</b></td><td>推荐</td><td>×1.00</td><td>×1.0</td><td><b>默认值</b>，抗误报优先</td></tr>
-        <tr><td><b>High</b></td><td>严格</td><td>×0.95</td><td>×0.75</td><td>开始能抓小动作，误报风险上升</td></tr>
-        <tr><td><b>Max</b></td><td>很严格</td><td>×0.90</td><td>×0.60</td><td>只建议无延迟、无特殊插件的纯净服</td></tr>
-        <tr><td><b>Highest</b></td><td>最严格</td><td>×0.85</td><td>×0.45</td><td>极易误报，仅测试或自建纯净服</td></tr>
-      </tbody>
-    </table>
+      <aside class="sidebar" id="sidebar">
+            <div class="sidebar-track">
+        <ul class="sidebar-flat">
+          <li class="sidebar-group-label" data-group="开始使用">开始使用</li>
+          <li><a href="#quickstart">快速开始</a></li>
+          <li><a href="#commands">命令详解</a></li>
+          <li class="sidebar-group-label" data-group="检测体系">检测体系</li>
+          <li><a href="#checks">检测项一览</a></li>
+          <li><a href="#strength">检测强度</a></li>
+          <li class="sidebar-group-label" data-group="处置与权限">处置与权限</li>
+          <li><a href="#alert">告警与处置</a></li>
+          <li><a href="#permissions">权限节点</a></li>
+          <li class="sidebar-group-label" data-group="参考与帮助">参考与帮助</li>
+          <li><a href="#config">配置与依赖</a></li>
+          <li><a href="#faq">常见问题</a></li>
+        </ul>
+      </div>
+    </aside>
 
-    <div class="reveal" style="margin-top: 24px;">
-      <p>切换：<code>/ace strength High</code> —— 会写回 <code>config.yml</code> 并立刻生效。</p>
-    </div>
-  </div>
-</section>
+  <main class="main-content">
 
-<!-- ── 配置文件 ───────────────────────────────────────── -->
-<section id="config">
-  <div class="container">
-    <div class="section-header reveal">
-      <span class="section-label">CONFIG</span>
-      <h2>配置文件</h2>
-      <p>plugins/LinuxACE/config.yml</p>
-    </div>
+<section class="help-section" id="quickstart">
+    <h2><span class="num">1</span>快速开始</h2>
 
-<pre class="code-block reveal"><code>enabled: true
-prefix: '&amp;8[&amp;bLinuxACE&amp;8] &amp;r'
-debug: false
+      <p>LinuxACE 是给服主用的<strong>低误报反作弊</strong>。它不追求"抓得狠"，
+         而是先保证<strong>不冤枉正常玩家</strong>：每次检测命中只累加缓冲，
+         连续命中够次数才算一次违规，缓冲每秒自动衰减。</p>
 
-# 检测强度：Lowest / Low / Medium / Pro / High / Max / Highest
-strength: Pro
+      <h3>三步上手</h3>
+      <ol class="steps">
+        <li>确认已安装 <code>InTheNameOfLinux</code>（<strong>硬依赖</strong>，缺它不启动）。</li>
+        <li>把 <code>LinuxACE-26.11.4.jar</code> 放进 <code>plugins/</code> 并重启服务器。</li>
+        <li>执行 <code>/ace</code> 看主菜单，<code>/ace status</code> 看运行状态。</li>
+      </ol>
 
+      <div class="tip tip-info">
+        <span class="tip-icon">ℹ️</span>
+        <div class="tip-body">
+          <strong>默认已经很保守</strong>
+          装上去先跑几天，用 <code>/ace logs</code> 确认没有误报，再考虑调高强度。
+        </div>
+      </div>
+  </section>
+
+<section class="help-section" id="commands">
+    <h2><span class="num">2</span>命令详解</h2>
+
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>命令</th><th>作用</th></tr></thead>
+          <tbody>
+            <tr><td><code>/ace</code></td><td>打开主菜单（面板，只显示重要信息）</td></tr>
+            <tr><td><code>/ace help [页码]</code></td><td>完整命令帮助，可翻页、可点击</td></tr>
+            <tr><td><code>/ace status</code></td><td>运行状态：强度、TPS、兼容插件、ITNOL 联动</td></tr>
+            <tr><td><code>/ace checks</code></td><td>列出 22 项检测的开关、风险权重、容忍次数</td></tr>
+            <tr><td><code>/ace goto &lt;玩家&gt;</code></td><td>变旁观者并传送过去（告警里的「点击前往」）</td></tr>
+            <tr><td><code>/ace back</code></td><td>返回观察前的位置与游戏模式</td></tr>
+            <tr><td><code>/ace check &lt;玩家&gt;</code></td><td>查看某人的危险等级与各检查命中次数</td></tr>
+            <tr><td><code>/ace lookup &lt;玩家&gt;</code></td><td>调 InTheNameOfLinux 查询：封禁历史 + 反作弊记录</td></tr>
+            <tr><td><code>/ace ban &lt;玩家&gt; [理由]</code></td><td>封禁（走 ITNOL 封禁体系）；不写理由时用触发的违规事件当理由</td></tr>
+            <tr><td><code>/ace exempt &lt;玩家&gt;</code></td><td>临时豁免该玩家的检测</td></tr>
+            <tr><td><code>/ace reset &lt;玩家&gt;</code></td><td>清零危险等级</td></tr>
+            <tr><td><code>/ace strength [级别]</code></td><td>查看或设置检测强度（七档）</td></tr>
+            <tr><td><code>/ace toggle &lt;检查&gt; &lt;on|off&gt;</code></td><td>开关某一项检测，关掉后完全不检测</td></tr>
+            <tr><td><code>/ace ops &lt;on|off&gt;</code></td><td>OP 检测豁免开关</td></tr>
+            <tr><td><code>/ace logs [数量]</code></td><td>查看最近告警</td></tr>
+            <tr><td><code>/ace reload</code></td><td>重载配置</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>只有管理员能用</strong>
+          <code>/ace</code> 要求 OP 或 <code>linuxace.use</code> 权限，普通玩家打不开。
+        </div>
+      </div>
+  </section>
+
+<section class="help-section" id="checks">
+    <h2><span class="num">3</span>检测项一览</h2>
+
+      <p>共 22 项。风险 = 记一次违规加多少危险等级；容忍 = 连续命中几次才算一次违规。</p>
+
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>分类</th><th>检查</th><th>说明</th><th>风险</th><th>容忍</th></tr></thead>
+          <tbody>
+            <tr><td>移动</td><td><b>加速</b> Speed</td><td>水平移动速度超过可能的极限</td><td>3</td><td>4</td></tr>
+            <tr><td>移动</td><td><b>飞行</b> Fly</td><td>空中长时间不受重力影响</td><td>4</td><td>4</td></tr>
+            <tr><td>移动</td><td><b>水上行走</b> Jesus</td><td>在水面上停留而没有下沉</td><td>4</td><td>3</td></tr>
+            <tr><td>移动</td><td><b>爬墙</b> Spider</td><td>贴着墙垂直上升</td><td>4</td><td>3</td></tr>
+            <tr><td>移动</td><td><b>穿墙</b> Phase</td><td>穿过无法穿过的方块</td><td>7</td><td>2</td></tr>
+            <tr><td>移动</td><td><b>变速</b> Timer</td><td>移动包频率超过 1.005 倍</td><td>3</td><td>5</td></tr>
+            <tr><td>移动</td><td><b>自动跳跃</b> Step</td><td>无跳跃直接上升超过 1 格</td><td>3</td><td>3</td></tr>
+            <tr><td>战斗</td><td><b>攻击距离</b> Reach</td><td>近战攻击距离超过正常范围</td><td>4</td><td>3</td></tr>
+            <tr><td>战斗</td><td><b>范围攻击</b> KillAura</td><td>同时攻击多个目标或攻击角度异常</td><td>6</td><td>2</td></tr>
+            <tr><td>战斗</td><td><b>连点器</b> AutoClicker</td><td>点击频率异常稳定且偏高</td><td>3</td><td>4</td></tr>
+            <tr><td>战斗</td><td><b>刀刀暴击</b> Criticals</td><td>无跳跃条件下持续暴击</td><td>3</td><td>5</td></tr>
+            <tr><td>战斗</td><td><b>击退免疫</b> Velocity</td><td>受击后位移明显不足</td><td>4</td><td>4</td></tr>
+            <tr><td>方块</td><td><b>秒挖</b> FastBreak</td><td>破坏耗时低于任何工具可能达到的值</td><td>5</td><td>3</td></tr>
+            <tr><td>方块</td><td><b>范围挖掘</b> Nuker</td><td>极短时间内破坏大量方块</td><td>6</td><td>2</td></tr>
+            <tr><td>方块</td><td><b>快速放置</b> FastPlace</td><td>放置频率超过可能范围</td><td>3</td><td>4</td></tr>
+            <tr><td>方块</td><td><b>自动搭桥</b> Scaffold</td><td>视角未朝下却在脚下放置方块</td><td>4</td><td>3</td></tr>
+            <tr><td>方块</td><td><b>液体放置</b> LiquidPlace</td><td>在水/岩浆上放置方块</td><td>2</td><td>6</td></tr>
+            <tr><td>其它</td><td><b>秒射</b> FastBow</td><td>拉弓时间不足</td><td>4</td><td>3</td></tr>
+            <tr><td>其它</td><td><b>背包移动</b> InventoryMove</td><td>打开背包时仍在移动</td><td>3</td><td>4</td></tr>
+            <tr><td>其它</td><td><b>秒吃</b> FastConsume</td><td>进食/喝药时间不足</td><td>2</td><td>6</td></tr>
+            <tr><td>其它</td><td><b>快速回血</b> Regen</td><td>生命恢复速度异常</td><td>3</td><td>6</td></tr>
+            <tr><td>其它</td><td><b>自动换工具</b> AutoTool</td><td>每次挖掘都精确切换到最优工具</td><td>2</td><td>5</td></tr>
+          </tbody>
+        </table>
+      </div>
+  </section>
+
+<section class="help-section" id="strength">
+    <h2><span class="num">4</span>检测强度</h2>
+
+      <p>一条命令切换松紧，不用改一堆数字：<code>/ace strength &lt;级别&gt;</code></p>
+
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>级别</th><th>中文</th><th>阈值倍率</th><th>容忍倍率</th><th>适用场景</th></tr></thead>
+          <tbody>
+            <tr><td><b>Lowest</b></td><td>最宽松</td><td>×1.35</td><td>×2.0</td><td>误报几乎为零，明显作弊也会放过一部分</td></tr>
+            <tr><td><b>Low</b></td><td>宽松</td><td>×1.20</td><td>×1.6</td><td>客户端差异大、插件多的服务器</td></tr>
+            <tr><td><b>Medium</b></td><td>中等</td><td>×1.10</td><td>×1.3</td><td>比推荐值再松一点</td></tr>
+            <tr><td><b>Pro</b></td><td>推荐</td><td>×1.00</td><td>×1.0</td><td><b>默认值</b>，抗误报优先</td></tr>
+            <tr><td><b>High</b></td><td>严格</td><td>×0.95</td><td>×0.75</td><td>开始能抓小动作，误报风险上升</td></tr>
+            <tr><td><b>Max</b></td><td>很严格</td><td>×0.90</td><td>×0.60</td><td>只建议无延迟、无特殊插件的纯净服</td></tr>
+            <tr><td><b>Highest</b></td><td>最严格</td><td>×0.85</td><td>×0.45</td><td>极易误报，仅测试或自建纯净服</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>单项误报就调单项</strong>
+          把那一项的 <code>tolerance</code> 调大即可，比整体降强度精准得多。
+        </div>
+      </div>
+  </section>
+
+<section class="help-section" id="alert">
+    <h2><span class="num">5</span>告警与处置</h2>
+
+      <p>确认违规时向在线 OP 广播，告警是<strong>可点击</strong>的：</p>
+      <pre><code>[LinuxACE]玩家 Steve 触发了 加速，等级 6 [点击前往]</code></pre>
+
+      <p>鼠标移到告警上能看到现场信息：<b>世界 · 坐标 · 延迟 · TPS · 危险等级</b>。
+         点「点击前往」会变成旁观者并传送过去，<code>/ace back</code> 一键返回。</p>
+
+      <h3>处置规则</h3>
+      <ul>
+        <li>危险等级达到 <b>20</b> → <b>踢出游戏，不封禁</b></li>
+        <li>封禁只能由 OP 手动执行 <code>/ace ban</code></li>
+        <li>不写理由时，理由自动取触发的违规事件，形如 <code>[LinuxACE]检测到 击退免疫</code></li>
+        <li>封禁写入 InTheNameOfLinux，<code>/linux lookup</code> 能查到</li>
+        <li>同一玩家同一检查有 10 秒告警冷却，不会刷屏</li>
+      </ul>
+  </section>
+
+<section class="help-section" id="permissions">
+    <h2><span class="num">6</span>权限节点</h2>
+
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>权限</th><th>默认</th><th>作用</th></tr></thead>
+          <tbody>
+            <tr><td><code>linuxace.use</code></td><td>OP</td><td>使用 /ace 基本命令</td></tr>
+            <tr><td><code>linuxace.alert</code></td><td>OP</td><td>接收作弊告警</td></tr>
+            <tr><td><code>linuxace.ban</code></td><td>OP</td><td>使用 /ace ban 封禁</td></tr>
+            <tr><td><code>linuxace.admin</code></td><td>OP</td><td>改强度 / 开关检测 / 重载配置</td></tr>
+            <tr><td><code>linuxace.bypass</code></td><td>否</td><td>完全跳过检测</td></tr>
+          </tbody>
+        </table>
+      </div>
+  </section>
+
+<section class="help-section" id="config">
+    <h2><span class="num">7</span>配置与依赖</h2>
+
+      <h3>前置依赖</h3>
+      <p><strong>InTheNameOfLinux 是硬依赖</strong>：没装它、或它被禁用时，LinuxACE 不会启动。
+         封禁统一走它的封禁体系（记录 / 历史 / 审计 / 到期解封都由它管）；
+         反过来 <b>ITNOL 可以单独运行</b>，依赖是单向的。</p>
+
+      <h3>关键配置</h3>
+      <pre><code>strength: Pro          # 检测强度
 risk:
-  kick-at: 20          # 危险等级达到多少踢出（只踢，不封）
-  decay-seconds: 45    # 多少秒没新违规就掉 1 点
-  min-tps: 15.0        # TPS 低于此值整体暂停检测
-
-alert:
-  use-permission: true
-  permission: linuxace.alert
-  cooldown-seconds: 10 # 同一玩家同一检查的告警冷却
-  console: true
-
+  kick-at: 20          # 危险等级达到多少踢出
+  decay-seconds: 45    # 多少秒没新违规掉 1 点
+  min-tps: 15.0        # TPS 低于此值暂停检测
 exempt:
-  bypass-node: linuxace.bypass
-  ops: true            # OP 完全不检测（/ace ops off 可关）
-  creative: true
-  allow-flight: true
-  worlds:
-    - spawn_build
-
-# 延迟补偿（与插件无关，只看玩家实测 ping）
-lag-compensation:
-  enabled: true
-  base-ping: 80
-  per-100ms: 0.25
-  max-grace: 1.5
-
+  ops: true            # OP 完全不检测
 compat:
   auto-disable: true   # 检测到冲突插件时自动关闭对应检查
-  eagler-grace: 0.50   # 只有检测到 EaglerXServer 才加
-  via-grace: 0.20      # 只有检测到 ViaVersion 才加
-
 checks:
   fly:
     enabled: true      # 关掉就是真的不检测
     tolerance: 4
-    risk: 4
-    max-air-ticks: 40
-  # … 其余 21 项同理</code></pre>
-  </div>
-</section>
+    risk: 4</code></pre>
 
-<!-- ── 兼容 ───────────────────────────────────────────── -->
-<section id="compat" class="alt">
-  <div class="container">
-    <div class="section-header reveal">
-      <span class="section-label">COMPATIBILITY</span>
-      <h2>插件兼容</h2>
-      <p>所有放宽都只在检测到对应插件时生效</p>
-    </div>
-
-    <table class="help-table reveal">
-      <thead><tr><th>插件</th><th>影响</th><th>LinuxACE 的处理</th></tr></thead>
-      <tbody>
-        <tr><td>KnockbackSync</td><td rowspan="4">会改写击退力度</td><td rowspan="4">自动关闭「击退免疫」检查</td></tr>
-        <tr><td>CrazyEnchantments</td></tr>
-        <tr><td>XlandHighPvp</td></tr>
-        <tr><td>mcMMO</td></tr>
-        <tr><td>MaxHealth / MMHp</td><td>改写血量与回血</td><td>自动关闭「快速回血」检查</td></tr>
-        <tr><td>FakePlayerPlugin / ZNPCsPlus</td><td>假人是 Player 对象</td><td>整体跳过，也不作为攻击目标</td></tr>
-        <tr><td>Slimefun 及附属</td><td>自定义工具速度未知</td><td>手持非原版工具时不判「秒挖」</td></tr>
-        <tr><td>EaglerXServer</td><td>网页客户端移动包节奏不同</td><td>移动阈值额外放宽 50%</td></tr>
-        <tr><td>ViaVersion / ViaBackwards</td><td>多版本客户端</td><td>阈值额外放宽 20%</td></tr>
-        <tr><td>EssentialsX</td><td>/fly /god /speed</td><td>读飞行状态；有权限则跳过飞行检查</td></tr>
-        <tr><td>Vulcan / XlandAntiCheat</td><td>已有反作弊</td><td>启动时提示，建议只告警不踢</td></tr>
-        <tr><td>AuthMe / Residence / WorldEdit</td><td>传送、区域操作</td><td>走通用传送豁免</td></tr>
-      </tbody>
-    </table>
-
-    <div class="reveal" style="margin-top: 24px;">
-      <p>
-        <b>重要</b>：没检测到对应插件时，所有放宽一律是中性值
-        （倍率 1.0、检查照常），代码里留着兼容分支也不会让它变松。
-        用 <code>/ace status</code> 的「放宽门控」一行可以直接看到当前实际放宽量。
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- ── 误报处理 ───────────────────────────────────────── -->
-<section id="falsepositive">
-  <div class="container">
-    <div class="intro-split">
-      <div class="reveal">
-        <h2>误报了怎么办</h2>
-        <p>
-          先别急着关掉整个插件。按这个顺序处理，通常一两步就能解决：
-        </p>
-        <p style="margin-top: 14px;">
-          <b>1.</b> <code>/ace check &lt;玩家&gt;</code> 看是哪一项在报。<br>
-          <b>2.</b> 把那一项的 <code>tolerance</code> 调大（比如 3 → 6），
-          只放宽这一项，不影响其它检测。<br>
-          <b>3.</b> 如果整类都在报，把 <code>/ace strength</code> 降一档。<br>
-          <b>4.</b> 确认是插件冲突导致的，把冲突插件加进兼容判断。
-        </p>
-      </div>
-      <ul class="split-points reveal stagger">
-        <li><strong>只调单项，别整体降</strong><br>tolerance 调大比降强度精准得多</li>
-        <li><strong>先看 /ace logs</strong><br>能看到最近的告警与触发原因</li>
-        <li><strong>临时豁免</strong><br>/ace exempt &lt;玩家&gt; 给特定人开白名单</li>
-        <li><strong>OP 默认不检测</strong><br>管理员自己测试不会被踢</li>
+      <h3>插件兼容</h3>
+      <ul>
+        <li>KnockbackSync / CrazyEnchantments / XlandHighPvp / mcMMO → 自动关闭击退检查</li>
+        <li>MaxHealth / MMHp / mcMMO → 自动关闭回血检查</li>
+        <li>FakePlayerPlugin / ZNPCsPlus → 假人整体跳过</li>
+        <li>Slimefun → 手持自定义工具时不判秒挖</li>
+        <li>EaglerXServer / ViaVersion → 移动阈值额外放宽</li>
       </ul>
-    </div>
-  </div>
-</section>
+      <p>所有放宽<strong>只在检测到对应插件时生效</strong>，没装就是最严格基线。</p>
+  </section>
 
-<!-- ── 权限 ───────────────────────────────────────────── -->
-<section id="permissions" class="alt">
-  <div class="container">
-    <div class="section-header reveal">
-      <span class="section-label">PERMISSIONS</span>
-      <h2>权限节点</h2>
-      <p>默认只有 OP 能用</p>
-    </div>
-    <table class="help-table reveal">
-      <thead><tr><th>权限</th><th>默认</th><th>作用</th></tr></thead>
-      <tbody>
-        <tr><td><code>linuxace.use</code></td><td>OP</td><td>使用 /ace 基本命令</td></tr>
-        <tr><td><code>linuxace.alert</code></td><td>OP</td><td>接收作弊告警</td></tr>
-        <tr><td><code>linuxace.ban</code></td><td>OP</td><td>使用 /ace ban 手动封禁</td></tr>
-        <tr><td><code>linuxace.admin</code></td><td>OP</td><td>改强度 / 开关检测 / 重载配置</td></tr>
-        <tr><td><code>linuxace.bypass</code></td><td>否</td><td>完全跳过检测</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
+<section class="help-section" id="faq">
+    <h2><span class="num">8</span>常见问题</h2>
 
-<section id="dep">
-  <div class="container">
-    <div class="section-header reveal">
-      <span class="section-label">DEPENDENCY</span>
-      <h2>前置依赖</h2>
-      <p>LinuxACE 依赖 InTheNameOfLinux</p>
-    </div>
-    <div class="reveal">
-      <p><b>InTheNameOfLinux 是 LinuxACE 的硬依赖</b>：没装它、或它被禁用时，
-         LinuxACE 不会启动（Bukkit 层面直接拦住）。</p>
-      <p style="margin-top:14px;">
-        封禁统一走 ITNOL 的封禁体系 —— 记录、历史、审计日志、到期解封任务都由它生成；
-        <code>/ace ban</code> 的封禁会出现在 <code>/linux lookup</code> 里。
-        反过来 <b>ITNOL 可以单独运行</b>，依赖是单向的。</p>
-      <p style="margin-top:14px;">
-        装了 ITNOL 之后还能用 <code>/ace lookup &lt;玩家&gt;</code>，
-        一次看到封禁历史与反作弊记录。</p>
-    </div>
-  </div>
-</section>
+      <h3>误报了怎么办？</h3>
+      <ol class="steps">
+        <li><code>/ace check &lt;玩家&gt;</code> 看是哪一项在报。</li>
+        <li>把那一项的 <code>tolerance</code> 调大（例如 3 → 6）。</li>
+        <li>整类都在报，再用 <code>/ace strength</code> 降一档。</li>
+        <li>确认是插件冲突，把冲突插件加进兼容判断。</li>
+      </ol>
 
-<section id="back">
-  <div class="container">
-    <div class="cover-nav" style="justify-content: center;">
-      <a href="ace.html" class="cover-btn">← 返回插件介绍</a>
-      <a href="linuxhelp.html" class="cover-btn">综合帮助中心</a>
-    </div>
-  </div>
-</section>
+      <h3>为什么 OP 不会被检测？</h3>
+      <p>默认开启了 OP 豁免（<code>exempt.ops: true</code>），避免管理员测试时被自己踢。
+         想验证检测是否生效，用 <code>/ace ops off</code> 临时关掉。</p>
 
-</div><!-- /.intro-body -->
+      <h3>玩家会被自动封禁吗？</h3>
+      <p>不会。LinuxACE 只会踢出，封禁必须由 OP 手动执行 <code>/ace ban</code>。</p>
 
+      <h3>和 Vulcan / XlandAntiCheat 冲突吗？</h3>
+      <p>不冲突。检测到还会在启动日志里提示，建议此时把对应检查设为只告警不踢，避免双重处罚。</p>
+  </section>
+
+</main>
 
 <script>
     // 页面切换动画：进入淡入 + 离开淡出
@@ -471,60 +446,113 @@ checks:
       }, true);
     })();
 
-    // 背景视频：只在宽屏加载（与主页一致）
+
+    // 滚动高亮：侧栏 + 本页目录
     (function () {
-      var v = document.getElementById('bgVideo');
-      if (!v) return;
-      var mq = window.matchMedia('(min-width: 921px)');
-      function apply() {
-        if (mq.matches) {
-          if (!v.getAttribute('src')) {
-            v.setAttribute('src', 'video.mp4');
-            v.load();
-            var pr = v.play();
-            if (pr && pr.catch) { pr.catch(function () {}); }
-          }
-        } else {
-          try { v.pause(); } catch (e) {}
-          v.removeAttribute('src');
-          try { v.load(); } catch (e) {}
-        }
+      var links = document.querySelectorAll('.sidebar a');
+      if (!links.length) return;
+
+      function activate(id) {
+        links.forEach(function (a) {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+        });
       }
-      apply();
-      if (mq.addEventListener) { mq.addEventListener('change', apply); }
-      else if (mq.addListener) { mq.addListener(apply); }
+
+      var targets = [];
+      links.forEach(function (a) {
+        var id = (a.getAttribute('href') || '').slice(1);
+        if (!id) return;
+        var el = document.getElementById(id);
+        if (el) targets.push(el);
+      });
+      if (!targets.length) return;
+
+      if (!('IntersectionObserver' in window)) {
+        activate(targets[0].id);
+        return;
+      }
+
+      var visible = {};
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          visible[en.target.id] = en.isIntersecting;
+        });
+        for (var i = 0; i < targets.length; i++) {
+          if (visible[targets[i].id]) { activate(targets[i].id); break; }
+        }
+      }, { rootMargin: '-90px 0px -70% 0px', threshold: 0 });
+
+      targets.forEach(function (t) { io.observe(t); });
     })();
 
-  // 滚动淡入
+    // 移动端侧栏抽屉
+    (function () {
+      var sb = document.getElementById('sidebar');
+      var tg = document.getElementById('navToggle');
+      if (!sb || !tg) return;
+
+      var bd = document.createElement('div');
+      bd.className = 'sidebar-backdrop';
+      document.body.appendChild(bd);
+
+      function close() {
+        sb.classList.remove('open');
+        bd.classList.remove('open');
+      }
+
+      tg.addEventListener('click', function (e) {
+        e.stopPropagation();
+        sb.classList.toggle('open');
+        bd.classList.toggle('open');
+      });
+
+      bd.addEventListener('click', close);
+      sb.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') close();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') close();
+      });
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 920) close();
+      });
+    })();
+
+  document.querySelectorAll('.faq-q').forEach((q) => {
+    q.addEventListener('click', () => {
+      q.parentElement.classList.toggle('open');
+    });
+  });
+
+  const sidebarLinks = document.querySelectorAll('.sidebar a');
+    // 参与滚动高亮的锚点：各章节 + 侧栏指向的其它锚点（如 #config-ref）
+    const watched = [];
+    const seen = {};
+    sidebarLinks.forEach((link) => {
+      const href = link.getAttribute('href') || '';
+      if (href.charAt(0) !== '#') return;
+      const id = href.slice(1);
+      if (seen[id]) return;
+      const el = document.getElementById(id);
+      if (el) { watched.push(el); seen[id] = true; }
+    });
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        // 触发一次就撤掉监听，避免反复播放
-        observer.unobserve(entry.target);
+        const id = entry.target.id;
+        sidebarLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
       }
     });
   }, {
-    // 不能用 0.1：比视口高的元素永远凑不满 10%，会一直 opacity:0
-    threshold: 0,
-    rootMargin: '0px 0px -40px 0px'
+    rootMargin: '-80px 0px -60% 0px',
+    threshold: 0
   });
 
-  document.querySelectorAll('.reveal').forEach((el) => {
-    observer.observe(el);
-  });
+  watched.forEach((s) => observer.observe(s));
 
-  // 兜底：滚动结束后仍未显示的，直接显示（防止某些浏览器不触发）
-  setTimeout(function () {
-    document.querySelectorAll('.reveal:not(.visible)').forEach(function (el) {
-      var r = el.getBoundingClientRect();
-      if (r.top < window.innerHeight && r.bottom > 0) {
-        el.classList.add('visible');
-      }
-    });
-  }, 1200);
-
-  // 平滑滚动
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener('click', function (e) {
       e.preventDefault();
@@ -537,9 +565,6 @@ checks:
     });
   });
 
-  // ============================================================
-  // 移动端汉堡菜单
-  // ============================================================
   const navToggle = document.getElementById('navToggle');
   const navLinks = document.getElementById('navLinks');
 
