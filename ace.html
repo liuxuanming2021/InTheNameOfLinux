@@ -294,7 +294,9 @@
         <ul>
           <li><code>/linux plugins</code> 显示强度与检查数</li>
           <li><code>/linux ace</code> 查看反作弊详情</li>
-          <li><code>/linux lookup &lt;玩家&gt;</code> 显示危险等级与违规记录</li>
+          <li><code>/ace lookup &lt;玩家&gt;</code> 直接调它的查询，一次看全</li>
+          <li><b>硬依赖</b>：没装 InTheNameOfLinux 时 LinuxACE 不启动</li>
+          <li>封禁统一走它的封禁体系，记录 / 审计 / 到期解封都由它管</li>
         </ul>
       </div>
 
@@ -333,7 +335,8 @@
         <tr><td><code>/ace goto &lt;玩家&gt;</code></td><td>变成旁观者并传送过去（告警里的「点击前往」）</td></tr>
         <tr><td><code>/ace back</code></td><td>返回观察前的位置与游戏模式</td></tr>
         <tr><td><code>/ace check &lt;玩家&gt;</code></td><td>查看某人的危险等级与各检查命中次数</td></tr>
-        <tr><td><code>/ace ban &lt;玩家&gt; [理由]</code></td><td>手动封禁；不写理由时自动用检测记录生成</td></tr>
+        <tr><td><code>/ace lookup &lt;玩家&gt;</code></td><td>调 InTheNameOfLinux 查询：封禁历史 + 反作弊记录一起看</td></tr>
+        <tr><td><code>/ace ban &lt;玩家&gt; [理由]</code></td><td>封禁（走 InTheNameOfLinux 的封禁体系）；不写理由时用触发的违规事件当理由</td></tr>
         <tr><td><code>/ace exempt &lt;玩家&gt;</code></td><td>临时豁免该玩家的检测</td></tr>
         <tr><td><code>/ace reset &lt;玩家&gt;</code></td><td>清零危险等级</td></tr>
         <tr><td><code>/ace strength [级别]</code></td><td>查看或设置检测强度</td></tr>
