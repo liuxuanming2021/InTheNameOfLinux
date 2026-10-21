@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>LinuxACE · 反作弊插件</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css?v=4e62472c">
+    <link rel="stylesheet" href="liquid-glass.css">
+</head>
+<body class="intro-page">
+
+<!-- ===== 液态玻璃折射滤镜（被 liquid-glass.css 的 backdrop-filter 引用） =====
+     这是"玻璃的厚度场"：把背景按边缘梯度掰弯，
+     让它像透过一块有弧边的玻璃，而不是糊了一层白膜。 -->
+<svg class="lw-glass-defs" aria-hidden="true" focusable="false"
+     width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <defs>
+        <filter id="lw-glass" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="40"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="50"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thick" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="48"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="72"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thin" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="16"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="20"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="24"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+    </defs>
+</svg>
+
+
+<div class="bg-mobile" aria-hidden="true"></div>
+
+<video class="bg-video" id="bgVideo" loop muted playsinline
+       preload="none" aria-hidden="true" poster="mobile.jpg"></video>
+
+<nav class="nav-home">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="team.html">LinuxTeam 介绍</a></li>
+      <li><a href="ace.html">LinuxACE 介绍</a></li>
+      <li><a href="#features">功能</a></li>
+      <li><a href="#commands">命令</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          <span class="nav-text">Nalxer 服务器</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav><header class="cover cover-page has-video">
+  <div class="cover-overlay"></div>
+
+  <div class="cover-inner">
+    <span class="plug-hero-ver">26.11.4 · Paper 1.12.2</span>
+
+    <h1 class="cover-title">LinuxACE</h1>
+    <p class="cover-subtitle">ANTI-CHEAT</p>
+
+    <hr class="cover-divider">
+
+    <p class="cover-quote">
+      宁可漏报，不要误报
+      <br>
+      <strong>22 项检测 · 七档强度 · 只告警不封禁</strong>
+    </p>
+
+    <div class="cover-nav">
+        <a href="acehelp.html" class="cover-btn">查看使用帮助</a>
+        <a href="#features" class="cover-btn">了解功能</a>
+        <a href="linuxhelp.html" class="cover-btn">综合帮助中心</a>
+    </div>
+
+    <div class="cover-remark">
+      <p><strong>22</strong> 项检测 · 危险等级到 20 才踢 · 永不自动封禁</p>
+    </div>
+  </div>
+</header>
+<div class="intro-body">
+
+
+<!-- ── 为什么这么设计 ─────────────────────────────────── -->
+<section id="what">
+  <div class="container">
+    <div class="intro-split">
+      <div class="reveal">
+        <h2>为什么是「宁可漏报」</h2>
+        <p>
+          反作弊最难的不是抓作弊，而是<strong>不冤枉正常玩家</strong>。
+          大多数反作弊装上去第一周，玩家投诉的往往是「我什么都没干就被踢了」。
+        </p>
+        <p style="margin-top: 14px;">
+          LinuxACE 的取舍很明确：<strong>先保证不误报</strong>。
+          每次检测命中只累加一个「缓冲」，达到容忍次数才真正记一次违规；
+          缓冲每秒自动衰减，偶发一次永远不会积累成误判。
+        </p>
+        <p style="margin-top: 14px;">
+          真正确认之后才加「危险等级」，<strong>攒到 20 才踢出，而且不封禁</strong>
+          —— 封不封人由 OP 自己判断。
+        </p>
+      </div>
+      <ul class="split-points reveal stagger">
+        <li><strong>缓冲 + 容忍</strong><br>连续命中 3~6 次才算一次违规</li>
+        <li><strong>缓冲每秒衰减</strong><br>偶发一次永远不累计</li>
+        <li><strong>风险 45 秒衰减</strong><br>长期在线不会被无故踢</li>
+        <li><strong>豁免窗口</strong><br>传送/击退/重生后 2~4 秒不查</li>
+        <li><strong>卡服保护</strong><br>TPS 低于 15 整体暂停</li>
+        <li><strong>永不自动封禁</strong><br>只踢出，封禁由 OP 决定</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── 核心功能 ───────────────────────────────────────── -->
+<section id="features" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">FEATURES</span>
+      <h2>核心功能</h2>
+      <p>检测、告警、处置、配置</p>
+    </div>
+
+    <div class="bento">
+      <div class="bento-item wide reveal">
+        <div class="bento-icon">🛡️</div>
+        <h3>22 项检测</h3>
+        <p>覆盖移动、战斗、方块、其它四大类，每一项都能单独开关。</p>
+        <ul>
+          <li>移动：加速 · 飞行 · 水上行走 · 爬墙 · 穿墙 · 变速 · 自动跳跃</li>
+          <li>战斗：攻击距离 · 范围攻击 · 连点器 · 刀刀暴击 · 击退免疫</li>
+          <li>方块：秒挖 · 范围挖掘 · 快速放置 · 自动搭桥 · 液体放置</li>
+          <li>其它：秒射 · 背包移动 · 秒吃 · 快速回血 · 自动换工具</li>
+        </ul>
+      </div>
+
+      <div class="bento-item wide reveal">
+        <div class="bento-icon">🔔</div>
+        <h3>OP 实时告警 · 点一下就飞过去</h3>
+        <p>作弊发生时立刻广播给在线 OP，告警是<b>可点击</b>的。</p>
+        <ul>
+          <li>格式：<code>[LinuxACE]玩家 X 触发了 Y，等级 N</code></li>
+          <li>点「点击前往」→ 你变旁观者并传送到他身边</li>
+          <li>鼠标悬停显示：<b>世界 · 坐标 · 延迟 · TPS · 危险等级</b></li>
+          <li><code>/ace back</code> 一键返回原位置与模式</li>
+        </ul>
+      </div>
+
+      <div class="bento-item reveal">
+        <div class="bento-icon">🎚️</div>
+        <h3>七档检测强度</h3>
+        <p>一条命令切换松紧，不用改一堆数字。</p>
+        <ul>
+          <li>Lowest / Low / Medium / <b>Pro</b> / High / Max / Highest</li>
+          <li>默认 Pro，生产环境推荐值</li>
+          <li>同时调整阈值倍率与容忍倍率</li>
+        </ul>
+      </div>
+
+      <div class="bento-item reveal">
+        <div class="bento-icon">🔌</div>
+        <h3>插件兼容「检测到才放宽」</h3>
+        <p>所有放宽只在检测到对应插件时生效，没装就是最严格基线。</p>
+        <ul>
+          <li>KnockbackSync / 疯狂附魔 / XlandHighPvp → 关击退检查</li>
+          <li>MaxHealth / MMHp / mcMMO → 关回血检查</li>
+          <li>假人插件 → 假人整体跳过</li>
+        </ul>
+      </div>
+
+      <div class="bento-item reveal">
+        <div class="bento-icon">🔗</div>
+        <h3>与 InTheNameOfLinux 联动</h3>
+        <p>反作弊数据接进管理插件，查人时一起看到。</p>
+        <ul>
+          <li><code>/linux plugins</code> 显示强度与检查数</li>
+          <li><code>/linux ace</code> 查看反作弊详情</li>
+          <li><code>/linux lookup &lt;玩家&gt;</code> 显示危险等级与违规记录</li>
+        </ul>
+      </div>
+
+      <div class="bento-item reveal">
+        <div class="bento-icon">⌨️</div>
+        <h3>讲究的帮助菜单</h3>
+        <p>与 <code>/linux help</code> 同一套样式，可翻页、可点击。</p>
+        <ul>
+          <li><code>/ace</code> 直接打开</li>
+          <li>带参数的点击填入，不带参数的直接执行</li>
+          <li>悬停显示每条命令的说明</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── 命令 ───────────────────────────────────────────── -->
+<section id="commands">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">COMMANDS</span>
+      <h2>命令一览</h2>
+      <p>全部通过 <code>/ace</code>，别名 <code>/linuxace</code>、<code>/ac</code></p>
+    </div>
+
+    <table class="help-table reveal">
+      <thead><tr><th>命令</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><code>/ace</code></td><td>打开帮助菜单（可分页、可点击）</td></tr>
+        <tr><td><code>/ace help [页码]</code></td><td>翻到指定页</td></tr>
+        <tr><td><code>/ace status</code></td><td>运行状态：强度、TPS、已关闭的检查、兼容插件</td></tr>
+        <tr><td><code>/ace checks</code></td><td>列出全部检测项的开关、风险权重、容忍次数</td></tr>
+        <tr><td><code>/ace goto &lt;玩家&gt;</code></td><td>变成旁观者并传送过去（告警里的「点击前往」）</td></tr>
+        <tr><td><code>/ace back</code></td><td>返回观察前的位置与游戏模式</td></tr>
+        <tr><td><code>/ace check &lt;玩家&gt;</code></td><td>查看某人的危险等级与各检查命中次数</td></tr>
+        <tr><td><code>/ace ban &lt;玩家&gt; [理由]</code></td><td>手动封禁；不写理由时自动用检测记录生成</td></tr>
+        <tr><td><code>/ace exempt &lt;玩家&gt;</code></td><td>临时豁免该玩家的检测</td></tr>
+        <tr><td><code>/ace reset &lt;玩家&gt;</code></td><td>清零危险等级</td></tr>
+        <tr><td><code>/ace strength [级别]</code></td><td>查看或设置检测强度</td></tr>
+        <tr><td><code>/ace toggle &lt;检查&gt; &lt;on|off&gt;</code></td><td>开关某一项检测</td></tr>
+        <tr><td><code>/ace ops &lt;on|off&gt;</code></td><td>OP 检测豁免开关（默认开）</td></tr>
+        <tr><td><code>/ace logs [数量]</code></td><td>查看最近告警</td></tr>
+        <tr><td><code>/ace reload</code></td><td>重载配置</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<!-- ── 检测项开关 ─────────────────────────────────────── -->
+<section id="switches" class="alt">
+  <div class="container">
+    <div class="intro-split">
+      <div class="reveal">
+        <h2>每一项都能单独关掉</h2>
+        <p>
+          配置文件里每个检查都有自己的 <code>enabled</code>。
+          关掉是<strong>真的不检测</strong> —— 连缓冲都不会累加，
+          也不会往危险等级上加分，不是"只不告警"。
+        </p>
+        <p style="margin-top: 14px;">
+          比如只想关掉飞行检测：
+        </p>
+<pre class="code-block"><code>checks:
+  fly:
+    enabled: false      # 关掉飞行检测
+    tolerance: 4
+    risk: 4
+    max-air-ticks: 40
+  speed:
+    enabled: true
+    ...</code></pre>
+        <p style="margin-top: 14px;">
+          游戏内也能改：<code>/ace toggle Fly off</code>，会写回配置文件并立刻生效。
+        </p>
+      </div>
+
+      <ul class="split-points reveal stagger">
+        <li><strong>/ace checks</strong><br>一次看全 22 项的开关状态</li>
+        <li><strong>/ace toggle &lt;检查&gt; &lt;on|off&gt;</strong><br>单项开关，写回配置</li>
+        <li><strong>关掉就彻底不查</strong><br>不累加缓冲，不加危险等级</li>
+        <li><strong>OP 默认豁免</strong><br>管理员测试不会被自己踢</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── 快速开始 ───────────────────────────────────────── -->
+<section id="start">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">QUICK START</span>
+      <h2>三步用起来</h2>
+      <p>装上就能跑，默认配置已是保守值</p>
+    </div>
+
+    <div class="bento">
+      <div class="bento-item reveal">
+        <div class="bento-icon">1️⃣</div>
+        <h3>放下 jar 重启</h3>
+        <p>把 <code>LinuxACE-26.11.4.jar</code> 放进 <code>plugins/</code>，
+           重启服务器。首次启动会自动生成 <code>config.yml</code>。</p>
+      </div>
+      <div class="bento-item reveal">
+        <div class="bento-icon">2️⃣</div>
+        <h3>看状态</h3>
+        <p><code>/ace status</code> 确认强度、TPS、兼容插件识别情况，
+           顺便看看有没有哪项被自动关闭了。</p>
+      </div>
+      <div class="bento-item reveal">
+        <div class="bento-icon">3️⃣</div>
+        <h3>等告警</h3>
+        <p>有情况 OP 会收到可点击的告警。
+           建议先跑几天确认无误报，再考虑调高强度。</p>
+      </div>
+    </div>
+
+    <div class="cover-nav" style="margin-top: 40px; justify-content: center;">
+      <a href="acehelp.html" class="cover-btn">完整使用帮助 →</a>
+    </div>
+  </div>
+</section>
+
+</div><!-- /.intro-body -->
+
+
+<script>
+    // 页面切换动画：进入淡入 + 离开淡出
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('page-anim');
+
+      // 从 bfcache 返回时清掉淡出状态，否则页面会是半透明的
+      window.addEventListener('pageshow', function () {
+        root.classList.remove('page-leaving');
+      });
+
+      function isInternal(a) {
+        if (!a || !a.href) return false;
+        if (a.target && a.target !== '_self') return false;
+        if (a.hasAttribute('download')) return false;
+        var h = a.getAttribute('href') || '';
+        if (h.charAt(0) === '#') return false;
+        if (a.hostname && a.hostname !== location.hostname) return false;
+        return true;
+      }
+
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a') : null;
+        if (!isInternal(a)) return;
+        if (a.pathname === location.pathname && a.hash) return;
+        e.preventDefault();
+        root.classList.add('page-leaving');
+        setTimeout(function () { location.href = a.href; }, 340);
+      }, true);
+    })();
+
+    // 背景视频：只在宽屏加载（与主页一致）
+    (function () {
+      var v = document.getElementById('bgVideo');
+      if (!v) return;
+      var mq = window.matchMedia('(min-width: 921px)');
+      function apply() {
+        if (mq.matches) {
+          if (!v.getAttribute('src')) {
+            v.setAttribute('src', 'video.mp4');
+            v.load();
+            var pr = v.play();
+            if (pr && pr.catch) { pr.catch(function () {}); }
+          }
+        } else {
+          try { v.pause(); } catch (e) {}
+          v.removeAttribute('src');
+          try { v.load(); } catch (e) {}
+        }
+      }
+      apply();
+      if (mq.addEventListener) { mq.addEventListener('change', apply); }
+      else if (mq.addListener) { mq.addListener(apply); }
+    })();
+
+  // 滚动淡入
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // 触发一次就撤掉监听，避免反复播放
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    // 不能用 0.1：比视口高的元素永远凑不满 10%，会一直 opacity:0
+    threshold: 0,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  document.querySelectorAll('.reveal').forEach((el) => {
+    observer.observe(el);
+  });
+
+  // 兜底：滚动结束后仍未显示的，直接显示（防止某些浏览器不触发）
+  setTimeout(function () {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) {
+        el.classList.add('visible');
+      }
+    });
+  }, 1200);
+
+  // 平滑滚动
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ============================================================
+  // 移动端汉堡菜单
+  // ============================================================
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>
