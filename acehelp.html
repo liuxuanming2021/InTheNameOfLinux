@@ -407,6 +407,27 @@ checks:
   </div>
 </section>
 
+<section id="dep">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">DEPENDENCY</span>
+      <h2>前置依赖</h2>
+      <p>LinuxACE 依赖 InTheNameOfLinux</p>
+    </div>
+    <div class="reveal">
+      <p><b>InTheNameOfLinux 是 LinuxACE 的硬依赖</b>：没装它、或它被禁用时，
+         LinuxACE 不会启动（Bukkit 层面直接拦住）。</p>
+      <p style="margin-top:14px;">
+        封禁统一走 ITNOL 的封禁体系 —— 记录、历史、审计日志、到期解封任务都由它生成；
+        <code>/ace ban</code> 的封禁会出现在 <code>/linux lookup</code> 里。
+        反过来 <b>ITNOL 可以单独运行</b>，依赖是单向的。</p>
+      <p style="margin-top:14px;">
+        装了 ITNOL 之后还能用 <code>/ace lookup &lt;玩家&gt;</code>，
+        一次看到封禁历史与反作弊记录。</p>
+    </div>
+  </div>
+</section>
+
 <section id="back">
   <div class="container">
     <div class="cover-nav" style="justify-content: center;">
