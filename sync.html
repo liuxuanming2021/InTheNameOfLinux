@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>LinuxSync · 反作弊插件</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css?v=4e62472c">
+    <link rel="stylesheet" href="liquid-glass.css">
+</head>
+<body class="intro-page">
+
+<!-- ===== 液态玻璃折射滤镜（被 liquid-glass.css 的 backdrop-filter 引用） =====
+     这是"玻璃的厚度场"：把背景按边缘梯度掰弯，
+     让它像透过一块有弧边的玻璃，而不是糊了一层白膜。 -->
+<svg class="lw-glass-defs" aria-hidden="true" focusable="false"
+     width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <defs>
+        <filter id="lw-glass" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="40"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="50"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thick" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="48"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="72"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thin" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="16"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="20"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="24"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+    </defs>
+</svg>
+
+
+<div class="bg-mobile" aria-hidden="true"></div>
+
+<video class="bg-video" id="bgVideo" loop muted playsinline
+       preload="none" aria-hidden="true" poster="mobile.jpg"></video>
+
+<nav class="nav-home">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="sync.html">LinuxSync 介绍</a></li>
+      <li><a href="#features">功能</a></li>
+      <li><a href="#commands">命令</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          <span class="nav-text">Nalxer 服务器</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav><header class="cover cover-page has-video">
+  <div class="cover-overlay"></div>
+
+  <div class="cover-inner">
+    <span class="plug-hero-ver">1.0.0 · Paper 1.12.2</span>
+
+    <h1 class="cover-title">LinuxSync</h1>
+    <p class="cover-subtitle">SHUTDOWN SYNC</p>
+
+    <hr class="cover-divider">
+
+    <p class="cover-quote">
+      关服之前，先让数据落地
+      <br>
+      <strong>/xstop 触发 · 7 个模块同步保存 · 一条面板广播</strong>
+    </p>
+
+    <div class="cover-nav">
+        <a href="synchelp.html" class="cover-btn">查看使用帮助</a>
+        <a href="#features" class="cover-btn">了解功能</a>
+        <a href="linuxhelp.html" class="cover-btn">综合帮助中心</a>
+    </div>
+
+    <div class="cover-remark">
+      <p><strong>7</strong> 个模块 · 同步保存 + 强制备份 · 单条面板播报</p>
+    </div>
+  </div>
+</header>
+<div class="intro-body">
+
+
+<!-- ── 为什么这么设计 ─────────────────────────────────── -->
+<section id="what">
+  <div class="container">
+    <article class="chapter">
+      <div class="chapter-head">
+        <span class="chapter-no">01</span>
+        <h2 class="chapter-title">关服那一刻最容易丢数据</h2>
+      </div>
+      <p class="chapter-lede">
+        <code>/stop</code> 一敲，Bukkit 开始按顺序禁用插件。
+        如果某个插件的保存逻辑排在别的插件后面，它读到的可能已经是
+        <strong>被清空的内存状态</strong>。LinuxSync 做的就是「先全部落盘，再关服」。
+      </p>
+      <div class="grid grid-2" style="margin-top: 26px;">
+        <div class="card">
+          <h3>为什么要单独做个插件</h3>
+          <p>
+            XlandStop 是<strong>闭源第三方插件</strong>，没有源码也无法修改。
+            但它注册了标准的 <code>/xstop</code> 命令（30 秒倒计时关服），
+            所以不用改它 —— 监听这条命令即可，零依赖、零侵入。
+          </p>
+        </div>
+        <div class="card">
+          <h3>ITNOL 里本来就有 XStop 监听</h3>
+          <p>
+            ITNOL 的 <code>XStopDetected</code> 只负责记录「谁执行了重启」，
+            不负责保存数据。LinuxSync 补的正是<strong>保存</strong>这一环，
+            两者互不冲突，可以同时存在。
+          </p>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="features" class="alt">
+  <div class="container">
+    <article class="chapter">
+      <div class="chapter-head">
+        <span class="chapter-no">02</span>
+        <h2 class="chapter-title">三条触发路径</h2>
+      </div>
+      <p class="chapter-lede">
+        不管是倒计时关机、控制台敲 stop，还是手动测试，都会走同一套同步逻辑。
+      </p>
+      <div class="grid grid-3" style="margin-top: 26px;">
+        <div class="card">
+          <h3><code>/xstop</code></h3>
+          <p>立即同步保存 + 备份 + 广播，然后<strong>放行</strong>，让 XlandStop 照常走 30 秒倒计时。</p>
+        </div>
+        <div class="card">
+          <h3><code>stop</code></h3>
+          <p><strong>拦截</strong>（取消原命令）→ 保存 → 广播 → 下一 tick 再真正执行 stop。</p>
+        </div>
+        <div class="card">
+          <h3><code>/linuxsync</code></h3>
+          <p>手动触发一次同步，<strong>不关服</strong>。上线前验证用。</p>
+        </div>
+      </div>
+      <h3 style="margin-top: 40px;">保存清单（全部反射调用，单项失败不影响其它）</h3>
+      <div class="reg-table" style="margin-top: 14px;">
+        <table>
+          <thead><tr><th>插件</th><th>实际调用</th></tr></thead>
+          <tbody>
+            <tr><td><strong>LinuxTeam</strong></td><td><code>TeamManager.save()</code> + <code>backupNow()</code> 强制备份</td></tr>
+            <tr><td><strong>LinuxTitle</strong></td><td><code>PlayerDataManager.save()</code></td></tr>
+            <tr><td><strong>FakePlayerPlugin</strong></td><td><code>saveFakePlayersToYaml()</code></td></tr>
+            <tr><td><strong>PointsShop</strong></td><td><code>data().save()</code></td></tr>
+            <tr><td><strong>NalxerPDR</strong></td><td><code>ReportManager.save()</code></td></tr>
+            <tr><td><strong>InTheNameOfLinux</strong></td><td><code>BanManager.flush()</code> + <code>PlayTimeManager.save()</code></td></tr>
+            <tr><td><strong>LinuxSync</strong></td><td>无持久化数据，标注「仅内存状态」</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="commands">
+  <div class="container">
+    <article class="chapter">
+      <div class="chapter-head">
+        <span class="chapter-no">03</span>
+        <h2 class="chapter-title">广播面板</h2>
+      </div>
+      <p class="chapter-lede">
+        同步完成后<strong>只发一条消息</strong>（一个多行文本），
+        样式对齐 ITNOL 的 <code>/linux plugins</code> 面板。
+      </p>
+      <div class="zz-panel" style="margin-top: 22px;">
+        <div class="panel-title">实测输出</div>
+        <pre style="white-space: pre-wrap; line-height: 1.8;">═══════════════════════════════════════
+  ✦ Linux 数据同步（/linuxsync 触发 · 发起者: Rcon）
+  ✦ LinuxTeam          ✔ 队伍已保存 · 备份 teams-20261023-213658-manual.yml
+  ✦ LinuxTitle         ✔ 玩家数据已保存
+  ✦ FakePlayerPlugin   ✔ 假人数据已保存
+  ✦ PointsShop        ✔ 点券数据已保存
+  ✦ NalxerPDR         ✔ 举报记录已保存
+  ✦ InTheNameOfLinux   ✔ 已保存 封禁·时长（2/2）
+  ✦ LinuxSync           ✔ 仅内存状态，无需落盘
+  ✦ 结果: 7/7 全部成功 · 耗时 234ms
+═══════════════════════════════════════</pre>
+      </div>
+      <div class="grid grid-2" style="margin-top: 26px;">
+        <div class="card">
+          <h3>谁能看到</h3>
+          <p>在线 OP、拥有 <code>xlandstop.stop</code> 权限的玩家、控制台。</p>
+        </div>
+        <div class="card">
+          <h3>备份后缀按来源区分</h3>
+          <p><code>-xstop</code> / <code>-stop</code> / <code>-manual</code> / <code>-shutdown</code>，一眼看出这次关服是怎么触发的。</p>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="switches" class="alt">
+  <div class="container">
+    <article class="chapter">
+      <div class="chapter-head">
+        <span class="chapter-no">04</span>
+        <h2 class="chapter-title">防止保存死循环</h2>
+      </div>
+      <p class="chapter-lede">拦截 stop 之后自己又派发 stop，是最容易写出无限循环的地方。三重保险：</p>
+      <div class="grid grid-3" style="margin-top: 26px;">
+        <div class="card">
+          <h3>① bypassStop</h3>
+          <p>自己 dispatch 之前置 true，派发结束（finally）后复位；监听器第一行就检查它，命中直接放行。</p>
+        </div>
+        <div class="card">
+          <h3>② stopHandled</h3>
+          <p>整个服务器生命周期<strong>只拦截一次</strong>。第二次再收到 stop 直接放行并继续关服。</p>
+        </div>
+        <div class="card">
+          <h3>③ runTaskLater(1L)</h3>
+          <p>不在命令事件里嵌套派发命令，先让事件处理完毕，<strong>下一 tick</strong>再 dispatch。</p>
+        </div>
+      </div>
+      <p class="chapter-lede" style="margin-top: 26px;">
+        另外：即使同步过程抛异常，也一定继续执行 stop —— 关服不能被保存卡住。耗时超过 15 秒只打警告，不阻塞。
+      </p>
+    </article>
+  </div>
+</section>
+
+<section id="start">
+  <div class="container">
+    <article class="chapter">
+      <div class="chapter-head">
+        <span class="chapter-no">05</span>
+        <h2 class="chapter-title">部署与限制</h2>
+      </div>
+      <div class="grid grid-2" style="margin-top: 22px;">
+        <div class="card">
+          <h3>三步用起来</h3>
+          <ol class="steps">
+            <li>把 <code>LinuxSync-1.0.0.jar</code> 放进 <code>plugins/</code></li>
+            <li>重启服务器，日志出现「LinuxSync 已启用」</li>
+            <li>执行 <code>/linuxsync</code> 验证，应看到 7/7</li>
+          </ol>
+        </div>
+        <div class="card">
+          <h3>⚠ RCON 的 stop 拦不住</h3>
+          <p>
+            Paper 1.12.2 对 RCON / 原生控制台的 stop 走服务端原生命令处理，
+            <strong>不触发 ServerCommandEvent</strong>。所以额外做了 onDisable 兜底保存 —— 任何关服方式都至少落盘一次。
+          </p>
+          <p>生产建议：关服统一用 <code>/xstop</code>，或直接在控制台敲 <code>stop</code>。</p>
+        </div>
+      </div>
+      <div class="zz-panel" style="margin-top: 26px;">
+        <div class="panel-title">权限</div>
+        <ul><li><code>linuxsync.use</code> — 使用 <code>/linuxsync</code>（默认 OP）</li></ul>
+      </div>
+    </article>
+  </div>
+</section>
+
+
+
+
+
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">LinuxSync</div>
+    <p>22 项检测 · 七档强度 · OP 实时告警 · 只踢出不封禁</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v26.11.4 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+      <a href="index.html">← 插件列表</a>
+        &nbsp;·&nbsp;
+      <a href="synchelp.html">使用帮助</a>
+        &nbsp;·&nbsp;
+      <a href="linuxhelp.html">综合帮助</a>
+        &nbsp;·&nbsp;
+      <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+<!-- /.intro-body -->
+
+<script>
+    // 页面切换动画：进入淡入 + 离开淡出
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('page-anim');
+
+      // 从 bfcache 返回时清掉淡出状态，否则页面会是半透明的
+      window.addEventListener('pageshow', function () {
+        root.classList.remove('page-leaving');
+      });
+
+      function isInternal(a) {
+        if (!a || !a.href) return false;
+        if (a.target && a.target !== '_self') return false;
+        if (a.hasAttribute('download')) return false;
+        var h = a.getAttribute('href') || '';
+        if (h.charAt(0) === '#') return false;
+        if (a.hostname && a.hostname !== location.hostname) return false;
+        return true;
+      }
+
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a') : null;
+        if (!isInternal(a)) return;
+        if (a.pathname === location.pathname && a.hash) return;
+        e.preventDefault();
+        root.classList.add('page-leaving');
+        setTimeout(function () { location.href = a.href; }, 340);
+      }, true);
+    })();
+
+    // 背景视频：只在宽屏加载（与主页一致）
+    (function () {
+      var v = document.getElementById('bgVideo');
+      if (!v) return;
+      var mq = window.matchMedia('(min-width: 921px)');
+      function apply() {
+        if (mq.matches) {
+          if (!v.getAttribute('src')) {
+            v.setAttribute('src', 'video.mp4');
+            v.load();
+            var pr = v.play();
+            if (pr && pr.catch) { pr.catch(function () {}); }
+          }
+        } else {
+          try { v.pause(); } catch (e) {}
+          v.removeAttribute('src');
+          try { v.load(); } catch (e) {}
+        }
+      }
+      apply();
+      if (mq.addEventListener) { mq.addEventListener('change', apply); }
+      else if (mq.addListener) { mq.addListener(apply); }
+    })();
+
+  // 滚动淡入
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // 触发一次就撤掉监听，避免反复播放
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    // 不能用 0.1：比视口高的元素永远凑不满 10%，会一直 opacity:0
+    threshold: 0,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  document.querySelectorAll('.reveal').forEach((el) => {
+    observer.observe(el);
+  });
+
+  // 兜底：滚动结束后仍未显示的，直接显示（防止某些浏览器不触发）
+  setTimeout(function () {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) {
+        el.classList.add('visible');
+      }
+    });
+  }, 1200);
+
+  // 平滑滚动
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ============================================================
+  // 移动端汉堡菜单
+  // ============================================================
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>

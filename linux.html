@@ -185,7 +185,7 @@
   <div class="cover-overlay"></div>
 
   <div class="cover-inner">
-    <span class="plug-hero-ver">26.11.5-Alpha · Paper 1.12.2</span>
+    <span class="plug-hero-ver">26.11.6-RC · Paper 1.12.2</span>
 
     <h1 class="cover-title">InTheNameOfLinux</h1>
     <p class="cover-subtitle">SERVER MANAGEMENT</p>
@@ -230,12 +230,12 @@
     <article class="chapter reveal">
       <div class="chapter-head">
         <span class="chapter-no">01</span>
-        <h2 class="chapter-title">26.11.4 更新亮点</h2>
+        <h2 class="chapter-title">26.11.6 更新亮点</h2>
       </div>
       <p class="chapter-lede">
-        本版集中在<strong>物品安全</strong>与<strong>信息可读性</strong>：
-        把独立的 BanNbt 插件整体合并进来，查询能直接给出维度坐标，
-        主页与帮助页改为点击即执行。
+        本版集中在<strong>物品安全的入口防护</strong>：
+        非法 NBT 从「事后扫描」升级为「全链路拦截」，
+        并加入 DuelArena 双 OP 决斗豁免。
       </p>
 
       <div class="zigzag">
@@ -281,6 +281,57 @@
             <li><strong>配置不再「看不见」</strong> — 缺失项自动补全并写回</li>
             <li><strong>管理层列表读真实配置</strong> — 与配置同步，不再写死</li>
             <li><strong>查看即同步</strong> — 查询时顺带刷新缓存</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="zigzag reverse" style="margin-top: 34px;">
+        <div class="zz-text">
+          <h4>🛡 非法 NBT 全链路拦截</h4>
+          <p>
+            以前只有「周期扫描」—— 玩家拿到非法物品后，要等下一轮扫描才会被收走。
+            26.11.6 把物品流动的<strong>每一个入口</strong>都堵上了。
+          </p>
+          <ul>
+            <li>玩家 <code>/give</code>、<code>/replaceitem</code> 直接取消命令</li>
+            <li>掉落物一生成就判定（<code>ItemSpawnEvent</code>）</li>
+            <li>拾取 / 容器取出 / 创造复制 / 切到手上 / 出手 全部前置判定</li>
+            <li>交互后 2 tick 补扫 —— 覆盖命令方块的 <code>/give</code></li>
+          </ul>
+        </div>
+        <div class="zz-panel">
+          <div class="panel-title">判定标准不变</div>
+          <ul>
+            <li>附魔等级 &gt; <code>max-enchant-level</code></li>
+            <li><code>AttributeModifiers</code> 超上限</li>
+          </ul>
+          <p style="margin-top: 12px;">
+            命令拦截与背包扫描<strong>共用同一套判定</strong>，
+            不会出现两套标准。普通物品、改名、Lore、正常附魔一律放行。
+          </p>
+        </div>
+      </div>
+
+      <div class="zigzag" style="margin-top: 34px;">
+        <div class="zz-text">
+          <h4>⚔ DuelArena 双 OP 决斗豁免</h4>
+          <p>
+            两个 OP 打剑技 PVP 时，硬性清理会把双方装备清空，打起来毫无意义。
+            现在改成<strong>「不清，但摊开说」</strong>。
+          </p>
+          <ul>
+            <li>双方都是 OP 且正在对局 → 不清理非法 NBT</li>
+            <li>每 30 秒互相提醒对方持有的非法物品与原因</li>
+            <li>决斗结束立即恢复正常清理</li>
+            <li>OP 打普通玩家 → 不豁免</li>
+          </ul>
+        </div>
+        <div class="zz-panel">
+          <div class="panel-title">豁免边界</div>
+          <ul>
+            <li>配置名单玩家：全路径放行，不清理也不提醒</li>
+            <li>豁免玩家丢出的物品：不会被吞掉</li>
+            <li>竞技场里的普通玩家：照常拦截</li>
           </ul>
         </div>
       </div>
@@ -739,7 +790,7 @@
     <div class="footer-brand">InTheNameOfLinux</div>
     <p>以 Linux 之名 · 守护你的服务器</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v26.11.5-Alpha · by Linux582021 &amp; 星白喵喵 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+      v26.11.6-RC · by Linux582021 &amp; 星白喵喵 · Minecraft 1.12.2 · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
 <a href="index.html">← 插件列表</a>

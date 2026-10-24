@@ -205,7 +205,7 @@
     <section class="help-section" id="changelog">
       <h2>更新日志</h2>
 
-      <h3>26.11.5-Alpha</h3>
+      <h3>26.11.6-RC</h3>
       <p>本版集中在<strong>物品安全</strong>与<strong>信息可读性</strong>：把独立的 BanNbt 插件整体合并进来，
          查询能直接给出维度坐标，主页与帮助页改为点击即执行。</p>
 
@@ -222,6 +222,12 @@
                   非法属性修饰符（攻击力 / 击退抗性 / 最大生命 / 移动速度 / 护甲 / 护甲韧性）、
                   抗性提升等级 ≥ 4。周期扫描（默认 20 秒）或手动
                   <code>/linux nbtview</code>。
+                  <strong>26.11.6 起改为全链路拦截</strong>：玩家
+                  <code>/give</code>、<code>/replaceitem</code> 直接拦命令；
+                  掉落物生成、拾取、容器取出、创造复制、切到手上、出手瞬间
+                  都前置判定；交互后 2 tick 补扫，覆盖命令方块。
+                  另支持 <strong>DuelArena 双 OP 决斗豁免</strong> ——
+                  双方都是 OP 且在对局中时不清理，但每 30 秒互相提醒。
                   清除时向控制台与服主播报，物品名带<strong>悬浮详情</strong>
                   （类型、数量、原因、附魔、lore）。
                   <strong>不含任何硬编码玩家名</strong> —— 豁免名单与世界全部由
@@ -259,7 +265,7 @@
               <td><strong>🧹 其他</strong></td>
               <td>移除已废弃的 <code>/linux dumpholders</code> 调试命令；
                   作者显示修复（读取 plugin.yml 的作者列表）；
-                  版本号由 <code>26.11.4-Beta</code> 定为 <code>26.11.5-Alpha</code></td>
+                  版本号由 <code>26.11.4-Beta</code> 定为 <code>26.11.6-RC</code></td>
             </tr>
           </tbody>
         </table>
@@ -1873,7 +1879,7 @@
     <div class="footer-brand">InTheNameOfLinux 插件帮助</div>
     <p>以 Linux 之名 · 守护你的服务器</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v26.11.5-Alpha · by Linux582021 &amp; 星白喵喵 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+      v26.11.6-RC · by Linux582021 &amp; 星白喵喵 · Minecraft 1.12.2 · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
 <a href="index.html">← 插件列表</a>
