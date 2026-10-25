@@ -232,60 +232,14 @@
         <span class="chapter-no">01</span>
         <h2 class="chapter-title">26.11.6 更新亮点</h2>
       </div>
+
       <p class="chapter-lede">
-        本版集中在<strong>物品安全的入口防护</strong>：
-        非法 NBT 从「事后扫描」升级为「全链路拦截」，
-        并加入 DuelArena 双 OP 决斗豁免。
+        本版三件事：<strong>非法 NBT 从「事后扫描」升级为「全链路拦截」</strong>、
+        <strong>封禁页改为登录前抢先拦截</strong>、
+        以及 <strong>DuelArena 双 OP 决斗豁免</strong>。
       </p>
 
       <div class="zigzag">
-        <div class="zz-text">
-          <h4>🧪 非法 NBT 物品检测（合并 BanNbt）</h4>
-          <p>
-            原 <code>BanNbt</code> 插件的功能<strong>整体并入本插件</strong>，
-            现在只需装一个插件、维护一份配置。
-          </p>
-          <ul>
-            <li>检测超限附魔等级、非法属性修饰符</li>
-            <li>抗性提升等级 ≥ 4 自动压回 3 级</li>
-            <li>周期扫描（默认 20 秒）或手动 <code>/linux nbtview</code></li>
-            <li>清除时播报带悬浮详情：物品名、数量、原因</li>
-          </ul>
-        </div>
-        <div class="zz-panel">
-          <div class="panel-title">豁免名单</div>
-          <ul>
-            <li><code>nbt.exempt-players</code> — 按玩家名豁免</li>
-            <li><code>nbt.exempt-worlds</code> — 按世界豁免</li>
-          </ul>
-          <p style="margin-top: 12px;">
-            <strong>不含任何硬编码玩家名</strong>，全部写进配置文件。
-            OP <strong>不自动豁免</strong>，需要显式写进名单。
-          </p>
-        </div>
-      </div>
-
-      <div class="zigzag reverse" style="margin-top: 34px;">
-        <div class="zz-text">
-          <h4>📍 查询显示维度与坐标</h4>
-          <p>
-            <code>/linux lookup</code> 现在会给出玩家所在维度与精确坐标。
-            在线玩家实时读取当前位置；离线玩家使用退出服务器时记录的位置；
-            拿不到时明确显示「无法获取」，不会给出错误坐标。
-          </p>
-        </div>
-        <div class="zz-panel">
-          <div class="panel-title">本版其它改动</div>
-          <ul>
-            <li><strong>主页改为点击即执行</strong> — <code>/linux plugins</code> 等一键跳转</li>
-            <li><strong>配置不再「看不见」</strong> — 缺失项自动补全并写回</li>
-            <li><strong>管理层列表读真实配置</strong> — 与配置同步，不再写死</li>
-            <li><strong>查看即同步</strong> — 查询时顺带刷新缓存</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="zigzag reverse" style="margin-top: 34px;">
         <div class="zz-text">
           <h4>🛡 非法 NBT 全链路拦截</h4>
           <p>
@@ -306,9 +260,37 @@
             <li><code>AttributeModifiers</code> 超上限</li>
           </ul>
           <p style="margin-top: 12px;">
-            命令拦截与背包扫描<strong>共用同一套判定</strong>，
-            不会出现两套标准。普通物品、改名、Lore、正常附魔一律放行。
+            命令拦截与背包扫描<strong>共用同一套判定</strong>，普通物品、改名、Lore、正常附魔一律放行。
           </p>
+        </div>
+      </div>
+
+      <div class="zigzag reverse" style="margin-top: 34px;">
+        <div class="zz-text">
+          <h4>🚫 自定义封禁页（登录前拦截）</h4>
+          <p>
+            封禁仍会<strong>自动同步</strong>到原版 <code>banned-players.json</code>，
+            管理面板照样看得见；但玩家看到的不再是原版那句
+            <em>You are banned from this server</em>。
+          </p>
+          <ul>
+            <li>在 <code>AsyncPlayerPreLoginEvent</code> 抢先拦截（早于原版检查）</li>
+            <li>显示完整封禁页：服务器名 / 理由 / 解封时间 / 申诉群</li>
+            <li>永久、临时、IP、历史封禁<strong>全部覆盖</strong></li>
+            <li>其它插件已经拦下的不抢</li>
+          </ul>
+        </div>
+        <div class="zz-panel">
+          <div class="panel-title">玩家看到的样子</div>
+          <pre style="white-space: pre-wrap; line-height: 1.7; font-size: 12px;">══════════════════
+  Nalxer MC
+══════════════════
+  您已被临时封禁账户/IP地址
+  封禁理由：&lt;你的理由&gt;
+  解封时间：2026-11-02 01:18:26
+  如果您有任何异议，
+  请到申诉群 925200745 申诉
+══════════════════</pre>
         </div>
       </div>
 
