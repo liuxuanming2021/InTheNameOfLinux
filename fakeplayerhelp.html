@@ -184,6 +184,7 @@
           <li><a href="#usage">使用技巧</a></li>
           <li class="sidebar-group-label" data-group="参考与帮助">参考与帮助</li>
           <li><a href="#config">配置与数据</a></li>
+          <li><a href="#keep">生物保活</a></li>
           <li><a href="#faq">常见问题</a></li>
         </ul>
       </div>
@@ -365,7 +366,66 @@
     
   </section>
 
-  </main>
+  
+<section class="help-section" id="keep">
+    <h2><span class="num">6</span>生物保活（keep）</h2>
+
+      <p>把生物<strong>命名为 keep</strong>，它就不会被原版刷掉。</p>
+
+      <h3>怎么做</h3>
+      <ol class="steps">
+        <li>拿一个命名牌，改名为 <code>keep</code></li>
+        <li>右键目标生物（末影螨、蠹虫、蝙蝠、任何可命名生物）</li>
+        <li>聊天栏立即收到：<code>[FakePlayer]生物将会被Linux的插件保护！</code></li>
+      </ol>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">ℹ️</span>
+        <div class="tip-body">
+          <strong>名字判定规则</strong>
+          去掉颜色代码后，只要<strong>包含</strong> <code>keep</code> 就算（不区分大小写），
+          所以 <code>keep</code>、<code>Keep</code>、<code>§akeep</code>、<code>myKeep</code> 都行。
+        </div>
+      </div>
+
+      <h3>为什么需要</h3>
+      <p>原版很多生物都有 despawn 机制：周围一定距离内没有玩家时会被随机删除。
+         命名牌改名<strong>本身并不会阻止</strong>这件事 —— 必须显式关掉
+         <code>removeWhenFarAway</code> 并打开 <code>persistent</code>。</p>
+
+      <h3>实现方式</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>触发</th><th>动作</th></tr></thead>
+          <tbody>
+            <tr><td>生物生成（EntitySpawnEvent）</td><td>名字含 keep → 立即加保护</td></tr>
+            <tr><td>命名牌改名</td><td>下一 tick 检查新名字 → 加保护 + 给操作者回执</td></tr>
+            <tr><td>每 20 秒补扫</td><td>遍历已加载实体，覆盖区块重载等情况</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>配置</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>配置项</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td><code>keep-entity.scan-seconds</code></td><td>补扫间隔（秒），默认 20</td></tr>
+            <tr><td><code>keep-entity.debug</code></td><td>后台打印每轮维护了多少生物</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>只防原版 despawn</strong>
+          如果有插件主动 <code>remove()</code> 实体（清理任务），那是拦不住的，需要在那个插件里加白名单。
+        </div>
+      </div>
+  </section>
+
+    </main>
 </div>
 
 <footer>
