@@ -194,20 +194,18 @@
 <section class="help-section" id="quickstart">
     <h2><span class="num">1</span>快速开始</h2>
       <p>LinuxChestGUI 是 ITNOL 的<strong>箱子 GUI 管理面板</strong>。
-         所有操作都直接作用在 ITNOL 上，效果等于在聊天栏敲命令。</p>
-
+         所有操作直接作用在 ITNOL 上，效果等于在聊天栏敲命令。</p>
       <h3>三种打开方式</h3>
       <ol class="steps">
         <li>命令 <code>/lchest</code>（别名 <code>/chest</code>、<code>/lcgui</code>、<code>/book</code>）</li>
         <li>命令 <code>/lchest give</code> 领一本「Linux插件系统」附魔书</li>
         <li>右键那本书，随时打开</li>
       </ol>
-
       <div class="tip tip-info">
         <span class="tip-icon">ℹ️</span>
         <div class="tip-body">
           <strong>硬依赖 ITNOL</strong>
-          没有 InTheNameOfLinux 就不会加载。
+          没有 InTheNameOfLinux 就不会加载；权限：<code>linuxchest.use</code> / <code>linuxchest.admin</code>。
         </div>
       </div>
   </section>
@@ -234,37 +232,38 @@
 <section class="help-section" id="ban">
     <h2><span class="num">3</span>封禁与处罚</h2>
 
-      <h3>封禁</h3>
-      <p>玩家操作页点「封禁」→ 进入时长选择页：</p>
-      <div class="table-scroll">
-        <table class="help-table">
-          <thead><tr><th>档位</th><th>说明</th></tr></thead>
-          <tbody>
-            <tr><td>1 小时 / 1 天 / 7 天 / 30 天 / 10 年</td><td>临时封禁，到期自动解封</td></tr>
-            <tr><td>永久</td><td>永久封禁，需手动解除</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p>点完时长会关闭界面，提示在聊天栏输入理由 —— <strong>说一句话即执行，不会发送出去</strong>。</p>
+      <h3>三步流程</h3>
+      <ol class="steps">
+        <li><strong>选操作</strong> —— 封禁 / 禁言 / 禁移动 / 禁交互，四项平级</li>
+        <li><strong>选时长</strong> —— 1 小时 / 1 天 / 7 天 / 30 天 / 10 年 / 永久</li>
+        <li><strong>选理由</strong> —— 点一下选中，再点「确认执行」</li>
+      </ol>
 
-      <h3>功能处罚（三项独立）</h3>
+      <h3>理由清单（取自服务器规则）</h3>
       <div class="table-scroll">
         <table class="help-table">
-          <thead><tr><th>按钮</th><th>效果</th><th>对应命令</th></tr></thead>
+          <thead><tr><th>档位</th><th>理由</th></tr></thead>
           <tbody>
-            <tr><td>禁言</td><td>不能说话</td><td><code>linux banmsg</code></td></tr>
-            <tr><td>禁移动</td><td>原地不能走</td><td><code>linux banmove</code></td></tr>
-            <tr><td>禁交互</td><td>不能开门点方块</td><td><code>linux banblock</code></td></tr>
+            <tr><td>轻度 1-7 天</td><td>盗窃其他玩家物品 · 一直击杀其他玩家 · 损坏主城周围地形</td></tr>
+            <tr><td>中度 7-30 天</td><td>毁坏玩家建筑 · 毁坏公共建筑 · 使用 TNT 毁坏地形 · 持有违规道具（32k）· 大量刷物品/刷货币 · 破坏他人领地 · 使用作弊客户端</td></tr>
+            <tr><td>重度 30 天-永久</td><td>攻击服务器（压测/发包）· 制造卡服机/禁人塔 · 盗取 OP 权限/盗号</td></tr>
+            <tr><td>其它</td><td>其他（手动输入）</td></tr>
           </tbody>
         </table>
       </div>
-      <p>解除按钮同样三项独立，点上就解除对应那一种。</p>
+
+      <h3>手动输入的理由</h3>
+      <p>选「其他（手动输入）」后关界面，到聊天栏写一句话就是理由。</p>
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>5 分钟超时</strong>
+          超过 5 分钟再输入，本次操作自动作废，需要重新走一遍流程。
+        </div>
+      </div>
 
       <h3>离线玩家</h3>
-      <p>
-        玩家列表 = 在线玩家 + 从 <code>data.yml</code>、<code>playtime.yml</code>
-        读到的离线玩家。离线玩家同样可以封禁、处罚。
-      </p>
+      <p>玩家列表 = 在线玩家 + 从 <code>data.yml</code>、<code>playtime.yml</code> 读到的离线玩家，同样可以封禁、处罚。</p>
   </section>
 
 <section class="help-section" id="report">
@@ -279,25 +278,25 @@
   </section>
 
 <section class="help-section" id="mobile">
-    <h2><span class="num">5</span>手机优化</h2>
+    <h2><span class="num">5</span>导航与手机优化</h2>
       <div class="table-scroll">
         <table class="help-table">
           <thead><tr><th>设计</th><th>原因</th></tr></thead>
           <tbody>
-            <tr><td>图标集中在中间</td><td>手指不用够到屏幕边缘</td></tr>
             <tr><td>只围外圈玻璃板</td><td>内部留空，不误触空槽</td></tr>
-            <tr><td>每页 28 个</td><td>格子大、不误点</td></tr>
+            <tr><td>理由两行各 7 个</td><td>铺满不留洞，视觉整齐</td></tr>
+            <tr><td>返回一律回上一级</td><td>层级清晰，不会一下跳回主页</td></tr>
             <tr><td>底部固定返回 / 关闭</td><td>位置永远不变</td></tr>
             <tr><td>列表自动分页</td><td>玩家多也不会挤爆</td></tr>
           </tbody>
         </table>
       </div>
 
-      <div class="tip tip-warn">
-        <span class="tip-icon">⚠️</span>
+      <div class="tip tip-info">
+        <span class="tip-icon">ℹ️</span>
         <div class="tip-body">
-          <strong>返回上一级</strong>
-          时长选择页的「返回」回到玩家操作页，操作页的「返回」才回主页。
+          <strong>返回层级</strong>
+          理由页 → 时长页 → 玩家操作页 → 玩家列表 → 主页，一层层退。
         </div>
       </div>
   </section>

@@ -261,50 +261,43 @@
   </div>
 </section>
 
-
-<section id="ops">
+<section id="flow">
   <div class="container">
     <article class="chapter">
       <div class="chapter-head">
         <span class="chapter-no">03</span>
-        <h2 class="chapter-title">能做什么操作</h2>
+        <h2 class="chapter-title">操作流程</h2>
       </div>
+      <p class="chapter-lede">
+        封禁和三项处罚走<strong>同一套三步流程</strong>：选时长 → 选理由 → 确认执行。
+      </p>
 
-      <div class="grid grid-2" style="margin-top: 22px;">
+      <div class="grid grid-3" style="margin-top: 26px;">
         <div class="card">
-          <h3>🔨 封禁</h3>
-          <ul>
-            <li>六档时长：1 小时 / 1 天 / 7 天 / 30 天 / 10 年 / 永久</li>
-            <li>点击后在聊天栏输入理由（<strong>不会发送出去</strong>）</li>
-            <li>在线、离线玩家都能封</li>
-            <li>一键解除封禁</li>
-          </ul>
+          <h3>① 选操作</h3>
+          <p>封禁 / 禁言 / 禁移动 / 禁交互，四项平级。点哪个就做哪个。</p>
         </div>
         <div class="card">
-          <h3>⚔ 功能处罚</h3>
-          <ul>
-            <li>禁言 / 禁移动 / 禁交互 —— 三项<strong>各自独立</strong></li>
-            <li>点一下立即生效（等同 <code>/linux banmsg</code>）</li>
-            <li>对应的解除按钮同样独立</li>
-            <li>踢出（不封禁）单独一项</li>
-          </ul>
+          <h3>② 选时长</h3>
+          <p>1 小时 / 1 天 / 7 天 / 30 天 / 10 年 / 永久，六档。</p>
+        </div>
+        <div class="card">
+          <h3>③ 选理由</h3>
+          <p>14 条服务器规则，点一下选中、点确认执行。</p>
         </div>
       </div>
 
-      <div class="grid grid-2" style="margin-top: 22px;">
-        <div class="card">
-          <h3>📄 举报</h3>
-          <p>列出所有待处理举报，显示举报人、被举报人、理由。</p>
-          <ul>
-            <li>左键 → 受理</li>
-            <li>右键 → 驳回</li>
-            <li>处理完自动刷新</li>
-          </ul>
-        </div>
-        <div class="card">
-          <h3>📋 封禁详情</h3>
-          <p>玩家操作页可查看该玩家的完整封禁记录：理由、操作者、到期时间、封禁时间。</p>
-        </div>
+      <h3 style="margin-top: 34px;">理由取自服务器规则</h3>
+      <div class="reg-table" style="margin-top: 12px;">
+        <table>
+          <thead><tr><th>档位</th><th>理由</th></tr></thead>
+          <tbody>
+            <tr><td><strong>轻度</strong><br>1-7 天</td><td>盗窃其他玩家物品 · 一直击杀其他玩家 · 损坏主城周围地形</td></tr>
+            <tr><td><strong>中度</strong><br>7-30 天</td><td>毁坏玩家建筑 · 毁坏公共建筑 · 使用 TNT 毁坏地形 · 持有违规道具（32k）· 大量刷物品/刷货币 · 破坏他人领地 · 使用作弊客户端</td></tr>
+            <tr><td><strong>重度</strong><br>30 天-永久</td><td>攻击服务器（压测/发包）· 制造卡服机/禁人塔 · 盗取 OP 权限/盗号</td></tr>
+            <tr><td><strong>其它</strong></td><td>其他（手动输入）—— 5 分钟内到聊天栏写理由</td></tr>
+          </tbody>
+        </table>
       </div>
     </article>
   </div>
@@ -317,23 +310,27 @@
         <span class="chapter-no">04</span>
         <h2 class="chapter-title">手机玩家友好</h2>
       </div>
-      <div class="grid grid-3" style="margin-top: 22px;">
+      <div class="grid grid-2" style="margin-top: 22px;">
         <div class="card">
-          <h3>大格子</h3>
-          <p>功能图标集中在中间区域，手指不用够到屏幕边缘。</p>
+          <h3>布局</h3>
+          <ul>
+            <li>只围外圈玻璃板，内部留空</li>
+            <li>理由两行各 7 个，铺满不散</li>
+            <li>返回 / 关闭固定在底部</li>
+          </ul>
         </div>
         <div class="card">
-          <h3>只围外圈</h3>
-          <p>灰色玻璃板只铺最外一圈，内部留空放控件，点错也不会点到空槽。</p>
-        </div>
-        <div class="card">
-          <h3>分页</h3>
-          <p>列表超过 28 个自动分页，底部 <code>◀ 上一页</code> / <code>下一页 ▶</code>。</p>
+          <h3>导航</h3>
+          <ul>
+            <li>「返回」一律回<strong>上一级</strong></li>
+            <li>关闭清空历史</li>
+            <li>列表超过 28 个自动分页</li>
+          </ul>
         </div>
       </div>
 
       <div class="zz-panel" style="margin-top: 26px;">
-        <div class="panel-title">完整命令</div>
+        <div class="panel-title">命令与权限</div>
         <ul>
           <li><code>/lchest</code> — 打开面板（别名 <code>/chest</code>、<code>/lcgui</code>、<code>/book</code>）</li>
           <li><code>/lchest give</code> — 领取「Linux插件系统」附魔书</li>
@@ -345,6 +342,8 @@
     </article>
   </div>
 </section>
+
+
 
 
 
