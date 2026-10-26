@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>LinuxChestGUI · 关服同步 · 使用帮助</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css?v=4e62472c">
+    <link rel="stylesheet" href="liquid-glass.css">
+</head>
+<body class="pure-white">
+
+<!-- ===== 液态玻璃折射滤镜（被 liquid-glass.css 的 backdrop-filter 引用） =====
+     这是"玻璃的厚度场"：把背景按边缘梯度掰弯，
+     让它像透过一块有弧边的玻璃，而不是糊了一层白膜。 -->
+<svg class="lw-glass-defs" aria-hidden="true" focusable="false"
+     width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <defs>
+        <filter id="lw-glass" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="40"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="50"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thick" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="48"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="72"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thin" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="16"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="20"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="24"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+    </defs>
+</svg>
+
+
+<div class="bg-mobile" aria-hidden="true"></div>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="sync.html">LinuxChestGUI 介绍</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          <span class="nav-text">Nalxer 服务器</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="plug-hero-ver">26.11.5</span>
+    <h1>LinuxChestGUI 帮助中心</h1>
+    <p>命令详解、检测项与常见问题</p>
+  </div>
+</section>
+
+<div class="container content-layout no-toc">
+
+      <aside class="sidebar" id="sidebar">
+            <div class="sidebar-track">
+        <ul class="sidebar-flat">
+          <li class="sidebar-group-label" data-group="开始使用">开始使用</li>
+          <li><a href="#quickstart">快速开始</a></li>
+          <li><a href="#pages">页面说明</a></li>
+          <li class="sidebar-group-label" data-group="操作">操作</li>
+          <li><a href="#ban">封禁与处罚</a></li>
+          <li><a href="#report">举报处理</a></li>
+          <li class="sidebar-group-label" data-group="其它">其它</li>
+          <li><a href="#mobile">手机优化</a></li>
+        </ul>
+      </div>
+    </aside>
+
+  <main class="main-content">
+
+<section class="help-section" id="quickstart">
+    <h2><span class="num">1</span>快速开始</h2>
+      <p>LinuxChestGUI 是 ITNOL 的<strong>箱子 GUI 管理面板</strong>。
+         所有操作都直接作用在 ITNOL 上，效果等于在聊天栏敲命令。</p>
+
+      <h3>三种打开方式</h3>
+      <ol class="steps">
+        <li>命令 <code>/lchest</code>（别名 <code>/chest</code>、<code>/lcgui</code>、<code>/book</code>）</li>
+        <li>命令 <code>/lchest give</code> 领一本「Linux插件系统」附魔书</li>
+        <li>右键那本书，随时打开</li>
+      </ol>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">ℹ️</span>
+        <div class="tip-body">
+          <strong>硬依赖 ITNOL</strong>
+          没有 InTheNameOfLinux 就不会加载。
+        </div>
+      </div>
+  </section>
+
+<section class="help-section" id="pages">
+    <h2><span class="num">2</span>页面说明</h2>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>页面</th><th>作用</th><th>权限</th></tr></thead>
+          <tbody>
+            <tr><td>主页</td><td>功能入口 + 状态摘要</td><td>所有人</td></tr>
+            <tr><td>运行状态</td><td>在线 / TPS 实时 / 内存 / 封禁数</td><td>所有人</td></tr>
+            <tr><td>插件联动</td><td>8 个 Linux 系插件加载状态</td><td>所有人</td></tr>
+            <tr><td>我的信息</td><td>名字 / 身份 / 世界 / 坐标 / 生命</td><td>所有人</td></tr>
+            <tr><td>封禁管理</td><td>在线 + 离线玩家列表</td><td>管理员</td></tr>
+            <tr><td>玩家操作</td><td>封禁 / 三项处罚 / 解除 / 踢出</td><td>管理员</td></tr>
+            <tr><td>举报处理</td><td>左键受理 右键驳回</td><td>管理员</td></tr>
+            <tr><td>封禁列表</td><td>生效封禁，点击可解封</td><td>管理员</td></tr>
+          </tbody>
+        </table>
+      </div>
+  </section>
+
+<section class="help-section" id="ban">
+    <h2><span class="num">3</span>封禁与处罚</h2>
+
+      <h3>封禁</h3>
+      <p>玩家操作页点「封禁」→ 进入时长选择页：</p>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>档位</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>1 小时 / 1 天 / 7 天 / 30 天 / 10 年</td><td>临时封禁，到期自动解封</td></tr>
+            <tr><td>永久</td><td>永久封禁，需手动解除</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>点完时长会关闭界面，提示在聊天栏输入理由 —— <strong>说一句话即执行，不会发送出去</strong>。</p>
+
+      <h3>功能处罚（三项独立）</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>按钮</th><th>效果</th><th>对应命令</th></tr></thead>
+          <tbody>
+            <tr><td>禁言</td><td>不能说话</td><td><code>linux banmsg</code></td></tr>
+            <tr><td>禁移动</td><td>原地不能走</td><td><code>linux banmove</code></td></tr>
+            <tr><td>禁交互</td><td>不能开门点方块</td><td><code>linux banblock</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>解除按钮同样三项独立，点上就解除对应那一种。</p>
+
+      <h3>离线玩家</h3>
+      <p>
+        玩家列表 = 在线玩家 + 从 <code>data.yml</code>、<code>playtime.yml</code>
+        读到的离线玩家。离线玩家同样可以封禁、处罚。
+      </p>
+  </section>
+
+<section class="help-section" id="report">
+    <h2><span class="num">4</span>举报处理</h2>
+      <p>「举报处理」页列出所有待处理举报：</p>
+      <ul>
+        <li><strong>左键</strong> → 受理</li>
+        <li><strong>右键</strong> → 驳回</li>
+        <li>处理完自动刷新列表</li>
+      </ul>
+      <p>显示内容：举报编号、举报人、被举报人、理由。</p>
+  </section>
+
+<section class="help-section" id="mobile">
+    <h2><span class="num">5</span>手机优化</h2>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>设计</th><th>原因</th></tr></thead>
+          <tbody>
+            <tr><td>图标集中在中间</td><td>手指不用够到屏幕边缘</td></tr>
+            <tr><td>只围外圈玻璃板</td><td>内部留空，不误触空槽</td></tr>
+            <tr><td>每页 28 个</td><td>格子大、不误点</td></tr>
+            <tr><td>底部固定返回 / 关闭</td><td>位置永远不变</td></tr>
+            <tr><td>列表自动分页</td><td>玩家多也不会挤爆</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>返回上一级</strong>
+          时长选择页的「返回」回到玩家操作页，操作页的「返回」才回主页。
+        </div>
+      </div>
+  </section>
+
+    </main>
+
+
+<script>
+    // 页面切换动画：进入淡入 + 离开淡出
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('page-anim');
+
+      // 从 bfcache 返回时清掉淡出状态，否则页面会是半透明的
+      window.addEventListener('pageshow', function () {
+        root.classList.remove('page-leaving');
+      });
+
+      function isInternal(a) {
+        if (!a || !a.href) return false;
+        if (a.target && a.target !== '_self') return false;
+        if (a.hasAttribute('download')) return false;
+        var h = a.getAttribute('href') || '';
+        if (h.charAt(0) === '#') return false;
+        if (a.hostname && a.hostname !== location.hostname) return false;
+        return true;
+      }
+
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a') : null;
+        if (!isInternal(a)) return;
+        if (a.pathname === location.pathname && a.hash) return;
+        e.preventDefault();
+        root.classList.add('page-leaving');
+        setTimeout(function () { location.href = a.href; }, 340);
+      }, true);
+    })();
+
+
+    // 滚动高亮：侧栏 + 本页目录
+    (function () {
+      var links = document.querySelectorAll('.sidebar a');
+      if (!links.length) return;
+
+      function activate(id) {
+        links.forEach(function (a) {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+        });
+      }
+
+      var targets = [];
+      links.forEach(function (a) {
+        var id = (a.getAttribute('href') || '').slice(1);
+        if (!id) return;
+        var el = document.getElementById(id);
+        if (el) targets.push(el);
+      });
+      if (!targets.length) return;
+
+      if (!('IntersectionObserver' in window)) {
+        activate(targets[0].id);
+        return;
+      }
+
+      var visible = {};
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          visible[en.target.id] = en.isIntersecting;
+        });
+        for (var i = 0; i < targets.length; i++) {
+          if (visible[targets[i].id]) { activate(targets[i].id); break; }
+        }
+      }, { rootMargin: '-90px 0px -70% 0px', threshold: 0 });
+
+      targets.forEach(function (t) { io.observe(t); });
+    })();
+
+    // 移动端侧栏抽屉
+    (function () {
+      var sb = document.getElementById('sidebar');
+      var tg = document.getElementById('navToggle');
+      if (!sb || !tg) return;
+
+      var bd = document.createElement('div');
+      bd.className = 'sidebar-backdrop';
+      document.body.appendChild(bd);
+
+      function close() {
+        sb.classList.remove('open');
+        bd.classList.remove('open');
+      }
+
+      tg.addEventListener('click', function (e) {
+        e.stopPropagation();
+        sb.classList.toggle('open');
+        bd.classList.toggle('open');
+      });
+
+      bd.addEventListener('click', close);
+      sb.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') close();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') close();
+      });
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 920) close();
+      });
+    })();
+
+  document.querySelectorAll('.faq-q').forEach((q) => {
+    q.addEventListener('click', () => {
+      q.parentElement.classList.toggle('open');
+    });
+  });
+
+  const sidebarLinks = document.querySelectorAll('.sidebar a');
+    // 参与滚动高亮的锚点：各章节 + 侧栏指向的其它锚点（如 #config-ref）
+    const watched = [];
+    const seen = {};
+    sidebarLinks.forEach((link) => {
+      const href = link.getAttribute('href') || '';
+      if (href.charAt(0) !== '#') return;
+      const id = href.slice(1);
+      if (seen[id]) return;
+      const el = document.getElementById(id);
+      if (el) { watched.push(el); seen[id] = true; }
+    });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        sidebarLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, {
+    rootMargin: '-80px 0px -60% 0px',
+    threshold: 0
+  });
+
+  watched.forEach((s) => observer.observe(s));
+
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+<footer>
+  <div class="container">
+    <div class="footer-brand">LinuxChestGUI</div>
+    <p>快速开始 · 页面说明 · 封禁与处罚 · 手机优化</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v26.11.5 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+      <a href="index.html">← 插件列表</a>
+        &nbsp;·&nbsp;
+      <a href="sync.html">插件介绍</a>
+        &nbsp;·&nbsp;
+      <a href="linuxhelp.html">综合帮助</a>
+        &nbsp;·&nbsp;
+      <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

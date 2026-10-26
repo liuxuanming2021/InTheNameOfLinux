@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>LinuxChestGUI · 反作弊插件</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css?v=4e62472c">
+    <link rel="stylesheet" href="liquid-glass.css">
+</head>
+<body class="intro-page">
+
+<!-- ===== 液态玻璃折射滤镜（被 liquid-glass.css 的 backdrop-filter 引用） =====
+     这是"玻璃的厚度场"：把背景按边缘梯度掰弯，
+     让它像透过一块有弧边的玻璃，而不是糊了一层白膜。 -->
+<svg class="lw-glass-defs" aria-hidden="true" focusable="false"
+     width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <defs>
+        <filter id="lw-glass" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="40"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="50"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thick" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="48"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="72"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thin" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="16"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="20"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="24"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+    </defs>
+</svg>
+
+
+<div class="bg-mobile" aria-hidden="true"></div>
+
+<video class="bg-video" id="bgVideo" loop muted playsinline
+       preload="none" aria-hidden="true" poster="mobile.jpg"></video>
+
+<nav class="nav-home">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="chest.html">LinuxChestGUI 介绍</a></li>
+      <li><a href="#features">功能</a></li>
+      <li><a href="#commands">命令</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          <span class="nav-text">Nalxer 服务器</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav><header class="cover cover-page has-video">
+  <div class="cover-overlay"></div>
+
+  <div class="cover-inner">
+    <span class="plug-hero-ver">26.11.5 · Paper 1.12.2</span>
+
+    <h1 class="cover-title">LinuxChestGUI</h1>
+    <p class="cover-subtitle">ADMIN PANEL</p>
+
+    <hr class="cover-divider">
+
+    <p class="cover-quote">
+      一个面板，管完整个服务器
+      <br>
+      <strong>封禁 · 处罚 · 举报 · 状态 · 手机友好</strong>
+    </p>
+
+    <div class="cover-nav">
+        <a href="chesthelp.html" class="cover-btn">查看使用帮助</a>
+        <a href="#features" class="cover-btn">了解功能</a>
+        <a href="linuxhelp.html" class="cover-btn">综合帮助中心</a>
+    </div>
+
+    <div class="cover-remark">
+      <p><strong>8</strong> 个页面 · 箱子 GUI · 触屏可点</p>
+    </div>
+  </div>
+</header>
+<div class="intro-body">
+
+
+<!-- ── 为什么这么设计 ─────────────────────────────────── -->
+<section id="what">
+  <div class="container">
+    <article class="chapter">
+      <div class="chapter-head">
+        <span class="chapter-no">01</span>
+        <h2 class="chapter-title">为什么是箱子，不是书</h2>
+      </div>
+      <p class="chapter-lede">
+        1.12.2 的原版书页<strong>只是文字，点不了</strong>。
+        Slimefun 那本「指南书」其实也是箱子界面 + 物品图标。
+        LinuxChestGUI 沿用这套做法：54 格箱子，图标可点，触屏友好。
+      </p>
+
+      <div class="grid grid-2" style="margin-top: 26px;">
+        <div class="card">
+          <h3>打开方式</h3>
+          <ul>
+            <li><code>/lchest</code> —— 直接开面板</li>
+            <li><code>/lchest give</code> —— 领一本「Linux插件系统」附魔书</li>
+            <li>右键那本书 —— 随时打开</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>硬依赖 ITNOL</h3>
+          <p>
+            没有 InTheNameOfLinux 就不加载。所有数据与操作都直连 ITNOL，
+            封禁、处罚、举报的效果和在聊天栏敲命令<strong>完全一致</strong>。
+          </p>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="pages" class="alt">
+  <div class="container">
+    <article class="chapter">
+      <div class="chapter-head">
+        <span class="chapter-no">02</span>
+        <h2 class="chapter-title">八个页面</h2>
+      </div>
+      <p class="chapter-lede">只保留信息显示和操作控件，没有纯介绍页。</p>
+
+      <div class="reg-table" style="margin-top: 20px;">
+        <table>
+          <thead><tr><th>页面</th><th>作用</th><th>权限</th></tr></thead>
+          <tbody>
+            <tr><td><strong>主页</strong></td><td>功能入口 + 状态摘要</td><td>所有人</td></tr>
+            <tr><td><strong>运行状态</strong></td><td>在线 / TPS（<strong>每秒刷新</strong>）/ 内存 / 封禁数</td><td>所有人</td></tr>
+            <tr><td><strong>插件联动</strong></td><td>8 个 Linux 系插件加载状态</td><td>所有人</td></tr>
+            <tr><td><strong>我的信息</strong></td><td>名字 / 身份 / 世界 / 坐标 / 生命</td><td>所有人</td></tr>
+            <tr><td><strong>封禁管理</strong></td><td>在线 + 离线玩家列表，可封禁</td><td>管理员</td></tr>
+            <tr><td><strong>玩家操作</strong></td><td>封禁 / 禁言 / 禁移动 / 禁交互</td><td>管理员</td></tr>
+            <tr><td><strong>举报处理</strong></td><td>待处理举报，左键受理 右键驳回</td><td>管理员</td></tr>
+            <tr><td><strong>封禁列表</strong></td><td>所有生效封禁，点击可解封</td><td>管理员</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+</section>
+
+
+<section id="ops">
+  <div class="container">
+    <article class="chapter">
+      <div class="chapter-head">
+        <span class="chapter-no">03</span>
+        <h2 class="chapter-title">能做什么操作</h2>
+      </div>
+
+      <div class="grid grid-2" style="margin-top: 22px;">
+        <div class="card">
+          <h3>🔨 封禁</h3>
+          <ul>
+            <li>六档时长：1 小时 / 1 天 / 7 天 / 30 天 / 10 年 / 永久</li>
+            <li>点击后在聊天栏输入理由（<strong>不会发送出去</strong>）</li>
+            <li>在线、离线玩家都能封</li>
+            <li>一键解除封禁</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>⚔ 功能处罚</h3>
+          <ul>
+            <li>禁言 / 禁移动 / 禁交互 —— 三项<strong>各自独立</strong></li>
+            <li>点一下立即生效（等同 <code>/linux banmsg</code>）</li>
+            <li>对应的解除按钮同样独立</li>
+            <li>踢出（不封禁）单独一项</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid grid-2" style="margin-top: 22px;">
+        <div class="card">
+          <h3>📄 举报</h3>
+          <p>列出所有待处理举报，显示举报人、被举报人、理由。</p>
+          <ul>
+            <li>左键 → 受理</li>
+            <li>右键 → 驳回</li>
+            <li>处理完自动刷新</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>📋 封禁详情</h3>
+          <p>玩家操作页可查看该玩家的完整封禁记录：理由、操作者、到期时间、封禁时间。</p>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="mobile" class="alt">
+  <div class="container">
+    <article class="chapter">
+      <div class="chapter-head">
+        <span class="chapter-no">04</span>
+        <h2 class="chapter-title">手机玩家友好</h2>
+      </div>
+      <div class="grid grid-3" style="margin-top: 22px;">
+        <div class="card">
+          <h3>大格子</h3>
+          <p>功能图标集中在中间区域，手指不用够到屏幕边缘。</p>
+        </div>
+        <div class="card">
+          <h3>只围外圈</h3>
+          <p>灰色玻璃板只铺最外一圈，内部留空放控件，点错也不会点到空槽。</p>
+        </div>
+        <div class="card">
+          <h3>分页</h3>
+          <p>列表超过 28 个自动分页，底部 <code>◀ 上一页</code> / <code>下一页 ▶</code>。</p>
+        </div>
+      </div>
+
+      <div class="zz-panel" style="margin-top: 26px;">
+        <div class="panel-title">完整命令</div>
+        <ul>
+          <li><code>/lchest</code> — 打开面板（别名 <code>/chest</code>、<code>/lcgui</code>、<code>/book</code>）</li>
+          <li><code>/lchest give</code> — 领取「Linux插件系统」附魔书</li>
+        </ul>
+        <p style="margin-top: 12px;">
+          权限：<code>linuxchest.use</code>（所有人）、<code>linuxchest.admin</code>（管理员）
+        </p>
+      </div>
+    </article>
+  </div>
+</section>
+
+
+
+
+
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">LinuxChestGUI</div>
+    <p>22 项检测 · 七档强度 · OP 实时告警 · 只踢出不封禁</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v26.11.5 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+      <a href="index.html">← 插件列表</a>
+        &nbsp;·&nbsp;
+      <a href="chesthelp.html">使用帮助</a>
+        &nbsp;·&nbsp;
+      <a href="linuxhelp.html">综合帮助</a>
+        &nbsp;·&nbsp;
+      <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+<!-- /.intro-body -->
+
+<script>
+    // 页面切换动画：进入淡入 + 离开淡出
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('page-anim');
+
+      // 从 bfcache 返回时清掉淡出状态，否则页面会是半透明的
+      window.addEventListener('pageshow', function () {
+        root.classList.remove('page-leaving');
+      });
+
+      function isInternal(a) {
+        if (!a || !a.href) return false;
+        if (a.target && a.target !== '_self') return false;
+        if (a.hasAttribute('download')) return false;
+        var h = a.getAttribute('href') || '';
+        if (h.charAt(0) === '#') return false;
+        if (a.hostname && a.hostname !== location.hostname) return false;
+        return true;
+      }
+
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a') : null;
+        if (!isInternal(a)) return;
+        if (a.pathname === location.pathname && a.hash) return;
+        e.preventDefault();
+        root.classList.add('page-leaving');
+        setTimeout(function () { location.href = a.href; }, 340);
+      }, true);
+    })();
+
+    // 背景视频：只在宽屏加载（与主页一致）
+    (function () {
+      var v = document.getElementById('bgVideo');
+      if (!v) return;
+      var mq = window.matchMedia('(min-width: 921px)');
+      function apply() {
+        if (mq.matches) {
+          if (!v.getAttribute('src')) {
+            v.setAttribute('src', 'video.mp4');
+            v.load();
+            var pr = v.play();
+            if (pr && pr.catch) { pr.catch(function () {}); }
+          }
+        } else {
+          try { v.pause(); } catch (e) {}
+          v.removeAttribute('src');
+          try { v.load(); } catch (e) {}
+        }
+      }
+      apply();
+      if (mq.addEventListener) { mq.addEventListener('change', apply); }
+      else if (mq.addListener) { mq.addListener(apply); }
+    })();
+
+  // 滚动淡入
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // 触发一次就撤掉监听，避免反复播放
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    // 不能用 0.1：比视口高的元素永远凑不满 10%，会一直 opacity:0
+    threshold: 0,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  document.querySelectorAll('.reveal').forEach((el) => {
+    observer.observe(el);
+  });
+
+  // 兜底：滚动结束后仍未显示的，直接显示（防止某些浏览器不触发）
+  setTimeout(function () {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) {
+        el.classList.add('visible');
+      }
+    });
+  }, 1200);
+
+  // 平滑滚动
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ============================================================
+  // 移动端汉堡菜单
+  // ============================================================
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>
