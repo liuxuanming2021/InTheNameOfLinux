@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<title>LinuxChestGUI · 关服同步 · 使用帮助</title>
+<title>LinuxChestGUI · 管理面板 · 使用帮助</title>
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="stylesheet" href="style.css?v=4e62472c">
@@ -140,7 +140,7 @@
 
     <ul class="nav-links" id="navLinks">
       <li><a href="index.html#plugins">插件列表</a></li>
-      <li><a href="sync.html">LinuxChestGUI 介绍</a></li>
+      <li><a href="chest.html">LinuxChestGUI 介绍</a></li>
       <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
       <li>
         <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
@@ -184,6 +184,7 @@
           <li><a href="#ban">封禁与处罚</a></li>
           <li><a href="#report">举报处理</a></li>
           <li class="sidebar-group-label" data-group="其它">其它</li>
+          <li><a href="#switch">功能开关</a></li>
           <li><a href="#mobile">手机优化</a></li>
         </ul>
       </div>
@@ -224,6 +225,9 @@
             <tr><td>玩家操作</td><td>封禁 / 三项处罚 / 解除 / 踢出</td><td>管理员</td></tr>
             <tr><td>举报处理</td><td>左键受理 右键驳回</td><td>管理员</td></tr>
             <tr><td>封禁列表</td><td>生效封禁，点击可解封</td><td>管理员</td></tr>
+            <tr><td>惩罚列表</td><td>功能处罚记录（penalty.yml）</td><td>管理员</td></tr>
+            <tr><td>管理员列表</td><td>所有 OP + 在线状态</td><td>管理员</td></tr>
+            <tr><td>功能开关</td><td>18 项配置开关</td><td><strong>仅服主</strong></td></tr>
           </tbody>
         </table>
       </div>
@@ -299,6 +303,55 @@
           理由页 → 时长页 → 玩家操作页 → 玩家列表 → 主页，一层层退。
         </div>
       </div>
+  </section>
+
+    
+<section class="help-section" id="switch">
+    <h2><span class="num">6</span>功能开关（仅服主）</h2>
+      <p>「功能开关」页 <strong>只有 Linux582021</strong> 能看、能点。
+         其他管理员连主页上的入口都看不到。</p>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>三层校验</strong>
+          ① 主页入口只对服主渲染 → ② 点击入口再验一次 → ③ 开关页与每次点击都验，不符直接关界面。
+        </div>
+      </div>
+
+      <h3>开关清单（18 项，动态读取 config.yml）</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>配置项</th><th>作用</th></tr></thead>
+          <tbody>
+            <tr><td><code>broadcast-ban</code></td><td>封禁/解封时向全服播报</td></tr>
+            <tr><td><code>refuse-enabled</code></td><td>拒绝针对保护对象的命令</td></tr>
+            <tr><td><code>console-cmd-enabled</code></td><td>控制台命令拦截</td></tr>
+            <tr><td><code>command-takeover</code></td><td>接管 Essentials 封禁命令</td></tr>
+            <tr><td><code>owner-force-permissions</code></td><td>服主强制拥有全部权限</td></tr>
+            <tr><td><code>tempban-reminder.enabled</code></td><td>临时封禁到期前提醒</td></tr>
+            <tr><td><code>penalty-sync.enabled</code></td><td>功能封禁跨服同步</td></tr>
+            <tr><td><code>moderator.enabled</code></td><td>协管体系总开关</td></tr>
+            <tr><td><code>nbt.enabled</code></td><td>非法 NBT 检测总开关</td></tr>
+            <tr><td><code>nbt.self-test</code></td><td>调试自检（平时保持关闭）</td></tr>
+            <tr><td><code>nbt.skip-charms</code></td><td>跳过 PointsShop 饰品</td></tr>
+            <tr><td><code>nbt.compress-resistance</code></td><td>抗性≥4 压回 3 级</td></tr>
+            <tr><td><code>nbt.guard-command</code></td><td>拦截 /give 等命令</td></tr>
+            <tr><td><code>nbt.guard-item-spawn</code></td><td>掉落物生成时检测</td></tr>
+            <tr><td><code>nbt.guard-pickup</code></td><td>拾取时检测</td></tr>
+            <tr><td><code>nbt.guard-inventory</code></td><td>容器取出时检测</td></tr>
+            <tr><td><code>nbt.guard-creative</code></td><td>创造复制时检测</td></tr>
+            <tr><td><code>nbt.guard-on-join</code></td><td>上线补扫背包</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>表现</h3>
+      <ul>
+        <li>开启 = 绿色潜影盒</li>
+        <li>关闭 = 红色方块</li>
+        <li>点击 → 写回 ITNOL 配置并保存，立即生效</li>
+      </ul>
   </section>
 
     </main>
@@ -491,7 +544,7 @@
     <p style="margin-top: 12px;">
       <a href="index.html">← 插件列表</a>
         &nbsp;·&nbsp;
-      <a href="sync.html">插件介绍</a>
+      <a href="chest.html">插件介绍</a>
         &nbsp;·&nbsp;
       <a href="linuxhelp.html">综合帮助</a>
         &nbsp;·&nbsp;
