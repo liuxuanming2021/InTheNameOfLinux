@@ -224,6 +224,7 @@
             <tr><td>封禁管理</td><td>在线 + 离线玩家列表</td><td>管理员</td></tr>
             <tr><td>玩家操作</td><td>封禁 / 三项处罚 / 解除 / 踢出</td><td>管理员</td></tr>
             <tr><td>举报处理</td><td>左键受理 右键驳回</td><td>管理员</td></tr>
+            <tr><td>举报结果</td><td>已处理举报 + 处理人 / 结果</td><td>管理员</td></tr>
             <tr><td>封禁列表</td><td>生效封禁，点击可解封</td><td>管理员</td></tr>
             <tr><td>惩罚列表</td><td>功能处罚记录（penalty.yml）</td><td>管理员</td></tr>
             <tr><td>管理员列表</td><td>所有 OP + 在线状态</td><td>管理员</td></tr>
@@ -279,6 +280,21 @@
         <li>处理完自动刷新列表</li>
       </ul>
       <p>显示内容：举报编号、举报人、被举报人、理由。</p>
+
+      <h3>数据来源（双通道）</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>通道</th><th>来源</th><th>特点</th></tr></thead>
+          <tbody>
+            <tr><td>① 内存</td><td>反射读 ITNOL 的 ReportManager</td><td>完全实时</td></tr>
+            <tr><td>② 文件</td><td>读 reports.yml</td><td>反射失败时兜底</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>举报结果</h3>
+      <p>主页「举报结果」页列出<strong>所有已处理</strong>的举报：
+         编号、举报人、被举报人、理由、<strong>处理人</strong>、<strong>处理结果</strong>。</p>
   </section>
 
 <section class="help-section" id="mobile">
