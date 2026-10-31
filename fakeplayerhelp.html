@@ -204,7 +204,7 @@
       <h3>三步上手</h3>
       <ol class="steps">
         <li>把 <code>FakePlayerPlugin.jar</code> 放入 <code>plugins/</code> 目录并重启服务器。</li>
-        <li>站在你想放假人的位置，执行 <code>/fp 假人名字</code>。</li>
+        <li>站在你想放假人的位置，执行 <code>/fp add 假人名字</code>。</li>
         <li>用 <code>/fplist</code> 确认已创建；不想要了就 <code>/fpr 名字</code> 移除。</li>
       </ol>
 
@@ -227,7 +227,7 @@
             <tr><th>命令</th><th>说明</th><th>权限</th></tr>
           </thead>
           <tbody>
-            <tr><td><code>/fp</code></td><td>显示插件信息</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/fp</code></td><td>打开假人管理面板（没装 LinuxChestGUI 时显示插件信息）</td><td><span class="badge badge-op">所有人</span></td></tr>
             <tr><td><code>/fp add &lt;名字&gt;</code></td><td>在<strong>当前位置</strong>创建一个假人（受名额限制）</td><td><span class="badge badge-op">所有人</span></td></tr>
             <tr><td><code>/fp gui</code></td><td>打开假人管理面板（装了 LinuxChestGUI 才有这条）</td><td><span class="badge badge-op">所有人</span></td></tr>
             <tr><td><code>/fp help</code></td><td>显示帮助菜单</td><td><span class="badge badge-op">所有人</span></td></tr>
@@ -240,10 +240,11 @@
         </table>
       </div>
 
-      <div class="tip">
-        <strong>旧写法还能用。</strong>
-        <code>/fp &lt;名字&gt;</code> 依然可以创建假人，
-        只是现在推荐写 <code>/fp add &lt;名字&gt;</code>，和 <code>/fp gui</code>、<code>/fp help</code> 统一成子命令风格。
+      <div class="tip tip-warn">
+        <strong>旧写法已删除。</strong>
+        <code>/fp &lt;名字&gt;</code>、<code>/fakeplayer &lt;名字&gt;</code> 都不再创建假人，
+        打进去只会回一句「未知子命令」并给出用法。必须写成 <code>/fp add &lt;名字&gt;</code>
+        —— 否则名字和 <code>add</code> / <code>gui</code> / <code>help</code> 这些子命令会互相打架。
       </div>
 
       <h3>完整命令名</h3>
@@ -273,7 +274,7 @@
          插件会强制加载它所在的区块，所以不会因为区块卸载而掉进虚空。</p>
 
       <h3>怎么让假人换个位置</h3>
-      <p>直接 <code>/fpr 名字</code> 移除，然后走到新位置重新 <code>/fp 名字</code> 创建。
+      <p>直接 <code>/fpr 名字</code> 移除，然后走到新位置重新 <code>/fp add 名字</code> 创建。
          目前不支持直接移动已有假人。</p>
 
       <h3>服务器重启后假人还在吗</h3>
@@ -432,7 +433,7 @@
       <div class="faq-item">
         <div class="faq-q"><span>能一次创建很多假人吗？</span><span class="faq-icon"></span></div>
         <div class="faq-a-wrap"><div class="faq-a">
-          没有批量命令，需要一条一条 <code>/fp 名字</code> 创建。
+          没有批量命令，需要一条一条 <code>/fp add 名字</code> 创建。
           数量很多时注意服务器性能，每个假人都会占用少量资源并强制加载所在区块。
         </div></div>
       </div>
