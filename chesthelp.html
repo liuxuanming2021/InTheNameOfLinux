@@ -184,6 +184,7 @@
           <li><a href="#ban">封禁与处罚</a></li>
           <li><a href="#report">举报处理</a></li>
           <li class="sidebar-group-label" data-group="其它">其它</li>
+          <li><a href="#fake">假人管理</a></li>
           <li><a href="#switch">功能开关</a></li>
           <li><a href="#mobile">手机优化</a></li>
         </ul>
@@ -229,6 +230,8 @@
             <tr><td>惩罚列表</td><td>功能处罚记录（penalty.yml）</td><td>管理员</td></tr>
             <tr><td>管理员列表</td><td>所有 OP + 在线状态</td><td>管理员</td></tr>
             <tr><td>功能开关</td><td>18 项配置开关</td><td><strong>仅服主</strong></td></tr>
+            <tr><td>假人管理</td><td>区块常驻 / 模拟刷怪 / 只刷黑屋 / 名额与列表</td><td>所有人（开关仅管理员）</td></tr>
+            <tr><td>假人列表</td><td>全部假人 + 创建者 / 世界 / 坐标，点击移除</td><td>本人或管理员</td></tr>
           </tbody>
         </table>
       </div>
@@ -322,6 +325,38 @@
   </section>
 
     
+<section class="help-section" id="fake">
+    <h2><span class="num">6</span>假人管理</h2>
+
+      <p>主页 → <strong>假人管理</strong>，三个全局开关 + 名额信息 + 假人列表。
+        没装 FakePlayerPlugin 时这个入口直接不显示。</p>
+
+      <h3>三个开关（仅管理员）</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>开关</th><th>作用</th></tr></thead>
+          <tbody>
+            <tr><td>区块常驻</td><td>假人注册进 PlayerChunkMap，周围区块真正在 tick（红石、水流、作物、刷怪塔都靠它）</td></tr>
+            <tr><td>模拟刷怪</td><td>假人附近按配置刷敌对生物，没人在线也出货</td></tr>
+            <tr><td>只刷黑屋</td><td>只在天花板遮挡的暗处刷怪，避免地表无限堆怪</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>假人名额</h3>
+      <ul>
+        <li>普通玩家<strong>免费 2 个</strong>名额，最多 5 个</li>
+        <li>多出来的名额在<strong>点券商店</strong>买：<code>/pshop</code> → 特殊商品 → 假人名额</li>
+        <li>每个 <strong>600 点卷</strong>，最多买 3 个</li>
+        <li>OP 与带 <code>fakeplayer.bypass</code> 权限的账号不占名额</li>
+      </ul>
+
+      <div class="tip tip-warn">
+        <strong>购买入口只有点券商店一个。</strong>
+        面板里的「购买名额」按钮只负责把你送到商店，不会二次扣费。
+      </div>
+  </section>
+
 <section class="help-section" id="switch">
     <h2><span class="num">6</span>功能开关（仅服主）</h2>
       <p>「功能开关」页 <strong>只有 Linux582021</strong> 能看、能点。

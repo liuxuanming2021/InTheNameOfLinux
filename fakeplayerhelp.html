@@ -186,6 +186,7 @@
           <li><a href="#config">配置与数据</a></li>
           <li><a href="#keep">生物保活</a></li>
           <li><a href="#chunktick">区块 tick 与刷怪</a></li>
+          <li><a href="#quota">名额与购买</a></li>
           <li><a href="#faq">常见问题</a></li>
         </ul>
       </div>
@@ -320,6 +321,41 @@
         </div>
       </div>
     
+  </section>
+
+<section class="help-section" id="quota">
+    <h2><span class="num">6</span>名额与购买</h2>
+
+      <p>普通玩家创建假人是有限额的，避免一个人把常驻区块吃满。</p>
+
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>项目</th><th>默认值</th><th>配置键</th></tr></thead>
+          <tbody>
+            <tr><td>免费名额</td><td>2 个</td><td><code>limits.default</code></td></tr>
+            <tr><td>名额上限</td><td>5 个</td><td><code>limits.max</code></td></tr>
+            <tr><td>单个价格</td><td>600 点卷</td><td><code>limits.buy-price</code></td></tr>
+            <tr><td>最多可买</td><td>3 个</td><td><code>limits.buy-max</code></td></tr>
+            <tr><td>免限额权限</td><td><code>fakeplayer.bypass</code></td><td><code>limits.bypass-permission</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>怎么买</h3>
+      <ol>
+        <li>游戏里输入 <code>/pshop</code> 打开点券商店</li>
+        <li>点<strong>特殊商品</strong></li>
+        <li>点<strong>假人名额 +1</strong>，扣 600 点卷并立刻到账</li>
+      </ol>
+
+      <p>名额记在 <code>plugins/FakePlayerPlugin/quota.yml</code>，
+        和假人数据分开存，删假人不会退名额。</p>
+
+      <div class="tip tip-warn">
+        <strong>面板里不扣费。</strong>
+        <code>/lchest</code> → 假人管理 → 购买名额 只是把你送到点券商店，
+        真正的扣费只发生在商店里 —— 不会出现两边各自扣一次的情况。
+      </div>
   </section>
 
 <section class="help-section" id="faq">
