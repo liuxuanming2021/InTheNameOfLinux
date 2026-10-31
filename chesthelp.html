@@ -231,7 +231,8 @@
             <tr><td>管理员列表</td><td>所有 OP + 在线状态</td><td>管理员</td></tr>
             <tr><td>功能开关</td><td>18 项配置开关</td><td><strong>仅服主</strong></td></tr>
             <tr><td>假人管理</td><td>我的名额 / 购买入口 / 假人列表</td><td>所有人</td></tr>
-            <tr><td>假人列表</td><td>全部假人 + 创建者 / 世界 / 坐标</td><td>本人或管理员</td></tr>
+            <tr><td>假人列表</td><td><b>只列你自己创建的假人</b> + 创建者 / 世界 / 坐标 / 运行状态</td><td>所有人</td></tr>
+            <tr><td>全部假人（管理）</td><td>服务器上所有人的假人，点进去可以配置 / 关闭 / 移除别人创建的假人</td><td>服务器 OP / <code>linuxchest.admin</code> / 已开 <code>/fpgm</code></td></tr>
             <tr><td>假人设置</td><td>选中那个假人的四个开关（区块常驻 / 模拟刷怪 / 只刷黑屋 / 关闭开启）+ 移除</td><td>本人或管理员</td></tr>
           </tbody>
         </table>
@@ -328,6 +329,15 @@
     
 <section class="help-section" id="fake">
     <h2><span class="num">6</span>假人管理</h2>
+
+      <div class="tip">
+        <strong>两个列表不一样。</strong>
+        <br>· <b>假人列表</b>：<b>只显示你自己创建的假人</b>，普通玩家和 <code>/fp</code> 打开的都是这一个。
+        <br>· <b>全部假人（管理）</b>：只有服务器 OP、有 <code>linuxchest.admin</code> 权限，
+        或者用 <code>/fpgm</code> 开了「假人 GM」的人，才会在「假人管理」页看到这个按钮（槽位 28），
+        点进去是服务器上所有人的假人，可以管理别人创建的。
+        <br>不是管理员的玩家点那个位置不会有任何反应，即使硬点也会被服务端拒绝。
+      </div>
 
       <p>主页 → <strong>假人管理</strong>（名额 / 购买入口 / 假人列表）→ 点列表里的某个假人 →
         <strong>假人设置</strong>。没装 FakePlayerPlugin 时这个入口直接不显示。</p>
