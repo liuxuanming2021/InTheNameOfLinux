@@ -366,13 +366,11 @@
         真正的扣费只发生在商店里 —— 不会出现两边各自扣一次的情况。
       </div>
 
-      <h3><code>/fpgm</code>：临时不限名额</h3>
-      <ul>
-        <li>在游戏里输入 <code>/fpgm</code> 开，再输一次关</li>
-        <li>开着的时候自己创建假人<strong>不占名额</strong>，也不受 <code>max-fake-players</code> 总数上限限制</li>
-        <li>权限：OP、<code>fakeplayer.gm</code>，或服主账号；其他人一律提示「你没有权限使用 /fpgm」</li>
-        <li>这个命令<strong>故意没注册进命令表</strong>，所以 tab 补全里看不到</li>
-      </ul>
+      <div class="tip tip-info">
+        <strong>管理员不受名额限制。</strong>
+        带 <code>fakeplayer.bypass</code> 权限的账号创建假人不占名额，
+        也不受 <code>max-fake-players</code> 总数上限约束。
+      </div>
   </section>
 
 <section class="help-section" id="perfake">
