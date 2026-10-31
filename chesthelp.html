@@ -232,7 +232,7 @@
             <tr><td>功能开关</td><td>18 项配置开关</td><td><strong>仅服主</strong></td></tr>
             <tr><td>假人管理</td><td>我的名额 / 购买入口 / 假人列表</td><td>所有人</td></tr>
             <tr><td>假人列表</td><td>全部假人 + 创建者 / 世界 / 坐标</td><td>本人或管理员</td></tr>
-            <tr><td>假人设置</td><td>选中那个假人的三个开关 + 移除</td><td>本人或管理员</td></tr>
+            <tr><td>假人设置</td><td>选中那个假人的四个开关（区块常驻 / 模拟刷怪 / 只刷黑屋 / 关闭开启）+ 移除</td><td>本人或管理员</td></tr>
           </tbody>
         </table>
       </div>
@@ -349,6 +349,9 @@
             <tr><td>区块常驻</td><td>这个假人注册进 PlayerChunkMap，它周围区块真正在 tick（红石、水流、作物、刷怪塔都靠它）</td></tr>
             <tr><td>模拟刷怪</td><td>这个假人附近按配置刷敌对生物，没人在线也出货</td></tr>
             <tr><td>只刷黑屋</td><td>只在天花板遮挡的暗处刷怪，避免地表无限堆怪</td></tr>
+            <tr><td>关闭这个假人</td><td>把假人从服务器上撤下来：销毁实体、退出 PlayerChunkMap、不 tick、不刷怪。
+              <b>记录、坐标、创建者、上面三个开关都保留</b>，点「开启这个假人」就原地回来。
+              和「移除」不同 —— 移除是连 data.yml 里的记录一起删</td></tr>
           </tbody>
         </table>
       </div>
@@ -356,7 +359,9 @@
       <div class="tip">
         <strong>「未单独设置（跟随全局）」</strong>表示这个假人还没被改过，用的是 config.yml 的默认值；
         一点开关就会写进 data.yml 的该假人条目（<code>chunk-loaded</code> / <code>mob-spawning</code> /
-        <code>require-covered</code>），从此以它为准。
+        <code>require-covered</code> / <code>enabled</code>），从此以它为准。<br>
+        假人列表里每条也会显示状态：<b>运行中</b> 或 <b>已关闭</b>；关闭的假人在重启后不会加载
+        （日志会写「处于关闭状态，本次不加载」），也不会被「消失后恢复」的巡查拉回来。
       </div>
 
       <h3>假人名额</h3>
