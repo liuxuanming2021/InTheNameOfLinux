@@ -247,12 +247,13 @@
 
       <div class="bento-item wide reveal">
         <div class="bento-icon">🧱</div>
-        <h3>区块强制加载</h3>
-        <p>假人所在区块会被强制加载，这是挂机机器能持续运转的前提。</p>
+        <h3>区块真正在 tick</h3>
+        <p>不只是把区块留在内存里 —— 假人会被注册进原版的
+           <code>PlayerChunkMap</code>，区块进入正常的 tick 循环，机器真的会转。</p>
         <ul>
-          <li>自动强制加载所在区块</li>
-          <li>区块卸载 / 世界卸载时自动处理</li>
-          <li>定期自检并修复异常假人</li>
+          <li>水流、红石、作物生长、熔炉烧炼持续运作</li>
+          <li>实体 tick 正常（掉落物、TNT、怪物 AI）</li>
+          <li>假人附近自动模拟刷怪，刷怪塔没人在线也出货</li>
         </ul>
       </div>
 
@@ -328,13 +329,15 @@
       <div class="card reveal">
         <div class="card-icon">⚔️</div>
         <h3>刷怪塔挂机</h3>
-        <p>把假人放在刷怪塔的挂机点，怪物持续生成，你下线时也在刷。</p>
+        <p>把假人放在刷怪塔的挂机点，插件会在假人附近的黑暗处按原版条件刷怪，
+           你下线时塔也在出货；水流、漏斗、掉落物全部正常。</p>
       </div>
 
       <div class="card reveal">
         <div class="card-icon">🌾</div>
         <h3>农场 / 熔炉运转</h3>
-        <p>农作物生长、熔炉烧炼都依赖区块加载，假人能保持这些机器一直跑。</p>
+        <p>农作物生长、熔炉烧炼依赖区块持续 tick（不只是加载），
+           注册进 <code>PlayerChunkMap</code> 之后这些机器会一直跑。</p>
       </div>
 
       <div class="card reveal">

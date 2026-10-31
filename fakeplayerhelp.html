@@ -185,6 +185,7 @@
           <li class="sidebar-group-label" data-group="参考与帮助">参考与帮助</li>
           <li><a href="#config">配置与数据</a></li>
           <li><a href="#keep">生物保活</a></li>
+          <li><a href="#chunktick">区块 tick 与刷怪</a></li>
           <li><a href="#faq">常见问题</a></li>
         </ul>
       </div>
@@ -428,12 +429,92 @@
     </main>
 </div>
 
+<section class="help-section" id="chunktick">
+    <h2><span class="num">7</span>区块 tick 与刷怪</h2>
+
+      <p>假人插件保证的不只是「区块在内存里」，而是<strong>区块在 tick</strong> ——
+         这是水流、红石、作物、熔炉、刷怪塔能运转的唯一前提。</p>
+
+      <h3>为什么以前不行</h3>
+      <p>反编译 1.12.2 服务端可以看到：区块 tick 循环
+         <code>WorldServer.j()</code> 遍历的是
+         <code>PlayerChunkMap.b()</code>，而它只包含<strong>被玩家占用的区块</strong>。
+         插件手动 <code>loadChunk()</code> 加载的区块永远进不了这张表，
+         所以旧版假人旁边放水都不会流。</p>
+
+      <div class="tip tip-info">
+        <span class="tip-icon">🔬</span>
+        <div class="tip-body">
+          <strong>实测对照</strong>
+          同一位置、同一条命令：注册前 <code>setblock</code> 放水 4 秒后下方仍是 Air；
+          注册后下方变成 Water。实体侧 <code>summon tnt {Fuse:20}</code> 会正常爆炸。
+        </div>
+      </div>
+
+      <h3>怎么做的</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>步骤</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>改视野半径</td><td>反射把 <code>EntityPlayer.viewDistance</code> 设为 <code>chunk-radius</code>，避免一个假人按默认视野加载 21×21 区块</td></tr>
+            <tr><td>注册</td><td><code>world.getPlayerChunkMap().addPlayer(entityPlayer)</code>，把区块登记为「使用中」</td></tr>
+            <tr><td>钉住</td><td>半径内的 <code>ChunkUnloadEvent</code> 被取消，区块不会因无人而卸载</td></tr>
+            <tr><td>注销</td><td>移除假人时 <code>removePlayer()</code>，区块正常回收</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>刷怪塔为什么需要额外支持</h3>
+      <p>原版的刷怪围绕 <code>world.playerEntities</code> 里的真人玩家进行，
+         假人不是真玩家，所以没人在线时刷怪塔不出货。
+         插件会每 <code>interval-ticks</code> 在假人附近按原版条件生成敌对生物：
+         光照 ≤ 7、脚下实心、上方两格可站立、不在液体里，
+         生成后的生物走原版 AI，会被水流冲走、被漏斗收集。</p>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>默认只在「见不到天空」的地方刷</strong>
+          假人附近没有真人，原版怪物不会自然消失，若露天地表也刷会无限堆积。
+          所以 <code>require-covered: true</code> 时只在天光为 0 的位置生成（刷怪塔/地牢/室内）。
+        </div>
+      </div>
+
+      <h3>配置</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead><tr><th>键</th><th>默认</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td><code>keep-loaded-chunks</code></td><td>true</td><td>是否注册进 PlayerChunkMap 并钉住区块</td></tr>
+            <tr><td><code>chunk-radius</code></td><td>2</td><td>常驻半径（区块），2 → 25 区块/假人</td></tr>
+            <tr><td><code>mob-spawning.enabled</code></td><td>true</td><td>是否模拟刷怪</td></tr>
+            <tr><td><code>mob-spawning.radius</code></td><td>3</td><td>生成半径（区块）</td></tr>
+            <tr><td><code>mob-spawning.interval-ticks</code></td><td>60</td><td>多久一轮（60 = 3 秒）</td></tr>
+            <tr><td><code>mob-spawning.attempts</code></td><td>8</td><td>每轮每个假人尝试次数</td></tr>
+            <tr><td><code>mob-spawning.max-mobs</code></td><td>25</td><td>每个假人周围敌对生物上限</td></tr>
+            <tr><td><code>mob-spawning.min-distance</code></td><td>8</td><td>离假人最小水平距离</td></tr>
+            <tr><td><code>mob-spawning.vertical-range</code></td><td>24</td><td>上下搜索范围</td></tr>
+            <tr><td><code>mob-spawning.require-covered</code></td><td>true</td><td>只在天光为 0 处生成</td></tr>
+            <tr><td><code>mob-spawning.types</code></td><td>ZOMBIE / SKELETON / SPIDER / CREEPER</td><td>生成哪些生物</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>实测</h3>
+      <pre><code>[02:42:54] LtTestBob 已注册进 PlayerChunkMap，半径 2 区块（区块将正常 tick）
+水：setblock -248 100 104 water → 99 格变 Water         ✔
+实体：summon tnt {Fuse:20} → 石台被炸掉                  ✔
+刷怪：离假人 20 格的密封石屋，30 秒后出现 Creeper/Spider ✔
+约束：黑屋建在假人正上方（水平距离 0）不刷 → min-distance ✔
+地表：假人半径 60 格内地表无怪 → require-covered         ✔</code></pre>
+</section>
+
 <footer>
   <div class="container">
     <div class="footer-brand">FakePlayerPlugin 帮助</div>
     <p>在服务器里放置不会掉线的"假玩家"</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v26.11.2 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+      v26.11.5 · Minecraft 1.12.2 · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
 <a href="index.html">← 插件列表</a>
