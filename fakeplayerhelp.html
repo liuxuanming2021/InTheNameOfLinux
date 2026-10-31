@@ -227,9 +227,10 @@
             <tr><th>命令</th><th>说明</th><th>权限</th></tr>
           </thead>
           <tbody>
-            <tr><td><code>/fp</code></td><td>显示插件信息</td><td><span class="badge badge-op">OP</span></td></tr>
-            <tr><td><code>/fp &lt;名字&gt;</code></td><td>在<strong>当前位置</strong>创建一个假人</td><td><span class="badge badge-op">OP</span></td></tr>
-            <tr><td><code>/fp help</code></td><td>显示帮助菜单</td><td><span class="badge badge-op">OP</span></td></tr>
+            <tr><td><code>/fp</code></td><td>显示插件信息</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/fp add &lt;名字&gt;</code></td><td>在<strong>当前位置</strong>创建一个假人（受名额限制）</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/fp gui</code></td><td>打开假人管理面板（装了 LinuxChestGUI 才有这条）</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/fp help</code></td><td>显示帮助菜单</td><td><span class="badge badge-op">所有人</span></td></tr>
             <tr><td><code>/fplist</code></td><td>列出服务器上所有假人</td><td><span class="badge badge-op">OP</span></td></tr>
             <tr><td><code>/fpr &lt;名字&gt;</code></td><td>移除指定假人</td><td><span class="badge badge-op">OP</span></td></tr>
             <tr><td><code>/fpr all</code></td><td><strong>移除全部</strong>假人</td><td><span class="badge badge-op">OP</span></td></tr>
@@ -237,6 +238,12 @@
             <tr><td><code>/fpsave</code></td><td>手动保存假人数据</td><td><span class="badge badge-op">OP</span></td></tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="tip">
+        <strong>旧写法还能用。</strong>
+        <code>/fp &lt;名字&gt;</code> 依然可以创建假人，
+        只是现在推荐写 <code>/fp add &lt;名字&gt;</code>，和 <code>/fp gui</code>、<code>/fp help</code> 统一成子命令风格。
       </div>
 
       <h3>完整命令名</h3>
