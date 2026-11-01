@@ -287,6 +287,8 @@
             <tr><td><code>format.tab</code></td><td>TAB 列表显示格式</td></tr>
             <tr><td><code>format.block-impersonation</code></td><td>是否拦截冒充登录，默认开</td></tr>
             <tr><td><code>format.migrate-legacy</code></td><td>老假人是否自动改名成带前缀的，默认开</td></tr>
+            <tr><td><code>spawn.gamemode</code></td><td>假人的游戏模式，默认 <code>CREATIVE</code>（创造）。改成 <code>SURVIVAL</code> 才会被怪打死</td></tr>
+            <tr><td><code>spawn.invulnerable</code></td><td>假人是否无敌，默认开（除 <code>/kill</code> 与掉虚空）</td></tr>
           </tbody>
         </table>
       </div>
@@ -299,6 +301,23 @@
           把前缀留空则等于<strong>关掉</strong>防冒充。想改的话先用 <code>/fpr</code> 清掉旧假人再换。
         </div>
       </div>
+
+      <h3>假人会不会被怪打死</h3>
+      <p>不会。假人默认是<strong>创造模式 + 无敌</strong>：僵尸、骷髅、苦力怕都打不死它，
+        怪物甚至不会把它当目标。这样假人挂机时不会因为一次夜袭就消失。</p>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>配置</th><th>默认</th><th>效果</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>spawn.gamemode</code></td><td><code>CREATIVE</code></td><td>创造模式，怪物不攻击；填 <code>SURVIVAL</code> 会像真人一样被打死</td></tr>
+            <tr><td><code>spawn.invulnerable</code></td><td><code>true</code></td><td>除了 <code>/kill</code> 和掉虚空，任何伤害都无效</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>生成时服务器日志会打一行 <code>[假人] FP_Linux 游戏模式 = CREATIVE，无敌 = true</code>，
+        想知道当前是什么模式看这行就行。</p>
 
       <h3>老假人怎么办（自动改名）</h3>
       <p>升级前创建的假人（比如 <code>LtTestCarol</code>）名字和真人一样。为了统一成新格式，
