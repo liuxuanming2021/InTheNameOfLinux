@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>帮助 · LinuxTAB</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css?v=20261101c">
+    <link rel="stylesheet" href="liquid-glass.css?v=20261101c">
+</head>
+<body class="pure-white">
+
+<!-- ===== 液态玻璃折射滤镜（被 liquid-glass.css 的 backdrop-filter 引用） =====
+     这是"玻璃的厚度场"：把背景按边缘梯度掰弯，
+     让它像透过一块有弧边的玻璃，而不是糊了一层白膜。 -->
+<svg class="lw-glass-defs" aria-hidden="true" focusable="false"
+     width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <defs>
+        <filter id="lw-glass" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="40"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="50"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thick" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="48"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="72"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thin" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="16"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="20"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="24"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+    </defs>
+</svg>
+
+
+<div class="bg-mobile" aria-hidden="true"></div>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="linuxtab.html">LinuxTAB 介绍</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          <span class="nav-text">Nalxer 服务器</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="plug-hero-ver">26.11.8</span>
+    <h1>LinuxTAB 帮助中心</h1>
+    <p>布局、顺序、头尾面板与命令，一页看完</p>
+  </div>
+</section>
+
+<div class="container content-layout no-toc">
+
+      <aside class="sidebar" id="sidebar">
+            <div class="sidebar-track">
+        <ul class="sidebar-flat">
+          <li class="sidebar-group-label" data-group="开始使用">开始使用</li>
+          <li><a href="#install">安装与启用</a></li>
+          <li class="sidebar-group-label" data-group="布局与顺序">布局与顺序</li>
+          <li><a href="#layout">布局：人少也是多列</a></li>
+          <li><a href="#order">顺序规则（重要）</a></li>
+          <li class="sidebar-group-label" data-group="显示">显示</li>
+          <li><a href="#headerfooter">头尾面板</a></li>
+          <li><a href="#animations">动画与打字机</a></li>
+          <li><a href="#nameformat">玩家名格式</a></li>
+          <li><a href="#ping">延迟列</a></li>
+          <li class="sidebar-group-label" data-group="参考与帮助">参考与帮助</li>
+          <li><a href="#commands">命令</a></li>
+          <li><a href="#faq">常见问题</a></li>
+          <li><a href="#config-all">配置全表</a></li>
+        </ul>
+      </div>
+    </aside>
+
+  <main class="main-content">
+
+<section class="help-section" id="install">
+    <h2><span class="num">1</span>安装与启用</h2>
+    <p>LinuxTAB 不需要前置插件，一个 jar 就能跑。队伍、头衔、假人都是可选的联动项：装了谁就接谁，没装也只是少一块信息，不会报错、不会影响其它功能。</p>
+
+    <ol class="steps">
+      <li>把 <code>LinuxTAB-26.11.8.jar</code> 放进服务器的 <code>plugins/</code> 目录。服务端用 Paper 或 Spigot 1.12.2，Java 8 及以上。</li>
+      <li>重启服务器。第一次启动会生成 <code>plugins/LinuxTAB/config.yml</code>，默认就是「2 列 × 20 行、补空位、延迟列开」。</li>
+      <li>看一眼控制台的启动摘要，确认列数、补位、延迟列、PlaceholderAPI 都是你要的状态。</li>
+      <li>之后改配置只需要 <code>/linuxtab reload</code>，不用重启服务器；玩家列表会在下一次刷新（默认 20 tick）内变过来。</li>
+    </ol>
+
+    <p>正常启动时控制台是这样两行：</p>
+
+    <div class="code-block"><div>[LinuxTAB] LinuxTAB 已启用 —— 布局 2 列 × 20 行（人数不足补空位），延迟列 开，PlaceholderAPI 已接上</div><div>[LinuxTAB] [联动] 已接上 LinuxTeam 队伍 / LinuxTitle 头衔 / FakePlayerPlugin 假人（假人会排在最前面）</div></div>
+
+    <p>如果第二行里某一段写的是「未检测到」，说明对应的插件没装或没启用，那一项功能会自动关掉，其余照常工作。想让队伍、头衔、假人都显示出来，把 LinuxTeam、LinuxTitle、FakePlayerPlugin 一起装上即可，LinuxTAB 启动时会自己认。</p>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠️</span>
+      <div class="tip-body">
+        <strong>先卸掉别的 TAB 类插件</strong>
+        同一时间只能有一个插件改玩家列表。TAB、sTablist 这类插件也在接管列表，同时装会互相覆盖，表现是列表闪来闪去、只剩一列，或者干脆变回原版。装 LinuxTAB 之前先停用它们，处理办法见 <a href="#faq">常见问题</a> 第一条。
+      </div>
+    </div>
+
+    <h3>配置放在哪</h3>
+    <p>插件的所有配置都在一个文件里，没有子目录、没有数据库：</p>
+
+    <div class="code-block"><div>plugins/LinuxTAB/</div><div>└── config.yml</div></div>
+
+    <p>改完存盘，执行 <code>/linuxtab reload</code>。如果配置写错（缩进错了、键名拼错），插件不会崩，会在控制台打一行黄色警告并保留旧配置继续跑，修好再 reload 一次就行。</p>
+  </section>
+
+<section class="help-section" id="layout">
+    <h2><span class="num">2</span>布局：怎么让人少也是多列</h2>
+    <p>1.12.2 的客户端把玩家列表画成一张固定网格：<strong>每列固定 20 行，最多 4 列</strong>。行数是客户端写死的，服务端改不了；服务端唯一能决定的是「谁被塞进第几列第几行」。</p>
+
+    <p>所以在线只有 12 个人的时候，如果只发 12 个条目，客户端就只画一列 12 行，右边三列是空的——看起来根本没有多列。LinuxTAB 的做法是<strong>按列补位</strong>：把空条目补齐到整列（20 的倍数），多列布局在人少时也成立，题目里的「人少也是多列」就是这么来的。</p>
+
+    <h3>配置项</h3>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>键</th><th>默认值</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>layout.columns</code></td><td><code>2</code></td><td>列数，取 1 ~ 4。1.12.2 客户端只认 4 列，写大于 4 会被压回 4。</td></tr>
+          <tr><td><code>layout.rows</code></td><td><code>20</code></td><td>每列行数。1.12.2 客户端就是 20，改小只会让补位少填几行，一般不要动。</td></tr>
+          <tr><td><code>layout.pad-empty</code></td><td><code>true</code></td><td>人数不足时用空条目补满整列。关掉它，人少时就只剩一列。</td></tr>
+          <tr><td><code>layout.fill</code></td><td><code>column</code></td><td><code>column</code> = 先填满第一列再换列，真人紧跟在假人下面；<code>balance</code> = 按列均分，几列的高度尽量一样。</td></tr>
+          <tr><td><code>layout.empty-name</code></td><td><code>&amp;7</code></td><td>补位条目显示的名字。留一个颜色码就是一条看不见的空白，不要写成文字，否则列表里会多出 20 个「空」。</td></tr>
+          <tr><td><code>layout.empty-skin.value</code></td><td><code>""</code></td><td>补位条目的皮肤纹理值（base64）。不填就是客户端默认的白色 Steve 头。</td></tr>
+          <tr><td><code>layout.empty-skin.signature</code></td><td><code>""</code></td><td>上面那个纹理值对应的签名，两个要成对填。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>两种填充方式怎么选</h3>
+    <p><code>column</code> 是默认值：假人排第一列开头，真人接着往下排，第一列满了才换第二列，视觉上最像「一列名单接着一列名单」。<code>balance</code> 会把总数平均摊到每一列，比如 30 个人分 2 列就是 15 + 15，看起来更对称，代价是玩家进出的瞬间偶尔会看到整列重排。</p>
+
+    <h3>一个完整的布局配置</h3>
+
+    <div class="code-block"><div>layout:</div><div>  columns: 3            <span class="comment"># 3 列 × 20 行 = 60 个位置</span></div><div>  rows: 20</div><div>  pad-empty: true       <span class="comment"># 人少也补满，多列才整齐</span></div><div>  fill: column</div><div>  empty-name: "&amp;7"</div><div>  empty-skin:</div><div>    value: ""</div><div>    signature: ""</div></div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>改列数需要全员重进吗</strong>
+        不用。列数变化后插件会重新发一遍列表，在线玩家下一秒就能看到新布局。只有补位空条目的皮肤需要客户端重新拉取纹理，换过皮肤的话让玩家重进一次更稳妥。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="order">
+    <h2><span class="num">3</span>顺序规则（重要）</h2>
+    <p>LinuxTAB 发出去的最终顺序永远是这三段：<strong>假人（无队伍）→ 真人（各自队伍）→ 补位空行</strong>。假人在最前面，真人在中间按队伍聚在一起，空行全部沉底。</p>
+
+    <h3>客户端会自己重排，你要顺着它来</h3>
+    <p>1.12.2 客户端拿到玩家列表后并不会照抄服务端给的顺序，它会按三个键重新排序：<strong>是否旁观 → 计分板队伍名 → 玩家名</strong>。也就是说，服务端发过去的顺序会被打乱一遍，插件必须让「排序结果」也符合预期，否则你看到的永远是乱序。</p>
+
+    <p>补位空条目就是这里最容易翻车的：它们没有队伍、名字又只有一个颜色码，客户端一排就会把它们排到中间去，于是「真人被空行挤到中间」或者「真人掉到最后一行」。LinuxTAB 的处理是——把补位空条目全部塞进一个队名以 <code>U+FFFF</code> 开头的计分板队伍里，这个字符比任何正常字符都大，客户端按队伍名排序时必然把它们排到最后，空行就永远沉底了。</p>
+
+    <div class="code-block"><div><span class="comment"># 插件内部创建的补位队伍（不需要你手动维护）</span></div><div>队伍名：  \uFFFF_linuxtab_pad</div><div>成员：    所有补位空条目</div><div>作用：    让空行在客户端排序里永远排最后</div></div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>这条队伍不会碰你的 LinuxTeam</strong>
+        补位队伍是插件自己建、自己删的，只用来放空条目。它不会改动 LinuxTeam 建的任何队伍，也不会影响玩家的队伍归属。你可以在 <code>/scoreboard teams list</code> 里看到它，插件停用时会一起清掉，下次启动再建回来。
+      </div>
+    </div>
+
+    <h3>假人为什么一定在最前面</h3>
+    <p>假人来自 FakePlayerPlugin，用的是插件自己的 UUID，也<strong>不属于任何队伍</strong>。客户端排序时没有队伍名的条目排在前面，假人自然落在真人上面，而且不会在列表里出现两条——LinuxTAB 会按 UUID 去重，同一个假人只会发一次。</p>
+
+    <p>如果你希望假人跟真人混排，把假人也加进某个 LinuxTeam 队伍即可，那时它就按那个队伍的名字参与排序，不再固定在最前。</p>
+  </section>
+
+<section class="help-section" id="headerfooter">
+    <h2><span class="num">4</span>头尾面板</h2>
+    <p>玩家列表上方（header）和下方（footer）的两块文字面板。LinuxTAB 允许你写多套设计，按世界、按条件切换，每套面板里还能用动画和 PlaceholderAPI 变量。</p>
+
+    <h3>配置项</h3>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>键</th><th>默认值</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>header-footer.enabled</code></td><td><code>true</code></td><td>头尾面板总开关。关掉后玩家列表只有名字，没有上下两块。</td></tr>
+          <tr><td><code>header-footer.refresh-ticks</code></td><td><code>20</code></td><td>刷新间隔（tick）。20 = 每秒一次。放进打字机动画时插件会自动压到 4，见下一节。</td></tr>
+          <tr><td><code>header-footer.active</code></td><td><code>default</code></td><td>默认用哪套设计。条件不匹配任何设计时回落到它。</td></tr>
+          <tr><td><code>header-footer.designs.&lt;名字&gt;.display-condition</code></td><td><code>""</code></td><td>生效条件，空表示不限制。语法见下。</td></tr>
+          <tr><td><code>header-footer.designs.&lt;名字&gt;.header</code></td><td><code>""</code></td><td>面板上部文字，可以多行（用 <code>\n</code> 换行）。</td></tr>
+          <tr><td><code>header-footer.designs.&lt;名字&gt;.footer</code></td><td><code>""</code></td><td>面板下部文字，同样支持多行。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>display-condition 怎么写</h3>
+    <p>条件是一串「变量 符号 值」的判断，<strong>多条用分号 <code>;</code> 隔开，必须全部满足才生效</strong>。符号支持 <code>=</code> 和 <code>!=</code>。</p>
+
+    <div class="code-block"><div>designs:</div><div>  lobby:</div><div>    display-condition: "%world%=world"          <span class="comment"># 只在大厅世界生效</span></div><div>    header: "&amp;b&amp;lNalxer 服务器"</div><div>    footer: "&amp;7在线 &amp;f%online%&amp;7/&amp;f%max%"</div><div></div><div>  nether:</div><div>    display-condition: "%world%!=world;%world%!=spawn"  <span class="comment"># 不在大厅和主城时生效</span></div><div>    header: "&amp;c&amp;l下界 · 小心恶魂"</div><div>    footer: "&amp;7TPS &amp;f%tps%"</div></div>
+
+    <h3>可用变量</h3>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>变量</th><th>内容</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>%player%</code></td><td>当前玩家的名字</td></tr>
+          <tr><td><code>%online%</code></td><td>在线真人数量</td></tr>
+          <tr><td><code>%max%</code></td><td>服务器人数上限</td></tr>
+          <tr><td><code>%fakes%</code></td><td>在线假人数量（FakePlayerPlugin 联动时有效）</td></tr>
+          <tr><td><code>%total%</code></td><td>真 + 假的总数</td></tr>
+          <tr><td><code>%staffonline%</code></td><td>在线管理员数量，按 <code>linuxtab.staff</code> 权限统计</td></tr>
+          <tr><td><code>%tps%</code></td><td>最近一分钟 TPS，保留两位</td></tr>
+          <tr><td><code>%world%</code></td><td>玩家所在世界的名字</td></tr>
+          <tr><td><code>%ping%</code></td><td>这名玩家自己的延迟</td></tr>
+          <tr><td><code>%team%</code></td><td>所属 LinuxTeam 队伍名，没有队伍时用 <code>player-list.no-team</code></td></tr>
+          <tr><td><code>%title%</code></td><td>所属 LinuxTitle 头衔，没有头衔时用 <code>player-list.no-title</code></td></tr>
+          <tr><td><code>%animation:time%</code></td><td>当前时间，格式 <code>HH:mm:ss</code></td></tr>
+          <tr><td><code>%animation:date%</code></td><td>当前日期</td></tr>
+          <tr><td>其它 <code>%xxx%</code></td><td>原样交给 PlaceholderAPI。PAPI 有的变量这里都能用，包括 <code>%animation_&lt;名字&gt;%</code> 这类扩展。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>变量里带颜色怎么办</strong>
+        变量替换进来的内容如果是 <code>&amp;</code> 色码，插件会先翻译再发出去，所以 PAPI 里返回 <code>&amp;a</code> 开头的字符串也能正常上色。玩家名里的颜色码会被剥掉，避免把整行颜色搞乱。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="animations">
+    <h2><span class="num">5</span>动画与打字机</h2>
+    <p>头尾面板里的文字可以动起来：按帧轮播，或者用打字机一个字一个字打出来。动画定义在 <code>animations</code> 下面，用 <code>%animation:&lt;名字&gt;%</code> 引用。</p>
+
+    <h3>配置项</h3>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>键</th><th>默认值</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>animations.&lt;名字&gt;.style</code></td><td><code>frames</code></td><td><code>typewriter</code> = 打字机逐字显示；<code>frames</code> = 按 <code>frames</code> 列表轮播。</td></tr>
+          <tr><td><code>animations.&lt;名字&gt;.interval</code></td><td><code>4</code></td><td>每帧间隔，单位是 tick。<code>4</code> = 每 0.2 秒一帧。</td></tr>
+          <tr><td><code>animations.&lt;名字&gt;.frames</code></td><td><code>[]</code></td><td><code>frames</code> 模式下的文字列表，从头循环。</td></tr>
+          <tr><td><code>animations.&lt;名字&gt;.text</code></td><td><code>""</code></td><td><code>typewriter</code> 模式要打出来的那一整句。</td></tr>
+          <tr><td><code>animations.&lt;名字&gt;.color</code></td><td><code>&amp;f</code></td><td>打字机文字的颜色，写一个颜色码即可。</td></tr>
+          <tr><td><code>animations.&lt;名字&gt;.hold</code></td><td><code>30</code></td><td>打完（或收完）之后停留多少帧再继续，单位同样按 <code>interval</code> 算。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>打字机的完整过程</h3>
+    <p>以 <code>text: "欢迎回来"</code> 为例，一整个循环是这样的：</p>
+    <p><strong>欢 → 欢迎 → 欢迎回 → 欢迎回来</strong>（停 <code>hold</code> 帧）→ <strong>欢迎回 → 欢迎 → 欢 → 空</strong>（停一下）→ 从头再来。</p>
+    <p>也就是打完不会硬切回空，而是原路收回去，看起来像有人在敲键盘又删掉。想让收字更快，把 <code>hold</code> 调小即可；不想收字就直接用 <code>frames</code> 轮播。</p>
+
+    <div class="code-block"><div>animations:</div><div>  welcome:</div><div>    style: typewriter</div><div>    interval: 4        <span class="comment"># 每 0.2 秒一个字</span></div><div>    text: "欢迎回来"</div><div>    color: "&amp;b"</div><div>    hold: 30           <span class="comment"># 打完停 30 帧 = 1.5 秒</span></div><div></div><div>  tips:</div><div>    style: frames</div><div>    interval: 40       <span class="comment"># 每 2 秒切一条</span></div><div>    frames:</div><div>      - "&amp;7输入 &amp;f/help&amp;7 看指令"</div><div>      - "&amp;7加入交流群 &amp;f123456789"</div><div>      - "&amp;7TPS &amp;a%tps%"</div></div>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠️</span>
+      <div class="tip-body">
+        <strong>用打字机时插件会自动把刷新压到 4 tick</strong>
+        头尾面板默认每 20 tick（1 秒）才刷新一次。打字机按 4 tick 一帧走，如果面板还按 1 秒刷新，玩家看到的就是每秒跳一个字，卡得像坏了。所以只要某个设计里用到了打字机动画，LinuxTAB 会自动把这个面板的 <code>refresh-ticks</code> 压到 <code>4</code>，不用你手动改。你手写了 <code>refresh-ticks: 20</code> 也一样会被压下来。
+      </div>
+    </div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>刷新太勤会不会卡</strong>
+        4 tick 只影响面板文字的下发，不重算玩家列表，开销很小。真正要留意的是动画帧数：<code>interval</code> 别低于 2，帧数别堆到几十条，否则每个在线玩家每秒都会收到几十次字符串更新。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="nameformat">
+    <h2><span class="num">6</span>玩家名格式</h2>
+    <p>列表里每个名字显示成什么样，由 <code>player-list.name-format</code> 决定。它是一段模板，支持颜色码和几个占位符，插件会把它们换成队伍、头衔和玩家名。</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>键</th><th>默认值</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>player-list.name-format</code></td><td><code>&amp;7[%team%&amp;7] %title%&amp;f%name%</code></td><td>整行的格式。<code>%team%</code> 队伍名、<code>%title%</code> 头衔、<code>%name%</code> 玩家名。</td></tr>
+          <tr><td><code>player-list.no-team</code></td><td><code>&amp;8无队伍</code></td><td>玩家没有队伍时 <code>%team%</code> 的值。想直接不显示，把它设成空字符串。</td></tr>
+          <tr><td><code>player-list.no-title</code></td><td><code>""</code></td><td>玩家没有头衔时 <code>%title%</code> 的值，默认空。</td></tr>
+          <tr><td><code>layout.max-name-length</code></td><td><code>16</code></td><td>名字最长显示多少字符，超出的部分截断。列宽有限，太长会把后面的延迟列顶出去。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>默认格式渲染出来是这样，队伍和头衔各带一层方括号：</p>
+
+    <div class="code-block"><div>&amp;7[%team%&amp;7] %title%&amp;f%name%</div><div><span class="comment">        ↓</span></div><div>[元老院] [元老] Steve</div></div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>头衔只要一层括号</strong>
+        LinuxTitle 里的 <code>prefix</code> 一般已经自带方括号（比如 <code>[元老]</code>）。如果你的头衔显示成 <code>[[元老]]</code>，把格式里的 <code>%title%</code> 前后的括号去掉，或者把 LinuxTitle 的 <code>prefix</code> 改成不带括号的写法。
+      </div>
+    </div>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠️</span>
+      <div class="tip-body">
+        <strong>格式里别塞太长的固定文字</strong>
+        每行名字的宽度是固定的。<code>&amp;7[%team%&amp;7] %title%&amp;f%name%</code> 这样的长度基本刚好，再往前面加「玩家」「会员」之类的固定文字，长 ID 就会被截断或换行。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="ping">
+    <h2><span class="num">7</span>延迟列</h2>
+    <p>延迟列用玩家列表右侧的计分板区域显示每个人的 ping，数值直接取自服务端记录的连接延迟，不额外发包，也不影响性能。</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>键</th><th>默认值</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>player-list.ping.enabled</code></td><td><code>true</code></td><td>延迟列开关。关掉后右侧计分板不显示 ping。</td></tr>
+          <tr><td><code>player-list.ping.title</code></td><td><code>Ping</code></td><td>计分板标题，也就是这一列最上面那行字。</td></tr>
+          <tr><td><code>player-list.ping.refresh-ticks</code></td><td><code>20</code></td><td>更新间隔，20 = 每秒刷新一次数值。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>单元格的显示格式是 <code>&amp;7%ping% ms</code> 这种风格：前面一个颜色码，中间是数字，后面跟单位。分档着色也会自动做——延迟低的偏绿、偏高偏黄、再高偏红，方便一眼看出谁在卡。</p>
+
+    <div class="code-block"><div>player-list:</div><div>  ping:</div><div>    enabled: true</div><div>    title: "&amp;bPing"</div><div>    refresh-ticks: 20</div></div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>和原来的计分板会打架吗</strong>
+        延迟列只在玩家列表界面里生效，不占用主世界的侧边栏计分板，也不影响你其它插件的 scoreboard。玩家关掉列表界面就看不到它。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="commands">
+    <h2><span class="num">8</span>命令</h2>
+    <p>命令不多，日常只用得到 <code>reload</code>。所有子命令都需要 <code>linuxtab.admin</code> 权限，默认只有 OP 有。</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>命令</th><th>别名</th><th>说明</th><th>权限</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>/linuxtab info</code></td><td><code>/ltab info</code></td><td>打印当前状态：列数、每列行数、补位开关、填充方式、在线/假人数量，以及 LinuxTeam、LinuxTitle、FakePlayerPlugin、PlaceholderAPI 四个联动的连接结果。</td><td><span class="badge badge-op">linuxtab.admin</span></td></tr>
+          <tr><td><code>/linuxtab reload</code></td><td><code>/ltabreload</code></td><td>重新读取 <code>config.yml</code> 并重建玩家列表、头尾面板和延迟列。配置有错时保留旧配置并在控制台给警告。</td><td><span class="badge badge-op">linuxtab.admin</span></td></tr>
+          <tr><td><code>/linuxtab debug</code></td><td><code>/ltab debug</code></td><td>开关调试日志。打开后控制台会额外打印 <code>[布局]</code> 和 <code>[头尾]</code> 两类行，排查顺序和面板问题时用。</td><td><span class="badge badge-op">linuxtab.admin</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>debug 打开后能看到什么</h3>
+
+    <div class="code-block"><div><span class="comment"># 每次重发列表时打印</span></div><div>[布局] 列数 2 行数 20 补位 开 填充 column | 假人 3 真人 17 空行 20 合计 40</div><div>[布局] 第 1 位 fake:Steve_01  第 2 位 fake:Alex_02 … 第 21 位 player:Notch 第 40 位 pad</div><div></div><div><span class="comment"># 头尾面板刷新时打印</span></div><div>[头尾] 玩家 Notch 命中设计 lobby（%world%=world）帧 12/24</div></div>
+
+    <p>顺序不对的时候，先看第一行的「合计」是不是 20 的整数倍。不是整数倍说明补位没生效，检查 <code>layout.pad-empty</code> 和 <code>layout.rows</code>；是整数倍但人还是掉到最后，把第二行发出来看空行到底排在第几位。</p>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>调试日志记得关</strong>
+        列表刷新很频繁，debug 开着会让控制台刷得很快，排查完再执行一次 <code>/linuxtab debug</code> 关掉就好。重启服务器也会自动关掉。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="faq">
+    <h2><span class="num">9</span>常见问题</h2>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>装了 LinuxTAB，玩家列表还是原来那样</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          九成是还有别的插件在改列表，而且它比 LinuxTAB 更新得更勤。按顺序排查：<br>
+          ① 看 <code>plugins/</code> 里有没有 <code>TAB.v6.1.0.jar</code>，有就删掉；<br>
+          ② 看根目录有没有 <code>TAB/</code> 文件夹，那是 TAB 插件的数据目录，一起移走，留着也可能被别的插件读；<br>
+          ③ 看有没有 <code>sTablist</code> 这类插件，同样停用；<br>
+          ④ 执行 <code>/linuxtab reload</code>，再让玩家退出重进一次。<br>
+          这几步做完还是原版样式，用 <code>/linuxtab info</code> 看插件是否真的启用了，以及控制台有没有报错。
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>真人总是掉到最后一行 / 被空行挤到后面</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          这个已经修了：补位空行现在全部放进队名以 <code>U+FFFF</code> 开头的计分板队伍里，客户端按队伍名排序时它们必然沉底，不会再插到真人中间。<br>
+          如果升级之后还出现，先确认你确实用的是 26.11.8，然后 <code>/linuxtab debug</code> 打开调试，看 <code>[布局]</code> 那行打印的位次——空行应该全部排在所有 <code>player:</code> 之后。顺序对但显示不对，通常是客户端缓存，让玩家退出列表界面再打开一次。
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>头衔显示了两遍，变成 [[元老]]</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          LinuxTitle 的 <code>prefix</code> 一般已经自带方括号（<code>[元老]</code>），而默认格式 <code>&amp;7[%team%&amp;7] %title%&amp;f%name%</code> 里 <code>%title%</code> 是没有再加括号的，所以正常不会重复。<br>
+          出现双括号说明你在格式里手动加了 <code>[%title%]</code>，或者 LinuxTitle 的 <code>prefix</code> 本身就带了一层括号又被你加了一层。删掉格式里多出来的那对括号即可；<code>title()</code> 已经处理过占位，不需要你再包一层。
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>补位的空位是个白色默认头，很显眼</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          那是客户端在皮肤纹理缺失时画的默认 Steve 头。配 <code>layout.empty-skin</code> 就行：<code>value</code> 填 base64 纹理值，<code>signature</code> 填对应的签名，两个要成对。想完全看不见，可以把 <code>layout.empty-name</code> 设成只有一个颜色码（默认就是 <code>&amp;7</code>），再配一个接近背景色的透明皮肤。<br>
+          注意换皮肤后客户端要重新拉纹理，让玩家重进一次才会变。
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>写了 hex 颜色（&amp;#55FFFF）但没生效</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          1.12.2 客户端不支持 16 位 hex 颜色，这是客户端版本的限制，不是配置写错。LinuxTAB 会自动降级：把 hex 解析成最接近的 16 色之一再发出去，所以颜色不会变成乱码，只是没有原色那么准。<br>
+          想要稳定可控，建议直接用 <code>&amp;0</code> ~ <code>&amp;f</code> 和 <code>&amp;l</code> 这些原版色码写配置。等服务器升到 1.16+ 再换 hex 才有效果。
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="config-all">
+    <h2><span class="num">10</span>配置全表</h2>
+    <p>下面这张表是 <code>config.yml</code> 里 LinuxTAB 用到的全部键，默认值和说明都在里面。左边一列可以直接对照你的配置文件。</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>键</th><th>默认值</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>layout.columns</code></td><td><code>2</code></td><td>列数 1 ~ 4，客户端最多 4 列。</td></tr>
+          <tr><td><code>layout.rows</code></td><td><code>20</code></td><td>每列行数，1.12.2 客户端固定 20，一般不改。</td></tr>
+          <tr><td><code>layout.pad-empty</code></td><td><code>true</code></td><td>人少时补空条目，保证多列成立。</td></tr>
+          <tr><td><code>layout.fill</code></td><td><code>column</code></td><td><code>column</code> 先填满一列再换列；<code>balance</code> 按列均分。</td></tr>
+          <tr><td><code>layout.empty-name</code></td><td><code>&amp;7</code></td><td>空条目的显示名，只留颜色码最干净。</td></tr>
+          <tr><td><code>layout.empty-skin.value</code></td><td><code>""</code></td><td>空条目的皮肤纹理 base64。</td></tr>
+          <tr><td><code>layout.empty-skin.signature</code></td><td><code>""</code></td><td>与上面成对的签名。</td></tr>
+          <tr><td><code>layout.max-name-length</code></td><td><code>16</code></td><td>名字最长显示字符数，超出截断。</td></tr>
+          <tr><td><code>header-footer.enabled</code></td><td><code>true</code></td><td>头尾面板总开关。</td></tr>
+          <tr><td><code>header-footer.refresh-ticks</code></td><td><code>20</code></td><td>面板刷新间隔，用打字机时自动压到 4。</td></tr>
+          <tr><td><code>header-footer.active</code></td><td><code>default</code></td><td>默认使用哪套设计。</td></tr>
+          <tr><td><code>header-footer.designs.&lt;名字&gt;.display-condition</code></td><td><code>""</code></td><td>生效条件，空 = 不限制；多条用 <code>;</code> 连接。</td></tr>
+          <tr><td><code>header-footer.designs.&lt;名字&gt;.header</code></td><td><code>""</code></td><td>面板上部文字，<code>\n</code> 换行。</td></tr>
+          <tr><td><code>header-footer.designs.&lt;名字&gt;.footer</code></td><td><code>""</code></td><td>面板下部文字，<code>\n</code> 换行。</td></tr>
+          <tr><td><code>animations.&lt;名字&gt;.style</code></td><td><code>frames</code></td><td><code>typewriter</code> 打字机 / <code>frames</code> 轮播。</td></tr>
+          <tr><td><code>animations.&lt;名字&gt;.interval</code></td><td><code>4</code></td><td>每帧 tick 数，4 = 0.2 秒一帧。</td></tr>
+          <tr><td><code>animations.&lt;名字&gt;.frames</code></td><td><code>[]</code></td><td>轮播用的文字列表。</td></tr>
+          <tr><td><code>animations.&lt;名字&gt;.text</code></td><td><code>""</code></td><td>打字机要打的整句。</td></tr>
+          <tr><td><code>animations.&lt;名字&gt;.color</code></td><td><code>&amp;f</code></td><td>打字机文字颜色。</td></tr>
+          <tr><td><code>animations.&lt;名字&gt;.hold</code></td><td><code>30</code></td><td>打完 / 收完后停留的帧数。</td></tr>
+          <tr><td><code>player-list.name-format</code></td><td><code>&amp;7[%team%&amp;7] %title%&amp;f%name%</code></td><td>列表里每行的格式。</td></tr>
+          <tr><td><code>player-list.no-team</code></td><td><code>&amp;8无队伍</code></td><td>没队伍时 <code>%team%</code> 的值。</td></tr>
+          <tr><td><code>player-list.no-title</code></td><td><code>""</code></td><td>没头衔时 <code>%title%</code> 的值。</td></tr>
+          <tr><td><code>player-list.ping.enabled</code></td><td><code>true</code></td><td>延迟列开关。</td></tr>
+          <tr><td><code>player-list.ping.title</code></td><td><code>Ping</code></td><td>延迟列的计分板标题。</td></tr>
+          <tr><td><code>player-list.ping.refresh-ticks</code></td><td><code>20</code></td><td>延迟数值刷新间隔。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>改了不生效先看缩进</strong>
+        YAML 用两个空格缩进，不能用 Tab。<code>designs</code> 和 <code>animations</code> 下面的名字是你自己起的，引用时写 <code>%animation:名字%</code> 要完全一致（区分大小写）。改完记得 <code>/linuxtab reload</code>。
+      </div>
+    </div>
+  </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">LinuxTAB 帮助</div>
+    <p>多列 · 队伍 · 头衔 · 延迟，把玩家列表做成展示面板</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v26.11.8 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+<a href="index.html">← 插件列表</a>
+        &nbsp;·&nbsp;
+<a href="linuxtab.html">插件介绍</a>
+        &nbsp;·&nbsp;
+<a href="linuxhelp.html">综合帮助</a>
+        &nbsp;·&nbsp;
+<a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+    // 页面切换动画：进入淡入 + 离开淡出
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('page-anim');
+
+      // 从 bfcache 返回时清掉淡出状态，否则页面会是半透明的
+      window.addEventListener('pageshow', function () {
+        root.classList.remove('page-leaving');
+      });
+
+      function isInternal(a) {
+        if (!a || !a.href) return false;
+        if (a.target && a.target !== '_self') return false;
+        if (a.hasAttribute('download')) return false;
+        var h = a.getAttribute('href') || '';
+        if (h.charAt(0) === '#') return false;
+        if (a.hostname && a.hostname !== location.hostname) return false;
+        return true;
+      }
+
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a') : null;
+        if (!isInternal(a)) return;
+        if (a.pathname === location.pathname && a.hash) return;
+        e.preventDefault();
+        root.classList.add('page-leaving');
+        setTimeout(function () { location.href = a.href; }, 340);
+      }, true);
+    })();
+
+
+    // 滚动高亮：侧栏 + 本页目录
+    (function () {
+      var links = document.querySelectorAll('.sidebar a');
+      if (!links.length) return;
+
+      function activate(id) {
+        links.forEach(function (a) {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+        });
+      }
+
+      var targets = [];
+      links.forEach(function (a) {
+        var id = (a.getAttribute('href') || '').slice(1);
+        if (!id) return;
+        var el = document.getElementById(id);
+        if (el) targets.push(el);
+      });
+      if (!targets.length) return;
+
+      if (!('IntersectionObserver' in window)) {
+        activate(targets[0].id);
+        return;
+      }
+
+      var visible = {};
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          visible[en.target.id] = en.isIntersecting;
+        });
+        for (var i = 0; i < targets.length; i++) {
+          if (visible[targets[i].id]) { activate(targets[i].id); break; }
+        }
+      }, { rootMargin: '-90px 0px -70% 0px', threshold: 0 });
+
+      targets.forEach(function (t) { io.observe(t); });
+    })();
+
+    // 移动端侧栏抽屉
+    (function () {
+      var sb = document.getElementById('sidebar');
+      var tg = document.getElementById('navToggle');
+      if (!sb || !tg) return;
+
+      var bd = document.createElement('div');
+      bd.className = 'sidebar-backdrop';
+      document.body.appendChild(bd);
+
+      function close() {
+        sb.classList.remove('open');
+        bd.classList.remove('open');
+      }
+
+      tg.addEventListener('click', function (e) {
+        e.stopPropagation();
+        sb.classList.toggle('open');
+        bd.classList.toggle('open');
+      });
+
+      bd.addEventListener('click', close);
+      sb.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') close();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') close();
+      });
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 920) close();
+      });
+    })();
+
+  document.querySelectorAll('.faq-q').forEach((q) => {
+    q.addEventListener('click', () => {
+      q.parentElement.classList.toggle('open');
+    });
+  });
+
+  const sidebarLinks = document.querySelectorAll('.sidebar a');
+    // 参与滚动高亮的锚点：各章节 + 侧栏指向的其它锚点（如 #config-ref）
+    const watched = [];
+    const seen = {};
+    sidebarLinks.forEach((link) => {
+      const href = link.getAttribute('href') || '';
+      if (href.charAt(0) !== '#') return;
+      const id = href.slice(1);
+      if (seen[id]) return;
+      const el = document.getElementById(id);
+      if (el) { watched.push(el); seen[id] = true; }
+    });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        sidebarLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, {
+    rootMargin: '-80px 0px -60% 0px',
+    threshold: 0
+  });
+
+  watched.forEach((s) => observer.observe(s));
+
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>

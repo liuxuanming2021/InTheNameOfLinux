@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>LinuxTAB · TAB 列表插件</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css?v=20261101c">
+    <link rel="stylesheet" href="liquid-glass.css?v=20261101c">
+</head>
+<body class="intro-page">
+
+<!-- ===== 液态玻璃折射滤镜（被 liquid-glass.css 的 backdrop-filter 引用） =====
+     这是"玻璃的厚度场"：把背景按边缘梯度掰弯，
+     让它像透过一块有弧边的玻璃，而不是糊了一层白膜。 -->
+<svg class="lw-glass-defs" aria-hidden="true" focusable="false"
+     width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <defs>
+        <filter id="lw-glass" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="40"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="50"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thick" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="48"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="72"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thin" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="16"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="20"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="24"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+    </defs>
+</svg>
+
+
+<div class="bg-mobile" aria-hidden="true"></div>
+
+<video class="bg-video" id="bgVideo" loop muted playsinline
+       preload="none" aria-hidden="true" poster="mobile.jpg"></video>
+
+<nav class="nav-home">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="#features">功能</a></li>
+      <li><a href="#commands">命令</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          <span class="nav-text">Nalxer 服务器</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<header class="cover cover-page has-video">
+  <div class="cover-overlay"></div>
+
+  <div class="cover-inner">
+    <span class="plug-hero-ver">26.11.8 · Paper 1.12.2</span>
+
+    <h1 class="cover-title">LinuxTAB</h1>
+    <p class="cover-subtitle">TAB LIST</p>
+
+    <hr class="cover-divider">
+
+    <p class="cover-quote">
+      把玩家列表做成真正的展示面板
+      <br>
+      <strong>多列 · 队伍 · 头衔 · 延迟</strong>
+    </p>
+
+    <div class="cover-nav">
+        <a href="linuxtabhelp.html" class="cover-btn">查看使用帮助</a>
+        <a href="#features" class="cover-btn">了解功能</a>
+        <a href="linuxhelp.html" class="cover-btn">综合帮助中心</a>
+    </div>
+
+    <div class="cover-remark">
+      <p><strong>4</strong> 列布局 · 队伍头衔延迟一次做齐 · 假人自动并入</p>
+    </div>
+  </div>
+</header>
+<div class="intro-body">
+
+
+<!-- ── 一句话说明 ─────────────────────────────────────── -->
+<section id="what">
+  <div class="container">
+    <div class="intro-split">
+      <div class="reveal">
+        <h2>为什么需要 LinuxTAB</h2>
+        <p>
+          原版 TAB 只有<strong>一列 20 行</strong>。人一多，客户端自己开第二列，
+          而且顺序由<strong>客户端重排</strong> —— 它按「是否旁观 → 计分板队伍名 → 玩家名」排，
+          服务端发下去的顺序根本不算数。
+        </p>
+        <p>
+          队伍、头衔、延迟这些「本来就该显示」的东西，原版要么不显示，
+          要么得再装一个插件；装两个改玩家列表的插件，又会互相覆盖。
+          LinuxTAB 把这些一次做齐。
+        </p>
+      </div>
+      <ul class="split-points reveal stagger">
+        <li><strong>一列只有 20 行</strong><br>人多就开第二列，顺序还被客户端重排</li>
+        <li><strong>队伍看不见</strong><br>原版列表不显示计分板队伍</li>
+        <li><strong>头衔要另装插件</strong><br>再装一个改列表的，两边互相覆盖</li>
+        <li><strong>延迟没地方放</strong><br>1.12.2 的 TAB 客户端没有这一栏</li>
+        <li><strong>一次做齐</strong><br>多列 · 队伍 · 头衔 · 延迟 · 头尾面板</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── Bento 功能网格 ─────────────────────────────────── -->
+<section id="features" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">FEATURES</span>
+      <h2>核心功能</h2>
+      <p>多列、队伍、头衔、延迟、头尾面板与假人并入</p>
+    </div>
+
+    <div class="bento">
+      <div class="bento-item wide reveal">
+        <div class="bento-icon">📐</div>
+        <h3>多列布局</h3>
+        <p>1.12.2 客户端<strong>每列固定 20 行</strong>，改成 25 行是不可能的。
+           插件能做的是<strong>按列补位</strong>：用空条目把每一列填满，
+           人少也是整齐的多列。</p>
+        <ul>
+          <li><code>layout.columns: 1~4</code>，最多四列</li>
+          <li><code>layout.pad-empty</code> 补空位，列高一致</li>
+          <li><code>layout.fill</code> 选先填满第一列，还是按列均分</li>
+        </ul>
+      </div>
+
+      <div class="bento-item wide reveal">
+        <div class="bento-icon">🤝</div>
+        <h3>队伍显示</h3>
+        <p>联动 <strong>LinuxTeam</strong>，把玩家的队伍名直接写进列表：
+           <code>&amp;7[队伍名]</code> 这样的灰色方括号前缀，一眼看出谁跟谁一队。</p>
+        <ul>
+          <li>没有队伍的玩家走 <code>player-list.no-team</code>，不会显示成空括号</li>
+          <li>队伍名跟着 LinuxTeam 的数据走，改名后自动跟上</li>
+          <li>也能读到 PlaceholderAPI 的队伍变量</li>
+        </ul>
+      </div>
+
+      <div class="bento-item reveal">
+        <div class="bento-icon">🏅</div>
+        <h3>头衔显示</h3>
+        <p>联动 <strong>LinuxTitle</strong>，显示 <code>[元老]</code> 这类前缀，
+           和队伍名排在一起。</p>
+        <ul>
+          <li>直接读 LinuxTitle 的 <code>prefix</code></li>
+          <li><code>title()</code> 已经处理过括号，<strong>不会显示两遍</strong></li>
+          <li>没头衔的玩家整段消失，不留空位</li>
+        </ul>
+      </div>
+
+      <div class="bento-item reveal">
+        <div class="bento-icon">📶</div>
+        <h3>延迟列</h3>
+        <p>1.12.2 的 TAB 没有延迟栏，插件在<strong>右侧计分板</strong>里给每个人放一行 ping。</p>
+        <ul>
+          <li>每行形如 <code>&amp;7%ping% ms</code></li>
+          <li><code>player-list.ping.refresh-ticks</code> 控制刷新频率</li>
+          <li>不需要的话一个开关关掉</li>
+        </ul>
+      </div>
+
+      <div class="bento-item reveal">
+        <div class="bento-icon">✨</div>
+        <h3>头尾面板</h3>
+        <p>列表上方的 header、下方的 footer 都是多行文本，可以按世界切换。</p>
+        <ul>
+          <li><code>header-footer.designs</code> 配多套设计</li>
+          <li><code>display-condition</code> 按世界自动切换</li>
+          <li><code>%animation:*%</code> 动画，支持打字机逐字显示 / 逐字消失</li>
+        </ul>
+      </div>
+
+      <div class="bento-item full reveal">
+        <div class="bento-icon">👥</div>
+        <h3>假人并入</h3>
+        <p>装了 <strong>FakePlayerPlugin</strong> 的话，假人会<strong>排在真人前面</strong>，
+           用的是假人自己的 UUID —— 同一个假人不会既在这里又在那里，
+           列表里<strong>不会出现两条一样的条目</strong>。</p>
+        <div class="bento-cols">
+          <ul>
+            <li>假人排最前，真人在后，补位空行沉底</li>
+            <li>假人的名字、头衔照样套模板</li>
+            <li>没装 FakePlayerPlugin 就只列真人，不报错</li>
+          </ul>
+          <ul>
+            <li>假人移除后列表立刻少一行，空位自动重排</li>
+            <li>在线人数可以按「只算真人 / 算上假人」分别取 <code>%online%</code> 和 <code>%total%</code></li>
+            <li>和 LinuxSync 的关服同步不冲突</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 兼容性 ─────────────────────────────────────────── -->
+<section id="compat">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">COMPATIBILITY</span>
+      <h2>兼容性与注意事项</h2>
+      <p>两条会直接影响观感的规则，装之前先看一眼</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <div class="card-icon">⚠️</div>
+        <h3>与其它改列表的插件互斥</h3>
+        <p>LinuxTAB 改的是服务端发给客户端的<strong>玩家列表报文</strong>。
+           TAB、sTablist 这类插件改的是同一份东西 —— 两边同时装，
+           会按各自的刷新节奏互相覆盖。</p>
+        <ul>
+            <li>表现：列表一会儿是新的、一会儿又变回去</li>
+            <li>表现：头尾面板闪、列数反复横跳</li>
+            <li>只能留<strong>一个</strong>改玩家列表的插件</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🎨</div>
+        <h3>hex 颜色自动降级</h3>
+        <p>1.12.2 客户端<strong>不支持 16 位 hex</strong>，只认 16 种颜色码。
+           配置里写了 hex 不会报错，插件会算成最接近的 16 色再发下去。</p>
+        <ul>
+            <li><code>&amp;#55FFFF</code> 在 1.12.2 上会退成 <code>&amp;b</code> 一类的颜色</li>
+            <li>渐变、彩虹这类效果只能靠多色码拼接模拟</li>
+            <li>这是客户端限制，不是配置写错了</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠️</span>
+      <div class="tip-body">
+        <strong>换过来之前先把旧的移干净</strong>
+        要换成 LinuxTAB，先把 <code>TAB.v6.1.0.jar</code>、<code>plugins/TAB/</code> 目录
+        和 <code>sTablist</code> 一起移出服务器，再重启 —— 只删插件不删配置目录，
+        有些版本还会在下次启动时把列表接回去。
+      </div>
+    </div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">💡</span>
+      <div class="tip-body">
+        <strong>PlaceholderAPI 是可选依赖</strong>
+        装了它，头尾面板和名字模板里可以直接写 PAPI 变量；
+        没装也能跑，插件自己的 <code>%online%</code>、<code>%tps%</code>、
+        <code>%animation:time%</code> 这些照常工作，只是认不出的变量原样显示。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 命令 ────────────────────────────────────────────── -->
+<section id="commands" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">COMMANDS</span>
+      <h2>命令一览</h2>
+      <p>主命令 <code>/linuxtab</code>，简写 <code>/ltab</code></p>
+    </div>
+
+    <div class="table-scroll reveal">
+      <table class="help-table">
+        <thead>
+          <tr><th>命令</th><th>说明</th><th>权限</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>/linuxtab info</code></td><td>打印当前布局与联动状态：列数、行数、补位开关、接了哪些插件</td><td><span class="badge badge-op">OP</span></td></tr>
+          <tr><td><code>/linuxtab reload</code></td><td>重载 <code>config.yml</code>，重建布局、空位队伍与头尾面板</td><td><span class="badge badge-op">OP</span></td></tr>
+          <tr><td><code>/linuxtab debug</code></td><td>开关调试日志，打开后每次刷新会打 <code>[布局]</code> / <code>[头尾]</code> 行</td><td><span class="badge badge-op">OP</span></td></tr>
+          <tr><td><code>/ltab</code></td><td>等于 <code>/linuxtab</code>，少打几个字</td><td><span class="badge badge-op">OP</span></td></tr>
+          <tr><td><code>/ltabreload</code></td><td>等于 <code>/linuxtab reload</code>，常用所以单独给了个别名</td><td><span class="badge badge-op">OP</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">💡</span>
+      <div class="tip-body">
+        <strong>改完配置一定要 reload</strong>
+        LinuxTAB 只在启动和 reload 时读 <code>config.yml</code>。
+        改了列数、头尾文字、动画之后不 reload，客户端看到的一直是旧的。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 底部 CTA ───────────────────────────────────────── -->
+<section id="get">
+  <div class="cta-band reveal">
+    <p class="cta-wordmark">LinuxTAB</p>
+    <p>把玩家列表做成一张真正的面板。</p>
+    <div class="cta-actions">
+      <a href="linuxtabhelp.html" class="btn btn-primary">查看使用帮助</a>
+      <a href="linuxhelp.html" class="btn btn-secondary">综合帮助中心</a>
+      <a href="index.html#plugins" class="btn btn-secondary">← 返回插件列表</a>
+    </div>
+  </div>
+</section>
+</div>
+
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">LinuxTAB</div>
+    <p>把玩家列表做成真正的展示面板</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v26.11.8 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+<a href="index.html">← 插件列表</a>
+        &nbsp;·&nbsp;
+<a href="linuxtabhelp.html">使用帮助</a>
+        &nbsp;·&nbsp;
+<a href="linuxhelp.html">综合帮助</a>
+        &nbsp;·&nbsp;
+<a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+    // 页面切换动画：进入淡入 + 离开淡出
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('page-anim');
+
+      // 从 bfcache 返回时清掉淡出状态，否则页面会是半透明的
+      window.addEventListener('pageshow', function () {
+        root.classList.remove('page-leaving');
+      });
+
+      function isInternal(a) {
+        if (!a || !a.href) return false;
+        if (a.target && a.target !== '_self') return false;
+        if (a.hasAttribute('download')) return false;
+        var h = a.getAttribute('href') || '';
+        if (h.charAt(0) === '#') return false;
+        if (a.hostname && a.hostname !== location.hostname) return false;
+        return true;
+      }
+
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a') : null;
+        if (!isInternal(a)) return;
+        if (a.pathname === location.pathname && a.hash) return;
+        e.preventDefault();
+        root.classList.add('page-leaving');
+        setTimeout(function () { location.href = a.href; }, 340);
+      }, true);
+    })();
+
+    // 背景视频：只在宽屏加载（与主页一致）
+    (function () {
+      var v = document.getElementById('bgVideo');
+      if (!v) return;
+      var mq = window.matchMedia('(min-width: 921px)');
+      function apply() {
+        if (mq.matches) {
+          if (!v.getAttribute('src')) {
+            v.setAttribute('src', 'video.mp4');
+            v.load();
+            var pr = v.play();
+            if (pr && pr.catch) { pr.catch(function () {}); }
+          }
+        } else {
+          try { v.pause(); } catch (e) {}
+          v.removeAttribute('src');
+          try { v.load(); } catch (e) {}
+        }
+      }
+      apply();
+      if (mq.addEventListener) { mq.addEventListener('change', apply); }
+      else if (mq.addListener) { mq.addListener(apply); }
+    })();
+
+  // 滚动淡入
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // 触发一次就撤掉监听，避免反复播放
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    // 不能用 0.1：比视口高的元素永远凑不满 10%，会一直 opacity:0
+    threshold: 0,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  document.querySelectorAll('.reveal').forEach((el) => {
+    observer.observe(el);
+  });
+
+  // 兜底：滚动结束后仍未显示的，直接显示（防止某些浏览器不触发）
+  setTimeout(function () {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) {
+        el.classList.add('visible');
+      }
+    });
+  }, 1200);
+
+  // 平滑滚动
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ============================================================
+  // 移动端汉堡菜单
+  // ============================================================
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>
