@@ -533,7 +533,7 @@
         <table class="help-table">
           <thead><tr><th>步骤</th><th>说明</th></tr></thead>
           <tbody>
-            <tr><td>改视野半径</td><td>反射把 <code>EntityPlayer.viewDistance</code> 设为 <code>chunk-radius</code>，避免一个假人按默认视野加载 21×21 区块</td></tr>
+            <tr><td>对齐视野</td><td>反射把 <code>EntityPlayer.viewDistance</code> 设成该世界的 <code>view-distance</code>，和真实玩家完全一致（服务端把这个值夹在 3~32）</td></tr>
             <tr><td>注册</td><td><code>world.getPlayerChunkMap().addPlayer(entityPlayer)</code>，把区块登记为「使用中」</td></tr>
             <tr><td>钉住</td><td>半径内的 <code>ChunkUnloadEvent</code> 被取消，区块不会因无人而卸载</td></tr>
             <tr><td>注销</td><td>移除假人时 <code>removePlayer()</code>，区块正常回收</td></tr>
@@ -577,11 +577,23 @@
           <thead><tr><th>键</th><th>默认</th><th>说明</th></tr></thead>
           <tbody>
             <tr><td><code>keep-loaded-chunks</code></td><td>true</td><td>是否注册进 PlayerChunkMap 并钉住区块</td></tr>
-            <tr><td><code>chunk-radius</code></td><td>2</td><td>常驻半径（区块），2 → 25 区块/假人</td></tr>
+            <tr><td><code>chunk-radius</code></td><td>—</td><td><b>已废弃</b>：不再读取。视野固定跟服务端 <code>view-distance</code> 一致</td></tr>
             <tr><td><code>mob-spawning.enabled</code></td><td>true</td><td>新建假人默认是否参与原版刷怪（单个假人可在面板里改）</td></tr>
           </tbody>
         </table>
       </div>
+      <div class="tip">
+        <span class="tip-icon">👀</span>
+        <div class="tip-body">
+          <strong>视野 = 真实玩家</strong>
+          假人的视野、强制加载、拒绝卸载半径，全部等于服务端 <code>server.properties</code> 里的
+          <code>view-distance</code>（原版会把它夹在 3~32）。<br>
+          <code>view-distance=6</code> → 13×13 = <b>169 区块/假人</b>；
+          <code>view-distance=10</code> → 21×21 = <b>441 区块/假人</b>。<br>
+          换句话说：你在那儿挂机能 tick 多大一片，假人就是多大一片，不用另外配。
+        </div>
+      </div>
+
       <p style="margin-top: 14px;">旧版的 <code>mob-spawning.radius / interval-ticks / attempts /
          max-mobs / min-distance / vertical-range / require-covered / types</code>
          已经废弃，留着不影响启动。</p>
