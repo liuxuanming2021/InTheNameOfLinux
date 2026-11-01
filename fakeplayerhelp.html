@@ -286,6 +286,7 @@
             <tr><td><code>format.overhead</code></td><td>头顶显示格式</td></tr>
             <tr><td><code>format.tab</code></td><td>TAB 列表显示格式</td></tr>
             <tr><td><code>format.block-impersonation</code></td><td>是否拦截冒充登录，默认开</td></tr>
+            <tr><td><code>format.migrate-legacy</code></td><td>老假人是否自动改名成带前缀的，默认开</td></tr>
           </tbody>
         </table>
       </div>
@@ -299,10 +300,41 @@
         </div>
       </div>
 
-      <h3>老假人怎么办</h3>
-      <p>升级前创建的假人（比如 <code>LtTestCarol</code>）没有前缀，仍然能正常工作、
-        同样受防冒充保护，启动日志会提醒一次。想统一成新格式的话，删掉后用
-        <code>/fp add</code> 重新创建即可。</p>
+      <h3>老假人怎么办（自动改名）</h3>
+      <p>升级前创建的假人（比如 <code>LtTestCarol</code>）名字和真人一样。为了统一成新格式，
+        插件会在<strong>开服 / <code>/fpreload</code> 时自动把 data.yml 里的名字改掉</strong>：</p>
+
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>改之前</th><th>改之后</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>LtTestCarol</code></td><td><code>FP_LtTestCarol</code></td></tr>
+            <tr><td><code>Linux</code></td><td><code>FP_Linux</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>只动名字：世界、坐标、朝向、创建者、创建时间、三个单假人开关、开/关状态全部原样保留，
+        关掉的假人改名后依然是关闭状态 —— 是整段搬到新键下，不是重建。</p>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>两种情况不会改名，会跳过并告警</strong>
+          ① 老名字本身已经 13 个字符以上，加前缀超过 16 字符协议上限；
+          ② 改名后与已存在的假人撞名。这两种都会在日志里点名，需要手工删掉后用
+          <code>/fp add</code> 重建。
+        </div>
+      </div>
+
+      <p>不想自动改名，把 <code>format.migrate-legacy</code> 设为 <code>false</code> ——
+        老假人照常能用、同样受防冒充保护，只是名字不带前缀（日志会提醒一次）。</p>
+
+      <p>改名会释放旧名字：改完之后真人可以注册 <code>LtTestCarol</code> 了（那已经不再是假人）。
+        如果有别的插件、脚本或白名单里写着老名字，记得同步改过来；InTheNameOfLinux 的
+        假人联动会自动跟上。</p>
     
   </section>
 
