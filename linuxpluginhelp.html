@@ -757,7 +757,7 @@
             <tr><td><code>/linux checkop</code></td><td>检查自己的身份与管理权限（<strong>服主 / 管理员 / 协管都能用</strong>，不需要额外权限）</td><td><span class="badge badge-op">所有人</span></td></tr>
             <tr><td><code>/linux checkop list</code></td><td><strong>管理层列表</strong>：直接读原版 <code>ops.json</code> 与 <code>plugins/XlandCore/config.yml</code>，按 服主 → 副服主 → 协管 → 管理员 排序并标注在线状态。每次执行都会同步身份记录，改完权限立刻反映</td><td><span class="badge badge-op">lookup</span></td></tr>
             <tr><td><code>/hide</code></td><td>切换隐身（等价于执行 <code>/vanish</code>），不带参数。仅保护对象本人可用</td><td><span class="badge badge-op">仅 Linux582021</span></td></tr>
-            <tr><td><code>/linux plugins</code></td><td><strong>插件联动状态一览</strong>：XlandCore 身份识别、假人插件（含假人数量）、XlandStop 监听、LinuxTitle 头衔、命令接管状态、非法 NBT 检测状态；末尾的<strong>「拓展插件」</strong>小节列出给本插件加功能的外挂（LinuxChestGUI 箱子面板），装了才显示。主页可点击直达</td><td><span class="badge badge-op">lookup</span></td></tr>
+            <tr><td><code>/linux plugins</code></td><td><strong>插件联动状态一览</strong>：XlandCore 身份识别、假人插件（含假人数量）、XlandStop 监听、LinuxTitle 头衔、命令接管状态、非法 NBT 检测状态；末尾的<strong>「拓展插件」</strong>小节（青色菱形 + 淡紫名字，和联动行的金色区分）列出给本插件加功能的外挂 —— LinuxACE 反作弊（强度 / 检查数 / 踢出阈值）与 LinuxChestGUI 箱子面板，装了才显示。主页可点击直达</td><td><span class="badge badge-op">lookup</span></td></tr>
             <tr><td><code>/linux nbtview</code></td><td><strong>立即扫描并清除</strong>在线玩家的非法 NBT 物品（不等周期扫描）。结果播报到控制台与服主，物品名带悬浮详情</td><td><span class="badge badge-op">nbtview</span></td></tr>
             <tr><td><code>/linux cmd &lt;玩家&gt; &lt;命令&gt;</code></td><td>以指定玩家身份执行命令</td><td><span class="badge badge-op">sudo</span></td></tr>
             <tr><td><code>/linux refuse</code></td><td>查看 / 修改命令拦截列表</td><td><span class="badge badge-op">reload</span></td></tr>
