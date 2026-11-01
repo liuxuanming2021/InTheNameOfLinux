@@ -45,7 +45,6 @@
     .plug-card,
     .cover-btn,
     .cta-band--ink,
-    .help-table tr,
     .card-links .btn,
     .nav-links,
     .nav-home,
@@ -66,7 +65,6 @@
     .card-links .btn,
     .cover-btn,
     .cover-nav a.cover-btn,
-    .help-table tr,
     .tag,
     .badge,
     .plug-hero-ver,
@@ -126,7 +124,6 @@
         html:not(.pure-white) body:not(.pure-white) .bento-item,
         html:not(.pure-white) body:not(.pure-white) .chapter,
         html:not(.pure-white) body:not(.pure-white) .plug-card,
-        html:not(.pure-white) body:not(.pure-white) .help-table tr,
         html:not(.pure-white) body:not(.pure-white) .intro-split .split-points li {
             backdrop-filter: url(#lw-glass) blur(14px) saturate(170%);
         }
@@ -151,3 +148,11 @@
 @media (prefers-reduced-motion: reduce) {
     /* 保留 backdrop-filter，不做任何降级 */
 }
+
+/* --------------------------------------------------------------------------
+   表格行不做折射（2026-11-01 修）
+   --------------------------------------------------------------------------
+   之前 .help-table tr 也在折射名单里：整行被 url(#lw-glass) 位移采样，
+   实际渲染出来是**每一行都有一条横向的灰色糊带**（字还发虚），
+   远看像表格被横着切了几刀。表格是数据，不是玻璃面板 —— 行级折射已经移除。
+   -------------------------------------------------------------------------- */
