@@ -384,8 +384,7 @@
           <thead><tr><th>开关</th><th>作用</th><th>存到 data.yml</th></tr></thead>
           <tbody>
             <tr><td>区块常驻</td><td>把它注册进 PlayerChunkMap，周围区块真正在 tick</td><td><code>chunk-loaded</code></td></tr>
-            <tr><td>模拟刷怪</td><td>在它附近按原版条件刷敌对生物</td><td><code>mob-spawning</code></td></tr>
-            <tr><td>只刷黑屋</td><td>只在见不到天空的地方刷</td><td><code>require-covered</code></td></tr>
+            <tr><td>原版刷怪</td><td>参与原版刷怪：服务端把它当真玩家，群系 / 亮度 / 结构全按原版</td><td><code>mob-spawning</code></td></tr>
           </tbody>
         </table>
       </div>
@@ -542,19 +541,33 @@
         </table>
       </div>
 
-      <h3>刷怪塔为什么需要额外支持</h3>
-      <p>原版的刷怪围绕 <code>world.playerEntities</code> 里的真人玩家进行，
-         假人不是真玩家，所以没人在线时刷怪塔不出货。
-         插件会每 <code>interval-ticks</code> 在假人附近按原版条件生成敌对生物：
-         光照 ≤ 7、脚下实心、上方两格可站立、不在液体里，
-         生成后的生物走原版 AI，会被水流冲走、被漏斗收集。</p>
+      <h3>刷怪：直接交给原版</h3>
+      <p>这一步不用插件自己写刷怪器 —— 插件把假人放进了服务端的<strong>玩家表</strong>
+         <code>World.players</code>。原版的自然刷怪器 <code>SpawnerCreature</code>
+         每个 tick 都会遍历这张表，于是它把假人当成了真玩家。</p>
+      <p>结果是<strong>刷什么、刷在哪里，全由原版判定</strong>：</p>
+      <ul>
+        <li><strong>群系</strong>：沙漠出尸壳、雪原出流浪者、沼泽出史莱姆</li>
+        <li><strong>结构</strong>：史莱姆区块按种子算，海底遗迹 / 地牢 / 要塞照旧</li>
+        <li><strong>亮度与地形</strong>：光照 ≤ 7、脚下实心、上方两格可站立、不刷在液体里</li>
+        <li><strong>上限与消失</strong>：生物容量、生成上限、128 格消失规则都按原版算</li>
+      </ul>
 
       <div class="tip tip-warn">
         <span class="tip-icon">⚠️</span>
         <div class="tip-body">
-          <strong>默认只在「见不到天空」的地方刷</strong>
-          假人附近没有真人，原版怪物不会自然消失，若露天地表也刷会无限堆积。
-          所以 <code>require-covered: true</code> 时只在天光为 0 的位置生成（刷怪塔/地牢/室内）。
+          <strong>旧版本不是这样</strong>
+          之前由插件自己随机挑点生成（不看群系、不看结构），沙漠里刷僵尸、平原刷史莱姆；
+          假人又不在玩家表里，那些怪永远不会消失、只能越积越多。这条路已经整段删掉了。
+        </div>
+      </div>
+
+      <div class="tip">
+        <span class="tip-icon">💡</span>
+        <div class="tip-body">
+          <strong>关掉一个假人的刷怪</strong>
+          每个假人的「原版刷怪」开关对应服务端的 <code>affectsSpawning</code>：
+          关掉后原版刷怪器会跳过它（周围不再刷怪），但区块 tick、生物消失都不受影响。
         </div>
       </div>
 
@@ -565,27 +578,21 @@
           <tbody>
             <tr><td><code>keep-loaded-chunks</code></td><td>true</td><td>是否注册进 PlayerChunkMap 并钉住区块</td></tr>
             <tr><td><code>chunk-radius</code></td><td>2</td><td>常驻半径（区块），2 → 25 区块/假人</td></tr>
-            <tr><td><code>mob-spawning.enabled</code></td><td>true</td><td>是否模拟刷怪</td></tr>
-            <tr><td><code>mob-spawning.radius</code></td><td>3</td><td>生成半径（区块）</td></tr>
-            <tr><td><code>mob-spawning.interval-ticks</code></td><td>60</td><td>多久一轮（60 = 3 秒）</td></tr>
-            <tr><td><code>mob-spawning.attempts</code></td><td>8</td><td>每轮每个假人尝试次数</td></tr>
-            <tr><td><code>mob-spawning.max-mobs</code></td><td>25</td><td>每个假人周围敌对生物上限</td></tr>
-            <tr><td><code>mob-spawning.min-distance</code></td><td>8</td><td>离假人最小水平距离</td></tr>
-            <tr><td><code>mob-spawning.vertical-range</code></td><td>24</td><td>上下搜索范围</td></tr>
-            <tr><td><code>mob-spawning.require-covered</code></td><td>true</td><td>只在天光为 0 处生成</td></tr>
-            <tr><td><code>mob-spawning.types</code></td><td>ZOMBIE / SKELETON / SPIDER / CREEPER</td><td>生成哪些生物</td></tr>
+            <tr><td><code>mob-spawning.enabled</code></td><td>true</td><td>新建假人默认是否参与原版刷怪（单个假人可在面板里改）</td></tr>
           </tbody>
         </table>
       </div>
+      <p style="margin-top: 14px;">旧版的 <code>mob-spawning.radius / interval-ticks / attempts /
+         max-mobs / min-distance / vertical-range / require-covered / types</code>
+         已经废弃，留着不影响启动。</p>
 
       <h3>实测</h3>
-      <pre><code>[02:42:54] LtTestBob 已注册进 PlayerChunkMap，半径 2 区块（区块将正常 tick）
-水：setblock -248 100 104 water → 99 格变 Water         ✔
-实体：summon tnt {Fuse:20} → 石台被炸掉                  ✔
-刷怪：离假人 20 格的密封石屋，30 秒后出现 Creeper/Spider ✔
-约束：黑屋建在假人正上方（水平距离 0）不刷 → min-distance ✔
-地表：假人半径 60 格内地表无怪 → require-covered         ✔</code></pre>
-</section>
+      <pre><code>[17:53:21] LtTestCarol 已加入原版玩家表（原版刷怪 / 刷怪范围 / 生物消失对它生效）
+关：三个假人的「原版刷怪」全关，清场后 90 秒 → 僵尸 / 骷髅 / 苦力怕 0 只
+开：重新打开，90 秒后 → 僵尸 12、苦力怕 13、骷髅 10（白天，全在暗处）
+暗室：离假人 40 格的密封石屋，50 秒内出现 2 只苦力怕 ✔
+TPS：19.89 / 19.77 / 19.92，日志无刷怪相关异常 ✔</code></pre>
+    </section>
 
 <footer>
   <div class="container">
