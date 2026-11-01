@@ -186,6 +186,7 @@
           <li><a href="#config">配置与数据</a></li>
           <li><a href="#keep">生物保活</a></li>
           <li><a href="#chunktick">区块 tick 与刷怪</a></li>
+          <li><a href="#names">假人名字与防冒充</a></li>
           <li><a href="#quota">名额与购买</a></li>
           <li><a href="#perfake">单假人配置</a></li>
           <li><a href="#faq">常见问题</a></li>
@@ -219,8 +220,94 @@
     
   </section>
 
+
+<section class="help-section" id="names">
+    <h2><span class="num">2</span>假人名字与防冒充</h2>
+
+      <p>假人和真实玩家共用同一个名字空间（TAB、头顶、<code>/lookup</code> 都按名字找人），
+        所以假人的名字是<strong>保留段</strong>：由插件统一加前缀，玩家没法用同名账号混进来。</p>
+
+      <h3>自动前缀</h3>
+      <p>执行 <code>/fp add Steve</code>，真正创建的假人叫 <code>FP_Steve</code>。
+        前缀由 <code>format.name-prefix</code> 决定（默认 <code>FP_</code>）；
+        如果名字里已经带了前缀（<code>/fp add FP_Foo</code>），不会再叠一层变成 <code>FP_FP_Foo</code>。</p>
+
+      <h3>显示格式</h3>
+      <p>头顶和 TAB 的名字可以单独配，默认是 <code>&amp;7[&amp;b假人&amp;7] &amp;f%name%</code>，
+        <code>%name%</code> 会被替换成假人名字，支持 <code>&amp;</code> 颜色码。</p>
+
+      <h3>防冒充</h3>
+      <p>真实玩家登录时，只要命中下面任何一条，<strong>在进服之前</strong>就被拒绝：</p>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>情况</th><th>结果</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>名字落在保留前缀里（如 <code>FP_xxx</code>）</td><td>拒绝登录：这是假人专用的名字前缀</td></tr>
+            <tr><td>名字和已有假人重名（不区分大小写）</td><td>拒绝登录：服务器里已经有一个同名假人</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip">
+        <span class="tip-icon">✅</span>
+        <div class="tip-body">
+          <strong>不会污染玩家名册</strong>
+          被挡下来的登录发生在玩家档案落盘之前，所以这些名字<strong>不会</strong>被记进
+          <code>usercache.json</code>，也不会让你以后建假人时误判成「这是真实玩家」。
+        </div>
+      </div>
+
+      <h3>名字规则</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>规则</th><th>说明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>长度 ≤ 16</td><td>1.12.2 协议硬上限，超了会让同世界玩家客户端解码失败掉线</td></tr>
+            <tr><td>只用 <code>A-Z a-z 0-9 _</code></td><td>不能有空格、点、颜色码</td></tr>
+            <tr><td>不区分大小写查重</td><td><code>FP_Steve</code> 和 <code>FP_steve</code> 视为同一个</td></tr>
+            <tr><td>不能是真实玩家名</td><td>读服务器本地玩家名册判断；读不出来时<strong>拒绝创建</strong>（宁可不让建，也不占真人名字）</td></tr>
+            <tr><td>保留词黑名单</td><td><code>admin</code>、<code>server</code>、<code>all</code>、<code>op</code>、<code>notch</code> 等不能当假人名</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>配置</h3>
+      <div class="table-scroll">
+        <table class="help-table">
+          <thead>
+            <tr><th>配置项</th><th>说明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>format.name-prefix</code></td><td>假人专用前缀，默认 <code>FP_</code></td></tr>
+            <tr><td><code>format.overhead</code></td><td>头顶显示格式</td></tr>
+            <tr><td><code>format.tab</code></td><td>TAB 列表显示格式</td></tr>
+            <tr><td><code>format.block-impersonation</code></td><td>是否拦截冒充登录，默认开</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip tip-warn">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-body">
+          <strong>改前缀会锁死已经用掉的名字</strong>
+          把前缀改成很常见的串（比如 <code>a_</code>），所有以它开头的真人账号都会进不来；
+          把前缀留空则等于<strong>关掉</strong>防冒充。想改的话先用 <code>/fpr</code> 清掉旧假人再换。
+        </div>
+      </div>
+
+      <h3>老假人怎么办</h3>
+      <p>升级前创建的假人（比如 <code>LtTestCarol</code>）没有前缀，仍然能正常工作、
+        同样受防冒充保护，启动日志会提醒一次。想统一成新格式的话，删掉后用
+        <code>/fp add</code> 重新创建即可。</p>
+    
+  </section>
+
 <section class="help-section" id="commands">
-    <h2><span class="num">2</span>命令详解</h2>
+    <h2><span class="num">3</span>命令详解</h2>
 
       <div class="table-scroll">
         <table class="help-table">
@@ -229,7 +316,7 @@
           </thead>
           <tbody>
             <tr><td><code>/fp</code></td><td>打开假人管理面板（没装 LinuxChestGUI 时显示插件信息）</td><td><span class="badge badge-op">所有人</span></td></tr>
-            <tr><td><code>/fp add &lt;名字&gt;</code></td><td>在<strong>当前位置</strong>创建一个假人（受名额限制）</td><td><span class="badge badge-op">所有人</span></td></tr>
+            <tr><td><code>/fp add &lt;名字&gt;</code></td><td>在<strong>当前位置</strong>创建一个假人（受名额限制，名字会自动套上假人前缀）</td><td><span class="badge badge-op">所有人</span></td></tr>
             <tr><td><code>/fp gui</code></td><td>打开假人管理面板（装了 LinuxChestGUI 才有这条）</td><td><span class="badge badge-op">所有人</span></td></tr>
             <tr><td><code>/fp help</code></td><td>显示帮助菜单</td><td><span class="badge badge-op">所有人</span></td></tr>
             <tr><td><code>/fplist</code></td><td>列出服务器上所有假人</td><td><span class="badge badge-op">OP</span></td></tr>
@@ -268,7 +355,7 @@
   </section>
 
 <section class="help-section" id="usage">
-    <h2><span class="num">3</span>使用技巧</h2>
+    <h2><span class="num">4</span>使用技巧</h2>
 
       <h3>假人会一直在原地吗</h3>
       <p>会。假人创建在你<strong>执行命令时所站的位置</strong>，之后不会自己走动。
@@ -300,7 +387,7 @@
   </section>
 
 <section class="help-section" id="config">
-    <h2><span class="num">4</span>配置与数据</h2>
+    <h2><span class="num">5</span>配置与数据</h2>
 
       <h3>数据文件</h3>
       <p>假人数据保存在插件目录下，一般不需要手动编辑：</p>
@@ -334,7 +421,7 @@
   </section>
 
 <section class="help-section" id="quota">
-    <h2><span class="num">5</span>名额与购买</h2>
+    <h2><span class="num">6</span>名额与购买</h2>
 
       <p>普通玩家创建假人是有限额的，避免一个人把常驻区块吃满。</p>
 
@@ -375,7 +462,7 @@
   </section>
 
 <section class="help-section" id="perfake">
-    <h2><span class="num">6</span>单假人配置</h2>
+    <h2><span class="num">7</span>单假人配置</h2>
 
       <p>三个功能开关是<strong>每个假人各管各的</strong>，不是全局的：
         <code>/lchest</code> → 假人管理 → 假人列表 → 点某个假人 → 假人设置。</p>
@@ -401,7 +488,7 @@
   </section>
 
 <section class="help-section" id="faq">
-    <h2><span class="num">7</span>常见问题</h2>
+    <h2><span class="num">8</span>常见问题</h2>
 
       <div class="faq-item">
         <div class="faq-q"><span>创建假人提示失败？</span><span class="faq-icon"></span></div>
@@ -447,7 +534,7 @@
 
   
 <section class="help-section" id="keep">
-    <h2><span class="num">8</span>生物保活（keep）</h2>
+    <h2><span class="num">9</span>生物保活（keep）</h2>
 
       <p>把生物<strong>命名为 keep</strong>，它就不会被原版刷掉。</p>
 
@@ -508,7 +595,7 @@
 </div>
 
 <section class="help-section" id="chunktick">
-    <h2><span class="num">9</span>区块 tick 与刷怪</h2>
+    <h2><span class="num">10</span>区块 tick 与刷怪</h2>
 
       <p>假人插件保证的不只是「区块在内存里」，而是<strong>区块在 tick</strong> ——
          这是水流、红石、作物、熔炉、刷怪塔能运转的唯一前提。</p>
