@@ -328,7 +328,7 @@
           </ul>
           <ul>
             <li>每个 IP 每分钟 5 次登录、180 次请求</li>
-            <li>接口只监听 <code>127.0.0.1</code>，公网走 Nginx 443</li>
+            <li>公网只走 HTTPS：Nginx 反代，或插件自带 TLS（<code>http.tls</code>）</li>
             <li>封禁、解封都进 <code>audit.log</code></li>
           </ul>
         </div>

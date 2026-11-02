@@ -210,7 +210,7 @@
 
     <p>正常启动时控制台会依次打出这几行（装了什么就出现什么，没装的那一项不会打）：</p>
 
-    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v1.1.0</div><div>[NalxerApp] Enabling NalxerApp v1.0.0</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49985/api/health</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是）</div></div>
+    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v1.1.0</div><div>[NalxerApp] Enabling NalxerApp v1.1.0</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49985/api/health（明文 HTTP，公网请用 Nginx 反代成 HTTPS）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是）</div></div>
 
     <p>哪一行结尾写的是「未检测到」，就是对应的插件没装、没启用或者版本不认识。那一项在 App 里会显示成 <code>—</code>，其余功能照常，不用为了一行日志去折腾服务器。</p>
 
@@ -222,10 +222,11 @@
     <div class="tip tip-warn">
       <span class="tip-icon">⚠</span>
       <div class="tip-body">
-        <strong>49985 直连公网 = 明文，能挂 HTTPS 就挂</strong>
-        接口默认只监听 <code>127.0.0.1</code>，这是故意的：它只接受本机（也就是 Nginx）转发过来的请求。
-        把 <code>http.host</code> 改成 <code>0.0.0.0</code> 或者给端口做端口映射，等于把登录接口裸露在公网上，
-        限流和审计都还在，但你会开始收到大量撞库请求。要外网访问就老老实实走 Nginx，见 <a href="#nginx">Nginx 反代</a>。
+        <strong>49985 直连公网 = 明文，要么挂 Nginx、要么开插件自带 TLS</strong>
+        接口默认是明文 HTTP（<code>http.tls: false</code>）。给端口做映射把明文直接开到公网，等于把登录接口裸露出去，
+        限流和审计都还在，但你会开始收到大量撞库请求。要外网访问，两条路选一条：
+        前面挂 Nginx（见 <a href="#nginx">Nginx 反代</a>），或者开 <code>http.tls: true</code> 让插件自己上 HTTPS
+        （见本节末尾）。
       </div>
     </div>
 
@@ -251,6 +252,9 @@
           <tr><td><code>http.host</code></td><td><code>0.0.0.0</code></td><td>监听地址。只接受本机连接，别改成 <code>0.0.0.0</code>，理由见上一节。</td></tr>
           <tr><td><code>http.port</code></td><td><code>49985</code></td><td>接口端口。改了记得同步改 Nginx 里的 <code>proxy_pass</code>，两边要对得上。</td></tr>
           <tr><td><code>http.threads</code></td><td><code>8</code></td><td>处理请求的线程数。几十个人的服 8 个足够，没必要往上加。</td></tr>
+          <tr><td><code>http.tls</code></td><td><code>false</code></td><td>插件自带 HTTPS 的总开关。开了就不用在前面挂 Nginx，地址直接写 <code>https://域名:49985</code>。</td></tr>
+          <tr><td><code>http.keystore</code></td><td><code>keystore.p12</code></td><td>证书文件（PKCS12），放在 <code>plugins/NalxerApp/</code> 下。</td></tr>
+          <tr><td><code>http.keystore-password</code></td><td>空</td><td>p12 的密码，开了 <code>tls</code> 就不能留空。</td></tr>
           <tr><td><code>token.secret</code></td><td><code>""</code></td><td>令牌签名密钥。留空会自动生成一串随机值写回配置；换掉它等于所有人重新登录一次。</td></tr>
           <tr><td><code>token.ttl-hours</code></td><td><code>168</code></td><td>令牌有效期（小时）。168 = 7 天，过期的令牌直接返回 401。</td></tr>
           <tr><td><code>login.require-authme</code></td><td><code>true</code></td><td><code>true</code> = 登录必须通过 AuthMe 校验游戏密码（推荐）；<code>false</code> = 不校验密码，只放行<strong>此刻在游戏里在线</strong>的玩家，给正版服 / 没装 AuthMe 的服用。关掉它之后，知道别人 ID 的人可以在对方在线时登进去，别在装了 AuthMe 的服上关。</td></tr>
@@ -313,6 +317,25 @@
         <strong>前面还有 Cloudflare 怎么办</strong>
         Nginx 拿到的 <code>$remote_addr</code> 会是 Cloudflare 的节点 IP。要么让 Nginx 认 <code>CF-Connecting-IP</code>，
         要么在插件前面就别加这一层 —— 加一层就得配一次真实 IP，多一层就多一个「限流算错人」的机会。
+      </div>
+    </div>
+    <h3>不想挂 Nginx：让插件自己上 HTTPS</h3>
+    <p>服务器上就这一个服务、又懒得维护 Nginx 的话，插件内置了 HTTPS（Java 自带 HttpsServer，没有额外依赖）。
+       把 certbot 签的证书转成 PKCS12 丢进插件目录就行：</p>
+
+    <div class="code-block"><div># 1. 证书转 PKCS12</div><div>openssl pkcs12 -export -out keystore.p12 \</div><div>  -inkey /etc/letsencrypt/live/api.nalxer.top/privkey.pem \</div><div>  -in    /etc/letsencrypt/live/api.nalxer.top/fullchain.pem \</div><div>  -passout pass:你的密码</div><div></div><div># 2. 放进插件目录</div><div>cp keystore.p12 plugins/NalxerApp/</div></div>
+
+    <div class="code-block"><div>http:</div><div>  port: 49985</div><div>  tls: true</div><div>  keystore: keystore.p12</div><div>  keystore-password: '你的密码'</div></div>
+
+    <p>重启后控制台会打 <code>接口已启动：https://0.0.0.0:49985/api/health（插件自带 TLS，证书来自 keystore.p12）</code>，
+       App 里地址填 <code>https://你的域名:49985</code>。</p>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>证书得和域名对得上，用 IP 直连手机不认</strong>
+        自签证书或者「证书是 api.nalxer.top、App 里却填 IP」都会在手机上直接报证书错误。
+        换证书要重启服务器；<code>tls: true</code> 但 p12 缺失或密码错时，插件打一条警告后<strong>退回普通 HTTP</strong>，不会起不来。
       </div>
     </div>
   </section>
