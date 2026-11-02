@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Nalxer App · 手机端玩家数据</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css?v=20261101c">
+    <link rel="stylesheet" href="liquid-glass.css?v=20261101c">
+</head>
+<body class="intro-page">
+
+<!-- ===== 液态玻璃折射滤镜（被 liquid-glass.css 的 backdrop-filter 引用） =====
+     这是"玻璃的厚度场"：把背景按边缘梯度掰弯，
+     让它像透过一块有弧边的玻璃，而不是糊了一层白膜。 -->
+<svg class="lw-glass-defs" aria-hidden="true" focusable="false"
+     width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <defs>
+        <filter id="lw-glass" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="40"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="50"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thick" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="48"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="72"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thin" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="16"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="20"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="24"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+    </defs>
+</svg>
+
+
+<div class="bg-mobile" aria-hidden="true"></div>
+
+<video class="bg-video" id="bgVideo" loop muted playsinline
+       preload="none" aria-hidden="true" poster="mobile.jpg"></video>
+
+<nav class="nav-home">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="#features">功能</a></li>
+      <li><a href="#download">下载</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          <span class="nav-text">Nalxer 服务器</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<header class="cover cover-page has-video">
+  <div class="cover-overlay"></div>
+
+  <div class="cover-inner">
+    <span class="plug-hero-ver">1.0.0 · Android / iOS</span>
+
+    <h1 class="cover-title">Nalxer App</h1>
+    <p class="cover-subtitle">PLAYER DATA</p>
+
+    <hr class="cover-divider">
+
+    <p class="cover-quote">
+      不进服也能看自己的数据
+      <br>
+      <strong>金币 · 点券 · 等级 · 队伍 · 头衔</strong>
+    </p>
+
+    <div class="cover-nav">
+        <a href="download/Nalxer-1.0.0.apk" class="cover-btn" download>下载安卓版</a>
+        <a href="nalxerapphelp.html" class="cover-btn">使用帮助</a>
+        <a href="linuxhelp.html" class="cover-btn">综合帮助中心</a>
+    </div>
+
+    <div class="cover-remark">
+      <p><strong>5</strong> 项数据 · 30 秒自动刷新 · 管理员多一个玩家管理页</p>
+    </div>
+  </div>
+</header>
+<div class="intro-body">
+
+
+<!-- ── 为什么需要 ─────────────────────────────────────── -->
+<section id="what">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">WHY</span>
+      <h2>为什么还得装一个 App</h2>
+      <p>下面这五件事，以前都只能进服、翻菜单、开控制台</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <div class="card-icon">💰</div>
+        <h3>金币得进服才看得到</h3>
+        <p>金币藏在服务器菜单的第几层，人在外面谁也说不清。
+          想知道自己攒了多少，只能上线翻一遍，或者找个在线的朋友帮你问。</p>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🧾</div>
+        <h3>点券和金币不在一个地方</h3>
+        <p>金币一个菜单、点券另一个菜单，等级又在别的地方。
+          想对一下自己到底有多少家底，要点开四五层界面，还容易点错。</p>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">📈</div>
+        <h3>经验看不到进度</h3>
+        <p>升级差多少、总经验多少、现在这一级攒了几成 —— 游戏里只有一个会淡出的经验条，
+          想知道具体数字只能靠估算。</p>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🚫</div>
+        <h3>被封了不知道为什么</h3>
+        <p>上线直接弹一行封禁提示，然后被踢出去。到期时间、封禁原因、是谁封的，
+          都得另外去群里问管理员。</p>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🛠</div>
+        <h3>管理员封人要开控制台</h3>
+        <p>人在外面遇到作弊的，得先连服务器、进控制台、敲命令，处理完再退出来。
+          手机上根本没法做这件事。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 功能 Bento ─────────────────────────────────────── -->
+<section id="features" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">FEATURES</span>
+      <h2>装上都有些什么</h2>
+      <p>一个人一屏数据，管理员多一个能动手的页面</p>
+    </div>
+
+    <div class="bento">
+      <div class="bento-item wide reveal">
+        <div class="bento-icon">📊</div>
+        <h3>我的数据</h3>
+        <p>登录后第一屏就是自己的数据，一屏看完，不用点来点去。
+           离线也能看 —— 只要服务器开着插件，数据就在。</p>
+        <ul>
+          <li>顶部一行<strong>在线 / 离线</strong>状态，跟着服务器实时变</li>
+          <li>金币、点券、等级三张大卡，数字用大字号，扫一眼就够</li>
+          <li>队伍、头衔、累计在线时长、最近一次上线时间都在下面</li>
+        </ul>
+      </div>
+
+      <div class="bento-item wide reveal">
+        <div class="bento-icon">🃏</div>
+        <h3>三张数据卡</h3>
+        <p>金币、点券、等级各占一张卡，<strong>几千几万自动缩写成「1.2 万」</strong>，
+           不会一屏塞满零。</p>
+        <ul>
+          <li>没装对应的经济插件，那一张卡显示 <strong>「—」</strong> 而不是 0</li>
+          <li>数字太长自动缩写，点一下能展开看完整数值</li>
+          <li>下拉即刷新，不用等自动刷新那一轮</li>
+        </ul>
+      </div>
+
+      <div class="bento-item reveal">
+        <div class="bento-icon">📶</div>
+        <h3>经验进度条</h3>
+        <p>当前等级到下一级的进度条，旁边标着 <code>1200 / 2400 exp</code> 这种具体数字。</p>
+        <ul>
+          <li>总经验单独一行，不掉级就只增不减</li>
+          <li>进度按实时经验算，杀一只怪就能看到条往前走</li>
+        </ul>
+      </div>
+
+      <div class="bento-item reveal">
+        <div class="bento-icon">🤝</div>
+        <h3>队伍与头衔</h3>
+        <p>联动 <strong>LinuxTeam</strong> 和 <strong>LinuxTitle</strong>，
+           队伍名带方括号，头衔单独一行。</p>
+        <ul>
+          <li>没队伍显示「无队伍」，不会空一块</li>
+          <li>服务器改了队伍名，App 下一次刷新就跟上</li>
+        </ul>
+      </div>
+
+      <div class="bento-item reveal">
+        <div class="bento-icon">🔨</div>
+        <h3>玩家管理页</h3>
+        <p>名单里的人（或者 OP）会多出一个管理页：<strong>搜人 → 点选 → 填原因 → 选时长 → 封禁</strong>，
+           解封同样点两下。</p>
+        <ul>
+          <li>按名字模糊搜，最多列 20 条</li>
+          <li>封禁立刻生效，在线的人当场被踢</li>
+          <li>每次操作都写审计日志，事后查得到</li>
+        </ul>
+      </div>
+
+      <div class="bento-item full reveal">
+        <div class="bento-icon">🔐</div>
+        <h3>安全是怎么做的</h3>
+        <p>App 说到底是个能读你数据的入口，所以密码这件事一步都没省：
+           <strong>密码不存本地、不存服务端</strong>，登录时交给 AuthMe 校验完就丢；
+           之后发的是签名令牌，限定时间、限定次数。</p>
+        <div class="bento-cols">
+          <ul>
+            <li>密码走 AuthMe 校验，插件自己不存、不写日志</li>
+            <li>HMAC 签名令牌，默认 7 天过期</li>
+            <li>改一次 <code>token.secret</code>，所有令牌立刻作废</li>
+          </ul>
+          <ul>
+            <li>每个 IP 每分钟 5 次登录、180 次请求</li>
+            <li>接口只监听 <code>127.0.0.1</code>，公网走 Nginx 443</li>
+            <li>封禁、解封都进 <code>audit.log</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 下载 ───────────────────────────────────────────── -->
+<section id="download">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">DOWNLOAD</span>
+      <h2>下载安装</h2>
+      <p>安卓直接装 APK；iOS 只有工程，得自己用 Xcode 编一次</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <div class="card-icon">🤖</div>
+        <h3>安卓版 · 直接装</h3>
+        <p>已经打好包，<strong>约 2.9 MB</strong>，支持 Android 5.1 及以上。
+           APK 是自签名的，没有上架任何应用商店。</p>
+        <p><a href="download/Nalxer-1.0.0.apk" download>下载 Nalxer-1.0.0.apk</a></p>
+        <ul>
+          <li>安装时系统会提示「未知来源」，允许一次就行</li>
+          <li>装完第一次打开要填接口地址，见下面</li>
+          <li>不支持 iOS 越狱机、模拟器没测过</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🍎</div>
+        <h3>iOS · 自己编</h3>
+        <p>没有签名证书，所以不放 ipa。<code>mobile/ios</code> 里是完整的 Xcode 工程，
+           在 macOS 上打开、选自己的开发者账号就能装到自己手机上。</p>
+        <ul>
+          <li>需要 macOS + Xcode 14 以上，iOS 13 及以上</li>
+          <li>免费开发者账号签出来的 App <strong>7 天要重签一次</strong></li>
+          <li>签名用的 Bundle ID 要改成你自己的，否则装不上</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>第一次打开要填接口地址</h3>
+    <p>App 不认服务器名字，只认一个地址。填 Nalxer 服务器的接口域名就行，
+       后面所有数据都从这个地址取：</p>
+
+    <div class="code-block"><div>接口地址： https://api.nalxer.top   <span class="comment"># 不要带 /api，也不要在结尾加斜杠</span></div><div>账号：     游戏 ID（就是你进服用的那个名字）</div><div>密码：     游戏密码（AuthMe 那个密码，不是邮箱密码）</div></div>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>「未知来源应用」不是中毒</strong>
+        APK 没有经过应用商店签名，安卓默认会拦一下。去系统设置里给浏览器（或文件管理器）打开「安装未知应用」权限，
+        再点一次安装就可以了。装完这个权限可以关回去。
+      </div>
+    </div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>地址必须是 https 域名</strong>
+        填 <code>http://</code> 开头或者直接填 IP，大概率连不上 —— 服务端只监听本机的 8787，公网入口只有 Nginx 的 443。
+        安卓 9 以后默认还禁止明文 HTTP，填 http 会直接报网络错误。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 部署三步 ───────────────────────────────────────── -->
+<section id="get" class="alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">SETUP</span>
+      <h2>服务器这边三步</h2>
+      <p>放插件、反代一个域名、手机登录，就这些</p>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card reveal">
+        <div class="card-icon">①</div>
+        <h3>放插件，重启</h3>
+        <p>把 <code>NalxerApp.jar</code> 丢进 <code>plugins/</code>，重启服务器，
+           启动日志会打 6 行 <code>[联动]</code>，告诉你接上了哪些插件。</p>
+        <div class="code-block"><div>plugins/</div><div>└── NalxerApp.jar</div></div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">②</div>
+        <h3>Nginx 反代一个域名</h3>
+        <p>插件只监听 <code>127.0.0.1:8787</code>，公网靠 Nginx 转：
+           <code>api.nalxer.top</code> → <code>127.0.0.1:8787</code>。</p>
+        <div class="code-block"><div>location /api/ {</div><div>    proxy_pass http://127.0.0.1:8787;</div><div>    proxy_set_header X-Real-IP $remote_addr;</div><div>}</div></div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">③</div>
+        <h3>手机装 APK 登录</h3>
+        <p>装上安卓版，第一屏填接口地址，再用游戏 ID + 游戏密码登录，
+           数据立刻就能看到。</p>
+        <div class="code-block"><div>https://api.nalxer.top</div><div>游戏 ID  +  游戏密码</div></div>
+      </div>
+    </div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>没有域名也能先用</strong>
+        只想自己试试，可以在服务器上 <code>curl http://127.0.0.1:8787/api/health</code> 看接口活没活。
+        但手机要连，还是得有一个 https 域名 —— 这是故意设计的，不是懒得写。
+        完整的 server 块写在 <a href="nalxerapphelp.html#nginx">帮助页的 Nginx 一节</a>。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 技术信息 ───────────────────────────────────────── -->
+<section id="tech">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">TECH</span>
+      <h2>技术信息</h2>
+      <p>一句话：老版本服务端，新一点的手机</p>
+    </div>
+
+    <div class="table-scroll reveal">
+      <table class="help-table">
+        <thead>
+          <tr><th>项目</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>插件版本</td><td>1.0.0</td></tr>
+          <tr><td>服务端</td><td>Paper / Spigot 1.12.2</td></tr>
+          <tr><td>Java</td><td>8</td></tr>
+          <tr><td>客户端</td><td>Android 5.1+ / iOS 13+</td></tr>
+          <tr><td>接口</td><td>HTTP + JSON，默认只监听 <code>127.0.0.1:8787</code></td></tr>
+          <tr><td>数据来源</td><td>AuthMe、经济插件、原版经验、LinuxTeam、LinuxTitle</td></tr>
+          <tr><td>安装包</td><td>APK 约 2.9 MB，自签名；iOS 只有 Xcode 工程</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cta-band reveal">
+      <p class="cta-wordmark">Nalxer App</p>
+      <p>不进服也能看自己的数据。</p>
+      <div class="cta-actions">
+        <a href="download/Nalxer-1.0.0.apk" class="btn btn-primary" download>下载安卓版</a>
+        <a href="nalxerapphelp.html" class="btn btn-secondary">查看使用帮助</a>
+        <a href="index.html#plugins" class="btn btn-secondary">← 返回插件列表</a>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">Nalxer App</div>
+    <p>不进服也能看自己的数据</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v1.0.0 · Android / iOS · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+<a href="index.html">← 插件列表</a>
+        &nbsp;·&nbsp;
+<a href="nalxerapphelp.html">使用帮助</a>
+        &nbsp;·&nbsp;
+<a href="linuxhelp.html">综合帮助</a>
+        &nbsp;·&nbsp;
+<a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+    // 页面切换动画：进入淡入 + 离开淡出
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('page-anim');
+
+      // 从 bfcache 返回时清掉淡出状态，否则页面会是半透明的
+      window.addEventListener('pageshow', function () {
+        root.classList.remove('page-leaving');
+      });
+
+      function isInternal(a) {
+        if (!a || !a.href) return false;
+        if (a.target && a.target !== '_self') return false;
+        if (a.hasAttribute('download')) return false;
+        var h = a.getAttribute('href') || '';
+        if (h.charAt(0) === '#') return false;
+        if (a.hostname && a.hostname !== location.hostname) return false;
+        return true;
+      }
+
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a') : null;
+        if (!isInternal(a)) return;
+        if (a.pathname === location.pathname && a.hash) return;
+        e.preventDefault();
+        root.classList.add('page-leaving');
+        setTimeout(function () { location.href = a.href; }, 340);
+      }, true);
+    })();
+
+    // 背景视频：只在宽屏加载（与主页一致）
+    (function () {
+      var v = document.getElementById('bgVideo');
+      if (!v) return;
+      var mq = window.matchMedia('(min-width: 921px)');
+      function apply() {
+        if (mq.matches) {
+          if (!v.getAttribute('src')) {
+            v.setAttribute('src', 'video.mp4');
+            v.load();
+            var pr = v.play();
+            if (pr && pr.catch) { pr.catch(function () {}); }
+          }
+        } else {
+          try { v.pause(); } catch (e) {}
+          v.removeAttribute('src');
+          try { v.load(); } catch (e) {}
+        }
+      }
+      apply();
+      if (mq.addEventListener) { mq.addEventListener('change', apply); }
+      else if (mq.addListener) { mq.addListener(apply); }
+    })();
+
+  // 滚动淡入
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // 触发一次就撤掉监听，避免反复播放
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    // 不能用 0.1：比视口高的元素永远凑不满 10%，会一直 opacity:0
+    threshold: 0,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  document.querySelectorAll('.reveal').forEach((el) => {
+    observer.observe(el);
+  });
+
+  // 兜底：滚动结束后仍未显示的，直接显示（防止某些浏览器不触发）
+  setTimeout(function () {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) {
+        el.classList.add('visible');
+      }
+    });
+  }, 1200);
+
+  // 平滑滚动
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      // 只处理本页锚点；别的页面的 #xxx 交给浏览器
+      if (this.getAttribute('href').indexOf('#') > 0) return;
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ============================================================
+  // 移动端汉堡菜单
+  // ============================================================
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>

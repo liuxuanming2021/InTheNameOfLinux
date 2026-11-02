@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>帮助 · Nalxer App</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css?v=20261101c">
+    <link rel="stylesheet" href="liquid-glass.css?v=20261101c">
+</head>
+<body class="pure-white">
+
+<!-- ===== 液态玻璃折射滤镜（被 liquid-glass.css 的 backdrop-filter 引用） =====
+     这是"玻璃的厚度场"：把背景按边缘梯度掰弯，
+     让它像透过一块有弧边的玻璃，而不是糊了一层白膜。 -->
+<svg class="lw-glass-defs" aria-hidden="true" focusable="false"
+     width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <defs>
+        <filter id="lw-glass" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="40"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="50"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thick" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="48"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="72"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thin" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="16"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="20"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="24"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+    </defs>
+</svg>
+
+
+<div class="bg-mobile" aria-hidden="true"></div>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="nalxerapp.html">Nalxer App 介绍</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          <span class="nav-text">Nalxer 服务器</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="plug-hero-ver">1.0.0 · Android / iOS</span>
+    <h1>Nalxer App 帮助中心</h1>
+    <p>安装、配置、接口、App 用法，一页看完</p>
+  </div>
+</section>
+
+<div class="container content-layout no-toc">
+
+      <aside class="sidebar" id="sidebar">
+            <div class="sidebar-track">
+        <ul class="sidebar-flat">
+          <li class="sidebar-group-label" data-group="开始使用">开始使用</li>
+          <li><a href="#install">安装插件</a></li>
+          <li><a href="#config">配置</a></li>
+          <li><a href="#nginx">Nginx 反代</a></li>
+          <li class="sidebar-group-label" data-group="接口与数据">接口与数据</li>
+          <li><a href="#api">接口表</a></li>
+          <li><a href="#data">数据字段</a></li>
+          <li class="sidebar-group-label" data-group="手机端">手机端</li>
+          <li><a href="#use">App 使用</a></li>
+          <li><a href="#admin">管理员</a></li>
+          <li class="sidebar-group-label" data-group="排查与安全">排查与安全</li>
+          <li><a href="#faq">常见问题</a></li>
+          <li><a href="#security">安全说明</a></li>
+        </ul>
+      </div>
+    </aside>
+
+  <main class="main-content">
+
+<section class="help-section" id="install">
+    <h2><span class="num">1</span>安装插件</h2>
+    <p>一个 jar，没有必须装的前置；AuthMe、经济插件、LinuxTeam、LinuxTitle 都是接上就用，没接就少一块数据，不会报错。</p>
+
+    <ol class="steps">
+      <li>把 <code>NalxerApp.jar</code> 放进服务器的 <code>plugins/</code> 目录。服务端用 Paper 或 Spigot 1.12.2，Java 8。</li>
+      <li>重启服务器。插件会自己生成配置和密钥，并在 <code>127.0.0.1:8787</code> 上把接口开起来。</li>
+      <li>看控制台的 <code>[联动]</code> 日志，确认 AuthMe、金币、点券、封禁、队伍、头衔都接上了。</li>
+      <li>在服务器本机上执行 <code>curl http://127.0.0.1:8787/api/health</code>，能返回一串 JSON 就说明接口是活的。</li>
+    </ol>
+
+    <p>正常启动时控制台会依次打出这几行（装了什么就出现什么，没装的那一项不会打）：</p>
+
+    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v1.0.0</div><div>[NalxerApp] Enabling NalxerApp v1.0.0</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔</div><div>[NalxerApp] 接口已启动：http://127.0.0.1:8787/api/health（请用 Nginx 反代成 HTTPS）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是）</div></div>
+
+    <p>哪一行结尾写的是「未检测到」，就是对应的插件没装、没启用或者版本不认识。那一项在 App 里会显示成 <code>—</code>，其余功能照常，不用为了一行日志去折腾服务器。</p>
+
+    <h3>启动后生成的文件</h3>
+    <p>没有子目录、没有数据库，就这几个文件：</p>
+
+    <div class="code-block"><div>plugins/NalxerApp/</div><div>├── config.yml   <span class="comment"># 全部配置；token.secret 也写在这个文件里</span></div><div>├── stats.yml    <span class="comment"># 离线玩家的数据缓存（金币 / 点券 / 等级 / 时长）</span></div><div>└── audit.log    <span class="comment"># 封禁 / 解封 / 登录的审计记录</span></div></div>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>不要把 8787 直接开到公网</strong>
+        接口默认只监听 <code>127.0.0.1</code>，这是故意的：它只接受本机（也就是 Nginx）转发过来的请求。
+        把 <code>http.host</code> 改成 <code>0.0.0.0</code> 或者给端口做端口映射，等于把登录接口裸露在公网上，
+        限流和审计都还在，但你会开始收到大量撞库请求。要外网访问就老老实实走 Nginx，见 <a href="#nginx">Nginx 反代</a>。
+      </div>
+    </div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>服务器是离线模式也没关系</strong>
+        登录校验走的是 AuthMe 的账号数据，和正版验证无关。只要玩家在 AuthMe 里注册过，就能用游戏 ID + 游戏密码登录 App。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="config">
+    <h2><span class="num">2</span>配置</h2>
+    <p>全部配置都在一个 <code>config.yml</code> 里，改完执行 <code>/nalxerapp reload</code> 就生效，不用重启服务器。</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>键</th><th>默认值</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>http.host</code></td><td><code>127.0.0.1</code></td><td>监听地址。只接受本机连接，别改成 <code>0.0.0.0</code>，理由见上一节。</td></tr>
+          <tr><td><code>http.port</code></td><td><code>8787</code></td><td>接口端口。改了记得同步改 Nginx 里的 <code>proxy_pass</code>，两边要对得上。</td></tr>
+          <tr><td><code>http.threads</code></td><td><code>8</code></td><td>处理请求的线程数。几十个人的服 8 个足够，没必要往上加。</td></tr>
+          <tr><td><code>token.secret</code></td><td><code>""</code></td><td>令牌签名密钥。留空会自动生成一串随机值写回配置；换掉它等于所有人重新登录一次。</td></tr>
+          <tr><td><code>token.ttl-hours</code></td><td><code>168</code></td><td>令牌有效期（小时）。168 = 7 天，过期的令牌直接返回 401。</td></tr>
+          <tr><td><code>login.require-authme</code></td><td><code>true</code></td><td><code>true</code> = 登录必须通过 AuthMe 校验游戏密码（推荐）；<code>false</code> = 不校验密码，只放行<strong>此刻在游戏里在线</strong>的玩家，给正版服 / 没装 AuthMe 的服用。关掉它之后，知道别人 ID 的人可以在对方在线时登进去，别在装了 AuthMe 的服上关。</td></tr>
+          <tr><td><code>login.attempts-per-minute</code></td><td><code>5</code></td><td>每个 IP 每分钟允许几次<strong>登录尝试</strong>。这是防撞库的第一道闸。</td></tr>
+          <tr><td><code>login.requests-per-minute</code></td><td><code>180</code></td><td>每个 IP 每分钟允许多少次<strong>请求</strong>（所有接口合计）。App 自动刷新 30 秒一次，180 有富余。</td></tr>
+          <tr><td><code>admin.players</code></td><td><code>[]</code></td><td>管理员名单，填游戏 ID。名单里的人能看到玩家管理页；服务器 OP 自动算管理员，不用重复填。</td></tr>
+          <tr><td><code>data.coins</code> / <code>data.points</code> / <code>data.level</code> / <code>data.playtime</code> / <code>data.team</code> / <code>data.title</code></td><td>全 <code>true</code></td><td>某一项数据要不要对外提供。关掉哪一项，App 里对应的那一块就显示 <code>—</code>，接口也不返回。</td></tr>
+          <tr><td><code>debug</code></td><td><code>false</code></td><td>打开后每个请求都往控制台打一行（路径、耗时、来源 IP），排查连不上时用，平时关着。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>一份改过的配置长这样</h3>
+
+    <div class="code-block"><div>http:</div><div>  host: 127.0.0.1</div><div>  port: 8787</div><div>  threads: 8</div><div></div><div>token:</div><div>  secret: ""          <span class="comment"># 留空，首次启动自动生成</span></div><div>  ttl-hours: 168     <span class="comment"># 7 天</span></div><div></div><div>login:</div><div>  require-authme: true</div><div>  attempts-per-minute: 5</div><div>  requests-per-minute: 180</div><div></div><div>admin:</div><div>  players:</div><div>    - Linux582021</div><div>    - Steve</div></div>
+
+    <p>存盘之后执行 <code>/nalxerapp reload</code>。配置写错（缩进错、键名拼错）插件不会崩，会在控制台打一行黄色警告并且继续用旧配置跑。</p>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>reload 不会把谁踢下线</strong>
+        只有改了 <code>token.secret</code>，已经发出去的令牌才会立刻失效 —— 因为签名换了，旧令牌验不过。改端口、改限流、改管理员名单都不影响已登录的人。
+      </div>
+    </div>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>token.secret 别提交进 Git</strong>
+        这个密钥是签令牌用的，泄露了别人就能自己伪造一个「已登录」的令牌。仓库里放的是空的 <code>config.yml</code>，
+        线上那个文件用 <code>.gitignore</code> 排除掉。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="nginx">
+    <h2><span class="num">3</span>Nginx 反代</h2>
+    <p>插件只监听本机 8787，外网访问靠 Nginx 转一次，顺便把 http 跳 https 一起做了。</p>
+
+    <div class="code-block"><div>server {</div><div>    listen 80;</div><div>    server_name api.nalxer.top;</div><div>    return 301 https://$host$request_uri;</div><div>}</div><div></div><div>server {</div><div>    listen 443 ssl http2;</div><div>    server_name api.nalxer.top;</div><div></div><div>    ssl_certificate     /etc/letsencrypt/live/api.nalxer.top/fullchain.pem;</div><div>    ssl_certificate_key /etc/letsencrypt/live/api.nalxer.top/privkey.pem;</div><div></div><div>    location /api/ {</div><div>        proxy_pass            http://127.0.0.1:8787;</div><div>        proxy_set_header      Host              $host;</div><div>        proxy_set_header      X-Real-IP         $remote_addr;</div><div>        proxy_set_header      X-Forwarded-For   $proxy_add_x_forwarded_for;</div><div>        proxy_set_header      X-Forwarded-Proto $scheme;</div><div>        proxy_read_timeout    15s;</div><div>    }</div><div>}</div></div>
+
+    <p>证书路径按你自己的改，用 <code>certbot --nginx -d api.nalxer.top</code> 签的话它长这样。<code>proxy_pass</code> 后面是纯地址，<strong>不要</strong>再拼一个 <code>/api/</code>，拼了会把路径再叠一遍，变成 <code>/api/api/login</code>。</p>
+
+    <p>改完先 <code>nginx -t</code> 看语法，再 <code>systemctl reload nginx</code>。然后本机验一下：
+       <code>curl -I https://api.nalxer.top/api/health</code>，返回 <code>200</code> 就通了。</p>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>一定要传 X-Real-IP，否则限流会把所有人算成一个 IP</strong>
+        插件看到的来源地址是 Nginx 的 <code>127.0.0.1</code>。少了这一行，全服所有玩家在限流眼里是同一个人：
+        一个人连续输错 5 次密码，所有人接下来一分钟都登不上，日志里也全是 127.0.0.1，出了问题根本没法查是谁。
+      </div>
+    </div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>前面还有 Cloudflare 怎么办</strong>
+        Nginx 拿到的 <code>$remote_addr</code> 会是 Cloudflare 的节点 IP。要么让 Nginx 认 <code>CF-Connecting-IP</code>，
+        要么在插件前面就别加这一层 —— 加一层就得配一次真实 IP，多一层就多一个「限流算错人」的机会。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="api">
+    <h2><span class="num">4</span>接口表</h2>
+    <p>一共 9 个接口，除了 <code>health</code> 和 <code>login</code>，其它都要在请求头里带 <code>Authorization: Bearer &lt;token&gt;</code>。</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>方法</th><th>路径</th><th>要令牌</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/health</code></td><td>否</td><td>返回版本、监听地址和 <code>capabilities</code>（哪些插件接上了）。连不上、数据全是 0，第一个要看的就是它。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/login</code></td><td>否</td><td>body 传 <code>name</code> + <code>password</code>，校验通过返回 <code>token</code> 和过期时间。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/me</code></td><td>是</td><td>当前登录玩家的完整数据，App 的「我的」页只靠这个接口。字段见下一节。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/me?name=Steve</code></td><td>是</td><td>管理员查别人的数据。普通玩家查别人会拿到 <code>403</code>，查自己不带参数就行。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/online</code></td><td>是</td><td>在线人数和在线玩家名单（名字 + 延迟）。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/search?q=st</code></td><td>是</td><td>按名字模糊搜玩家，最多 30 条，每条带 <code>name</code> / <code>online</code> / <code>banned</code>。需要管理员。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/bans</code></td><td>是</td><td>当前生效的封禁列表，带原因和到期时间。需要管理员。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/ban</code></td><td>是</td><td>封禁，body：<code>name</code> / <code>reason</code> / <code>minutes</code>。需要管理员。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/unban</code></td><td>是</td><td>解封，body：<code>name</code>。需要管理员。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>手动试一次登录</h3>
+
+    <div class="code-block"><div>curl -X POST https://api.nalxer.top/api/login \</div><div>     -H "Content-Type: application/json" \</div><div>     -d '{"name":"Steve","password":"你的游戏密码"}'</div><div></div><div><span class="comment"># 返回</span></div><div>{"ok":true,"token":"eyJhbGciOi...","name":"Steve","admin":false,"expiresIn":604800}</div></div>
+
+    <p>拿到 <code>token</code> 之后可以接着试：</p>
+
+    <div class="code-block"><div>curl https://api.nalxer.top/api/me \</div><div>     -H "Authorization: Bearer eyJhbGciOi..."</div></div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>会碰到的状态码</strong>
+        <code>200</code> 成功、<code>400</code> 参数不对、<code>401</code> 令牌没有或过期（重新登录）、
+        <code>403</code> 令牌是好的但你没有管理员权限、<code>404</code> 路径写错了、
+        <code>429</code> 触发限流（等一分钟，不用改配置）、<code>5xx</code> 服务端执行失败（消息里会写原因，比如玩家不存在）。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="data">
+    <h2><span class="num">5</span>数据字段</h2>
+    <p><code>/api/me</code> 返回一个 JSON 对象，字段固定就这 18 个，App 的每一块显示都对应其中几个。</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>name</code></td><td>string</td><td>游戏 ID，就是登录时填的那个名字。</td></tr>
+          <tr><td><code>uuid</code></td><td>string</td><td>玩家 UUID，带连字符的完整形式。</td></tr>
+          <tr><td><code>online</code></td><td>boolean</td><td>现在是否在线。离线也能拿到数据，只是这个字段是 <code>false</code>。</td></tr>
+          <tr><td><code>coins</code></td><td>number</td><td>金币数量。没装经济插件时是 0，要靠 <code>hasCoins</code> 判断该不该显示。</td></tr>
+          <tr><td><code>hasCoins</code></td><td>boolean</td><td>服务端有没有接上金币来源。<code>false</code> 时 App 显示「—」而不是 0。</td></tr>
+          <tr><td><code>points</code></td><td>number</td><td>点券数量，同理。</td></tr>
+          <tr><td><code>hasPoints</code></td><td>boolean</td><td>服务端有没有接上点券来源。</td></tr>
+          <tr><td><code>level</code></td><td>number</td><td>上次存盘时的等级。</td></tr>
+          <tr><td><code>exp</code></td><td>number</td><td>当前这一级已经攒的经验，用于画进度条。</td></tr>
+          <tr><td><code>totalExp</code></td><td>number</td><td>从 0 级算起的总经验，不掉级就只增不减。</td></tr>
+          <tr><td><code>levelLive</code></td><td>number</td><td>实时等级，含经验条上那点还没存盘的进度。</td></tr>
+          <tr><td><code>playtimeHours</code></td><td>number</td><td>累计在线小时数，保留一位小数。</td></tr>
+          <tr><td><code>firstPlayed</code></td><td>string</td><td>第一次进服时间，ISO 8601 格式。</td></tr>
+          <tr><td><code>lastPlayed</code></td><td>string</td><td>最近一次进服时间，同样 ISO 8601。</td></tr>
+          <tr><td><code>team</code></td><td>string</td><td>LinuxTeam 队伍名。没队伍是空字符串，App 显示「无队伍」。</td></tr>
+          <tr><td><code>title</code></td><td>string</td><td>LinuxTitle 头衔。没头衔是空字符串。</td></tr>
+          <tr><td><code>banned</code></td><td>boolean</td><td>当前是否处于封禁状态。被封的人也能登录 App 看自己的状态。</td></tr>
+          <tr><td><code>banReason</code></td><td>string</td><td>封禁原因。没封禁是空字符串。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong><code>level</code> 和 <code>levelLive</code> 差一级以内是正常的</strong>
+        <code>level</code> 是上一次存盘写进玩家数据的等级，<code>levelLive</code> 是插件现场算出来的。
+        刚升完级、服务器还没存盘的那一小段时间里，后者会比前者大 1，刷新一次就对齐了。
+      </div>
+    </div>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>别拿 <code>coins: 0</code> 直接当「没钱」</strong>
+        判断有没有这个数据源看 <code>hasCoins</code>。只读 <code>coins</code> 的话，没装经济插件的服务器上每个人看起来都是穷光蛋。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="use">
+    <h2><span class="num">6</span>App 使用</h2>
+    <p>三件事：登录、看数据、管人。界面就三个页面，不会找不到东西。</p>
+
+    <h3>第一次登录</h3>
+    <p>先填接口地址（<code>https://api.nalxer.top</code>，不要带 <code>/api</code> 后缀），再填游戏 ID 和游戏密码。
+       这里的密码就是进服用的那个 AuthMe 密码，不是邮箱密码、也不是论坛账号。</p>
+    <p>登录成功会拿到一个令牌，默认 7 天有效。这 7 天里打开 App 不用再输密码；令牌过期会回到登录页，重新登一次即可。</p>
+
+    <h3>「我的」页看什么</h3>
+    <p>从上到下一屏：在线状态 → 金币 / 点券 / 等级三张卡 → 经验进度条 → 队伍和头衔 → 累计在线时长和最近一次上线时间。
+       被封禁的账号在最上面多一条红色横幅，写着原因和到期时间。</p>
+
+    <h3>管理页怎么封人</h3>
+    <p>只有 <code>admin.players</code> 名单里的人或者 OP 才看得到这个入口。流程是五步，一步都不能少：</p>
+
+    <ol class="steps">
+      <li>进管理页，在搜索框里打一部分名字（打 <code>st</code> 就能搜到 <code>Steve</code>），等结果出来。</li>
+      <li>点一下要处理的那个玩家，选中之后底部才会亮出操作栏。</li>
+      <li>点「封禁」，填原因 —— 这一栏建议写清楚，玩家在 App 里看到的就是它。</li>
+      <li>选时长：1 小时 / 1 天 / 7 天 / 30 天 / 永久。</li>
+      <li>再点一次「确认封禁」。在线的人会被当场踢下线，封禁立刻生效，同时写一条审计日志。</li>
+    </ol>
+
+    <p>解封在同一个页面：<code>admin/bans</code> 列表里点开那条封禁，点「解封」就行，不用填原因。</p>
+
+    <h3>刷新和设置</h3>
+    <ul>
+      <li>「我的」页每 <strong>30 秒</strong>自动刷一次，下拉也能立刻刷。</li>
+      <li>设置页可以改接口地址（换服务器用）、清掉本地令牌（等于退出登录）、看 App 版本号。</li>
+      <li>退出登录只删手机上的令牌，不影响游戏账号，也不影响别人。</li>
+    </ul>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>离线也能看，只是数字不涨</strong>
+        人不在线时 App 照样能登录、照样显示上次存盘的数据，只有「在线状态」是灰的。
+        在线时长、经验这些要等下次进服才会更新。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="admin">
+    <h2><span class="num">7</span>管理员</h2>
+    <p>两种方式成为管理员：把游戏 ID 写进 <code>admin.players</code>，或者给这个玩家服务器 OP（OP 自动算管理员，不用重复填）。</p>
+
+    <div class="code-block"><div>admin:</div><div>  players:</div><div>    - Linux582021    <span class="comment"># 一个 ID 一行（不区分大小写）</span></div><div>    - Steve</div></div>
+
+    <p>改完 <code>/nalxerapp reload</code>，名单里的人下次打开 App 就能看到管理页。被移出名单的人要重新登录一次才会掉权限 —— 他手上的令牌还是管理员令牌，直到过期。</p>
+
+    <h3>封禁时长选项</h3>
+    <p>App 里给的是四个档，对应的就是接口里的 <code>minutes</code>：</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>选项</th><th>minutes</th><th>什么时候用</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>永久</td><td><code>0</code></td><td>作弊、开小号报复。不传 <code>minutes</code> 也是永久。</td></tr>
+          <tr><td>1 小时</td><td><code>60</code></td><td>刷屏、骂人这类小问题，冷静一下就行。</td></tr>
+          <tr><td>1 天</td><td><code>1440</code></td><td>反复犯同一个小毛病。</td></tr>
+          <tr><td>7 天</td><td><code>10080</code></td><td>恶意破坏、偷东西。</td></tr>
+        </tbody>
+      </table>
+    </div>
+    </div>
+
+    <h3>审计日志</h3>
+    <p>每一次封禁和解封都会往 <code>plugins/NalxerApp/audit.log</code> 追加一行，一行一次操作，纯文本，直接 <code>tail -f</code> 看：</p>
+
+    <div class="code-block"><div>2026-11-02 21:55:10  Linux582021 封禁 Alex_02（7 天）原因：飞行作弊</div><div>2026-11-02 21:55:25  Linux582021 解封 Alex_02</div><div>2026-11-02 21:54:25  127.0.0.1 登录 Steve → 成功</div></div>
+
+    <p>日志只追加、不自动清理。一个几十人的服务器一年也就几百行，占不了多少地方；真嫌大就手动归档一下，别直接删 —— 出了纠纷它是唯一能拿出来说话的东西。</p>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>管理员名单不是权限组</strong>
+        <code>admin.players</code> 里的人能封人、解封、搜人，但<strong>不能</strong>改配置、不能重启插件。
+        别把「能管玩家」和「能管服务器」混成一件事。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="faq">
+    <h2><span class="num">8</span>常见问题</h2>
+    <p>下面这几条覆盖了绝大多数「打不开 / 数据不对」的情况，按顺序试。</p>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>登录提示「游戏密码不对」</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          App 校验的是 <strong>AuthMe 的密码</strong>，不是论坛密码、不是邮箱密码。先在游戏里 <code>/login 密码</code> 确认这个密码是对的。<br>
+          还是不对的话按顺序查：① 玩家在 AuthMe 里注册过没有（<code>plugins/AuthMe/</code> 里能不能找到这个 ID）；② 大小写有没有打错，ID 是区分大小写的；③ 服务器是不是把 <code>login.require-authme</code> 改成了 <code>false</code> —— 关掉后不再校验密码，只放行在线玩家，离线时怎么登都失败。<br>
+          另外注意限流：一分钟内输错 5 次会返回 429，这时候密码是对的也登不上，等一分钟再试。
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>数据全是 0，或者显示成「—」</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          「—」表示<strong>服务端根本没接上那一项数据源</strong>，不是你的数据丢了。用浏览器打开 <code>https://api.nalxer.top/api/health</code>，里面有一个 <code>capabilities</code> 字段，写着每一项接没接上：<br>
+          <code>coins: false</code> → 服务器没装经济插件，或者装了但插件名不在 <code>data.*</code> 的识别列表里；<br>
+          <code>points: false</code> → 点券插件没接上；<br>
+          <code>team: false</code> / <code>title: false</code> → LinuxTeam / LinuxTitle 没装。 <br>
+          而如果显示的是 <strong>0</strong> 而不是「—」，说明数据源接上了，只是这个玩家确实没有：新号、或者数据存在别的插件里。
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>离线玩家的金币显示 0</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          经济插件一般把余额存在内存里，玩家下线才写盘，有的干脆只对在线玩家提供查询接口。插件能做的只有两件事：在线时直接问经济插件要，离线时读它落盘的数据。<br>
+          插件已经做了能做的：玩家在线时把金币记进 <code>plugins/NalxerApp/stats.yml</code>，离线后读这份缓存显示，所以一般不会是 0。但如果那个玩家从没在线过一次、或者换了经济插件导致旧缓存对不上，就只能是 0 —— 这不是 App 的问题。<br>
+          另外新人第一次进服之前没有任何数据，显示 0 是正常的。
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>手机连不上，浏览器打开 http://服务器IP:8787 也是打不开</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          这是<strong>故意的</strong>：接口只监听 <code>127.0.0.1:8787</code>，从外面用 IP 直连永远连不上，也不该连上。<br>
+          正确的访问方式是 <code>https://api.nalxer.top</code>，中间隔一层 Nginx。所以排查的时候不要在手机上试 IP:8787，而要在服务器本机试 <code>curl http://127.0.0.1:8787/api/health</code>：<br>
+          ① 本机 curl 都不通 → 插件没起来或者端口被占，看控制台；<br>
+          ② 本机通、外网不通 → Nginx 配置或证书的问题，<code>nginx -t</code> 然后看 <code>/var/log/nginx/error.log</code>；<br>
+          ③ 外网 https 通、App 还是连不上 → 接口地址填错了（末尾多了斜杠、或者填成了 <code>/api</code>），或者手机系统时间不对导致证书校验失败。
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>服务器换了地址 / 换了域名，App 怎么改</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          进 App 的<strong>设置页</strong>，「接口地址」那一栏直接改成新的 <code>https://</code> 地址，保存后会要求重新登录一次（旧域名发的令牌不作数）。<br>
+          如果连 App 的登录页都进不去（老地址已经彻底不能用了），在登录页也能找到「修改接口地址」的入口。这个地址是存在手机本地的，卸载重装会清掉，等于回到第一次打开的状态。
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>管理员在管理页搜不到某个玩家</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          搜索走的是服务器上记录的玩家数据，<strong>从来没进过服的名字搜不到</strong>，这是正常的。<br>
+          另外两种可能：① 你手上的令牌是加进 <code>admin.players</code> 之前登录的，重新登录一次才会带上管理员身份；② 名字打错了 —— 搜索是模糊匹配但区分大小写，试试只打前三个字母。
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="security">
+    <h2><span class="num">9</span>安全说明</h2>
+    <p>这一节说清楚：密码去了哪、令牌怎么算的、什么样的部署方式等于没设防。</p>
+
+    <h3>密码</h3>
+    <p>App 里输入的密码，只在登录那一次请求里出现一次。插件拿到之后立刻交给 AuthMe 校验，校验完就丢掉 ——
+       <strong>不写配置文件、不写日志、不存数据库</strong>。所以别人拿到服务器上的文件，也翻不到任何人的密码。</p>
+
+    <h3>令牌</h3>
+    <p>登录成功后发的是 HMAC 签名令牌，签名的密钥就是 <code>token.secret</code>。令牌里带着玩家名和过期时间，
+       服务端每次校验都重新算一次签名，对不上就直接 401。默认有效期 <strong>7 天（168 小时）</strong>，改密钥等于让所有令牌立刻作废。</p>
+
+    <h3>限流</h3>
+    <p>每个 IP 每分钟 <strong>5 次登录尝试 / 180 次请求</strong>。前者挡撞库，后者挡脚本刷接口。
+       这两个数字都按 IP 算，所以 Nginx 那一行 <code>X-Real-IP</code> 是硬要求 —— 少了它，全服共用 127.0.0.1 这一个额度。</p>
+
+    <h3>监听与审计</h3>
+    <p>接口只监听 <code>127.0.0.1</code>，公网唯一的入口是 Nginx 的 443。所有封禁 / 解封都写进
+       <code>plugins/NalxerApp/audit.log</code>，谁在什么时候封了谁、什么原因、多长时间，一行一条。</p>
+
+    <div class="tip tip-danger">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>别用明文 HTTP 暴露这个接口</strong>
+        密码是在请求体里传的，走 <code>http://</code> 等于把每个人的游戏密码写在明信片上寄出去。
+        一定要 HTTPS，证书用 Let's Encrypt 免费签就行。安卓 9 以后默认也禁止明文 HTTP，这条路本来就走不通。
+      </div>
+    </div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>被限流挡住的时候怎么办</strong>
+        等一分钟。限流是按 IP 的滑动窗口算的，不会因为你重开 App 就重置。
+        如果是整栋楼共用出口 IP（学校、网吧、公司 NAT），确实可能出现「别人试错把我锁了」的情况 ——
+        这种环境只能把 <code>login.attempts-per-minute</code> 调大，或者干脆别在公共网络里登。
+      </div>
+    </div>
+  </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">Nalxer App 帮助</div>
+    <p>安装、配置、接口、App 用法，一页看完</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v1.0.0 · Android / iOS · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+<a href="index.html">← 插件列表</a>
+        &nbsp;·&nbsp;
+<a href="nalxerapp.html">插件介绍</a>
+        &nbsp;·&nbsp;
+<a href="linuxhelp.html">综合帮助</a>
+        &nbsp;·&nbsp;
+<a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+    // 页面切换动画：进入淡入 + 离开淡出
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('page-anim');
+
+      // 从 bfcache 返回时清掉淡出状态，否则页面会是半透明的
+      window.addEventListener('pageshow', function () {
+        root.classList.remove('page-leaving');
+      });
+
+      function isInternal(a) {
+        if (!a || !a.href) return false;
+        if (a.target && a.target !== '_self') return false;
+        if (a.hasAttribute('download')) return false;
+        var h = a.getAttribute('href') || '';
+        if (h.charAt(0) === '#') return false;
+        if (a.hostname && a.hostname !== location.hostname) return false;
+        return true;
+      }
+
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a') : null;
+        if (!isInternal(a)) return;
+        if (a.pathname === location.pathname && a.hash) return;
+        e.preventDefault();
+        root.classList.add('page-leaving');
+        setTimeout(function () { location.href = a.href; }, 340);
+      }, true);
+    })();
+
+
+    // 滚动高亮：侧栏 + 本页目录
+    (function () {
+      var links = document.querySelectorAll('.sidebar a');
+      if (!links.length) return;
+
+      function activate(id) {
+        links.forEach(function (a) {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+        });
+      }
+
+      var targets = [];
+      links.forEach(function (a) {
+        var id = (a.getAttribute('href') || '').slice(1);
+        if (!id) return;
+        var el = document.getElementById(id);
+        if (el) targets.push(el);
+      });
+      if (!targets.length) return;
+
+      if (!('IntersectionObserver' in window)) {
+        activate(targets[0].id);
+        return;
+      }
+
+      var visible = {};
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          visible[en.target.id] = en.isIntersecting;
+        });
+        for (var i = 0; i < targets.length; i++) {
+          if (visible[targets[i].id]) { activate(targets[i].id); break; }
+        }
+      }, { rootMargin: '-90px 0px -70% 0px', threshold: 0 });
+
+      targets.forEach(function (t) { io.observe(t); });
+    })();
+
+    // 移动端侧栏抽屉
+    (function () {
+      var sb = document.getElementById('sidebar');
+      var tg = document.getElementById('navToggle');
+      if (!sb || !tg) return;
+
+      var bd = document.createElement('div');
+      bd.className = 'sidebar-backdrop';
+      document.body.appendChild(bd);
+
+      function close() {
+        sb.classList.remove('open');
+        bd.classList.remove('open');
+      }
+
+      tg.addEventListener('click', function (e) {
+        e.stopPropagation();
+        sb.classList.toggle('open');
+        bd.classList.toggle('open');
+      });
+
+      bd.addEventListener('click', close);
+      sb.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') close();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') close();
+      });
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 920) close();
+      });
+    })();
+
+  document.querySelectorAll('.faq-q').forEach((q) => {
+    q.addEventListener('click', () => {
+      q.parentElement.classList.toggle('open');
+    });
+  });
+
+  const sidebarLinks = document.querySelectorAll('.sidebar a');
+    // 参与滚动高亮的锚点：各章节 + 侧栏指向的其它锚点（如 #config-ref）
+    const watched = [];
+    const seen = {};
+    sidebarLinks.forEach((link) => {
+      const href = link.getAttribute('href') || '';
+      if (href.charAt(0) !== '#') return;
+      const id = href.slice(1);
+      if (seen[id]) return;
+      const el = document.getElementById(id);
+      if (el) { watched.push(el); seen[id] = true; }
+    });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        sidebarLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, {
+    rootMargin: '-80px 0px -60% 0px',
+    threshold: 0
+  });
+
+  watched.forEach((s) => observer.observe(s));
+
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      // 只处理本页锚点；别的页面的 #xxx 交给浏览器
+      if (this.getAttribute('href').indexOf('#') > 0) return;
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>
