@@ -166,7 +166,7 @@
 
 <section class="page-hero">
   <div class="container">
-    <span class="plug-hero-ver">1.0.0 · Android / iOS</span>
+    <span class="plug-hero-ver">1.1.0 · Android / iOS</span>
     <h1>Nalxer App 帮助中心</h1>
     <p>安装、配置、接口、App 用法，一页看完</p>
   </div>
@@ -187,6 +187,7 @@
           <li class="sidebar-group-label" data-group="手机端">手机端</li>
           <li><a href="#use">App 使用</a></li>
           <li><a href="#admin">管理员</a></li>
+          <li><a href="#console">服务器命令</a></li>
           <li class="sidebar-group-label" data-group="排查与安全">排查与安全</li>
           <li><a href="#faq">常见问题</a></li>
           <li><a href="#security">安全说明</a></li>
@@ -202,14 +203,14 @@
 
     <ol class="steps">
       <li>把 <code>NalxerApp.jar</code> 放进服务器的 <code>plugins/</code> 目录。服务端用 Paper 或 Spigot 1.12.2，Java 8。</li>
-      <li>重启服务器。插件会自己生成配置和密钥，并在 <code>127.0.0.1:8787</code> 上把接口开起来。</li>
+      <li>重启服务器。插件会自己生成配置和密钥，并在 <code>49985</code> 端口把接口开起来（默认监听 <code>0.0.0.0</code>，云服务器要能直连）。</li>
       <li>看控制台的 <code>[联动]</code> 日志，确认 AuthMe、金币、点券、封禁、队伍、头衔都接上了。</li>
-      <li>在服务器本机上执行 <code>curl http://127.0.0.1:8787/api/health</code>，能返回一串 JSON 就说明接口是活的。</li>
+      <li>在服务器本机执行 <code>curl http://127.0.0.1:49985/api/health</code>，能返回一串 JSON 就说明接口是活的；在手机浏览器里试 <code>http://你的服务器IP:49985/api/health</code> 能看到同样的 JSON，就说明安全组也放行了。</li>
     </ol>
 
     <p>正常启动时控制台会依次打出这几行（装了什么就出现什么，没装的那一项不会打）：</p>
 
-    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v1.0.0</div><div>[NalxerApp] Enabling NalxerApp v1.0.0</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔</div><div>[NalxerApp] 接口已启动：http://127.0.0.1:8787/api/health（请用 Nginx 反代成 HTTPS）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是）</div></div>
+    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v1.0.0</div><div>[NalxerApp] Enabling NalxerApp v1.0.0</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49985/api/health</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是）</div></div>
 
     <p>哪一行结尾写的是「未检测到」，就是对应的插件没装、没启用或者版本不认识。那一项在 App 里会显示成 <code>—</code>，其余功能照常，不用为了一行日志去折腾服务器。</p>
 
@@ -221,7 +222,7 @@
     <div class="tip tip-warn">
       <span class="tip-icon">⚠</span>
       <div class="tip-body">
-        <strong>不要把 8787 直接开到公网</strong>
+        <strong>49985 直连公网 = 明文，能挂 HTTPS 就挂</strong>
         接口默认只监听 <code>127.0.0.1</code>，这是故意的：它只接受本机（也就是 Nginx）转发过来的请求。
         把 <code>http.host</code> 改成 <code>0.0.0.0</code> 或者给端口做端口映射，等于把登录接口裸露在公网上，
         限流和审计都还在，但你会开始收到大量撞库请求。要外网访问就老老实实走 Nginx，见 <a href="#nginx">Nginx 反代</a>。
@@ -242,13 +243,13 @@
     <p>全部配置都在一个 <code>config.yml</code> 里，改完执行 <code>/nalxerapp reload</code> 就生效，不用重启服务器。</p>
 
     <div class="table-scroll">
-      <table class="help-table">
+      <table class="help-table config-table">
         <thead>
           <tr><th>键</th><th>默认值</th><th>说明</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>http.host</code></td><td><code>127.0.0.1</code></td><td>监听地址。只接受本机连接，别改成 <code>0.0.0.0</code>，理由见上一节。</td></tr>
-          <tr><td><code>http.port</code></td><td><code>8787</code></td><td>接口端口。改了记得同步改 Nginx 里的 <code>proxy_pass</code>，两边要对得上。</td></tr>
+          <tr><td><code>http.host</code></td><td><code>0.0.0.0</code></td><td>监听地址。只接受本机连接，别改成 <code>0.0.0.0</code>，理由见上一节。</td></tr>
+          <tr><td><code>http.port</code></td><td><code>49985</code></td><td>接口端口。改了记得同步改 Nginx 里的 <code>proxy_pass</code>，两边要对得上。</td></tr>
           <tr><td><code>http.threads</code></td><td><code>8</code></td><td>处理请求的线程数。几十个人的服 8 个足够，没必要往上加。</td></tr>
           <tr><td><code>token.secret</code></td><td><code>""</code></td><td>令牌签名密钥。留空会自动生成一串随机值写回配置；换掉它等于所有人重新登录一次。</td></tr>
           <tr><td><code>token.ttl-hours</code></td><td><code>168</code></td><td>令牌有效期（小时）。168 = 7 天，过期的令牌直接返回 401。</td></tr>
@@ -264,7 +265,7 @@
 
     <h3>一份改过的配置长这样</h3>
 
-    <div class="code-block"><div>http:</div><div>  host: 127.0.0.1</div><div>  port: 8787</div><div>  threads: 8</div><div></div><div>token:</div><div>  secret: ""          <span class="comment"># 留空，首次启动自动生成</span></div><div>  ttl-hours: 168     <span class="comment"># 7 天</span></div><div></div><div>login:</div><div>  require-authme: true</div><div>  attempts-per-minute: 5</div><div>  requests-per-minute: 180</div><div></div><div>admin:</div><div>  players:</div><div>    - Linux582021</div><div>    - Steve</div></div>
+    <div class="code-block"><div>http:</div><div>  host: 0.0.0.0         <span class="comment"># 直连要 0.0.0.0；只走本机 Nginx 就 127.0.0.1</span></div><div>  port: 49985</div><div>  threads: 8</div><div></div><div>token:</div><div>  secret: ""          <span class="comment"># 留空，首次启动自动生成</span></div><div>  ttl-hours: 168     <span class="comment"># 7 天</span></div><div></div><div>login:</div><div>  require-authme: true</div><div>  attempts-per-minute: 5</div><div>  requests-per-minute: 180</div><div></div><div>admin:</div><div>  players:</div><div>    - Linux582021</div><div>    - Steve</div></div>
 
     <p>存盘之后执行 <code>/nalxerapp reload</code>。配置写错（缩进错、键名拼错）插件不会崩，会在控制台打一行黄色警告并且继续用旧配置跑。</p>
 
@@ -288,9 +289,9 @@
 
 <section class="help-section" id="nginx">
     <h2><span class="num">3</span>Nginx 反代</h2>
-    <p>插件只监听本机 8787，外网访问靠 Nginx 转一次，顺便把 http 跳 https 一起做了。</p>
+    <p>直连已经能用（<code>http://服务器IP:49985</code>），这一节是给「想要 https、想要域名」的人准备的：Nginx 转一次，顺便把 http 跳 https 一起做了。</p>
 
-    <div class="code-block"><div>server {</div><div>    listen 80;</div><div>    server_name api.nalxer.top;</div><div>    return 301 https://$host$request_uri;</div><div>}</div><div></div><div>server {</div><div>    listen 443 ssl http2;</div><div>    server_name api.nalxer.top;</div><div></div><div>    ssl_certificate     /etc/letsencrypt/live/api.nalxer.top/fullchain.pem;</div><div>    ssl_certificate_key /etc/letsencrypt/live/api.nalxer.top/privkey.pem;</div><div></div><div>    location /api/ {</div><div>        proxy_pass            http://127.0.0.1:8787;</div><div>        proxy_set_header      Host              $host;</div><div>        proxy_set_header      X-Real-IP         $remote_addr;</div><div>        proxy_set_header      X-Forwarded-For   $proxy_add_x_forwarded_for;</div><div>        proxy_set_header      X-Forwarded-Proto $scheme;</div><div>        proxy_read_timeout    15s;</div><div>    }</div><div>}</div></div>
+    <div class="code-block"><div>server {</div><div>    listen 80;</div><div>    server_name api.nalxer.top;</div><div>    return 301 https://$host$request_uri;</div><div>}</div><div></div><div>server {</div><div>    listen 443 ssl http2;</div><div>    server_name api.nalxer.top;</div><div></div><div>    ssl_certificate     /etc/letsencrypt/live/api.nalxer.top/fullchain.pem;</div><div>    ssl_certificate_key /etc/letsencrypt/live/api.nalxer.top/privkey.pem;</div><div></div><div>    location /api/ {</div><div>        proxy_pass            http://127.0.0.1:49985;</div><div>        proxy_set_header      Host              $host;</div><div>        proxy_set_header      X-Real-IP         $remote_addr;</div><div>        proxy_set_header      X-Forwarded-For   $proxy_add_x_forwarded_for;</div><div>        proxy_set_header      X-Forwarded-Proto $scheme;</div><div>        proxy_read_timeout    15s;</div><div>    }</div><div>}</div></div>
 
     <p>证书路径按你自己的改，用 <code>certbot --nginx -d api.nalxer.top</code> 签的话它长这样。<code>proxy_pass</code> 后面是纯地址，<strong>不要</strong>再拼一个 <code>/api/</code>，拼了会把路径再叠一遍，变成 <code>/api/api/login</code>。</p>
 
@@ -475,7 +476,6 @@
         </tbody>
       </table>
     </div>
-    </div>
 
     <h3>审计日志</h3>
     <p>每一次封禁和解封都会往 <code>plugins/NalxerApp/audit.log</code> 追加一行，一行一次操作，纯文本，直接 <code>tail -f</code> 看：</p>
@@ -488,14 +488,95 @@
       <span class="tip-icon">⚠</span>
       <div class="tip-body">
         <strong>管理员名单不是权限组</strong>
-        <code>admin.players</code> 里的人能封人、解封、搜人，但<strong>不能</strong>改配置、不能重启插件。
-        别把「能管玩家」和「能管服务器」混成一件事。
+        <code>admin.players</code> 里的人能封人、解封、搜人，还能在下一节的「服务器命令」里跑白名单内的命令。
+        但 <strong>stop / op / give / whitelist 这类写死在黑名单里</strong>，改配置也放不开 —— 出问题最多影响玩家，不会把服务器搞挂。
       </div>
     </div>
   </section>
 
-<section class="help-section" id="faq">
-    <h2><span class="num">8</span>常见问题</h2>
+<section class="help-section" id="console">
+    <h2><span class="num">8</span>服务器命令（管理员）</h2>
+    <p>管理员在 App 的管理页会多一个「服务器命令」标签。它不是给玩家看的榜单，而是一个<strong>受控的命令执行器</strong>：
+       点一条命令 → 参数自动填进输入框 → 服务器主线程执行 → 回显原样贴回来。</p>
+
+    <p>这样做的好处是 ITNOL 的 <code>/linux xxx</code>、LinuxTAB 的 <code>/ltab</code>、<code>/team</code>、<code>/title</code>、
+       <code>/fp</code> 全都能用，插件以后加新子命令也不用改 App。</p>
+
+    <div class="steps">
+      <li><strong>先选分组</strong>：封禁与解封 / 查人 / 服务器 / Linux 系插件，四个分组覆盖日常操作。</li>
+      <li><strong>点一条</strong>：命令根和参数占位符会填进下面的输入框，比如 <code>linux ban &lt;玩家&gt; [原因]</code>。</li>
+      <li><strong>补完参数</strong>，点「执行」（或直接按回车）。</li>
+      <li><strong>看回显</strong>：下面是服务器真实的输出，分页、配色都已经被剥掉，只剩文字。</li>
+    </div>
+
+    <h3>默认能用哪些命令</h3>
+    <p>白名单在 <code>admin.commands.allow</code>，默认这些根命令：</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>根命令</th><th>干什么</th><th>例子</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>linux</code></td><td>ITNOL 总入口：封禁、查人、插件状态、审计、日志</td><td><code>linux plugins</code>、<code>linux lookup Steve</code></td></tr>
+          <tr><td><code>tempban</code> / <code>unban</code></td><td>临时封禁 / 解封（<code>linux ban</code> 没有时间参数，定时要用 tempban）</td><td><code>tempban Steve 7d 刷屏</code></td></tr>
+          <tr><td><code>banip</code> / <code>unbanip</code></td><td>封 IP（小号报复时用，注意别把网吧 / 学校网段封了）</td><td><code>banip Steve</code></td></tr>
+          <tr><td><code>banlist</code></td><td>看全部封禁记录，分页</td><td><code>banlist 2</code></td></tr>
+          <tr><td><code>ltab</code> / <code>lchest</code></td><td>LinuxTAB 状态与刷新 / 箱子面板</td><td><code>ltab info</code></td></tr>
+          <tr><td><code>title</code> / <code>team</code></td><td>头衔 / 队伍插件</td><td><code>title help</code></td></tr>
+          <tr><td><code>fp</code> / <code>fplist</code> / <code>fpr</code> / <code>fpsave</code> / <code>fpreload</code></td><td>假人插件的增删查、重载、存盘</td><td><code>fplist</code></td></tr>
+          <tr><td><code>linuxsync</code> / <code>nalxerapp</code></td><td>玩家数据同步 / 本插件自己的状态与重载</td><td><code>nalxerapp status</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>要放开别的根命令，往 <code>admin.commands.allow</code> 里加一行，然后 <code>/nalxerapp reload</code>：</p>
+
+    <div class="code-block"><div>admin:</div><div>  commands:</div><div>    enabled: true</div><div>    allow: [linux, banlist, unban, tempban, ltab, team, title, fp]</div><div>    <span class="comment"># 只写根命令，不带斜杠；子命令不受限</span></div></div>
+
+    <h3>永远执行不了的命令</h3>
+    <p>下面这些在代码里写死，<strong>改配置也放不开</strong>：</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>命令</th><th>为什么锁死</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>stop</code> <code>restart</code> <code>reload</code></td><td>一键把服务器关掉或重载，手滑一次全服掉线</td></tr>
+          <tr><td><code>op</code> <code>deop</code> <code>whitelist</code> <code>permissions</code></td><td>提权类，等于把服务器送给别人</td></tr>
+          <tr><td><code>give</code> <code>gamemode</code> <code>gm</code></td><td>刷物品 / 改模式，会直接毁经济</td></tr>
+          <tr><td><code>kick</code> <code>plugins</code> <code>version</code> <code>sudo</code></td><td>踢人、暴露插件列表、代执行任意命令</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>执行前会再问一次</strong>
+        标了「谨慎」的命令（封禁、封 IP 这类），点执行时 App 会弹一次确认框，把命令原文念一遍。
+        手指滑到就执行的年代已经过去了。
+      </div>
+    </div>
+
+    <h3>边界与超时</h3>
+    <p>每条命令最多等 <strong>5 秒</strong>，回显最多 <strong>40 行 / 4000 字</strong>，超了就截断 —— 防止有人拿 <code>banlist</code> 一口气翻几百页把 App 卡死。</p>
+    <p>命令在服务器<strong>主线程</strong>执行，和你在控制台敲是一样的效果；执行记录会写进控制台和 <code>audit.log</code>：</p>
+
+    <div class="code-block"><div>2026-11-03 01:44:02  Linux582021 控制台执行 ltab info</div><div>2026-11-03 01:44:15  Linux582021 控制台执行 tempban Steve 7d 刷屏</div></div>
+
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <div class="tip-body">
+        <strong>命令页要重新登录才出现</strong>
+        刚被加进 <code>admin.players</code> 的人，手上的令牌还是普通令牌；让他在设置页退出登录再登一次，管理页和命令标签才会出来。
+      </div>
+    </div>
+  </section>
+
+  <section class="help-section" id="faq">
+    <h2><span class="num">9</span>常见问题</h2>
     <p>下面这几条覆盖了绝大多数「打不开 / 数据不对」的情况，按顺序试。</p>
 
     <div class="faq-item">
@@ -544,16 +625,16 @@
 
     <div class="faq-item">
       <div class="faq-q">
-        <span>手机连不上，浏览器打开 http://服务器IP:8787 也是打不开</span>
+        <span>手机连不上，浏览器打开 http://服务器IP:49985/api/health 也打不开</span>
         <span class="faq-icon"></span>
       </div>
       <div class="faq-a-wrap">
         <div class="faq-a">
-          这是<strong>故意的</strong>：接口只监听 <code>127.0.0.1:8787</code>，从外面用 IP 直连永远连不上，也不该连上。<br>
-          正确的访问方式是 <code>https://api.nalxer.top</code>，中间隔一层 Nginx。所以排查的时候不要在手机上试 IP:8787，而要在服务器本机试 <code>curl http://127.0.0.1:8787/api/health</code>：<br>
-          ① 本机 curl 都不通 → 插件没起来或者端口被占，看控制台；<br>
-          ② 本机通、外网不通 → Nginx 配置或证书的问题，<code>nginx -t</code> 然后看 <code>/var/log/nginx/error.log</code>；<br>
-          ③ 外网 https 通、App 还是连不上 → 接口地址填错了（末尾多了斜杠、或者填成了 <code>/api</code>），或者手机系统时间不对导致证书校验失败。
+          先分清是<strong>哪一层</strong>不通：本机 / 安全组 / App 填的地址。<br>
+          ① 服务器本机 <code>curl http://127.0.0.1:49985/api/health</code> 不通 → 插件没起来、端口被占，或者 <code>config.yml</code> 的 <code>http.host</code> 被改成了别的网卡，看一眼启动日志；<br>
+          ② 本机通、手机浏览器打 <code>http://服务器IP:49985/api/health</code> 不通 → 云服务器安全组 / 系统防火墙没放行 49985，去控制台加一条入站规则（TCP 49985）；<br>
+          ③ 浏览器能打开、App 连不上 → App 里的地址填错了：忘了端口、多写了 <code>/api</code>、或者末尾多了斜杠。设置页的「测试连接」会直接告诉你通没通、联动接没接上。<br>
+          走 <code>https://api.nalxer.top</code> 域名的话，还要确认 Nginx 反代指向 <code>127.0.0.1:49985</code>、证书没过期（<code>nginx -t</code>，再看 <code>/var/log/nginx/error.log</code>）。
         </div>
       </div>
     </div>
@@ -586,7 +667,7 @@
   </section>
 
 <section class="help-section" id="security">
-    <h2><span class="num">9</span>安全说明</h2>
+    <h2><span class="num">10</span>安全说明</h2>
     <p>这一节说清楚：密码去了哪、令牌怎么算的、什么样的部署方式等于没设防。</p>
 
     <h3>密码</h3>
@@ -633,7 +714,7 @@
     <div class="footer-brand">Nalxer App 帮助</div>
     <p>安装、配置、接口、App 用法，一页看完</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v1.0.0 · Android / iOS · Made with ♥ by Linux582021
+      v1.1.0 · Android / iOS · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
 <a href="index.html">← 插件列表</a>

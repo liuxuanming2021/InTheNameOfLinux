@@ -172,7 +172,7 @@
   <div class="cover-overlay"></div>
 
   <div class="cover-inner">
-    <span class="plug-hero-ver">1.0.0 · Android / iOS</span>
+    <span class="plug-hero-ver">1.1.0 · Android / iOS</span>
 
     <h1 class="cover-title">Nalxer App</h1>
     <p class="cover-subtitle">PLAYER DATA</p>
@@ -392,7 +392,7 @@
       <span class="tip-icon">ℹ️</span>
       <div class="tip-body">
         <strong>地址必须是 https 域名</strong>
-        填 <code>http://</code> 开头或者直接填 IP，大概率连不上 —— 服务端只监听本机的 8787，公网入口只有 Nginx 的 443。
+        App 里的地址随便改：直连就填 <code>http://服务器IP:49985</code>，挂了 Nginx 就填 <code>https://api.nalxer.top</code>，设置页还有「测试连接」按钮能当场验证。
         安卓 9 以后默认还禁止明文 HTTP，填 http 会直接报网络错误。
       </div>
     </div>
@@ -420,9 +420,9 @@
       <div class="card reveal">
         <div class="card-icon">②</div>
         <h3>Nginx 反代一个域名</h3>
-        <p>插件只监听 <code>127.0.0.1:8787</code>，公网靠 Nginx 转：
-           <code>api.nalxer.top</code> → <code>127.0.0.1:8787</code>。</p>
-        <div class="code-block"><div>location /api/ {</div><div>    proxy_pass http://127.0.0.1:8787;</div><div>    proxy_set_header X-Real-IP $remote_addr;</div><div>}</div></div>
+        <p>想走域名 + HTTPS 的时候，Nginx 转一层：
+           <code>api.nalxer.top</code> → <code>127.0.0.1:49985</code>。</p>
+        <div class="code-block"><div>location /api/ {</div><div>    proxy_pass http://127.0.0.1:49985;</div><div>    proxy_set_header X-Real-IP $remote_addr;</div><div>}</div></div>
       </div>
 
       <div class="card reveal">
@@ -438,7 +438,7 @@
       <span class="tip-icon">ℹ️</span>
       <div class="tip-body">
         <strong>没有域名也能先用</strong>
-        只想自己试试，可以在服务器上 <code>curl http://127.0.0.1:8787/api/health</code> 看接口活没活。
+        在服务器上 <code>curl http://127.0.0.1:49985/api/health</code> 可以看接口活没活；手机浏览器打开 <code>http://服务器IP:49985/api/health</code> 能看到同样的 JSON，就说明安全组也通了。
         但手机要连，还是得有一个 https 域名 —— 这是故意设计的，不是懒得写。
         完整的 server 块写在 <a href="nalxerapphelp.html#nginx">帮助页的 Nginx 一节</a>。
       </div>
@@ -465,7 +465,7 @@
           <tr><td>服务端</td><td>Paper / Spigot 1.12.2</td></tr>
           <tr><td>Java</td><td>8</td></tr>
           <tr><td>客户端</td><td>Android 5.1+ / iOS 13+</td></tr>
-          <tr><td>接口</td><td>HTTP + JSON，默认只监听 <code>127.0.0.1:8787</code></td></tr>
+          <tr><td>接口</td><td>HTTP + JSON，默认监听 <code>0.0.0.0:49985</code>（可改）</td></tr>
           <tr><td>数据来源</td><td>AuthMe、经济插件、原版经验、LinuxTeam、LinuxTitle</td></tr>
           <tr><td>安装包</td><td>APK 约 2.9 MB，自签名；iOS 只有 Xcode 工程</td></tr>
         </tbody>
@@ -491,7 +491,7 @@
     <div class="footer-brand">Nalxer App</div>
     <p>不进服也能看自己的数据</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v1.0.0 · Android / iOS · Made with ♥ by Linux582021
+      v1.1.0 · Android / iOS · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
 <a href="index.html">← 插件列表</a>

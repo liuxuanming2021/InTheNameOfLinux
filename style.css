@@ -7844,3 +7844,15 @@ body.pure-white nav .nav-logo .nav-logo-icon {
   font-size: 12px;
   text-shadow: none;
 }
+
+/* 配置表：键 / 默认值 / 说明 三列固定比例，说明别被挤成一条缝 */
+.help-table.config-table { table-layout: fixed; width: 100%; }
+.help-table.config-table th:nth-child(1), .help-table.config-table td:nth-child(1) { width: 34%; }
+.help-table.config-table th:nth-child(2), .help-table.config-table td:nth-child(2) { width: 20%; }
+.help-table.config-table th:nth-child(3), .help-table.config-table td:nth-child(3) { width: 46%; }
+.help-table.config-table td { overflow-wrap: anywhere; }
+@media (max-width: 920px) {
+  .help-table.config-table { table-layout: auto; }
+  .help-table.config-table td:nth-child(1), .help-table.config-table td:nth-child(2),
+  .help-table.config-table td:nth-child(3) { width: auto; }
+}
