@@ -203,14 +203,14 @@
 
     <ol class="steps">
       <li>把 <code>NalxerApp.jar</code> 放进服务器的 <code>plugins/</code> 目录。服务端用 Paper 或 Spigot 1.12.2，Java 8。</li>
-      <li>重启服务器。插件会自己生成配置和密钥，并在 <code>49985</code> 端口把接口开起来（默认监听 <code>0.0.0.0</code>，云服务器要能直连）。</li>
+      <li>重启服务器。插件会自己生成配置和密钥，并在 <code>49282</code> 端口把接口开起来（默认监听 <code>0.0.0.0</code>，云服务器要能直连）。</li>
       <li>看控制台的 <code>[联动]</code> 日志，确认 AuthMe、金币、点券、封禁、队伍、头衔都接上了。</li>
-      <li>在服务器本机执行 <code>curl http://127.0.0.1:49985/api/health</code>，能返回一串 JSON 就说明接口是活的；在手机浏览器里试 <code>http://你的服务器IP:49985/api/health</code> 能看到同样的 JSON，就说明安全组也放行了。</li>
+      <li>在服务器本机执行 <code>curl http://127.0.0.1:49282/api/health</code>，能返回一串 JSON 就说明接口是活的；在手机浏览器里试 <code>http://你的服务器IP:49282/api/health</code> 能看到同样的 JSON，就说明安全组也放行了。</li>
     </ol>
 
     <p>正常启动时控制台会依次打出这几行（装了什么就出现什么，没装的那一项不会打）：</p>
 
-    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v1.1.0</div><div>[NalxerApp] Enabling NalxerApp v1.1.0</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49985/api/health（明文 HTTP，公网请用 Nginx 反代成 HTTPS）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是）</div></div>
+    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v1.1.0</div><div>[NalxerApp] Enabling NalxerApp v1.1.0</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49282/api/health（明文直连，手机里填 http://服务器IP:49282 就能用）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是）</div></div>
 
     <p>哪一行结尾写的是「未检测到」，就是对应的插件没装、没启用或者版本不认识。那一项在 App 里会显示成 <code>—</code>，其余功能照常，不用为了一行日志去折腾服务器。</p>
 
@@ -222,9 +222,9 @@
     <div class="tip tip-warn">
       <span class="tip-icon">⚠</span>
       <div class="tip-body">
-        <strong>49985 直连公网 = 明文，要么挂 Nginx、要么开插件自带 TLS</strong>
-        接口默认是明文 HTTP（<code>http.tls: false</code>）。给端口做映射把明文直接开到公网，等于把登录接口裸露出去，
-        限流和审计都还在，但你会开始收到大量撞库请求。要外网访问，两条路选一条：
+        <strong>默认就是公网直连，明文传输，心里有数就行</strong>
+        插件默认监听 <code>0.0.0.0:49282</code>，手机直接连 <code>http://服务器IP:49282</code>，不需要 Nginx。
+        代价是密码和令牌在公网上是明文（限流、令牌签名、审计都还在）。想加密有两条路：
         前面挂 Nginx（见 <a href="#nginx">Nginx 反代</a>），或者开 <code>http.tls: true</code> 让插件自己上 HTTPS
         （见本节末尾）。
       </div>
@@ -250,9 +250,9 @@
         </thead>
         <tbody>
           <tr><td><code>http.host</code></td><td><code>0.0.0.0</code></td><td>监听地址。只接受本机连接，别改成 <code>0.0.0.0</code>，理由见上一节。</td></tr>
-          <tr><td><code>http.port</code></td><td><code>49985</code></td><td>接口端口。改了记得同步改 Nginx 里的 <code>proxy_pass</code>，两边要对得上。</td></tr>
+          <tr><td><code>http.port</code></td><td><code>49282</code></td><td>接口端口。改了记得同步改 Nginx 里的 <code>proxy_pass</code>，两边要对得上。</td></tr>
           <tr><td><code>http.threads</code></td><td><code>8</code></td><td>处理请求的线程数。几十个人的服 8 个足够，没必要往上加。</td></tr>
-          <tr><td><code>http.tls</code></td><td><code>false</code></td><td>插件自带 HTTPS 的总开关。开了就不用在前面挂 Nginx，地址直接写 <code>https://域名:49985</code>。</td></tr>
+          <tr><td><code>http.tls</code></td><td><code>false</code></td><td>插件自带 HTTPS 的总开关。开了就不用在前面挂 Nginx，地址直接写 <code>https://域名:49282</code>。</td></tr>
           <tr><td><code>http.keystore</code></td><td><code>keystore.p12</code></td><td>证书文件（PKCS12），放在 <code>plugins/NalxerApp/</code> 下。</td></tr>
           <tr><td><code>http.keystore-password</code></td><td>空</td><td>p12 的密码，开了 <code>tls</code> 就不能留空。</td></tr>
           <tr><td><code>token.secret</code></td><td><code>""</code></td><td>令牌签名密钥。留空会自动生成一串随机值写回配置；换掉它等于所有人重新登录一次。</td></tr>
@@ -269,7 +269,7 @@
 
     <h3>一份改过的配置长这样</h3>
 
-    <div class="code-block"><div>http:</div><div>  host: 0.0.0.0         <span class="comment"># 直连要 0.0.0.0；只走本机 Nginx 就 127.0.0.1</span></div><div>  port: 49985</div><div>  threads: 8</div><div></div><div>token:</div><div>  secret: ""          <span class="comment"># 留空，首次启动自动生成</span></div><div>  ttl-hours: 168     <span class="comment"># 7 天</span></div><div></div><div>login:</div><div>  require-authme: true</div><div>  attempts-per-minute: 5</div><div>  requests-per-minute: 180</div><div></div><div>admin:</div><div>  players:</div><div>    - Linux582021</div><div>    - Steve</div></div>
+    <div class="code-block"><div>http:</div><div>  host: 0.0.0.0         <span class="comment"># 直连要 0.0.0.0；只走本机 Nginx 就 127.0.0.1</span></div><div>  port: 49282</div><div>  threads: 8</div><div></div><div>token:</div><div>  secret: ""          <span class="comment"># 留空，首次启动自动生成</span></div><div>  ttl-hours: 168     <span class="comment"># 7 天</span></div><div></div><div>login:</div><div>  require-authme: true</div><div>  attempts-per-minute: 5</div><div>  requests-per-minute: 180</div><div></div><div>admin:</div><div>  players:</div><div>    - Linux582021</div><div>    - Steve</div></div>
 
     <p>存盘之后执行 <code>/nalxerapp reload</code>。配置写错（缩进错、键名拼错）插件不会崩，会在控制台打一行黄色警告并且继续用旧配置跑。</p>
 
@@ -293,9 +293,9 @@
 
 <section class="help-section" id="nginx">
     <h2><span class="num">3</span>Nginx 反代</h2>
-    <p>直连已经能用（<code>http://服务器IP:49985</code>），这一节是给「想要 https、想要域名」的人准备的：Nginx 转一次，顺便把 http 跳 https 一起做了。</p>
+    <p>直连已经能用（<code>http://服务器IP:49282</code>），这一节是给「想要 https、想要域名」的人准备的：Nginx 转一次，顺便把 http 跳 https 一起做了。</p>
 
-    <div class="code-block"><div>server {</div><div>    listen 80;</div><div>    server_name api.nalxer.top;</div><div>    return 301 https://$host$request_uri;</div><div>}</div><div></div><div>server {</div><div>    listen 443 ssl http2;</div><div>    server_name api.nalxer.top;</div><div></div><div>    ssl_certificate     /etc/letsencrypt/live/api.nalxer.top/fullchain.pem;</div><div>    ssl_certificate_key /etc/letsencrypt/live/api.nalxer.top/privkey.pem;</div><div></div><div>    location /api/ {</div><div>        proxy_pass            http://127.0.0.1:49985;</div><div>        proxy_set_header      Host              $host;</div><div>        proxy_set_header      X-Real-IP         $remote_addr;</div><div>        proxy_set_header      X-Forwarded-For   $proxy_add_x_forwarded_for;</div><div>        proxy_set_header      X-Forwarded-Proto $scheme;</div><div>        proxy_read_timeout    15s;</div><div>    }</div><div>}</div></div>
+    <div class="code-block"><div>server {</div><div>    listen 80;</div><div>    server_name api.nalxer.top;</div><div>    return 301 https://$host$request_uri;</div><div>}</div><div></div><div>server {</div><div>    listen 443 ssl http2;</div><div>    server_name api.nalxer.top;</div><div></div><div>    ssl_certificate     /etc/letsencrypt/live/api.nalxer.top/fullchain.pem;</div><div>    ssl_certificate_key /etc/letsencrypt/live/api.nalxer.top/privkey.pem;</div><div></div><div>    location /api/ {</div><div>        proxy_pass            http://127.0.0.1:49282;</div><div>        proxy_set_header      Host              $host;</div><div>        proxy_set_header      X-Real-IP         $remote_addr;</div><div>        proxy_set_header      X-Forwarded-For   $proxy_add_x_forwarded_for;</div><div>        proxy_set_header      X-Forwarded-Proto $scheme;</div><div>        proxy_read_timeout    15s;</div><div>    }</div><div>}</div></div>
 
     <p>证书路径按你自己的改，用 <code>certbot --nginx -d api.nalxer.top</code> 签的话它长这样。<code>proxy_pass</code> 后面是纯地址，<strong>不要</strong>再拼一个 <code>/api/</code>，拼了会把路径再叠一遍，变成 <code>/api/api/login</code>。</p>
 
@@ -325,10 +325,10 @@
 
     <div class="code-block"><div># 1. 证书转 PKCS12</div><div>openssl pkcs12 -export -out keystore.p12 \</div><div>  -inkey /etc/letsencrypt/live/api.nalxer.top/privkey.pem \</div><div>  -in    /etc/letsencrypt/live/api.nalxer.top/fullchain.pem \</div><div>  -passout pass:你的密码</div><div></div><div># 2. 放进插件目录</div><div>cp keystore.p12 plugins/NalxerApp/</div></div>
 
-    <div class="code-block"><div>http:</div><div>  port: 49985</div><div>  tls: true</div><div>  keystore: keystore.p12</div><div>  keystore-password: '你的密码'</div></div>
+    <div class="code-block"><div>http:</div><div>  port: 49282</div><div>  tls: true</div><div>  keystore: keystore.p12</div><div>  keystore-password: '你的密码'</div></div>
 
-    <p>重启后控制台会打 <code>接口已启动：https://0.0.0.0:49985/api/health（插件自带 TLS，证书来自 keystore.p12）</code>，
-       App 里地址填 <code>https://你的域名:49985</code>。</p>
+    <p>重启后控制台会打 <code>接口已启动：https://0.0.0.0:49282/api/health（插件自带 TLS，证书来自 keystore.p12）</code>，
+       App 里地址填 <code>https://你的域名:49282</code>。</p>
 
     <div class="tip tip-warn">
       <span class="tip-icon">⚠</span>
@@ -675,16 +675,16 @@
 
     <div class="faq-item">
       <div class="faq-q">
-        <span>手机连不上，浏览器打开 http://服务器IP:49985/api/health 也打不开</span>
+        <span>手机连不上，浏览器打开 http://服务器IP:49282/api/health 也打不开</span>
         <span class="faq-icon"></span>
       </div>
       <div class="faq-a-wrap">
         <div class="faq-a">
           先分清是<strong>哪一层</strong>不通：本机 / 安全组 / App 填的地址。<br>
-          ① 服务器本机 <code>curl http://127.0.0.1:49985/api/health</code> 不通 → 插件没起来、端口被占，或者 <code>config.yml</code> 的 <code>http.host</code> 被改成了别的网卡，看一眼启动日志；<br>
-          ② 本机通、手机浏览器打 <code>http://服务器IP:49985/api/health</code> 不通 → 云服务器安全组 / 系统防火墙没放行 49985，去控制台加一条入站规则（TCP 49985）；<br>
+          ① 服务器本机 <code>curl http://127.0.0.1:49282/api/health</code> 不通 → 插件没起来、端口被占，或者 <code>config.yml</code> 的 <code>http.host</code> 被改成了别的网卡，看一眼启动日志；老版本默认是 <code>127.0.0.1:8787</code>（只监听本机），新 jar 会自动改成 <code>0.0.0.0:49282</code>，日志里有一行「已自动改成」；<br>
+          ② 本机通、手机浏览器打 <code>http://服务器IP:49282/api/health</code> 不通 → 云服务器安全组 / 系统防火墙没放行 49282，去控制台加一条入站规则（TCP 49282）；<br>
           ③ 浏览器能打开、App 连不上 → App 里的地址填错了：忘了端口、多写了 <code>/api</code>、或者末尾多了斜杠。设置页的「测试连接」会直接告诉你通没通、联动接没接上。<br>
-          走 <code>https://api.nalxer.top</code> 域名的话，还要确认 Nginx 反代指向 <code>127.0.0.1:49985</code>、证书没过期（<code>nginx -t</code>，再看 <code>/var/log/nginx/error.log</code>）。
+          走 <code>https://api.nalxer.top</code> 域名的话，还要确认 Nginx 反代指向 <code>127.0.0.1:49282</code>、证书没过期（<code>nginx -t</code>，再看 <code>/var/log/nginx/error.log</code>）。
         </div>
       </div>
     </div>
@@ -733,7 +733,8 @@
        这两个数字都按 IP 算，所以 Nginx 那一行 <code>X-Real-IP</code> 是硬要求 —— 少了它，全服共用 127.0.0.1 这一个额度。</p>
 
     <h3>监听与审计</h3>
-    <p>接口只监听 <code>127.0.0.1</code>，公网唯一的入口是 Nginx 的 443。所有封禁 / 解封都写进
+    <p>接口默认监听 <code>0.0.0.0:49282</code>，公网可以直接连（明文 HTTP）。想加密就挂 Nginx 或开插件自带 TLS；
+       安全组里也可以只放行自己常用的网段。所有封禁 / 解封都写进
        <code>plugins/NalxerApp/audit.log</code>，谁在什么时候封了谁、什么原因、多长时间，一行一条。</p>
 
     <div class="tip tip-danger">
