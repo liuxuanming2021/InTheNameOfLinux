@@ -17,10 +17,10 @@ const KEY_ADMIN = 'nalxer.admin';
 const KEY_EXPIRE = 'nalxer.expire';
 
 // 打包进来时的默认接口地址；用户可以在登录页 / 设置页改成自己的
-const DEFAULT_SERVER = 'http://aam.rainplay.cn:49985';
+const DEFAULT_SERVER = 'http://aam.rainplay.cn:49282';
 
 // 把用户随手写的地址整理成标准形式：
-//   aam.rainplay.cn:49985      -> http://aam.rainplay.cn:49985
+//   aam.rainplay.cn:49282      -> http://aam.rainplay.cn:49282
 //   nalxer.top                 -> http://nalxer.top
 //   https://api.x.top/         -> https://api.x.top
 function normServer(v) {

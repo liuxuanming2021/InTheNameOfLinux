@@ -53,6 +53,10 @@
 	<!-- 调试时允许连局域网里的 http://192.168.x.x:8787，正式接口仍是 https -->
 	<key>NSAppTransportSecurity</key>
 	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
