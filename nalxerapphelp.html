@@ -393,7 +393,7 @@
 
 <section class="help-section" id="data">
     <h2><span class="num">5</span>数据字段</h2>
-    <p><code>/api/me</code> 返回一个 JSON 对象，字段固定就这 18 个，App 的每一块显示都对应其中几个。</p>
+    <p><code>/api/me</code> 返回一个 JSON 对象，App 的每一块显示都对应其中几个。下面挑常用的写，<strong>加粗的是 1.2.0 新增</strong>的。</p>
 
     <div class="table-scroll">
       <table class="help-table">
@@ -408,10 +408,18 @@
           <tr><td><code>hasCoins</code></td><td>boolean</td><td>服务端有没有接上金币来源。<code>false</code> 时 App 显示「—」而不是 0。</td></tr>
           <tr><td><code>points</code></td><td>number</td><td>点券数量，同理。</td></tr>
           <tr><td><code>hasPoints</code></td><td>boolean</td><td>服务端有没有接上点券来源。</td></tr>
-          <tr><td><code>level</code></td><td>number</td><td>上次存盘时的等级。</td></tr>
+          <tr><td><code>level</code></td><td>number</td><td>玩家等级。<strong>1.2.0 起离线时也读真实存档</strong>（<code>world/playerdata/&lt;uuid&gt;.dat</code> 的 NBT），不再是 0。</td></tr>
           <tr><td><code>exp</code></td><td>number</td><td>当前这一级已经攒的经验，用于画进度条。</td></tr>
           <tr><td><code>totalExp</code></td><td>number</td><td>从 0 级算起的总经验，不掉级就只增不减。</td></tr>
           <tr><td><code>levelLive</code></td><td>number</td><td>实时等级，含经验条上那点还没存盘的进度。</td></tr>
+          <tr><td><strong><code>expIntoLevel</code></strong></td><td>number</td><td>当前这一级已经攒的经验（和 <code>exp</code> 同义，App 用它算进度百分比）。</td></tr>
+          <tr><td><strong><code>expToNext</code></strong></td><td>number</td><td>升到下一级要多少经验（1.12.2 公式：2L+7 / 5L-38 / 9L-158）。</td></tr>
+          <tr><td><strong><code>teamTag</code></strong></td><td>string</td><td>队伍标识（队标）带色码，没队伍是空串。</td></tr>
+          <tr><td><strong><code>titleId</code></strong> / <code>titleName</code></td><td>string</td><td>头衔 id 和干净名字，没戴头衔是空串。</td></tr>
+          <tr><td><strong><code>muted</code></strong></td><td>boolean</td><td>是否被 ITNOL 禁言（App 发聊天前会看它）。</td></tr>
+          <tr><td><strong><code>health</code></strong> / <code>maxHealth</code> / <code>food</code></td><td>number</td><td>在线时的生命、血量上限、饥饿值。</td></tr>
+          <tr><td><strong><code>gamemode</code></strong> / <code>world</code> / <code>ping</code></td><td>string / string / number</td><td>游戏模式、所在世界、延迟（毫秒）。</td></tr>
+          <tr><td><strong><code>banUntil</code></strong></td><td>number</td><td>封禁到期时间戳（毫秒），永久封禁是 0。</td></tr>
           <tr><td><code>playtimeHours</code></td><td>number</td><td>累计在线小时数，保留一位小数。</td></tr>
           <tr><td><code>firstPlayed</code></td><td>string</td><td>第一次进服时间，ISO 8601 格式。</td></tr>
           <tr><td><code>lastPlayed</code></td><td>string</td><td>最近一次进服时间，同样 ISO 8601。</td></tr>
@@ -426,9 +434,9 @@
     <div class="tip tip-info">
       <span class="tip-icon">ℹ️</span>
       <div class="tip-body">
-        <strong><code>level</code> 和 <code>levelLive</code> 差一级以内是正常的</strong>
-        <code>level</code> 是上一次存盘写进玩家数据的等级，<code>levelLive</code> 是插件现场算出来的。
-        刚升完级、服务器还没存盘的那一小段时间里，后者会比前者大 1，刷新一次就对齐了。
+        <strong>离线为什么也能看到等级</strong>
+        1.2.0 起离线玩家的等级直接从 <code>world/playerdata/&lt;uuid&gt;.dat</code> 的 NBT 里读，
+        不再依赖「上次有人在线时缓存下来的值」，所以挂机号、退服很久的人也能看到真实等级。<code>levelLive</code> 只是标记这次读数是不是实时的。
       </div>
     </div>
 
