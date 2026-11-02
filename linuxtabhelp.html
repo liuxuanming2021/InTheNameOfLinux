@@ -210,7 +210,7 @@
 
     <p>正常启动时控制台是这样两行：</p>
 
-    <div class="code-block"><div>[LinuxTAB] LinuxTAB 已启用 —— 布局 2 列 × 20 行（人数不足补空位），延迟列 开，PlaceholderAPI 已接上</div><div>[LinuxTAB] [联动] 已接上 LinuxTeam 队伍 / LinuxTitle 头衔 / FakePlayerPlugin 假人（假人会排在最前面）</div></div>
+    <div class="code-block"><div>[LinuxTAB] LinuxTAB 已启用 —— 布局 2 列 × 20 行（人数不足补空位），延迟列 开，PlaceholderAPI 已接上</div><div>[LinuxTAB] [联动] 已接上 LinuxTeam 队伍 / LinuxTitle 头衔 / FakePlayerPlugin 假人（默认不显示在列表里）</div></div>
 
     <p>如果第二行里某一段写的是「未检测到」，说明对应的插件没装或没启用，那一项功能会自动关掉，其余照常工作。想让队伍、头衔、假人都显示出来，把 LinuxTeam、LinuxTitle、FakePlayerPlugin 一起装上即可，LinuxTAB 启动时会自己认。</p>
 
@@ -247,6 +247,8 @@
           <tr><td><code>layout.columns</code></td><td><code>2</code></td><td>列数，取 1 ~ 4。1.12.2 客户端只认 4 列，写大于 4 会被压回 4。</td></tr>
           <tr><td><code>layout.rows</code></td><td><code>20</code></td><td>每列行数。1.12.2 客户端就是 20，改小只会让补位少填几行，一般不要动。</td></tr>
           <tr><td><code>layout.pad-empty</code></td><td><code>true</code></td><td>人数不足时用空条目补满整列。关掉它，人少时就只剩一列。</td></tr>
+          <tr><td><code>layout.include-fakes</code></td><td><code>false</code></td><td>假人要不要出现在 TAB 里。默认 <code>false</code>：每轮刷新都会把 FakePlayerPlugin 加进来的假人条目移除，列表里只有真人。改成 <code>true</code> 后假人排在真人上面。</td></tr>
+          <tr><td><code>layout.fakes-first</code></td><td><code>true</code></td><td>假人排最前面（<code>true</code>）还是按 <code>layout.sort</code> 和真人混排（<code>false</code>）。只有开了 <code>include-fakes</code> 才有意义。</td></tr>
           <tr><td><code>layout.fill</code></td><td><code>column</code></td><td><code>column</code> = 先填满第一列再换列，真人紧跟在假人下面；<code>balance</code> = 按列均分，几列的高度尽量一样。</td></tr>
           <tr><td><code>layout.empty-name</code></td><td><code>&amp;7</code></td><td>补位条目显示的名字。留一个颜色码就是一条看不见的空白，不要写成文字，否则列表里会多出 20 个「空」。</td></tr>
           <tr><td><code>layout.empty-skin.value</code></td><td><code>""</code></td><td>补位条目的皮肤纹理值（base64）。不填就是客户端默认的白色 Steve 头。</td></tr>
@@ -273,7 +275,7 @@
 
 <section class="help-section" id="order">
     <h2><span class="num">3</span>顺序规则（重要）</h2>
-    <p>LinuxTAB 发出去的最终顺序永远是这三段：<strong>假人（无队伍）→ 真人（各自队伍）→ 补位空行</strong>。假人在最前面，真人在中间按队伍聚在一起，空行全部沉底。</p>
+    <p>LinuxTAB 发出去的最终顺序是：<strong>真人（各自队伍）→ 补位空行</strong>。真人按队伍聚在一起，空行全部沉底。假人默认<strong>不进列表</strong>，需要的话在配置里打开 <code>layout.include-fakes</code>，打开后假人排在真人上面。</p>
 
     <h3>客户端会自己重排，你要顺着它来</h3>
     <p>1.12.2 客户端拿到玩家列表后并不会照抄服务端给的顺序，它会按三个键重新排序：<strong>是否旁观 → 计分板队伍名 → 玩家名</strong>。也就是说，服务端发过去的顺序会被打乱一遍，插件必须让「排序结果」也符合预期，否则你看到的永远是乱序。</p>
@@ -290,10 +292,18 @@
       </div>
     </div>
 
-    <h3>假人为什么一定在最前面</h3>
-    <p>假人来自 FakePlayerPlugin，用的是插件自己的 UUID，也<strong>不属于任何队伍</strong>。客户端排序时没有队伍名的条目排在前面，假人自然落在真人上面，而且不会在列表里出现两条——LinuxTAB 会按 UUID 去重，同一个假人只会发一次。</p>
+    <h3>假人默认不显示</h3>
+    <p>假人是 FakePlayerPlugin 创建的服务器端玩家，它为了让假人有皮肤、也让别的插件（经济、在线统计）认得出它，会自己把假人加进玩家列表——客户端随即会把假人画进 TAB。LinuxTAB 默认的处理是<strong>把假人条目摘掉</strong>：每轮刷新都发一次移除，进服瞬间也会补一刀，所以列表里只有真人。</p>
 
-    <p>如果你希望假人跟真人混排，把假人也加进某个 LinuxTeam 队伍即可，那时它就按那个队伍的名字参与排序，不再固定在最前。</p>
+    <p>想看到假人，把 <code>layout.include-fakes</code> 改成 <code>true</code> 再 <code>/linuxtab reload</code>。打开后假人排在真人上面（用的是假人自己的 UUID，不会和真人重条目），顺序是<strong>假人（无队伍）→ 真人（各自队伍）→ 补位空行</strong>。</p>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>为什么假人插件非要加进去</strong>
+        假人如果只在服务端存在、客户端不认识，它会没有皮肤、看不见头顶名字，别的插件统计在线人数时也会漏掉。所以 FakePlayerPlugin 主动加进玩家列表；「在 TAB 里显示不显示」这件事交给 LinuxTAB 决定，两个插件各管一段，配置在 <code>layout.include-fakes</code>。
+      </div>
+    </div>
   </section>
 
 <section class="help-section" id="headerfooter">
@@ -420,6 +430,14 @@
           <tr><td><code>layout.max-name-length</code></td><td><code>16</code></td><td>名字最长显示多少字符，超出的部分截断。列宽有限，太长会把后面的延迟列顶出去。</td></tr>
         </tbody>
       </table>
+    </div>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠️</span>
+      <div class="tip-body">
+        <strong>队伍 / 头衔被别的插件吃掉？</strong>
+        玩家列表名是所有插件共用的一个字段，TAB、sTablist、称号类插件都会往它上面写。<strong>同一台服务器只留一个改玩家列表的插件</strong>：还装着 TAB / sTablist 的，先把它们和对应的配置目录一起移走，否则两边每秒互相覆盖，看到的就是「有时候有队伍、有时候没有」。LinuxTAB 这边已经加了一层兜底：列表没变化时也每秒重发一次「队伍 + 头衔 + 名字」，被覆盖后一秒内会自己长回来。
+      </div>
     </div>
 
     <p>默认格式渲染出来是这样，队伍和头衔各带一层方括号：</p>
