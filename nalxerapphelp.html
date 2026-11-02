@@ -413,6 +413,33 @@
     <h2><span class="num">6</span>App 使用</h2>
     <p>三件事：登录、看数据、管人。界面就三个页面，不会找不到东西。</p>
 
+    <h3>装到手机上</h3>
+    <p>两个平台给的包不一样，别装错：</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>平台</th><th>文件</th><th>怎么装</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>安卓</td><td><code>Nalxer-1.1.0.apk</code>（约 2.9 MB）</td><td>传到手机点开装；系统提示「未知来源」时给浏览器一次安装权限</td></tr>
+          <tr><td>iOS</td><td><code>Nalxer-1.1.0-unsigned.ipa</code>（约 560 KB）</td><td>电脑装 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>，插上 iPhone，把 ipa 拖进去、填 Apple ID、点 Start</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>iOS 这个 ipa 是在 macOS 上编出来的真机包，<strong>没有签名</strong> —— 苹果不允许未签名的 App 在手机上跑，
+       所以要用你自己的 Apple ID 重签一次。Sideloadly 在 Windows 和 Mac 上都能用，全程不用越狱。</p>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>免费 Apple ID 签的 App 7 天到期</strong>
+        到期后图标点不开，用 Sideloadly 再签一次就行 —— 游戏数据、App 里的登录状态都还在。
+        想省这个麻烦就买开发者账号（一年），签一次能用一年。
+      </div>
+    </div>
+
     <h3>第一次登录</h3>
     <p>先填接口地址（<code>https://api.nalxer.top</code>，不要带 <code>/api</code> 后缀），再填游戏 ID 和游戏密码。
        这里的密码就是进服用的那个 AuthMe 密码，不是邮箱密码、也不是论坛账号。</p>

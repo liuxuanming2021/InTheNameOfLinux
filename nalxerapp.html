@@ -343,7 +343,7 @@
     <div class="section-header reveal">
       <span class="section-label">DOWNLOAD</span>
       <h2>下载安装</h2>
-      <p>安卓直接装 APK；iOS 只有工程，得自己用 Xcode 编一次</p>
+      <p>安卓直接装 APK；iOS 给的是未签名 ipa，用 Sideloadly 自签就能装</p>
     </div>
 
     <div class="grid grid-2">
@@ -362,13 +362,16 @@
 
       <div class="card reveal">
         <div class="card-icon">🍎</div>
-        <h3>iOS · 自己编</h3>
-        <p>没有签名证书，所以不放 ipa。<code>mobile/ios</code> 里是完整的 Xcode 工程，
-           在 macOS 上打开、选自己的开发者账号就能装到自己手机上。</p>
+        <h3>iOS · 未签名 ipa</h3>
+        <p>在苹果的 macOS 机器上编出来的真机包，<strong>约 560 KB</strong>，
+           没签名所以不能直接装，用电脑上的 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>
+           或 AltStore 拿你的 Apple ID 重签一次就行。</p>
+        <p><a href="download/Nalxer-1.1.0-unsigned.ipa" download>下载 Nalxer-1.1.0-unsigned.ipa</a></p>
         <ul>
-          <li>需要 macOS + Xcode 14 以上，iOS 13 及以上</li>
-          <li>免费开发者账号签出来的 App <strong>7 天要重签一次</strong></li>
-          <li>签名用的 Bundle ID 要改成你自己的，否则装不上</li>
+          <li>要 iOS 13 及以上，支持 arm64 真机</li>
+          <li>Sideloadly 在 Windows / Mac 都能跑，插上线点 Start 即可</li>
+          <li>免费 Apple ID 签出来的 App <strong>7 天要重签一次</strong>，证书不会掉数据</li>
+          <li>想自己编：<code>mobile/ios</code> 里是完整 Xcode 工程，见帮助页</li>
         </ul>
       </div>
     </div>
@@ -391,9 +394,9 @@
     <div class="tip tip-info">
       <span class="tip-icon">ℹ️</span>
       <div class="tip-body">
-        <strong>地址必须是 https 域名</strong>
+        <strong>地址两种写法都行</strong>
         App 里的地址随便改：直连就填 <code>http://服务器IP:49985</code>，挂了 Nginx 就填 <code>https://api.nalxer.top</code>，设置页还有「测试连接」按钮能当场验证。
-        安卓 9 以后默认还禁止明文 HTTP，填 http 会直接报网络错误。
+        安卓 9 以后默认禁止明文 HTTP，填 <code>http</code> 打不开的话就在 App 里换成 https 域名。
       </div>
     </div>
   </div>
