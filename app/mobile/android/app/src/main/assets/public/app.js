@@ -297,6 +297,16 @@
     return '<div class="kv"><span>' + esc(label) + '</span><b>' + esc(value == null ? '—' : value) + '</b></div>';
   }
 
+  /** 写数字卡片：太长就自动降字号，别截断成省略号。 */
+  function setStat(id, text) {
+    var el = $(id);
+    if (!el) return;
+    el.textContent = text;
+    var n = String(text).length;
+    el.classList.toggle('long', n > 7 && n <= 10);
+    el.classList.toggle('xlong', n > 10);
+  }
+
   function renderMe(d) {
     state.me = d;
     $('me-name').textContent = d.name || state.name;
@@ -331,9 +341,9 @@
     if (d.muted) badges.push('<span class="badge" style="color:#ffb3b3;border-color:rgba(255,107,107,.35)">已禁言</span>');
     $('me-badges').innerHTML = badges.join('');
 
-    $('me-coins').textContent = d.hasCoins ? fmtNum(d.coins) : '—';
-    $('me-points').textContent = d.hasPoints ? fmtNum(d.points) : '—';
-    $('me-level').textContent = d.level == null ? '—' : fmtNum(d.level);
+    setStat('me-coins', d.hasCoins ? fmtNum(d.coins) : '—');
+    setStat('me-points', d.hasPoints ? fmtNum(d.points) : '—');
+    setStat('me-level', d.level == null ? '—' : fmtNum(d.level));
 
     var need = Number(d.expToNext || 0);
     var into = Number(d.expIntoLevel || 0);

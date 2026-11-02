@@ -190,9 +190,13 @@ input:focus, select:focus { border-color: rgba(76, 194, 255, 0.55); background: 
 .stat b {
   display: inline-block; font-size: 19px; font-weight: 700;
   margin-top: 3px; letter-spacing: -0.3px;
-  max-width: calc(100% - 16px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: calc(100% - 14px); white-space: nowrap;
+  font-variant-numeric: tabular-nums;
   vertical-align: bottom;
 }
+/* 数字太长时自动缩字号，别用省略号把金币截成「86,415…」 */
+.stat b.long { font-size: 15.5px; letter-spacing: -0.5px; }
+.stat b.xlong { font-size: 13px; letter-spacing: -0.6px; }
 .stat-unit { color: var(--muted); font-size: 11.5px; margin-left: 2px; }
 
 .exp-bar {
