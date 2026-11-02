@@ -454,7 +454,7 @@
         </thead>
         <tbody>
           <tr><td><code>player-list.ping.enabled</code></td><td><code>true</code></td><td>延迟列开关。关掉后右侧计分板不显示 ping。</td></tr>
-          <tr><td><code>player-list.ping.title</code></td><td><code>Ping</code></td><td>计分板标题，也就是这一列最上面那行字。</td></tr>
+          <tr><td><code>player-list.ping.title</code></td><td><code>Ping</code></td><td>计分板标题，也就是这一列最上面那行字。<strong>最多 32 个字符</strong>，超出的部分会被自动截断。</td></tr>
           <tr><td><code>player-list.ping.refresh-ticks</code></td><td><code>20</code></td><td>更新间隔，20 = 每秒刷新一次数值。</td></tr>
         </tbody>
       </table>
@@ -469,6 +469,14 @@
       <div class="tip-body">
         <strong>和原来的计分板会打架吗</strong>
         延迟列只在玩家列表界面里生效，不占用主世界的侧边栏计分板，也不影响你其它插件的 scoreboard。玩家关掉列表界面就看不到它。
+      </div>
+    </div>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠️</span>
+      <div class="tip-body">
+        <strong>标题不要写太长</strong>
+        1.12.2 客户端读这个字段的上限是 32 个字符，写超了玩家一进服会被踢下线（客户端报 <code>The received string length is longer than maximum allowed</code>）。插件已经会按 32 字符自动截断，这里只提醒别指望长标题能显示全。
       </div>
     </div>
   </section>
@@ -612,7 +620,7 @@
           <tr><td><code>player-list.no-team</code></td><td><code>&amp;8无队伍</code></td><td>没队伍时 <code>%team%</code> 的值。</td></tr>
           <tr><td><code>player-list.no-title</code></td><td><code>""</code></td><td>没头衔时 <code>%title%</code> 的值。</td></tr>
           <tr><td><code>player-list.ping.enabled</code></td><td><code>true</code></td><td>延迟列开关。</td></tr>
-          <tr><td><code>player-list.ping.title</code></td><td><code>Ping</code></td><td>延迟列的计分板标题。</td></tr>
+          <tr><td><code>player-list.ping.title</code></td><td><code>Ping</code></td><td>延迟列的计分板标题（最多 32 个字符，超出自动截断）。</td></tr>
           <tr><td><code>player-list.ping.refresh-ticks</code></td><td><code>20</code></td><td>延迟数值刷新间隔。</td></tr>
         </tbody>
       </table>
