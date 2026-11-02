@@ -66,15 +66,24 @@ async function api(path, opts) {
   opts = opts || {};
   const headers = { 'Content-Type': 'application/json' };
   if (state.token && !opts.noAuth) headers['Authorization'] = 'Bearer ' + state.token;
+  const url = apiUrl(path);
+  const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+  const timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 10000) : null;
   let res;
   try {
-    res = await fetch(apiUrl(path), {
+    res = await fetch(url, {
       method: opts.method || 'GET',
       headers: headers,
-      body: opts.body ? JSON.stringify(opts.body) : undefined
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+      signal: ctrl ? ctrl.signal : undefined
     });
   } catch (e) {
-    throw new Error('连不上服务器，检查网络或接口地址');
+    const aborted = e && (e.name === 'AbortError');
+    throw new Error(aborted
+      ? ('连接超时：' + url + '（10 秒没响应，多半是端口没放行或被防火墙挡了）')
+      : ('连不上 ' + url + ' —— 看这几点：服务器开着吗 / 云服务器安全组放行这个端口了吗 / plugins 里有没有 NalxerApp'));
+  } finally {
+    if (timer) clearTimeout(timer);
   }
   let data = null;
   try { data = await res.json(); } catch (e) { data = null; }
