@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#0d1117">
+<title>Nalxer</title>
+
+<!-- iOS：全屏运行 / 状态栏 / 主屏图标（Safari「添加到主屏幕」时生效） -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nalxer">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══════════ 登录 ══════════ -->
+<section id="view-login" class="view active">
+  <div class="login-wrap">
+    <div class="brand">
+      <div class="brand-mark">N</div>
+      <h1>Nalxer</h1>
+      <p class="brand-sub">服务器数据 · 手机版</p>
+    </div>
+
+    <div class="field">
+      <label for="f-server">服务器接口</label>
+      <input id="f-server" type="url" inputmode="url" autocomplete="off"
+             value="https://api.nalxer.top" placeholder="https://api.nalxer.top">
+    </div>
+    <div class="field">
+      <label for="f-name">游戏 ID</label>
+      <input id="f-name" type="text" autocomplete="username" autocapitalize="off"
+             autocorrect="off" spellcheck="false" placeholder="你在服务器里的名字">
+    </div>
+    <div class="field">
+      <label for="f-pass">密码</label>
+      <input id="f-pass" type="password" autocomplete="current-password" placeholder="进游戏用的那个密码">
+    </div>
+
+    <button id="btn-login" class="btn btn-primary btn-block">登录</button>
+    <p id="login-err" class="err"></p>
+    <p class="hint">用游戏里的 ID 和密码登录，和进服时是同一个密码。</p>
+  </div>
+</section>
+
+<!-- ══════════ 主界面 ══════════ -->
+<section id="view-app" class="view">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span id="tb-title">我的数据</span>
+      <span id="tb-sub" class="tb-sub"></span>
+    </div>
+    <button id="btn-refresh" class="icon-btn" title="刷新">
+      <svg viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg>
+    </button>
+  </header>
+
+  <!-- 我的 -->
+  <main id="page-me" class="page active">
+    <div class="profile card">
+      <img id="avatar" class="avatar" alt="">
+      <div class="profile-main">
+        <div class="profile-name">
+          <span id="p-name">-</span>
+          <span id="p-online" class="dot offline"></span>
+        </div>
+        <div class="profile-tags">
+          <span id="p-team" class="tag hidden"></span>
+          <span id="p-title" class="tag hidden"></span>
+          <span id="p-level" class="tag hidden"></span>
+        </div>
+        <div id="p-state" class="profile-state">离线</div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat card">
+        <div class="stat-label">金币</div>
+        <div id="s-coins" class="stat-value">—</div>
+        <div class="stat-unit">$</div>
+      </div>
+      <div class="stat card">
+        <div class="stat-label">点券</div>
+        <div id="s-points" class="stat-value">—</div>
+        <div class="stat-unit">点</div>
+      </div>
+      <div class="stat card">
+        <div class="stat-label">经验等级</div>
+        <div id="s-level" class="stat-value">—</div>
+        <div class="stat-unit">级</div>
+      </div>
+    </div>
+
+    <div class="card exp-card">
+      <div class="exp-head">
+        <span>经验进度</span>
+        <span id="e-text" class="muted">—</span>
+      </div>
+      <div class="exp-bar"><div id="e-fill" class="exp-fill"></div></div>
+    </div>
+
+    <div class="card list-card">
+      <div class="row"><span>在线时长</span><b id="d-playtime">—</b></div>
+      <div class="row"><span>首次进服</span><b id="d-first">—</b></div>
+      <div class="row"><span>最近进服</span><b id="d-last">—</b></div>
+      <div class="row"><span>UUID</span><b id="d-uuid" class="mono">—</b></div>
+    </div>
+
+    <div id="banned-box" class="card warn hidden">
+      <div class="warn-title">你被服务器封禁了</div>
+      <div id="warn-reason" class="warn-text"></div>
+    </div>
+  </main>
+
+  <!-- 管理 -->
+  <main id="page-admin" class="page">
+    <div class="seg seg-top" id="admin-tabs">
+      <button class="seg-btn active" data-admin-tab="ban">玩家封禁</button>
+      <button class="seg-btn" data-admin-tab="cmd">服务器命令</button>
+    </div>
+
+    <div id="admin-ban-view">
+    <div class="card search-card">
+      <div class="search-row">
+        <input id="f-search" type="text" placeholder="搜索玩家名字" autocapitalize="off" autocorrect="off" spellcheck="false">
+        <button id="btn-search" class="btn btn-primary">搜索</button>
+      </div>
+      <div id="search-list" class="search-list"></div>
+    </div>
+
+    <div id="op-panel" class="card op-panel hidden">
+      <div class="op-head">
+        <img id="op-avatar" class="avatar sm" alt="">
+        <div>
+          <div id="op-name" class="op-name">-</div>
+          <div id="op-state" class="muted">-</div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-reason">封禁原因</label>
+        <input id="f-reason" type="text" value="违反服务器规则" placeholder="写清楚原因">
+      </div>
+      <div class="field">
+        <label>封禁时长</label>
+        <div id="dur-group" class="seg">
+          <button class="seg-btn active" data-min="0">永久</button>
+          <button class="seg-btn" data-min="60">1 小时</button>
+          <button class="seg-btn" data-min="1440">1 天</button>
+          <button class="seg-btn" data-min="10080">7 天</button>
+        </div>
+      </div>
+      <div class="op-actions">
+        <button id="btn-ban" class="btn btn-danger">封禁</button>
+        <button id="btn-unban" class="btn btn-ghost">解封</button>
+      </div>
+      <p id="op-msg" class="err"></p>
+    </div>
+
+    <div class="card list-card">
+      <div class="list-head">
+        <span>封禁列表</span>
+        <span id="ban-count" class="muted">—</span>
+      </div>
+      <div id="ban-list" class="ban-list"></div>
+    </div>
+    </div><!-- /admin-ban-view -->
+
+    <div id="admin-cmd-view" class="hidden">
+      <div class="card">
+        <p class="hint" style="margin:0 2px 10px">点一条命令，参数会自动填进下面的输入框，补完再按执行。</p>
+        <div id="cmd-groups" class="seg"></div>
+        <div id="cmd-list" class="cmd-list"></div>
+      </div>
+      <div class="card">
+        <div class="field">
+          <label for="f-cmd">要执行的命令</label>
+          <input id="f-cmd" type="text" placeholder="linux ban Steve 刷屏"
+                 autocapitalize="off" autocorrect="off" spellcheck="false">
+        </div>
+        <button id="btn-run" class="btn btn-primary btn-block">执行</button>
+        <div id="cmd-out" class="cmd-out hidden"></div>
+      </div>
+    </div><!-- /admin-cmd-view -->
+  </main>
+
+  <!-- 设置 -->
+  <main id="page-settings" class="page">
+    <div class="card list-card">
+      <div class="row"><span>登录账号</span><b id="st-user">—</b></div>
+      <div class="row"><span>服务器</span><b id="st-server" class="mono">—</b></div>
+      <div class="row"><span>管理权限</span><b id="st-admin">—</b></div>
+      <div class="row"><span>令牌到期</span><b id="st-expire">—</b></div>
+      <div class="row"><span>客户端版本</span><b>1.1.0</b></div>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label for="f-server-edit">接口地址（云服务器 IP / 域名 + 端口）</label>
+        <input id="f-server-edit" type="text" inputmode="url" autocapitalize="off" spellcheck="false"
+               placeholder="http://aam.rainplay.cn:49985">
+      </div>
+      <p class="hint" style="margin:-4px 2px 10px">
+        不写 <code>http://</code> 会自动补上；端口写冒号后面。改完点保存会自动重新拉一次数据。
+      </p>
+      <div class="seg" style="margin-bottom:10px">
+        <button id="btn-save-server" class="seg-btn active">保存地址</button>
+        <button id="btn-test-server" class="seg-btn">测试连接</button>
+        <button id="btn-reset-server" class="seg-btn">恢复默认</button>
+      </div>
+      <div id="server-msg" class="hint" style="min-height:18px"></div>
+    </div>
+
+    <div class="card list-card">
+      <div class="row"><span>自动刷新</span><b>每 30 秒</b></div>
+      <div class="row"><span>数据来源</span><b>NalxerApp 插件</b></div>
+    </div>
+    <button id="btn-logout" class="btn btn-ghost btn-block">退出登录</button>
+    <p class="hint center">Nalxer 服务器 · 数据来自游戏服务器实时读取</p>
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab active" data-page="me">
+      <svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z"/></svg>
+      <span>我的</span>
+    </button>
+    <button id="tab-admin-btn" class="tab" data-page="admin">
+      <svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3zm0 4 5 1.9V11c0 3.6-2.2 6.9-5 8-2.8-1.1-5-4.4-5-8V7.9L12 6z"/></svg>
+      <span>管理</span>
+    </button>
+    <button class="tab" data-page="settings">
+      <svg viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7zm7.4-2.6.1-1-.1-1 2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-1.7-1L14.9 3h-3.8l-.4 2.4c-.6.2-1.2.6-1.7 1l-2.4-1-2 3.4 2 1.6-.1 1 .1 1-2 1.6 2 3.4 2.4-1c.5.4 1.1.8 1.7 1l.4 2.4h3.8l.4-2.4c.6-.2 1.2-.6 1.7-1l2.4 1 2-3.4-2-1.6z"/></svg>
+      <span>设置</span>
+    </button>
+  </nav>
+</section>
+
+<div id="toast" class="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
