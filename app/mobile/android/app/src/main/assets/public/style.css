@@ -265,6 +265,13 @@ a { color: var(--accent); }
   padding: 10px 0 6px;
   background: linear-gradient(180deg, transparent, var(--bg) 45%);
 }
+/* 发送 / 转账 两颗按钮同宽同高 */
+.chat-input-bar .btn {
+  flex: 0 0 auto;
+  min-width: 76px;
+  padding: 13px 12px;
+  font-size: 15px;
+}
 
 /* ── 队伍 / 头衔 / 列表 ──────────────────────────── */
 .team-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }

@@ -1599,27 +1599,34 @@
     stopTimers();
     state.timer = setInterval(function () {
       if (state.page === 'me') loadMe();
-      if (state.page === 'chat') loadChat();
     }, 30000);
+    // 聊天每 3 秒刷一次；不在聊天页时每 4 拍（12 秒）查一次，只为点亮红点
+    state.chatTick = 0;
     state.chatTimer = setInterval(function () {
+      state.chatTick = (state.chatTick || 0) + 1;
       if (state.page === 'chat') { loadChat(); return; }
+      if (state.chatTick % 4 !== 0) return;
       api('/api/chat?since=' + (state.chatLast || 0)).then(function (r) {
         var d = r.data || {};
         var msgs = d.messages || [];
-        if (msgs.length) {
-          state.chatLast = d.last || state.chatLast;
-          state.chatMsgs = state.chatMsgs.concat(msgs).slice(-200);
-          $('chat-dot').classList.remove('hidden');
-        }
+        if (!msgs.length) return;
+        state.chatLast = d.last || state.chatLast;
+        var seen = {};
+        (state.chatMsgs || []).forEach(function (m) { if (m && m.id) seen[m.id] = 1; });
+        var fresh = msgs.filter(function (m) { return m && m.id && !seen[m.id]; });
+        if (fresh.length) state.chatMsgs = state.chatMsgs.concat(fresh).slice(-200);
+        $('chat-dot').classList.remove('hidden');
       }).catch(function () {});
-    }, 12000);
+    }, 3000);
   }
 
   function stopTimers() {
     if (state.timer) clearInterval(state.timer);
     if (state.chatTimer) clearInterval(state.chatTimer);
+    if (state.chatSlowTimer) clearInterval(state.chatSlowTimer);
     state.timer = 0;
     state.chatTimer = 0;
+    state.chatSlowTimer = 0;
   }
 
   // ── 事件绑定 ─────────────────────────────────────────
