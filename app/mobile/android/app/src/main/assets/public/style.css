@@ -83,7 +83,7 @@ a { color: var(--accent); }
 .brand p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
 .field { margin-bottom: 12px; }
 .field label { display: block; font-size: 12.5px; color: var(--text-2); margin: 0 2px 6px; }
-.field input, .search-row input, .chat-input-bar input, #f-cmd, #f-reason, #f-note, #report-card input, #transfer-modal input {
+.field input, .search-row input, .chat-input-bar input, #f-cmd, #f-reason, #f-note, #report-card input, #transfer-modal input, #f-server-edit, #f-team-name, #f-fake, #f-su2, #f-linux-cfg {
   width: 100%;
   padding: 13px 14px;
   font-size: 16px;
@@ -93,7 +93,7 @@ a { color: var(--accent); }
   border-radius: 13px;
   outline: none;
 }
-.field input:focus, .search-row input:focus, #f-cmd:focus, #f-reason:focus { border-color: var(--accent); }
+.field input:focus, .search-row input:focus, #f-cmd:focus, #f-reason:focus, #f-server-edit:focus { border-color: var(--accent); }
 .hint { color: var(--muted); font-size: 12.5px; }
 .tip-err { color: var(--red); font-size: 13px; margin: 10px 2px 0; }
 
@@ -751,7 +751,7 @@ body[data-skin="ios"] .modal-card {
 }
 body[data-skin="ios"] .modal-mark { border-radius: 18px; }
 body[data-skin="ios"] .switch { background: rgba(120, 130, 150, 0.28); }
-body[data-skin="ios"] .switch[aria-checked="true"] { background: var(--green); }
+body[data-skin="ios"] .switch[aria-checked="true"] { background: var(--accent); }
 body[data-skin="ios"] .chat-head {
   background: rgba(255, 255, 255, 0.6);
   -webkit-backdrop-filter: saturate(180%) blur(18px);
@@ -944,7 +944,7 @@ body[data-skin="ios"] .seg-arrow {
 .seg-arrow { display: none !important; }
 body[data-skin="ios"] .seg,
 body[data-skin="miuix"] .seg {
-  flex-wrap: wrap; overflow: visible;
+  flex-wrap: wrap; overflow: hidden;
   background: var(--card); border-radius: 14px;
 }
 body[data-skin="ios"] .seg-btn,
@@ -1027,7 +1027,7 @@ body[data-skin="miuix"] .seg > button.active {
   background: var(--accent-soft); color: var(--accent); font-weight: 600; box-shadow: none;
 }
 body[data-skin="ios"] .seg,
-body[data-skin="miuix"] .seg { flex-wrap: wrap; overflow: visible; }
+body[data-skin="miuix"] .seg { flex-wrap: wrap; overflow: hidden; }
 
 /* 管理层名单分组 */
 .staff-group + .staff-group { margin-top: 12px; }
@@ -1068,3 +1068,49 @@ body[data-skin="miuix"] #theme-styles .seg-btn {
   text-align: center;
   display: flex; align-items: center; justify-content: center;
 }
+
+
+/* ── 26.11.18：iOS 皮肤改回普通配色（圆角 / 间距 / 胶囊按钮这些布局保持不变） ── */
+body[data-skin="ios"] .card,
+[data-theme="dark"] body[data-skin="ios"] .card {
+  background: var(--card);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  border: 1px solid var(--card-b);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+[data-theme="dark"] body[data-skin="ios"] .card { box-shadow: none; }
+body[data-skin="ios"] .topbar,
+[data-theme="dark"] body[data-skin="ios"] .topbar {
+  background: var(--bg);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  border-bottom: 1px solid var(--card-b);
+}
+body[data-skin="ios"] .icon-btn,
+[data-theme="dark"] body[data-skin="ios"] .icon-btn {
+  background: var(--card);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  border: 1px solid var(--card-b);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+body[data-skin="ios"] .modal-card,
+[data-theme="dark"] body[data-skin="ios"] .modal-card {
+  background: var(--card);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  border: 1px solid var(--card-b);
+}
+body[data-skin="ios"] .chat-head,
+[data-theme="dark"] body[data-skin="ios"] .chat-head {
+  background: var(--bg);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+
+/* 开关的「开」状态统一跟随主题色（26.11.18） */
+.switch[aria-checked="true"],
+body[data-skin="ios"] .switch[aria-checked="true"],
+body[data-skin="miuix"] .switch[aria-checked="true"] { background: var(--accent); border-color: transparent; }
+
+/* 26.11.18：分段控件的圆角裁剪 + 聊天吸顶条不再左右出血 */
+.seg { overflow: hidden; }
+body[data-skin="ios"] .seg, body[data-skin="miuix"] .seg { overflow: hidden; }
+.card > .seg, .card .seg { max-width: 100%; }
+.chat-head { margin-left: 0 !important; margin-right: 0 !important; }

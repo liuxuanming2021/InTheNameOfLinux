@@ -417,8 +417,16 @@
   // ── 开屏 ──────────────────────────────────────────
 
   var splashGone = false;
+  var splashStart = Date.now();
+  var splashTimer = null;
   function hideSplash() {
     if (splashGone) return;
+    var left = 2000 - (Date.now() - splashStart);
+    if (left > 0) {
+      if (splashTimer) return;
+      splashTimer = setTimeout(function () { splashTimer = null; hideSplash(); }, left);
+      return;
+    }
     splashGone = true;
     var el = $('splash');
     if (!el) return;
@@ -1419,6 +1427,7 @@
   ];
 
   function loadStaff() {
+    if (Date.now() - (state.listTapAt || 0) < 1000) return;
     api('/api/admin/staff').then(function (r) {
       var d = r.data || {};
       var list = d.staff || [];
@@ -1433,7 +1442,7 @@
         return '<div class="staff-group"><div class="staff-head">' + role.ico + ' ' + role.label +
           '<span class="side">' + group.length + ' 人</span></div>' +
           group.map(function (p) {
-            return '<div class="list-item"><i class="dot' + (p.online ? ' on' : '') + '"></i>' +
+            return '<div class="list-item" data-manage="' + esc(p.name) + '"><i class="dot' + (p.online ? ' on' : '') + '"></i>' +
               '<div class="main"><b>' + esc(p.name) + '</b>' +
               '<div class="sub">' + (p.online ? '在线' : '离线') +
               (p.identity && p.identity.label ? ' · ' + esc(p.identity.label) : '') + '</div></div>' +
@@ -1448,6 +1457,7 @@
 
   function loadPlayers() {
     loadStaff();
+    if (Date.now() - (state.listTapAt || 0) < 1000) return;
     api('/api/players').then(function (r) {
       var d = r.data || {};
       var list = d.players || [];
@@ -1455,7 +1465,7 @@
         var tags = [];
         if (p.team) tags.push('<span class="tag">' + esc(plain(p.team)) + '</span>');
         if (p.titleId) tags.push('<span class="tag ok">' + esc(p.titleId) + '</span>');
-        return '<div class="list-item"><i class="dot on"></i><div class="main"><b>' + esc(p.name) + '</b>' +
+        return '<div class="list-item"' + (state.admin ? ' data-manage="' + esc(p.name) + '"' : '') + '><i class="dot on"></i><div class="main"><b>' + esc(p.name) + '</b>' +
           '<div class="sub">' + (p.level == null ? '—' : p.level) + ' 级 · ' + (p.ping == null ? '—' : p.ping + 'ms') +
           ' · ' + esc(p.world || '—') + '</div><div class="tags">' + tags.join('') + '</div></div>' +
           (state.admin ? '<button class="btn btn-mini" data-manage="' + esc(p.name) + '">管理</button>' : '') +
@@ -1921,6 +1931,11 @@
     if ($('f-su')) $('f-su').addEventListener('keydown', function (ev) {
       if (ev.key === 'Enter') { ev.preventDefault(); runSu(); }
     });
+
+    document.addEventListener('pointerdown', function (ev) {
+      var hit = ev.target && ev.target.closest ? ev.target.closest('#staff-list, #online-list, [data-manage]') : null;
+      if (hit) state.listTapAt = Date.now();
+    }, true);
 
     document.addEventListener('click', function (ev) {
       var t = ev.target.closest ? ev.target.closest('[data-linux-op],[data-chat],[data-chatteam],[data-tact],[data-team],[data-leave],[data-join],[data-kick],[data-title],[data-group],[data-cmd],[data-theme-style],[data-accent]') : null;
