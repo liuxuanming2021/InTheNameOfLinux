@@ -1525,7 +1525,7 @@
       teamAction('create', name);
     });
     $('btn-team-leave').addEventListener('click', function () {
-      if (confirm('确定退出所有队伍？')) teamAction('leave', '');
+      if (confirm('确定退出当前队伍？')) teamAction('leave', '');
     });
     $('btn-title-off').addEventListener('click', function () { equipTitle(''); });
     $('btn-pdetail-back').addEventListener('click', function () { setAdminTab(state.lastAdminTab || 'player'); switchPage('admin'); });
@@ -1541,7 +1541,7 @@
     });
 
     document.addEventListener('click', function (ev) {
-      var t = ev.target.closest ? ev.target.closest('[data-linux-op],[data-chat],[data-chatteam],[data-team],[data-leave],[data-join],[data-kick],[data-title],[data-group],[data-cmd]') : null;
+      var t = ev.target.closest ? ev.target.closest('[data-linux-op],[data-chat],[data-chatteam],[data-tact],[data-team],[data-leave],[data-join],[data-kick],[data-title],[data-group],[data-cmd]') : null;
       if (!t) return;
       if (t.hasAttribute('data-linux-op')) {
         linuxOp(t.getAttribute('data-linux'), t.getAttribute('data-linux-op'));
@@ -1637,8 +1637,7 @@
         return;
       }
       if (t.hasAttribute('data-unpen')) {
-        var h0 = document.querySelector('#player-detail .card-title h2');
-        var w0 = h0 ? h0.textContent : '';
+        var w0 = state.detailName || '';
         if (!w0) { toast('先选一个玩家'); return; }
         releasePenalty(t.getAttribute('data-unpen'), w0);
         return;
@@ -1649,9 +1648,8 @@
       else if (t.hasAttribute('data-release')) releasePenalty(t.getAttribute('data-release'), t.getAttribute('data-who'));
       else if (t.hasAttribute('data-fake-remove')) fakeRemove(t.getAttribute('data-fake-remove'));
       else if (t.hasAttribute('data-pen')) {
-        var sel = document.querySelector('#player-detail .card-title h2');
-        var who = sel ? sel.textContent : '';
-        if (!who) { toast('先在下面选一个玩家'); return; }
+        var who = state.detailName || '';
+        if (!who) { toast('先选一个玩家'); return; }
         var kind = t.getAttribute('data-pen');
         var label = { banmsg: '禁言', banmove: '禁止移动', banblock: '禁止交互', all: '全部禁止', ban: '封禁' }[kind] || kind;
         var minStr = prompt('给 ' + who + ' 开「' + label + '」多少分钟？（留空 = 永久）', '10');
@@ -1662,8 +1660,7 @@
         if (why === null) return;
         applyPenalty(kind, who, minutes, why || '');
       } else if (t.hasAttribute('data-ban')) {
-        var h = document.querySelector('#player-detail .card-title h2');
-        var target = h ? h.textContent : '';
+        var target = state.detailName || '';
         if (!target) { toast('先选一个玩家'); return; }
         if (t.getAttribute('data-ban') === '1') {
           var res = prompt('封禁 ' + target + '，原因（留空为未填写）', '违反服务器规定');
