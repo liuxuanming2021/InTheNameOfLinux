@@ -807,9 +807,11 @@
       var mine = m.name === state.name && m.source === 'app';
       var cls = 'msg' + (mine ? ' mine' : '') +
         (m.source === 'console' ? ' console' : '') +
-        (m.channel === 'team' ? ' team' : '');
+        (m.channel === 'team' ? ' team' : '') +
+        (m.source === 'link' ? ' link' : '');
       // 控制台发的话名字本来就是「控制台」，别再重复一次
-      var tag = m.source === 'console' ? '' : (m.source === 'app' ? ' · App' : ' · 游戏');
+      var tag = m.source === 'console' ? '' :
+        (m.source === 'link' ? ' · FS1安卓端' : (m.source === 'app' ? ' · App' : ' · 游戏'));
       var t = new Date(m.time || Date.now());
       var when = pad(t.getHours()) + ':' + pad(t.getMinutes());
       return '<div class="' + cls + '">' +
