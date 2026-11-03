@@ -503,3 +503,15 @@ body.verify-locked { overflow: hidden; }
   font-family: ui-monospace, Menlo, Consolas, monospace;
   font-size: 13px;
 }
+
+/* 设置页底部：版本 + 作者，只出现这一次 */
+.about-foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 0 26px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.about-foot .dot { opacity: .6; }

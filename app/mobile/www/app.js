@@ -20,7 +20,8 @@
     team: ['队伍', 'LinuxTeam'],
     title: ['头衔', 'LinuxTitle'],
     admin: ['服务器管理', '玩家 / 举报 / 惩罚 / 假人 / 命令'],
-    more: ['更多', '设置 / 接口地址 / 插件']
+    more: ['更多', '设置 / 接口地址 / 关于'],
+    pdetail: ['玩家详情', '']
   };
 
   var state = {
@@ -29,6 +30,7 @@
     name: '',
     admin: false,
     page: 'me',
+    lastAdminTab: 'player',
     me: null,
     chatLast: 0,
     chatMsgs: [],
@@ -229,6 +231,9 @@
     show('tab-admin', state.admin);
     $('admin-card').classList.toggle('hidden', !state.admin);
     $('status-card').classList.toggle('hidden', !state.admin);
+    // 普通玩家连入口都不该看到：Linux 系插件 / 联动状态都在管理员卡片里
+    var panel = $('admin-panel-card');
+    if (panel) panel.classList.toggle('hidden', !state.admin);
     $('f-server-edit').value = state.server;
     $('set-name').textContent = state.name;
     $('set-server').textContent = state.server.replace(/^https?:\/\//, '');
@@ -242,7 +247,8 @@
 
   var PAGE_IDS = {
     me: 'page-me', chat: 'page-chat', team: 'page-team',
-    title: 'page-titles', admin: 'page-admin', more: 'page-more'
+    title: 'page-titles', admin: 'page-admin', more: 'page-more',
+    pdetail: 'page-pdetail'
   };
 
   function switchPage(page) {
@@ -265,6 +271,10 @@
     measureTopbar();
     window.scrollTo(0, 0);
 
+    if (page === 'pdetail') {
+      // 详情页只显示一个人，返回就回管理页的玩家子标签
+      $('page-sub').textContent = state.detailName || state.name;
+    }
     if (page === 'team') {
       loadTeam();
     }
@@ -433,7 +443,10 @@
     var hint = $('su-switch-hint');
     if (!row) return;
     row.style.display = state.su ? '' : 'none';
-    if (hint) hint.style.display = (state.admin && !state.su) ? '' : 'none';
+    if (hint) {
+      hint.style.display = (state.admin && !state.su) ? '' : 'none';
+      hint.textContent = 'su 控制台只给服主账号，你这个号没有这个权限（Linux 系插件照常能管）。';
+    }
     var sw = $('sw-su');
     if (sw) {
       sw.classList.toggle('on', isSuOn());
@@ -1163,6 +1176,7 @@
   }
 
   function playerDetail(name) {
+    state.detailName = name;
     api('/api/admin/player?name=' + encodeURIComponent(name)).then(function (r) {
       var d = r.data || {};
       if (!d.ok) { toast(d.message || '读不到'); return; }
@@ -1216,9 +1230,11 @@
             '<div class="sub">' + esc(x.reporter) + ' · ' + (x.handled ? '已处理' : '待处理') + '</div></div></div>';
         }).join('');
       }
-      var box = $('player-detail');
+      // 详情独立成页：搜完点「详情」直接跳过去，不再挤在管理页里
+      var box = $('pdetail-body');
       box.innerHTML = html;
-      box.classList.remove('hidden');
+      $('page-sub').textContent = name;
+      switchPage('pdetail');
     }).catch(function (e) { toast(e.message); });
   }
 
@@ -1277,7 +1293,9 @@
           '<b>#' + x.id + ' ' + esc(x.target) + (done ? ' <span class="tag">已处理</span>' : '') + '</b>' +
           '<div class="sub">' + esc(plain(x.reason || '')) + '</div>' + head + tail +
           '</div></div>';
-      }).join('') : '<p class="empty">' + (showHandled ? '还没有举报记录' : '没有待处理的举报') + '</p>';
+      }).join('') : '<p class="empty">' +
+        (filter === 'handled' ? '还没有已处理的举报' : (filter === 'pending' ? '没有待处理的举报' : '还没有举报记录')) +
+        '</p>';
     }).catch(function (e) { $('report-list').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; });
   }
 
@@ -1510,6 +1528,7 @@
       if (confirm('确定退出所有队伍？')) teamAction('leave', '');
     });
     $('btn-title-off').addEventListener('click', function () { equipTitle(''); });
+    $('btn-pdetail-back').addEventListener('click', function () { setAdminTab(state.lastAdminTab || 'player'); switchPage('admin'); });
     $('btn-su-run').addEventListener('click', runSuConsole);
     $('f-su2').addEventListener('keydown', function (e) { if (e.key === 'Enter') runSuConsole(); });
     $('btn-su-clear').addEventListener('click', suReset);

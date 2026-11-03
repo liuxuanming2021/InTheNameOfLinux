@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#f4f6fa">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css?v=26">
+  <link rel="stylesheet" href="style.css?v=27">
 </head>
 <body>
 
@@ -294,16 +294,24 @@
 
     </section>
 
+    <section id="page-pdetail" class="page hidden">
+      <button id="btn-pdetail-back" class="btn btn-block" style="margin-bottom:10px">← 返回玩家列表</button>
+      <div id="pdetail-body"></div>
+    </section>
+
     <section id="page-more" class="page hidden">
       <div class="card">
-        <div class="card-title"><h2>设置</h2></div>
+        <div class="card-title"><h2>账号</h2></div>
         <div class="kv">
           <span>登录账号</span><b id="set-name">—</b>
           <span>服务器</span><b id="set-server">—</b>
           <span>管理权限</span><b id="set-admin">否</b>
           <span>玩家身份</span><b id="set-role">—</b>
-          <span>客户端版本</span><b>1.7.0</b>
         </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><h2>显示</h2></div>
         <div class="switch-row">
           <div>
             <div style="font-weight:600">深色模式</div>
@@ -311,20 +319,24 @@
           </div>
           <button id="sw-theme" class="switch" role="switch" aria-checked="false"></button>
         </div>
+      </div>
+
+      <div class="card hidden" id="admin-panel-card">
+        <div class="card-title"><h2>管理</h2><span class="side" style="color:var(--green)">有权限</span></div>
         <div class="switch-row" id="su-switch-row" style="display:none">
           <div>
             <div style="font-weight:600">启用 su 控制台</div>
-            <div class="hint">服主专用：打开要先验一次 Linux 身份，通过后才能执行任意命令</div>
+            <div class="hint">服主专用，打开后管理页会多一个 su 控制台</div>
           </div>
           <button id="sw-su" class="switch" role="switch" aria-checked="false"></button>
         </div>
         <div class="hint" id="su-switch-hint" style="display:none">命令控制台只对服主账号开放，你这个号没有这个权限。</div>
-      </div>
-
-
-      <div class="card">
-        <div class="card-title"><h2>Linux 系插件</h2><span class="side" id="linux-sum">—</span></div>
-        <p class="hint" style="margin:2px 0 10px">开关、重载、直接改 config.yml。改完会先备份成 <code>config.yml.app-bak</code>。</p>
+        <div class="switch-row" style="border-bottom:0">
+          <div>
+            <div style="font-weight:600">Linux 系插件</div>
+            <div class="hint" id="linux-sum">开关、重载、直接改 config.yml</div>
+          </div>
+        </div>
         <button id="btn-linux" class="btn btn-block">打开插件管理</button>
       </div>
 
@@ -346,7 +358,25 @@
         <div id="status-list"></div>
       </div>
 
-      <button id="btn-logout" class="btn btn-block" style="margin-bottom:16px">退出登录</button>
+      <div class="card">
+        <div class="card-title"><h2>关于软件</h2></div>
+        <div class="kv">
+          <span>软件名称</span><b>Nalxer App</b>
+          <span>版本</span><b>26.11.8</b>
+          <span>作者</span><b>Linux582021</b>
+          <span>官网</span><b>linux.nalxer.top</b>
+          <span>配套服务端</span><b>NalxerApp 26.11.8</b>
+        </div>
+        <p class="hint" style="margin:10px 2px 0">数据来自服务器上的 InTheNameOfLinux 与 Linux 系插件；App 只是把这些数据搬到手机上，不改动任何存档。</p>
+      </div>
+
+      <button id="btn-logout" class="btn btn-block" style="margin-bottom:8px">退出登录</button>
+
+      <div class="about-foot">
+        <span>Nalxer App 26.11.8</span>
+        <span class="dot">·</span>
+        <span>作者 Linux582021</span>
+      </div>
     </section>
   </main>
 
@@ -395,6 +425,6 @@
 
 <div id="fatal" class="hidden"></div>
 <div id="toast" class="toast hidden"></div>
-<script src="app.js?v=26"></script>
+<script src="app.js?v=27"></script>
 </body>
 </html>
