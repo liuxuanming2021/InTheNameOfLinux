@@ -166,7 +166,7 @@
 
 <section class="page-hero">
   <div class="container">
-    <span class="plug-hero-ver">1.4.2 · Android / iOS</span>
+    <span class="plug-hero-ver">1.5.0 · Android / iOS</span>
     <h1>Nalxer App 帮助中心</h1>
     <p>安装、配置、接口、App 用法，一页看完</p>
   </div>
@@ -210,7 +210,7 @@
 
     <p>正常启动时控制台会依次打出这几行（装了什么就出现什么，没装的那一项不会打）：</p>
 
-    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v1.4.2</div><div>[NalxerApp] Enabling NalxerApp v1.4.2</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍（信息 / 建队 / 加入 / 退出 / 踢人 / 转让）</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔（列表 / 佩戴）</div><div>[NalxerApp] [联动] 已接上 ITNOL 禁言判定（App 里发聊天前会先查）</div><div>[NalxerApp] [联动] 已接上 ITNOL 身份验证（受保护账号 Linux582021 在 App 里要验口令）</div><div>[NalxerApp] [联动] 已接上 ITNOL 举报（列表 / 提交 / 接受 / 驳回）</div><div>[NalxerApp] [联动] 已接上 FakePlayerPlugin 假人（列表 / 召唤 / 移除）</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49282/api/health（明文直连，手机里填 http://服务器IP:49282 就能用）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是，队伍：是，头衔：是）</div><div>[NalxerApp] 聊天通道已开启 —— 游戏里说话会同步到 App，App 发的消息带 [LinuxAPP]  前缀广播进游戏</div></div>
+    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v1.5.0</div><div>[NalxerApp] Enabling NalxerApp v1.5.0</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍（信息 / 建队 / 加入 / 退出 / 踢人 / 转让）</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔（列表 / 佩戴）</div><div>[NalxerApp] [联动] 已接上 ITNOL 禁言判定（App 里发聊天前会先查）</div><div>[NalxerApp] [联动] 已接上 ITNOL 身份验证（受保护账号 Linux582021 在 App 里要验口令）</div><div>[NalxerApp] [联动] 已接上 ITNOL 举报（列表 / 提交 / 接受 / 驳回）</div><div>[NalxerApp] [联动] 已接上 FakePlayerPlugin 假人（列表 / 召唤 / 移除）</div><div>[NalxerApp] [联动] 已接上 XlandCore 身份（服主 / 副服主 / 市长 / 协管）</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49282/api/health（明文直连，手机里填 http://服务器IP:49282 就能用）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是，队伍：是，头衔：是）</div><div>[NalxerApp] 聊天通道已开启 —— 游戏里说话会同步到 App，App 发的消息带 [LinuxAPP]  前缀广播进游戏</div><div>[NalxerApp] 二次身份验证：开启 —— 这些号登录 App 后要先验 ITNOL 口令：[Linux582021, fs1]（口令比对对象：Linux582021）</div><div>[NalxerApp] 命令控制台 / su 名单：[Linux582021, fs1]（不在名单里的管理员只能封禁 / 惩罚 / 处理举报 / 管假人）</div></div>
 
     <p>哪一行结尾写的是「未检测到」，就是对应的插件没装、没启用或者版本不认识。那一项在 App 里会显示成 <code>—</code>，其余功能照常，不用为了一行日志去折腾服务器。</p>
 
@@ -263,7 +263,8 @@
           <tr><td><code>admin.players</code></td><td><code>[]</code></td><td>管理员名单，填游戏 ID。名单里的人能看到玩家管理页；服务器 OP 自动算管理员，不用重复填。</td></tr>
           <tr><td><code>data.*</code></td><td>全 <code>true</code></td><td>某一项数据要不要对外提供（<code>coins</code> / <code>points</code> / <code>level</code> / <code>playtime</code> / <code>team</code> / <code>title</code>）。关掉哪一项，App 里对应的那一块就显示 <code>—</code>，接口也不返回。</td></tr>
           <tr><td><code>verify.enabled</code></td><td><code>true</code></td><td>1.4.1 的 Linux 身份验证总开关。开着时，<code>verify.players</code> 里的账号登录 App 后要先输一次 ITNOL 密码，验完才能用其它功能。</td></tr>
-          <tr><td><code>verify.players</code></td><td><code>[Linux582021]</code></td><td>哪些账号要二次验证。留空就退回「插件里那个受保护账号」。</td></tr>
+          <tr><td><code>verify.players</code></td><td><code>[Linux582021, fs1]</code></td><td>哪些账号要二次验证。留空就退回「插件里那个受保护账号」。</td></tr>
+          <tr><td><code>su.players</code></td><td><code>[Linux582021, fs1]</code></td><td>能碰「命令控制台」和「su（任意命令）」的账号。不在这份名单里的管理员照样能封禁 / 惩罚 / 处理举报 / 管假人，但命令控制台直接返回 <code>403</code>。App 设置里还要再打开「启用 su 控制台」开关才看得见入口。</td></tr>
           <tr><td><code>features.*</code></td><td>全 <code>true</code></td><td>1.3.0 起的功能开关：<code>chat</code> / <code>team</code> / <code>titles</code> / <code>checkin</code> / <code>report</code> / <code>penalty</code> / <code>fakes</code> / <code>console</code>。关掉后对应接口直接返回 <code>403</code>，App 里那一页也不再出现。</td></tr>
           <tr><td><code>debug</code></td><td><code>false</code></td><td>打开后每个请求都往控制台打一行（路径、耗时、来源 IP），排查连不上时用，平时关着。</td></tr>
         </tbody>
@@ -380,7 +381,7 @@
           <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/fake</code></td><td>是</td><td><code>op=add|remove</code>。召唤要求本人正在游戏里（假人要站在你脚下）。</td></tr>
           <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/commands</code></td><td>是</td><td>命令白名单 + 分组清单，App 的「服务器命令」页靠它渲染。</td></tr>
           <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/exec</code></td><td>是</td><td>执行一条白名单命令，body：<code>command</code>。返回真实回显，最多 40 行。</td></tr>
-          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/su</code></td><td>是</td><td>1.4.2 的 su：验证过 Linux 身份后执行<b>任意命令</b>（不走白名单，<code>stop</code> / <code>restart</code> 仍然拦），body：<code>command</code>。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/su</code></td><td>是</td><td>1.5.0 的 su：验证过 Linux 身份后执行<b>任意命令</b>（不走白名单，<code>stop</code> / <code>restart</code> 仍然拦），body：<code>command</code>。</td></tr>
           <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/search?q=st</code></td><td>是</td><td>按名字模糊搜玩家，最多 30 条，每条带 <code>name</code> / <code>online</code> / <code>banned</code>。需要管理员。</td></tr>
           <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/bans</code></td><td>是</td><td>当前生效的封禁列表，带原因和到期时间。需要管理员。</td></tr>
           <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/ban</code></td><td>是</td><td>封禁，body：<code>name</code> / <code>reason</code> / <code>minutes</code>。需要管理员。</td></tr>
@@ -431,6 +432,8 @@
           <tr><td><code>levelLive</code></td><td>number</td><td>实时等级，含经验条上那点还没存盘的进度。</td></tr>
           <tr><td><strong><code>expIntoLevel</code></strong></td><td>number</td><td>当前这一级已经攒的经验（和 <code>exp</code> 同义，App 用它算进度百分比）。</td></tr>
           <tr><td><strong><code>expToNext</code></strong></td><td>number</td><td>升到下一级要多少经验（1.12.2 公式：2L+7 / 5L-38 / 9L-158）。</td></tr>
+          <tr><td><strong><code>identity</code></strong></td><td>object</td><td>玩家身份（来自 XlandCore）：<code>{role, label, prefix, roles, hasXland}</code>，label 是「服主 / 副服主 / 市长 / 协管 / 管理员 / 普通玩家」。</td></tr>
+          <tr><td><strong><code>role</code></strong></td><td>string</td><td>上面那个 label 的简写，省得 App 再拆一层。</td></tr>
           <tr><td><strong><code>teamTag</code></strong></td><td>string</td><td>队伍标识（队标）带色码，没队伍是空串。</td></tr>
           <tr><td><strong><code>titleId</code></strong> / <code>titleName</code></td><td>string</td><td>头衔 id 和干净名字，没戴头衔是空串。</td></tr>
           <tr><td><strong><code>muted</code></strong></td><td>boolean</td><td>是否被 ITNOL 禁言（App 发聊天前会看它）。</td></tr>
@@ -489,8 +492,8 @@
           <tr><th>平台</th><th>文件</th><th>怎么装</th></tr>
         </thead>
         <tbody>
-          <tr><td>安卓</td><td><code>Nalxer-1.4.2.apk</code>（约 2.9 MB）</td><td>传到手机点开装；系统提示「未知来源」时给浏览器一次安装权限</td></tr>
-          <tr><td>iOS</td><td><code>Nalxer-1.4.2-unsigned.ipa</code>（约 560 KB）</td><td>电脑装 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>，插上 iPhone，把 ipa 拖进去、填 Apple ID、点 Start</td></tr>
+          <tr><td>安卓</td><td><code>Nalxer-1.5.0.apk</code>（约 2.9 MB）</td><td>传到手机点开装；系统提示「未知来源」时给浏览器一次安装权限</td></tr>
+          <tr><td>iOS</td><td><code>Nalxer-1.5.0-unsigned.ipa</code>（约 560 KB）</td><td>电脑装 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>，插上 iPhone，把 ipa 拖进去、填 Apple ID、点 Start</td></tr>
         </tbody>
       </table>
     </div>
@@ -755,7 +758,7 @@
       <li>连错 5 次锁 10 分钟，服务端 <code>audit.log</code> 里有记录。</li>
     </ul>
 
-    <h3>su 控制台（1.4.2）</h3>
+    <h3>su 控制台（1.5.0）</h3>
     <p>「管理 → 命令」最上面那张卡。验证过 Linux 身份之后，可以在弹窗里输入<b>任意命令</b>，不再受
        <code>admin.commands.allow</code> 白名单限制 —— 给东西、传送、改权限、装插件都行。</p>
     <ul>
@@ -925,7 +928,7 @@
     <div class="footer-brand">Nalxer App 帮助</div>
     <p>安装、配置、接口、App 用法，一页看完</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v1.4.2 · Android / iOS · Made with ♥ by Linux582021
+      v1.5.0 · Android / iOS · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
 <a href="index.html">← 插件列表</a>
