@@ -1215,23 +1215,33 @@
       var list = d.fakes || [];
       $('fake-list').innerHTML = list.length ? list.map(function (f) {
         var who = f.creator ? (' · 召唤者 ' + esc(f.creator)) : '';
+        var enabled = f.enabled !== false;
         var loaded = f.loaded !== false;
         var spawn = f.mobSpawning !== false;
-        var tags = '<span class="tag ' + (loaded ? 'ok' : '') + '">' + (loaded ? '区块已加载' : '区块没加载') + '</span>' +
-          '<span class="tag ' + (spawn ? 'ok' : '') + '">' + (spawn ? '会刷怪' : '不刷怪') + '</span>';
+        var tags = '<span class="tag ' + (enabled ? 'ok' : 'off') + '">' + (enabled ? '已启用' : '已停用') + '</span>';
+        if (enabled) {
+          tags += '<span class="tag ' + (loaded ? 'ok' : '') + '">' + (loaded ? '区块已加载' : '区块没加载') + '</span>' +
+            '<span class="tag ' + (spawn ? 'ok' : '') + '">' + (spawn ? '会刷怪' : '不刷怪') + '</span>';
+        } else {
+          tags += '<span class="tag off">不在服务器里，记录还留着</span>';
+        }
+        var btns = '<div class="seg" style="margin-top:8px">' +
+          '<button class="seg-btn" data-fake-toggle="enabled" data-on="' + (enabled ? '0' : '1') + '" data-name="' +
+          esc(f.name) + '">' + (enabled ? '停用假人' : '启用假人') + '</button>';
+        if (enabled) {
+          btns += '<button class="seg-btn" data-fake-toggle="load" data-on="' + (loaded ? '0' : '1') + '" data-name="' +
+            esc(f.name) + '">' + (loaded ? '停载区块' : '加载区块') + '</button>' +
+            '<button class="seg-btn" data-fake-toggle="spawn" data-on="' + (spawn ? '0' : '1') + '" data-name="' +
+            esc(f.name) + '">' + (spawn ? '关刷怪' : '开刷怪') + '</button>' +
+            '<button class="seg-btn" data-fake-respawn="' + esc(f.name) + '">重生</button>';
+        }
+        btns += '<button class="seg-btn" data-fake-remove="' + esc(f.name) + '">移除</button></div>';
         return '<div class="list-item" style="align-items:flex-start"><i class="dot' + (f.active ? ' on' : '') + '"></i>' +
           '<div class="main"><b>' + esc(f.name) + '</b>' +
           '<div class="sub">' + esc(f.world || '—') + ' · ' + Math.round(f.x) + ', ' + Math.round(f.y) + ', ' +
           Math.round(f.z) + who + '</div>' +
-          '<div class="tags" style="margin-top:6px">' + tags + '</div>' +
-          '<div class="seg" style="margin-top:8px">' +
-          '<button class="seg-btn" data-fake-toggle="load" data-on="' + (loaded ? '0' : '1') + '" data-name="' +
-          esc(f.name) + '">' + (loaded ? '停载区块' : '加载区块') + '</button>' +
-          '<button class="seg-btn" data-fake-toggle="spawn" data-on="' + (spawn ? '0' : '1') + '" data-name="' +
-          esc(f.name) + '">' + (spawn ? '关刷怪' : '开刷怪') + '</button>' +
-          '<button class="seg-btn" data-fake-respawn="' + esc(f.name) + '">重生</button>' +
-          '<button class="seg-btn" data-fake-remove="' + esc(f.name) + '">移除</button>' +
-          '</div></div></div>';
+          '<div class="tags" style="margin-top:6px">' + tags + '</div>' + btns +
+          '</div></div>';
       }).join('') : '<p class="empty">还没有假人</p>';
     }).catch(function (e) { $('fake-list').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; });
   }

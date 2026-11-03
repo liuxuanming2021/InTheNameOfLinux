@@ -276,6 +276,7 @@ a { color: var(--accent); }
   background: var(--chip); color: var(--muted);
 }
 .tag.ok { background: rgba(61, 220, 151, 0.16); color: var(--green); }
+.tag.off { background: var(--chip); color: var(--muted); }
 .tag.on { background: var(--accent-soft); color: var(--accent); }
 
 /* ── 命令 ────────────────────────────────────────── */
