@@ -1,56 +1,54 @@
-/* Nalxer App —— 前端逻辑（1.2.0）
- * 所有接口都带 Bearer 令牌，除了 /api/health 与 /api/login。
- */
+/* Nalxer App 1.3.0 —— 我的 / 聊天 / 队伍 / 头衔 / 命令 / 更多 */
 (function () {
   'use strict';
 
   var DEFAULT_SERVER = 'http://aam.rainplay.cn:49282';
-  var K = {
+
+  var LS = {
     server: 'nalxer.server',
     token: 'nalxer.token',
     name: 'nalxer.name',
     admin: 'nalxer.admin',
-    expire: 'nalxer.expire'
+    expire: 'nalxer.expire',
+    theme: 'nalxer.theme'
   };
 
-  var LS = window.localStorage;
+  var PAGE_TITLE = {
+    me: ['我的数据', ''],
+    chat: ['服务器聊天', '和游戏里的玩家一起聊'],
+    team: ['队伍', 'LinuxTeam'],
+    title: ['头衔', 'LinuxTitle'],
+    cmd: ['服务器命令', '只有管理员能用'],
+    more: ['更多', '在线玩家 / 管理 / 设置']
+  };
 
   var state = {
-    server: LS.getItem(K.server) || DEFAULT_SERVER,
-    token: LS.getItem(K.token) || '',
-    name: LS.getItem(K.name) || '',
-    admin: LS.getItem(K.admin) === '1',
-    expire: parseInt(LS.getItem(K.expire) || '0', 10) || 0,
+    server: '',
+    token: '',
+    name: '',
+    admin: false,
     page: 'me',
     me: null,
     chatLast: 0,
     chatMsgs: [],
-    chatTimer: null,
-    meTimer: null,
-    adminTab: 'ban',
-    selectedTarget: '',
+    chatTimer: 0,
+    adminTab: 'player',
     cmdCatalog: null,
     cmdGroup: '',
-    players: [],
-    team: null,
-    titles: null
+    timer: 0
   };
-
-  // ── 小工具 ──────────────────────────────────────────────
 
   function $(id) { return document.getElementById(id); }
 
   function esc(s) {
     return String(s == null ? '' : s)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  /** 去掉 &x / §x 色码，用于纯文本展示 */
+  /** 把 §6[元老] §r 这类色码去掉，只留文字 */
   function plain(s) {
-    return String(s == null ? '' : s).replace(/[&§][0-9a-fk-orA-FK-OR]/g, '');
+    return String(s == null ? '' : s).replace(/[\u00a7&][0-9a-fk-orx]/gi, '');
   }
 
   function normServer(v) {
@@ -60,846 +58,1024 @@
     return s.replace(/\/+$/, '');
   }
 
-  function fmtNum(n) {
-    if (n == null || n === '') return '—';
-    var v = Number(n);
-    if (!isFinite(v)) return String(n);
-    return v.toLocaleString('en-US');
-  }
-
-  function fmtTime(ms) {
-    if (!ms) return '—';
-    var d = new Date(Number(ms));
-    if (isNaN(d.getTime())) return '—';
-    var p = function (x) { return (x < 10 ? '0' : '') + x; };
-    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) +
-      ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
-  }
-
-  function fmtHours(sec) {
-    if (sec == null) return '—';
-    var h = Number(sec) / 3600;
-    if (h < 1) return Math.round(Number(sec) / 60) + ' 分钟';
-    return (Math.round(h * 10) / 10) + ' 小时';
-  }
-
-  var toastTimer = null;
-  function toast(msg, kind) {
+  function toast(msg) {
     var el = $('toast');
-    if (!el) return;
     el.textContent = msg;
-    el.className = 'toast' + (kind ? ' ' + kind : '');
-    if (toastTimer) clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { el.className = 'toast hidden'; }, 2600);
+    el.classList.remove('hidden');
+    clearTimeout(el._t);
+    el._t = setTimeout(function () { el.classList.add('hidden'); }, 2200);
   }
 
-  function showFatal(where, err) {
+  function fatal(prefix, detail) {
     var el = $('fatal');
-    if (!el) return;
-    var detail = err && err.message ? err.message : String(err || '');
-    el.textContent = (where ? where + '：' : '') + detail;
-    el.className = 'fatal';
-    setTimeout(function () { el.className = 'fatal hidden'; }, 6000);
+    el.textContent = prefix + (detail ? '\n' + detail : '');
+    el.classList.remove('hidden');
+    clearTimeout(el._t);
+    el._t = setTimeout(function () { el.classList.add('hidden'); }, 8000);
   }
 
-  window.onerror = function (msg, src, line) {
-    showFatal('页面出错', msg + ' @' + line);
-  };
-  window.addEventListener('unhandledrejection', function (e) {
-    showFatal('请求出错', e && e.reason ? e.reason : '未知错误');
-  });
+  // ── 主题 ─────────────────────────────────────────────
 
-  // ── 接口 ────────────────────────────────────────────────
-
-  function url(path, query) {
-    var u = state.server.replace(/\/+$/, '') + path;
-    if (!query) return u;
-    var parts = [];
-    Object.keys(query).forEach(function (k) {
-      var v = query[k];
-      if (v === undefined || v === null) return;
-      parts.push(encodeURIComponent(k) + '=' + encodeURIComponent(v));
-    });
-    return parts.length ? u + '?' + parts.join('&') : u;
+  function applyTheme(dark) {
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', dark ? '#0b0f14' : '#f4f6fa');
+    var sw = $('sw-theme');
+    if (sw) sw.setAttribute('aria-checked', dark ? 'true' : 'false');
   }
+
+  function initTheme() {
+    var saved = localStorage.getItem(LS.theme);
+    applyTheme(saved === 'dark');
+  }
+
+  function toggleTheme() {
+    var dark = document.documentElement.getAttribute('data-theme') !== 'dark';
+    applyTheme(dark);
+    localStorage.setItem(LS.theme, dark ? 'dark' : 'light');
+  }
+
+  // ── 请求 ─────────────────────────────────────────────
 
   function api(path, opts) {
     opts = opts || {};
-    var method = opts.method || 'GET';
-    var target = url(path, opts.query);
-    var ctrl = null;
-    var timer = null;
-    var init = { method: method, headers: {} };
-    if (state.token) init.headers['Authorization'] = 'Bearer ' + state.token;
-    if (opts.body) {
-      init.headers['Content-Type'] = 'application/json';
-      init.body = JSON.stringify(opts.body);
-    }
-    if (window.AbortController) {
-      ctrl = new AbortController();
-      init.signal = ctrl.signal;
-      timer = setTimeout(function () { ctrl.abort(); }, 10000);
-    }
-    return fetch(target, init).then(function (res) {
+    var url = state.server + path;
+    var headers = { 'Accept': 'application/json' };
+    if (opts.body != null) headers['Content-Type'] = 'application/json';
+    if (state.token) headers['Authorization'] = 'Bearer ' + state.token;
+
+    var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 10000) : 0;
+
+    return fetch(url, {
+      method: opts.method || (opts.body != null ? 'POST' : 'GET'),
+      headers: headers,
+      body: opts.body != null ? JSON.stringify(opts.body) : undefined,
+      signal: ctrl ? ctrl.signal : undefined
+    }).then(function (r) {
       if (timer) clearTimeout(timer);
-      return res.text().then(function (text) {
-        var json = null;
-        try { json = text ? JSON.parse(text) : null; } catch (e) { json = null; }
-        if (!res.ok) {
-          var msg = json && json.message ? json.message : ('服务器返回 ' + res.status);
-          if (res.status === 401) {
-            logout(true);
-            msg = msg || '登录过期了，请重新登录';
-          }
-          var err = new Error(msg);
-          err.status = res.status;
-          throw err;
+      return r.text().then(function (txt) {
+        var data = null;
+        try { data = txt ? JSON.parse(txt) : {}; } catch (e) { data = { ok: false, message: '服务器返回的不是 JSON' }; }
+        if (r.status === 401) {
+          if (!opts.quiet) { logout(true); }
+          throw new Error((data && data.message) || '登录已过期，请重新登录');
         }
-        return json || { ok: true };
+        return { status: r.status, data: data };
       });
-    }, function (e) {
+    }).catch(function (err) {
       if (timer) clearTimeout(timer);
-      if (e && e.name === 'AbortError') {
-        throw new Error('连接超时：' + target + '（10 秒没响应，多半是端口没放行或被防火墙挡了）');
+      if (err && err.name === 'AbortError') {
+        throw new Error('连接超时：' + url + '（10 秒没响应，多半是端口没放行或被防火墙挡了）');
       }
-      throw new Error('连不上 ' + target + ' —— 看这几点：服务器开着吗 / 云服务器安全组放行这个端口了吗 / plugins 里有没有 NalxerApp');
+      if (err && err.message && err.message.indexOf('登录已过期') >= 0) throw err;
+      if (err && err.message && err.message.indexOf('连接超时') >= 0) throw err;
+      throw new Error('连不上 ' + url + ' —— 看这几点：服务器开着吗 / 云服务器安全组放行这个端口了吗 / plugins 里有没有 NalxerApp');
     });
   }
 
-  // ── 登录 ────────────────────────────────────────────────
+  // ── 登录 / 退出 ──────────────────────────────────────
 
-  function setLoginMsg(text, bad) {
-    var el = $('login-msg');
-    if (!el) return;
-    el.textContent = text || '';
-    el.style.color = bad ? '#ff9b9b' : '';
+  function persist() {
+    localStorage.setItem(LS.server, state.server);
+    localStorage.setItem(LS.token, state.token);
+    localStorage.setItem(LS.name, state.name);
+    localStorage.setItem(LS.admin, state.admin ? '1' : '0');
   }
 
   function doLogin() {
-    var server = normServer($('f-server').value);
-    var name = String($('f-name').value || '').trim();
-    var pass = String($('f-pass').value || '');
-    if (!name) { setLoginMsg('先填游戏 ID', true); return; }
-    state.server = server;
-    $('f-server').value = server;
     var btn = $('btn-login');
+    var err = $('login-err');
+    err.classList.add('hidden');
+    state.server = normServer($('f-server').value);
+    var name = $('f-name').value.trim();
+    var pass = $('f-pass').value;
+    if (!name) { err.textContent = '先填游戏 ID'; err.classList.remove('hidden'); return; }
     btn.disabled = true;
-    setLoginMsg('登录中…');
-    api('/api/login', { method: 'POST', body: { name: name, password: pass } })
-      .then(function (r) {
-        state.token = r.token || '';
-        state.name = r.name || name;
-        state.admin = !!r.admin;
-        state.expire = Date.now() + (r.expiresIn ? r.expiresIn * 1000 : 0);
-        LS.setItem(K.server, state.server);
-        LS.setItem(K.token, state.token);
-        LS.setItem(K.name, state.name);
-        LS.setItem(K.admin, state.admin ? '1' : '0');
-        LS.setItem(K.expire, String(state.expire));
-        setLoginMsg('');
-        enterApp();
-        toast('登录成功，欢迎回来 ' + state.name, 'ok');
-      })
-      .catch(function (e) {
-        setLoginMsg(plain(e.message), true);
-      })
-      .then(function () { btn.disabled = false; });
+    btn.textContent = '登录中…';
+
+    api('/api/login', { body: { name: name, password: pass }, quiet: true }).then(function (r) {
+      var d = r.data || {};
+      if (!d.ok) throw new Error(d.message || '登录失败');
+      state.token = d.token || '';
+      state.name = d.name || name;
+      state.admin = !!d.admin;
+      persist();
+      enterApp();
+    }).catch(function (e) {
+      err.textContent = e.message;
+      err.classList.remove('hidden');
+    }).then(function () {
+      btn.disabled = false;
+      btn.textContent = '登录';
+    });
   }
 
   function logout(silent) {
     state.token = '';
+    state.name = '';
+    state.admin = false;
     state.me = null;
     state.chatMsgs = [];
     state.chatLast = 0;
-    state.titles = null;
-    state.team = null;
-    LS.removeItem(K.token);
-    LS.removeItem(K.name);
-    LS.removeItem(K.admin);
-    LS.removeItem(K.expire);
+    localStorage.removeItem(LS.token);
+    localStorage.removeItem(LS.name);
+    localStorage.removeItem(LS.admin);
     stopTimers();
     $('app').classList.add('hidden');
     $('login').classList.remove('hidden');
-    $('f-pass').value = '';
     if (!silent) toast('已退出登录');
   }
 
   function enterApp() {
     $('login').classList.add('hidden');
     $('app').classList.remove('hidden');
-    $('page-sub').textContent = state.name;
+    $('tab-cmd').classList.toggle('hidden', !state.admin);
     $('admin-card').classList.toggle('hidden', !state.admin);
+    $('status-card').classList.toggle('hidden', !state.admin);
+    $('f-server-edit').value = state.server;
     $('set-name').textContent = state.name;
     $('set-server').textContent = state.server.replace(/^https?:\/\//, '');
     $('set-admin').textContent = state.admin ? '有' : '否';
-    $('f-server-edit').value = state.server;
     switchPage(state.page || 'me');
     loadMe();
     startTimers();
   }
 
-  // ── 顶部 / 底部导航 ─────────────────────────────────────
+  // ── 页面切换 ─────────────────────────────────────────
 
-  var PAGE_TITLE = {
-    me: ['我的数据', ''],
-    chat: ['服务器聊天', '和游戏里的玩家一起聊'],
-    team: ['队伍', 'LinuxTeam'],
-    title: ['头衔', 'LinuxTitle'],
-    more: ['更多', '在线玩家 · 管理 · 设置']
+  var PAGE_IDS = {
+    me: 'page-me', chat: 'page-chat', team: 'page-team',
+    title: 'page-titles', cmd: 'page-cmd', more: 'page-more'
   };
 
   function switchPage(page) {
+    if (!PAGE_IDS[page]) page = 'me';
+    if (page === 'cmd' && !state.admin) page = 'more';
     state.page = page;
-    var ids = { me: 'page-me', chat: 'page-chat', team: 'page-team', title: 'page-titles', more: 'page-more' };
-    Object.keys(ids).forEach(function (p) {
-      var el = $(ids[p]);
+
+    Object.keys(PAGE_IDS).forEach(function (p) {
+      var el = $(PAGE_IDS[p]);
       if (el) el.classList.toggle('hidden', p !== page);
     });
     Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (b) {
       b.classList.toggle('active', b.getAttribute('data-page') === page);
     });
+
     var meta = PAGE_TITLE[page] || ['Nalxer', ''];
     $('page-title').textContent = meta[0];
-    $('page-sub').textContent = state.name + (meta[1] ? ' · ' + meta[1] : '');
-    if (page === 'chat') {
-      $('chat-badge').classList.add('hidden');
-      loadChat(true);
-    }
+    $('page-sub').textContent = meta[1] || state.name;
+    window.scrollTo(0, 0);
+
+    if (page === 'chat') { $('chat-dot').classList.add('hidden'); loadChat(); }
     if (page === 'team') loadTeam();
     if (page === 'title') loadTitles();
-    if (page === 'more') {
-      loadPlayers();
-      if (state.admin) setAdminTab(state.adminTab || 'ban');
-    }
-    if (page === 'me') loadMe();
+    if (page === 'cmd') loadCommands();
+    if (page === 'more') { loadPlayers(); if (state.admin) setAdminTab(state.adminTab || 'player'); }
   }
 
-  function startTimers() {
-    stopTimers();
-    state.meTimer = setInterval(function () {
-      if (state.page === 'me') loadMe(true);
-    }, 30000);
-    state.chatTimer = setInterval(function () {
-      if (state.page === 'chat') loadChat(false);
-    }, 5000);
-  }
+  // ── 我的 ─────────────────────────────────────────────
 
-  function stopTimers() {
-    if (state.meTimer) clearInterval(state.meTimer);
-    if (state.chatTimer) clearInterval(state.chatTimer);
-    state.meTimer = null;
-    state.chatTimer = null;
-  }
-
-  // ── 我的 ────────────────────────────────────────────────
-
-  function kv(label, value) {
-    return '<div class="kv"><span>' + esc(label) + '</span><b>' + esc(value == null ? '—' : value) + '</b></div>';
-  }
-
-  /** 写数字卡片：太长就自动降字号，别截断成省略号。 */
   function setStat(id, text) {
     var el = $(id);
     if (!el) return;
     el.textContent = text;
     var n = String(text).length;
-    el.classList.toggle('long', n > 7 && n <= 10);
-    el.classList.toggle('xlong', n > 10);
+    el.classList.toggle('long', n >= 8 && n < 11);
+    el.classList.toggle('xlong', n >= 11);
+  }
+
+  function fmt(n) {
+    if (n == null) return '—';
+    return Number(n).toLocaleString('en-US');
+  }
+
+  function fmtTime(ms) {
+    if (!ms || Number(ms) <= 0) return '—';
+    var d = new Date(Number(ms));
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' +
+      pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function hoursText(h) {
+    if (h == null) return '—';
+    var v = Number(h);
+    if (v < 1) return Math.round(v * 60) + ' 分钟';
+    return (Math.round(v * 10) / 10) + ' 小时';
+  }
+
+  function loadMe() {
+    api('/api/me').then(function (r) {
+      var d = r.data || {};
+      if (!d.ok) { toast(d.message || '读不到数据'); return; }
+      state.me = d.data;
+      renderMe(d.data);
+      loadCheckin();
+      if (state.admin) loadStatus();
+    }).catch(function (e) { fatal('读取数据失败', e.message); });
   }
 
   function renderMe(d) {
-    state.me = d;
     $('me-name').textContent = d.name || state.name;
-    $('me-dot').className = 'dot ' + (d.online ? 'on' : 'off');
-    $('me-state').textContent = d.online
-      ? ('在线' + (d.world ? ' · ' + d.world : '') + (d.gamemode ? ' · ' + d.gamemode : ''))
-      : '离线（显示的是上次存档的数据）';
+    $('me-dot').classList.toggle('on', !!d.online);
 
-    // 头像：先放首字母，皮肤拿到再换
-    var av = $('avatar');
-    var initial = String(d.name || '?').trim().charAt(0).toUpperCase();
-    av.textContent = initial;
-    av.style.background = 'linear-gradient(150deg, #4cc2ff, #7c6cff)';
-    if (d.uuid) {
-      var img = new Image();
-      img.onload = function () {
-        av.textContent = '';
-        av.style.background = 'transparent';
-        img.style.width = '100%';
-        img.style.height = '100%';
-        img.style.borderRadius = '15px';
-        img.style.objectFit = 'cover';
-        av.appendChild(img);
-      };
-      img.src = 'https://crafatar.com/avatars/' + encodeURIComponent(d.uuid) + '?size=116&overlay';
-    }
-
-    // 徽标：队伍 + 头衔
     var badges = [];
-    badges.push('<span class="badge">' + esc(d.team ? plain(d.team) : '无队伍') + '</span>');
-    if (d.titleName) badges.push('<span class="badge gold">' + esc(plain(d.titleName)) + '</span>');
-    if (d.muted) badges.push('<span class="badge" style="color:#ffb3b3;border-color:rgba(255,107,107,.35)">已禁言</span>');
+    if (d.team) badges.push('<span class="badge">' + esc(plain(d.team)) + '</span>');
+    else badges.push('<span class="badge gray">无队伍</span>');
+    if (d.titleName) badges.push('<span class="badge gold">' + esc(d.titleName) + '</span>');
+    else badges.push('<span class="badge gray">无头衔</span>');
+    if (d.online) badges.push('<span class="badge">在线</span>');
     $('me-badges').innerHTML = badges.join('');
 
-    setStat('me-coins', d.hasCoins ? fmtNum(d.coins) : '—');
-    setStat('me-points', d.hasPoints ? fmtNum(d.points) : '—');
-    setStat('me-level', d.level == null ? '—' : fmtNum(d.level));
+    setStat('me-coins', d.hasCoins ? fmt(d.coins) : '—');
+    setStat('me-points', d.hasPoints ? fmt(d.points) : '—');
+    setStat('me-level', d.level == null ? '—' : '' + d.level);
 
-    var need = Number(d.expToNext || 0);
-    var into = Number(d.expIntoLevel || 0);
-    var pct = need > 0 ? Math.max(0, Math.min(100, (into / need) * 100)) : 0;
-    $('me-exp-fill').style.width = pct.toFixed(1) + '%';
-    $('me-exp-text').textContent = d.level == null ? '—'
-      : (fmtNum(into) + ' / ' + fmtNum(need) + ' 经验（' + pct.toFixed(0) + '%）');
-    $('me-exp-total').textContent = d.totalExp == null ? '' : ('总经验 ' + fmtNum(d.totalExp));
+    var into = d.expIntoLevel || 0;
+    var need = d.expToNext || 0;
+    var pct = need > 0 ? Math.min(100, Math.round(into * 100 / need)) : 0;
+    $('me-exp-fill').style.width = pct + '%';
+    $('me-exp-text').textContent = need > 0
+      ? fmt(into) + ' / ' + fmt(need) + ' 经验（' + pct + '%）'
+      : (d.levelLive ? '满级/无进度' : '离线时读不到进度');
+    $('me-exp-total').textContent = '总经验 ' + fmt(d.totalExp || 0);
 
-    // 实时状态
+    var avatar = $('me-avatar');
+    if (d.uuid) {
+      avatar.innerHTML = '<img alt="" src="https://crafatar.com/avatars/' + esc(d.uuid) +
+        '?size=96&overlay" onerror="this.parentNode.textContent=\'' +
+        esc((d.name || '?').slice(0, 1).toUpperCase()) + '\'">';
+    } else {
+      avatar.textContent = (d.name || '?').slice(0, 1).toUpperCase();
+    }
+
     if (d.online) {
       $('me-live-card').classList.remove('hidden');
-      var rows = [];
-      if (d.health != null) rows.push(kv('生命', d.health + ' / ' + d.maxHealth));
-      if (d.food != null) rows.push(kv('饥饿值', d.food));
-      if (d.ping != null) rows.push(kv('延迟', d.ping + ' ms'));
-      if (d.world) rows.push(kv('世界', d.world));
-      $('me-live').innerHTML = rows.join('');
+      $('me-live-tag').textContent = '在线';
+      $('me-live-tag').style.color = 'var(--green)';
+      var rows = [
+        ['生命', (d.health == null ? '—' : Math.round(d.health)) + ' / ' + (d.maxHealth == null ? '—' : Math.round(d.maxHealth))],
+        ['饥饿值', d.food == null ? '—' : d.food],
+        ['延迟', (d.ping == null ? '—' : d.ping + ' ms')],
+        ['世界', d.world || '—'],
+        ['游戏模式', d.gamemode || '—']
+      ];
+      $('me-live').innerHTML = rows.map(function (r) {
+        return '<span>' + esc(r[0]) + '</span><b>' + esc(r[1]) + '</b>';
+      }).join('');
     } else {
       $('me-live-card').classList.add('hidden');
     }
 
-    // 封禁卡
     if (d.banned) {
       $('me-ban-card').classList.remove('hidden');
-      $('me-ban-reason').textContent = plain(d.banReason) || '未填写原因';
-      $('me-ban-until').textContent = d.banUntil ? ('解封时间：' + plain(d.banUntil)) : '永久封禁';
+      $('me-ban').innerHTML =
+        '<span>原因</span><b>' + esc(d.banReason || '未填写原因') + '</b>' +
+        '<span>到期</span><b>' + esc(d.banUntil ? fmtTime(d.banUntil) : '永久') + '</b>';
     } else {
       $('me-ban-card').classList.add('hidden');
     }
 
-    // 明细
-    var list = [];
-    list.push('<div class="row"><span>在线时长</span><b>' + esc(fmtHours(d.playtimeSeconds)) + '</b></div>');
-    list.push('<div class="row"><span>首次进服</span><b>' + esc(fmtTime(d.firstPlayed)) + '</b></div>');
-    list.push('<div class="row"><span>最近进服</span><b>' + esc(fmtTime(d.lastPlayed)) + '</b></div>');
-    if (d.teamInfo) {
-      list.push('<div class="row"><span>队伍</span><b>' + esc(plain(d.teamInfo.coloredName || d.teamInfo.name)) + '</b></div>');
-      if (d.teamInfo.leaderName) {
-        list.push('<div class="row"><span>队长</span><b>' + esc(d.teamInfo.leaderName) + '</b></div>');
-      }
-    }
-    if (d.titleName) {
-      list.push('<div class="row"><span>头衔</span><b>' + esc(plain(d.titleName)) + '</b></div>');
-    }
-    list.push('<div class="row"><span>UUID</span><b style="font-size:11.5px">' + esc(d.uuid || '—') + '</b></div>');
-    $('me-rows').innerHTML = list.join('');
+    var info = [
+      ['在线时长', hoursText(d.playtimeHours)],
+      ['首次进服', fmtTime(d.firstPlayed)],
+      ['最近进服', fmtTime(d.lastPlayed)],
+      ['当前头衔', d.titleName || '无'],
+      ['UUID', d.uuid || '—']
+    ];
+    $('me-rows').innerHTML = info.map(function (r) {
+      return '<span>' + esc(r[0]) + '</span><b>' + esc(r[1]) + '</b>';
+    }).join('');
   }
 
-  function loadMe(silent) {
-    return api('/api/me').then(function (r) {
-      renderMe(r.data || {});
+  function loadCheckin() {
+    api('/api/checkin').then(function (r) {
+      var d = r.data || {};
+      if (!d.ok) return;
+      var info = d.info || {};
+      $('ck-streak').textContent = info.streak || 0;
+      $('ck-total').textContent = info.total || 0;
+      var btn = $('btn-checkin');
+      if (!d.server) {
+        btn.disabled = true;
+        btn.textContent = '没接经济';
+        $('ck-hint').textContent = '服务器没接金币/点券，签到发不出奖励';
+      } else if (info.claimed) {
+        btn.disabled = true;
+        btn.textContent = '已签到';
+        $('ck-hint').textContent = '今天签过了，明天 0 点再来';
+      } else {
+        btn.disabled = false;
+        btn.textContent = '签到';
+        $('ck-hint').textContent = '每天 0 点重置，随机 5000 金币或 1-5 点券';
+      }
+    }).catch(function () {});
+  }
+
+  function doCheckin() {
+    var btn = $('btn-checkin');
+    btn.disabled = true;
+    btn.textContent = '领取中…';
+    api('/api/checkin', { body: { op: 'claim' } }).then(function (r) {
+      var d = r.data || {};
+      toast(d.message || (d.ok ? '签到成功' : '签到失败'));
+      if (d.info) {
+        $('ck-streak').textContent = d.info.streak || 0;
+        $('ck-total').textContent = d.info.total || 0;
+        if (d.info.claimed) { btn.textContent = '已签到'; btn.disabled = true; }
+      }
+      loadMe();
     }).catch(function (e) {
-      if (!silent) toast(plain(e.message), 'bad');
+      toast(e.message);
+      btn.disabled = false;
+      btn.textContent = '签到';
     });
   }
 
-  // ── 聊天 ────────────────────────────────────────────────
+  // ── 聊天 ─────────────────────────────────────────────
+
+  function loadChat() {
+    api('/api/chat?since=' + (state.chatLast || 0)).then(function (r) {
+      var d = r.data || {};
+      if (!d.ok) return;
+      $('chat-online').textContent = (d.online || 0) + ' 人在线';
+      var msgs = d.messages || [];
+      if (msgs.length) {
+        state.chatLast = d.last || state.chatLast;
+        state.chatMsgs = state.chatMsgs.concat(msgs).slice(-200);
+        renderChat();
+      } else if (!state.chatMsgs.length) {
+        renderChat();
+      }
+    }).catch(function () {});
+  }
 
   function renderChat() {
     var box = $('chat-list');
     if (!state.chatMsgs.length) {
-      box.innerHTML = '<p class="muted">还没有人说话，打个招呼？</p>';
+      box.innerHTML = '<p class="empty">还没有人说话，打个招呼？</p>';
       return;
     }
     box.innerHTML = state.chatMsgs.map(function (m) {
-      var cls = 'msg' + (m.name === state.name ? ' self' : '') + (m.source === 'app' ? ' app' : '');
+      var mine = m.name === state.name && m.source === 'app';
+      var cls = 'msg' + (mine ? ' mine' : '') + (m.source === 'console' ? ' console' : '');
+      // 控制台发的话名字本来就是「控制台」，别再重复一次
+      var tag = m.source === 'console' ? '' : (m.source === 'app' ? ' · App' : ' · 游戏');
+      var t = new Date(m.time || Date.now());
+      var when = pad(t.getHours()) + ':' + pad(t.getMinutes());
       return '<div class="' + cls + '">' +
-        '<div class="who">' + esc(m.name) + ' · ' + esc(fmtTime(m.time).slice(11)) + '</div>' +
-        '<div class="bubble"><span class="text">' + esc(m.text) + '</span></div>' +
-        '</div>';
+        '<div class="meta">' + esc(m.name) + ' · ' + when + esc(tag) + '</div>' +
+        '<div class="bubble">' + esc(m.text) + '</div></div>';
     }).join('');
-    var last = box.lastElementChild;
-    if (last && last.scrollIntoView) last.scrollIntoView({ block: 'end' });
-  }
-
-  function loadChat(full) {
-    return api('/api/chat', { query: { since: full ? 0 : state.chatLast, limit: 60 } })
-      .then(function (r) {
-        var msgs = r.messages || [];
-        if (full) {
-          state.chatMsgs = msgs;
-        } else if (msgs.length) {
-          state.chatMsgs = state.chatMsgs.concat(msgs).slice(-120);
-          if (state.page !== 'chat') $('chat-badge').classList.remove('hidden');
-        }
-        if (r.last) state.chatLast = r.last;
-        $('chat-online').textContent = (r.online != null ? r.online + ' 人在线' : '');
-        renderChat();
-      })
-      .catch(function (e) { toast(plain(e.message), 'bad'); });
+    box.scrollTop = box.scrollHeight;
+    window.scrollTo(0, document.body.scrollHeight);
   }
 
   function sendChat() {
     var input = $('f-chat');
-    var text = String(input.value || '').trim();
-    if (!text) { toast('先说点什么'); return; }
-    var btn = $('btn-chat-send');
-    btn.disabled = true;
-    api('/api/chat', { method: 'POST', body: { message: text } })
-      .then(function (r) {
-        input.value = '';
-        toast(r.message || '已发到服务器', 'ok');
-        loadChat(false);
-      })
-      .catch(function (e) { toast(plain(e.message), 'bad'); })
-      .then(function () { btn.disabled = false; });
+    var text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    api('/api/chat', { body: { message: text } }).then(function (r) {
+      var d = r.data || {};
+      if (!d.ok) { toast(d.message || '发送失败'); return; }
+      loadChat();
+    }).catch(function (e) { toast(e.message); });
   }
 
-  // ── 队伍 ────────────────────────────────────────────────
+  // ── 队伍 ─────────────────────────────────────────────
 
-  function renderTeam(r) {
-    var team = r.team;
-    state.team = team;
+  function loadTeam() {
+    api('/api/team').then(function (r) {
+      var d = r.data || {};
+      if (!d.ok) { toast(d.message || '读不到队伍'); return; }
+      renderTeam(d);
+    }).catch(function (e) { fatal('读取队伍失败', e.message); });
+  }
+
+  function renderTeam(d) {
+    var team = d.team;
     if (team) {
       $('team-mine').classList.remove('hidden');
       $('team-none').classList.add('hidden');
-      $('team-name').textContent = plain(team.coloredName || team.name) || '我的队伍';
-      $('team-size').textContent = (team.size || 0) + ' / ' + (team.maxSize || 0) + ' 人';
-      $('team-kv').innerHTML = [
-        kv('队伍名', plain(team.name)),
-        kv('队标', plain(team.coloredTag || team.tag) || '无'),
-        kv('队长', team.leaderName || '—'),
-        kv('建队时间', fmtTime(team.createTime))
-      ].join('');
+      $('team-name').textContent = plain(team.coloredName || team.name) +
+        (team.tag ? '（' + plain(team.coloredTag || team.tag) + '）' : '');
+      $('team-sub').textContent = '队长 ' + (team.leaderName || '—') + ' · ' +
+        (team.size || 0) + ' / ' + (team.maxSize || 0) + ' 人';
+
+      var isLeader = (team.leaderName || '').toLowerCase() === state.name.toLowerCase();
       var members = team.members || [];
-      $('team-member-count').textContent = members.length + ' 人';
-      $('team-members').innerHTML = members.length ? members.map(function (m) {
-        var tag = m.online ? '<span class="tag ok">在线</span>' : '<span class="tag">离线</span>';
-        var lead = m.name === team.leaderName ? ' <span class="badge gold">队长</span>' : '';
-        return '<div class="row"><span>' + esc(m.name) + lead + '</span><span>' + tag + '</span></div>';
-      }).join('') : '<p class="muted">没有成员数据</p>';
+      $('team-members').innerHTML = members.map(function (m) {
+        var canKick = isLeader && (m.name || '').toLowerCase() !== state.name.toLowerCase();
+        return '<div class="member">' +
+          '<i class="dot' + (m.online ? ' on' : '') + '"></i>' +
+          '<div class="who"><b>' + esc(m.name) + '</b><span>贡献 ' + (m.contribution || 0) +
+          ' · 在队 ' + (m.days || 0) + ' 天</span></div>' +
+          (canKick ? '<button class="btn btn-mini" data-kick="' + esc(m.name) + '">踢出</button>' : '') +
+          '</div>';
+      }).join('') || '<p class="empty">队伍里只有你</p>';
+
+      var acts = [];
+      if (isLeader) {
+        acts.push('<button class="seg-btn" data-team="disband">解散队伍</button>');
+      }
+      $('team-actions').innerHTML = acts.join('');
     } else {
       $('team-mine').classList.add('hidden');
       $('team-none').classList.remove('hidden');
-      var list = r.teams || [];
-      $('team-list').innerHTML = list.length ? list.map(function (t) {
-        return '<div class="row"><span>' + esc(plain(t.coloredName || t.name)) +
-          ' <span class="muted">' + esc(plain(t.coloredTag || t.tag) || '') + '</span></span>' +
-          '<span class="muted">' + (t.size || 0) + '/' + (t.maxSize || 0) + ' · ' + esc(t.leaderName || '') + '</span></div>';
-      }).join('') : '<p class="muted">服务器上还没有队伍</p>';
     }
-    if (r.available === false) toast('服务器没装 LinuxTeam，队伍功能不可用', 'bad');
-  }
 
-  function loadTeam() {
-    return api('/api/team').then(renderTeam).catch(function (e) {
-      toast(plain(e.message), 'bad');
-    });
+    var list = d.teams || [];
+    $('team-count').textContent = list.length ? list.length + ' 个' : '—';
+    $('team-list').innerHTML = list.length ? list.map(function (t) {
+      var joined = team && t.name === team.name;
+      return '<div class="list-item"><div class="main"><b>' + esc(plain(t.coloredName || t.name)) + '</b>' +
+        '<div class="sub">队长 ' + esc(t.leaderName || '—') + ' · ' + (t.size || 0) + '/' + (t.maxSize || 0) + ' 人</div>' +
+        '<div class="tags"><span class="tag">标识 ' + esc(plain(t.tag || '—')) + '</span></div></div>' +
+        (joined ? '<span class="tag on">我的队伍</span>'
+          : '<button class="btn btn-mini" data-join="' + esc(t.name) + '">加入</button>') +
+        '</div>';
+    }).join('') : '<p class="empty">服务器上还没有队伍</p>';
   }
 
   function teamAction(action, arg) {
-    return api('/api/team', { method: 'POST', body: { action: action, arg: arg || '' } })
-      .then(function (r) {
-        toast(plain(r.message) || '操作完成', 'ok');
-        loadTeam();
-      })
-      .catch(function (e) {
-        toast(plain(e.message), 'bad');
-        loadTeam();
-      });
+    api('/api/team', { body: { action: action, arg: arg || '' } }).then(function (r) {
+      var d = r.data || {};
+      toast(d.message || (d.ok ? '完成' : '失败'));
+      loadTeam();
+      loadMe();
+    }).catch(function (e) { toast(e.message); });
   }
 
-  // ── 头衔 ────────────────────────────────────────────────
-
-  var STAT_NAME = { mining: '挖矿', farming: '收获', deaths: '死亡', fishing: '钓鱼' };
-
-  /** 把 LinuxTitle 的 condition 翻成人话。 */
-  function condText(t) {
-    var type = String(t.conditionType || '');
-    var v = Number(t.conditionValue || 0);
-    var hours = Math.round(v / 3600000 * 10) / 10;
-    if (type === 'playtime') return '累计在线 ' + hours + ' 小时';
-    if (type === 'daily_playtime') return '今日在线 ' + hours + ' 小时';
-    if (type === 'statistic') {
-      var name = STAT_NAME[t.statisticType || ''] || t.statisticType || '统计';
-      return name + ' ' + fmtNum(v) + ' 次';
-    }
-    if (type === 'festival') return '节日活动';
-    if (type === 'manual') return '管理员发放';
-    if (t.permission) return '需要权限 ' + t.permission;
-    return type || t.id;
-  }
-
-  function renderTitles(r) {
-    var d = r.data || {};
-    state.titles = d;
-    var active = d.activeTitle;
-    $('title-active').textContent = active ? plain(active.display || active.id) : '未佩戴';
-    $('btn-title-off').disabled = !active;
-    var list = d.titles || [];
-    $('title-count').textContent = (d.unlockedCount || 0) + ' / ' + (d.total || list.length);
-    if (!list.length) {
-      $('title-list').innerHTML = '<p class="muted">服务器上还没有配置头衔</p>';
-      return;
-    }
-    $('title-list').innerHTML = list.map(function (t) {
-      var locked = !t.unlocked;
-      var cond = condText(t);
-      var btn = t.active
-        ? '<button class="mini-btn on" disabled>佩戴中</button>'
-        : '<button class="mini-btn" data-title="' + esc(t.id) + '"' + (locked ? ' disabled' : '') + '>' +
-          (locked ? '未解锁' : '佩戴') + '</button>';
-      return '<div class="row title-row"><div class="title-main">' +
-        '<div class="title-name">' + esc(plain(t.display || t.id)) + '</div>' +
-        '<div class="title-cond">' + esc(cond) + '</div>' +
-        '</div><div class="title-btns">' + btn + '</div></div>';
-    }).join('');
-    Array.prototype.forEach.call($('title-list').querySelectorAll('button[data-title]'), function (b) {
-      b.onclick = function () { equipTitle(b.getAttribute('data-title')); };
-    });
-    if (r.available === false) toast('服务器没装 LinuxTitle，头衔功能不可用', 'bad');
-  }
+  // ── 头衔 ─────────────────────────────────────────────
 
   function loadTitles() {
-    return api('/api/titles').then(renderTitles).catch(function (e) {
-      toast(plain(e.message), 'bad');
-    });
+    api('/api/titles').then(function (r) {
+      var d = r.data || {};
+      if (!d.ok) { toast(d.message || '读不到头衔'); return; }
+      renderTitles(d.data || {});
+    }).catch(function (e) { fatal('读取头衔失败', e.message); });
+  }
+
+  var STAT_NAME = { mining: '挖矿', farming: '收获', deaths: '死亡', fishing: '钓鱼', kills: '击杀', mobkills: '杀怪' };
+
+  function condText(t) {
+    var v = t.conditionValue || 0;
+    var ct = t.conditionType || '';
+    if (t.permission) return '需要权限 ' + t.permission;
+    if (ct === 'playtime') return '累计在线 ' + Math.round(v / 3600000) + ' 小时';
+    if (ct === 'daily_playtime') return '今日在线 ' + Math.round(v / 3600000) + ' 小时';
+    if (ct === 'statistic') return (STAT_NAME[t.statisticType] || t.statisticType || '统计') + ' ' + fmt(v) + ' 次';
+    if (ct === 'festival') return '节日活动';
+    if (ct === 'manual') return '管理员发放';
+    return ct || '—';
+  }
+
+  function renderTitles(data) {
+    var titles = data.titles || [];
+    var activeTitle = data.activeTitle;
+    var active = titles.filter(function (t) { return t.active; })[0];
+
+    if (active || activeTitle) {
+      $('title-active').textContent = active ? active.display : plain(activeTitle);
+      $('title-active-sub').textContent = active ? (active.prefix || '').replace(/§./g, '') : '';
+      $('btn-title-off').classList.remove('hidden');
+    } else {
+      $('title-active').textContent = '还没戴头衔';
+      $('title-active-sub').textContent = '下面挑一个戴上';
+      $('btn-title-off').classList.add('hidden');
+    }
+
+    $('title-count').textContent = (data.unlockedCount || 0) + ' / ' + (data.total || titles.length);
+
+    $('title-list').innerHTML = titles.length ? titles.map(function (t) {
+      var tag = t.active ? '<span class="tag on">佩戴中</span>'
+        : (t.unlocked ? '<span class="tag ok">已解锁</span>' : '<span class="tag">未解锁</span>');
+      var btn = t.active ? '' :
+        '<button class="btn btn-mini" data-title="' + esc(t.id) + '">' + (t.unlocked ? '戴上' : '查看') + '</button>';
+      var prog = '';
+      if (!t.unlocked && t.progress >= 0 && t.conditionValue > 0) {
+        var pct = Math.min(100, Math.round(t.progress * 100 / t.conditionValue));
+        prog = '<div class="exp-bar" style="margin:6px 0 0;height:6px"><i style="width:' + pct + '%"></i></div>' +
+          '<div class="hint">进度 ' + pct + '%</div>';
+      }
+      return '<div class="list-item"><div class="main"><b>' + esc(t.display || t.id) + '</b>' +
+        '<div class="sub">' + esc(condText(t)) + '</div>' + prog + '</div>' +
+        '<div class="tags">' + tag + '</div>' + btn + '</div>';
+    }).join('') : '<p class="empty">服务器上没有配头衔</p>';
   }
 
   function equipTitle(id) {
-    api('/api/titles', { method: 'POST', body: { id: id || '' } })
-      .then(function (r) {
-        toast(plain(r.message) || '已更新头衔', 'ok');
-        renderTitles({ ok: true, available: true, data: r.data || {} });
-        loadMe(true);
-      })
-      .catch(function (e) { toast(plain(e.message), 'bad'); });
+    api('/api/titles', { body: { id: id || '' } }).then(function (r) {
+      var d = r.data || {};
+      toast(d.message || (d.ok ? '完成' : '失败'));
+      if (d.data) renderTitles(d.data);
+      loadMe();
+    }).catch(function (e) { toast(e.message); });
   }
 
-  // ── 在线玩家 ────────────────────────────────────────────
-
-  function loadPlayers() {
-    return api('/api/players').then(function (r) {
-      var list = r.players || [];
-      state.players = list;
-      $('players-list').innerHTML = list.length ? list.map(function (p) {
-        var team = p.team ? plain(p.team) : '';
-        var sub = [team, p.world, p.gamemode, p.ping != null ? p.ping + 'ms' : ''].filter(Boolean).join(' · ');
-        return '<div class="row"><span>' + esc(p.name) +
-          (p.titleId ? ' <span class="badge gold">' + esc(p.titleId) + '</span>' : '') +
-          '</span><span class="muted">' + esc(sub) + '</span></div>';
-      }).join('') : '<p class="muted">现在没人在线</p>';
-    }).catch(function (e) { toast(plain(e.message), 'bad'); });
-  }
-
-  // ── 管理员：封禁 ────────────────────────────────────────
-
-  function setAdminTab(tab) {
-    state.adminTab = tab;
-    $('admin-ban-view').classList.toggle('hidden', tab !== 'ban');
-    $('admin-cmd-view').classList.toggle('hidden', tab !== 'cmd');
-    Array.prototype.forEach.call(document.querySelectorAll('#admin-tabs .seg-btn'), function (b) {
-      b.classList.toggle('active', b.getAttribute('data-admin-tab') === tab);
-    });
-    if (tab === 'ban') loadBans();
-    if (tab === 'cmd') loadCommands();
-  }
-
-  function searchPlayers() {
-    var q = String($('f-search').value || '').trim();
-    if (!q) { toast('先输入名字'); return; }
-    api('/api/admin/search', { query: { q: q } }).then(function (r) {
-      var hits = r.hits || [];
-      if (!hits.length) {
-        $('search-result').innerHTML = '<p class="muted">没找到叫这个名字的玩家</p>';
-        return;
-      }
-      $('search-result').innerHTML = hits.map(function (h) {
-        var tags = [];
-        if (h.online) tags.push('<span class="tag ok">在线</span>');
-        if (h.banned) tags.push('<span class="tag bad">已封禁</span>');
-        return '<div class="row"><span>' + esc(h.name) + ' ' + tags.join(' ') + '</span>' +
-          '<button class="mini-btn" data-pick="' + esc(h.name) + '">处理</button></div>';
-      }).join('');
-      Array.prototype.forEach.call($('search-result').querySelectorAll('button[data-pick]'), function (b) {
-        b.onclick = function () {
-          state.selectedTarget = b.getAttribute('data-pick');
-          $('ban-target').textContent = '目标：' + state.selectedTarget;
-          $('ban-form').classList.remove('hidden');
-        };
-      });
-    }).catch(function (e) { toast(plain(e.message), 'bad'); });
-  }
-
-  function loadBans() {
-    return api('/api/admin/bans').then(function (r) {
-      var list = r.bans || [];
-      $('bans-count').textContent = (r.count || list.length) + ' 条';
-      $('bans-list').innerHTML = list.length ? list.map(function (b) {
-        return '<div class="row"><div style="min-width:0"><div>' + esc(b.player) + '</div>' +
-          '<div class="muted" style="overflow:hidden;text-overflow:ellipsis">' + esc(plain(b.reason)) + '</div></div>' +
-          '<div style="display:flex;align-items:center;gap:8px;flex:0 0 auto">' +
-          '<span class="muted">' + esc(b.expire || '永久') + '</span>' +
-          '<button class="mini-btn" data-unban="' + esc(b.player) + '">解封</button></div></div>';
-      }).join('') : '<p class="muted">没有封禁记录</p>';
-      Array.prototype.forEach.call($('bans-list').querySelectorAll('button[data-unban]'), function (btn) {
-        btn.onclick = function () { doUnban(btn.getAttribute('data-unban')); };
-      });
-    }).catch(function (e) { toast(plain(e.message), 'bad'); });
-  }
-
-  function doBan() {
-    if (!state.selectedTarget) { toast('先搜索并选一个玩家'); return; }
-    var reason = String($('f-ban-reason').value || '').trim();
-    var minutes = parseInt($('f-ban-minutes').value, 10) || 0;
-    if (!confirm('确定封禁 ' + state.selectedTarget + '？')) return;
-    api('/api/admin/ban', { method: 'POST', body: { name: state.selectedTarget, reason: reason, minutes: minutes } })
-      .then(function (r) {
-        toast(plain(r.message) || '已封禁', 'ok');
-        loadBans();
-        loadMe(true);
-      })
-      .catch(function (e) { toast(plain(e.message), 'bad'); });
-  }
-
-  function doUnban(name) {
-    if (!name) return;
-    if (!confirm('确定解封 ' + name + '？')) return;
-    api('/api/admin/unban', { method: 'POST', body: { name: name } })
-      .then(function (r) {
-        toast(plain(r.message) || '已解封', 'ok');
-        loadBans();
-        loadMe(true);
-      })
-      .catch(function (e) { toast(plain(e.message), 'bad'); });
-  }
-
-  // ── 管理员：命令 ────────────────────────────────────────
+  // ── 命令 ─────────────────────────────────────────────
 
   function loadCommands() {
-    if (state.cmdCatalog) {
-      renderCmdGroups();
-      renderCmdList();
-      return;
-    }
+    if (state.cmdCatalog) { renderCmdGroups(); return; }
     api('/api/admin/commands').then(function (r) {
-      state.cmdCatalog = r;
+      var d = r.data || {};
+      if (!d.ok) { $('cmd-list').innerHTML = '<p class="empty">' + esc(d.message || '读不到命令表') + '</p>'; return; }
+      state.cmdCatalog = d;
       renderCmdGroups();
-      renderCmdList();
-    }).catch(function (e) { toast(plain(e.message), 'bad'); });
+    }).catch(function (e) { fatal('读取命令表失败', e.message); });
   }
 
   function renderCmdGroups() {
-    var groups = (state.cmdCatalog && state.cmdCatalog.groups) || [];
-    if (!groups.length) { $('cmd-groups').innerHTML = ''; return; }
-    if (!state.cmdGroup) state.cmdGroup = groups[0].name;
+    var cat = state.cmdCatalog || {};
+    var groups = cat.groups || [];
+    if (!groups.length) {
+      $('cmd-groups').innerHTML = '';
+      $('cmd-list').innerHTML = '<p class="empty">服务器没给命令表（admin.commands.enabled 关着？）</p>';
+      return;
+    }
+    if (!state.cmdGroup || !groups.some(function (g) { return g.name === state.cmdGroup; })) {
+      state.cmdGroup = groups[0].name;
+    }
     $('cmd-groups').innerHTML = groups.map(function (g) {
       return '<button class="seg-btn' + (g.name === state.cmdGroup ? ' active' : '') +
-        '" data-cmd-group="' + esc(g.name) + '">' + esc(g.name) + '</button>';
+        '" data-group="' + esc(g.name) + '">' + esc(g.name) + '</button>';
     }).join('');
-    Array.prototype.forEach.call($('cmd-groups').querySelectorAll('button[data-cmd-group]'), function (b) {
-      b.onclick = function () {
-        state.cmdGroup = b.getAttribute('data-cmd-group');
-        renderCmdGroups();
-        renderCmdList();
-      };
-    });
-  }
-
-  function renderCmdList() {
-    var groups = (state.cmdCatalog && state.cmdCatalog.groups) || [];
-    var group = null;
-    for (var i = 0; i < groups.length; i++) {
-      if (groups[i].name === state.cmdGroup) { group = groups[i]; break; }
-    }
-    var items = group && group.items ? group.items : [];
+    var cur = groups.filter(function (g) { return g.name === state.cmdGroup; })[0];
+    var items = (cur && cur.items) || [];
     $('cmd-list').innerHTML = items.map(function (it) {
       return '<button class="cmd-item' + (it.danger ? ' danger' : '') + '" data-cmd="' + esc(it.cmd) + '">' +
         '<div class="cmd-label">' + esc(it.label) + (it.danger ? '<span class="cmd-badge">谨慎</span>' : '') + '</div>' +
         '<div class="cmd-args">' + esc(it.cmd) + (it.args ? ' ' + esc(it.args) : '') + '</div>' +
         '<div class="cmd-desc">' + esc(it.desc || '') + '</div></button>';
     }).join('');
-    Array.prototype.forEach.call($('cmd-list').querySelectorAll('button[data-cmd]'), function (b) {
-      b.onclick = function () {
-        var input = $('f-cmd');
-        input.value = b.getAttribute('data-cmd') + ' ';
-        input.focus();
-      };
-    });
   }
 
   function runCommand() {
-    var cmd = String($('f-cmd').value || '').trim();
-    if (!cmd) { toast('先写一条命令'); return; }
-    var knownDanger = /^(stop|restart|reload|op|deop|whitelist|plugins|version|give|gm|gamemode|kick)\b/i.test(cmd);
-    if (knownDanger && !confirm('这条命令很危险：\n' + cmd + '\n\n确定执行？')) return;
+    var cmd = $('f-cmd').value.trim();
+    if (!cmd) { toast('先写要执行的命令'); return; }
+    var dangerous = /^(stop|restart|reload|op|deop|whitelist|give|gamemode|gm|kick)\b/i.test(cmd);
+    if (dangerous && !confirm('「' + cmd + '」可能弄坏服务器，确定要执行？')) return;
+
     var btn = $('btn-run');
     btn.disabled = true;
-    var out = $('cmd-out');
-    out.classList.remove('hidden');
-    out.innerHTML = '<span class="cmd-echo">$ ' + esc(cmd) + '</span>';
-    api('/api/admin/exec', { method: 'POST', body: { command: cmd } })
-      .then(function (r) {
-        var lines = r.output || [];
-        var html = '<span class="cmd-echo">$ ' + esc(cmd) + '</span>\n';
-        html += lines.length ? lines.map(esc).join('\n') : esc(plain(r.message) || '（没有回显）');
-        if (!r.ok) html = '<span class="cmd-err">' + html + '</span>';
-        out.innerHTML = html;
-        toast(plain(r.message) || '执行完成', r.ok ? 'ok' : 'bad');
-      })
-      .catch(function (e) {
-        out.innerHTML = '<span class="cmd-echo">$ ' + esc(cmd) + '</span>\n<span class="cmd-err">' +
-          esc(plain(e.message)) + '</span>';
-        toast(plain(e.message), 'bad');
-      })
-      .then(function () { btn.disabled = false; });
+    btn.textContent = '执行中…';
+    api('/api/admin/exec', { body: { command: cmd } }).then(function (r) {
+      var d = r.data || {};
+      showCmdOutput('$ ' + cmd, d.output || [], d.ok, d.message);
+    }).catch(function (e) {
+      showCmdOutput('$ ' + cmd, [], false, e.message);
+    }).then(function () {
+      btn.disabled = false;
+      btn.textContent = '执行';
+    });
   }
 
-  // ── 设置 ────────────────────────────────────────────────
+  function showCmdOutput(echo, lines, ok, message) {
+    var box = $('cmd-out');
+    var html = '<div class="cmd-echo">' + esc(echo) + '</div>';
+    if (message) html += '<div class="' + (ok ? '' : 'cmd-err') + '">' + esc(message) + '</div>';
+    if (lines && lines.length) {
+      html += lines.map(function (l) { return '<div>' + esc(l) + '</div>'; }).join('');
+    } else if (ok) {
+      html += '<div class="hint">（没有输出）</div>';
+    }
+    box.innerHTML = html;
+    box.classList.remove('hidden');
+  }
+
+  // ── 更多：在线玩家 / 管理 / 设置 ─────────────────────
+
+  function loadPlayers() {
+    api('/api/players').then(function (r) {
+      var d = r.data || {};
+      var list = d.players || [];
+      $('online-list').innerHTML = list.length ? list.map(function (p) {
+        var tags = [];
+        if (p.team) tags.push('<span class="tag">' + esc(plain(p.team)) + '</span>');
+        if (p.titleId) tags.push('<span class="tag ok">' + esc(p.titleId) + '</span>');
+        return '<div class="list-item"><i class="dot on"></i><div class="main"><b>' + esc(p.name) + '</b>' +
+          '<div class="sub">' + (p.level == null ? '—' : p.level) + ' 级 · ' + (p.ping == null ? '—' : p.ping + 'ms') +
+          ' · ' + esc(p.world || '—') + '</div><div class="tags">' + tags.join('') + '</div></div>' +
+          (state.admin ? '<button class="btn btn-mini" data-manage="' + esc(p.name) + '">管理</button>' : '') +
+          '</div>';
+      }).join('') : '<p class="empty">现在没人在线</p>';
+    }).catch(function (e) { $('online-list').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; });
+  }
+
+  function loadStatus() {
+    api('/api/admin/status').then(function (r) {
+      var d = r.data || {};
+      if (!d.ok) return;
+      var plugins = d.plugins || [];
+      var on = plugins.filter(function (p) { return p.loaded; }).length;
+      $('status-sub').textContent = on + ' / ' + plugins.length + ' 已加载';
+      $('status-list').innerHTML = plugins.map(function (p) {
+        return '<div class="list-item"><div class="main"><b>' + esc(p.label || p.name) + '</b>' +
+          '<div class="sub">' + esc(p.name) + (p.version ? ' · v' + esc(p.version) : '') + '</div></div>' +
+          '<span class="tag ' + (p.loaded ? 'ok' : '') + '">' + (p.loaded ? '已加载' : '没装') + '</span></div>';
+      }).join('');
+
+      var hooks = d.hooks || {};
+      var feats = d.features || {};
+      var bits = [];
+      Object.keys(hooks).forEach(function (k) {
+        if (hooks[k]) bits.push(k);
+      });
+      if (bits.length) {
+        $('status-list').innerHTML += '<p class="hint" style="margin-top:10px">已接上的能力：' + esc(bits.join(' / ')) + '</p>';
+      }
+      var off = Object.keys(feats).filter(function (k) { return !feats[k]; });
+      if (off.length) {
+        $('status-list').innerHTML += '<p class="hint">关掉的功能：' + esc(off.join(' / ')) + '</p>';
+      }
+    }).catch(function () {});
+  }
+
+  function setAdminTab(tab) {
+    state.adminTab = tab;
+    Array.prototype.forEach.call(document.querySelectorAll('#admin-tabs .seg-btn'), function (b) {
+      b.classList.toggle('active', b.getAttribute('data-admin') === tab);
+    });
+    ['player', 'report', 'penalty', 'fake'].forEach(function (t) {
+      var el = $('admin-' + t);
+      if (el) el.classList.toggle('hidden', t !== tab);
+    });
+    if (tab === 'report') loadReports();
+    if (tab === 'penalty') loadPenalties();
+    if (tab === 'fake') loadFakes();
+  }
+
+  function searchPlayers() {
+    var q = $('f-search').value.trim();
+    if (!q) { toast('先写个名字'); return; }
+    $('search-list').innerHTML = '<p class="empty">搜索中…</p>';
+    $('player-detail').classList.add('hidden');
+    api('/api/admin/players?q=' + encodeURIComponent(q)).then(function (r) {
+      var d = r.data || {};
+      var list = d.players || [];
+      $('search-list').innerHTML = list.length ? list.map(function (p) {
+        return '<div class="list-item"><div class="main"><b>' + esc(p.name) + '</b>' +
+          '<div class="sub">' + (p.online ? '在线' : '离线') + (p.banned ? ' · 已封禁' : '') + '</div></div>' +
+          '<button class="btn btn-mini" data-detail="' + esc(p.name) + '">详情</button></div>';
+      }).join('') : '<p class="empty">没找到这个人</p>';
+    }).catch(function (e) { $('search-list').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; });
+  }
+
+  function playerDetail(name) {
+    api('/api/admin/player?name=' + encodeURIComponent(name)).then(function (r) {
+      var d = r.data || {};
+      if (!d.ok) { toast(d.message || '读不到'); return; }
+      var p = d.data || {};
+      var rows = [
+        ['状态', p.online ? '在线' : '离线'],
+        ['金币', p.hasCoins ? fmt(p.coins) : '—'],
+        ['点券', p.hasPoints ? fmt(p.points) : '—'],
+        ['等级', p.level == null ? '—' : p.level],
+        ['在线时长', hoursText(p.playtimeHours)],
+        ['队伍', p.team ? plain(p.team) : '无'],
+        ['头衔', p.titleName || '无'],
+        ['封禁', p.banned ? ('是 · ' + (p.banReason || '未填写')) : '否']
+      ].map(function (x) {
+        return '<span>' + esc(x[0]) + '</span><b>' + esc(x[1]) + '</b>';
+      }).join('');
+
+      var penalties = [];
+      var pmap = d.penalties || {};
+      Object.keys(pmap).forEach(function (k) {
+        if (pmap[k]) penalties.push(k);
+      });
+
+      var html = '<div class="card" style="margin:0"><div class="card-title"><h2>' + esc(p.name) + '</h2>' +
+        '<span class="side">' + (penalties.length ? '在惩罚中：' + esc(penalties.join(' / ')) : '没有惩罚') + '</span></div>' +
+        '<div class="kv">' + rows + '</div></div>';
+
+      html += '<div class="seg" style="margin-top:10px">' +
+        '<button class="seg-btn" data-pen="banmsg">禁言 10 分钟</button>' +
+        '<button class="seg-btn" data-pen="banmsg-off">解除禁言</button>' +
+        '<button class="seg-btn" data-ban="1">封禁…</button>' +
+        '<button class="seg-btn" data-ban="0">解封</button>' +
+        '</div>';
+
+      var reps = d.reports || [];
+      if (reps.length) {
+        html += '<div class="hint" style="margin-top:10px">最近被举报：</div>' + reps.slice(0, 5).map(function (x) {
+          return '<div class="list-item"><div class="main"><b>#' + x.id + ' ' + esc(x.reason) + '</b>' +
+            '<div class="sub">' + esc(x.reporter) + ' · ' + (x.handled ? '已处理' : '待处理') + '</div></div></div>';
+        }).join('');
+      }
+      var box = $('player-detail');
+      box.innerHTML = html;
+      box.classList.remove('hidden');
+    }).catch(function (e) { toast(e.message); });
+  }
+
+  function applyPenalty(type, name, minutes, reason) {
+    api('/api/admin/penalty', {
+      body: { op: 'apply', type: type, name: name, minutes: minutes || 0, reason: reason || '' }
+    }).then(function (r) {
+      var d = r.data || {};
+      toast(d.message || (d.ok ? '已执行' : '失败'));
+      if (d.ok) { loadPenalties(); playerDetail(name); }
+    }).catch(function (e) { toast(e.message); });
+  }
+
+  function releasePenalty(type, name) {
+    api('/api/admin/penalty', { body: { op: 'release', type: type, name: name } }).then(function (r) {
+      var d = r.data || {};
+      toast(d.message || '已解除');
+      loadPenalties();
+      if (name) playerDetail(name);
+    }).catch(function (e) { toast(e.message); });
+  }
+
+  function loadReports() {
+    $('report-list').innerHTML = '<p class="empty">加载中…</p>';
+    api('/api/admin/reports?pending=1').then(function (r) {
+      var d = r.data || {};
+      var list = d.reports || [];
+      $('report-count').textContent = list.length ? list.length + ' 条待处理' : '没有待处理';
+      $('report-list').innerHTML = list.length ? list.map(function (x) {
+        var t = new Date(x.time || Date.now());
+        return '<div class="list-item" style="align-items:flex-start"><div class="main">' +
+          '<b>#' + x.id + ' ' + esc(x.target) + '</b>' +
+          '<div class="sub">' + esc(plain(x.reason || '')) + '</div>' +
+          '<div class="sub">举报人 ' + esc(x.reporter) + ' · ' + pad(t.getMonth() + 1) + '-' +
+          pad(t.getDate()) + ' ' + pad(t.getHours()) + ':' + pad(t.getMinutes()) + '</div>' +
+          '<div class="seg" style="margin-top:8px">' +
+          '<button class="seg-btn" data-rep="accept" data-id="' + x.id + '">受理</button>' +
+          '<button class="seg-btn" data-rep="reject" data-id="' + x.id + '">驳回</button>' +
+          '</div></div></div>';
+      }).join('') : '<p class="empty">没有待处理的举报</p>';
+    }).catch(function (e) { $('report-list').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; });
+  }
+
+  function handleReport(op, id) {
+    var note = op === 'accept' ? prompt('处理说明（可留空）', '已处理') : prompt('驳回原因（可留空）', '证据不足');
+    if (note === null) return;
+    api('/api/admin/report', { body: { op: op, id: id, note: note } }).then(function (r) {
+      var d = r.data || {};
+      toast(d.message || (d.ok ? '已处理' : '失败'));
+      loadReports();
+    }).catch(function (e) { toast(e.message); });
+  }
+
+  function loadPenalties() {
+    $('penalty-list').innerHTML = '<p class="empty">加载中…</p>';
+    api('/api/admin/penalties').then(function (r) {
+      var d = r.data || {};
+      var list = d.penalties || [];
+      $('penalty-count').textContent = list.length ? list.length + ' 条' : '没有生效中的惩罚';
+      var CN = { banmsg: '禁言', banmove: '禁移动', banblock: '禁破坏', banall: '全部惩罚' };
+      $('penalty-list').innerHTML = list.length ? list.map(function (x) {
+        return '<div class="list-item"><div class="main"><b>' + esc(x.player) + '</b>' +
+          '<div class="sub">' + esc(CN[x.type] || x.type) + ' · ' + esc(plain(x.reason || '')) + '</div>' +
+          '<div class="sub">到期 ' + esc(x.expire || '—') + ' · 执行人 ' + esc(x.operator || '—') + '</div></div>' +
+          '<button class="btn btn-mini" data-release="' + esc(x.type) + '" data-who="' + esc(x.player) + '">解除</button></div>';
+      }).join('') : '<p class="empty">现在没有生效中的惩罚</p>';
+    }).catch(function (e) { $('penalty-list').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; });
+  }
+
+  function loadFakes() {
+    $('fake-list').innerHTML = '<p class="empty">加载中…</p>';
+    api('/api/admin/fakes').then(function (r) {
+      var d = r.data || {};
+      if (!d.available) {
+        $('fake-list').innerHTML = '<p class="empty">服务器没装 FakePlayerPlugin</p>';
+        return;
+      }
+      var list = d.fakes || [];
+      $('fake-list').innerHTML = list.length ? list.map(function (f) {
+        return '<div class="list-item"><i class="dot' + (f.active ? ' on' : '') + '"></i>' +
+          '<div class="main"><b>' + esc(f.name) + '</b><div class="sub">' + esc(f.world || '—') +
+          ' · ' + Math.round(f.x) + ', ' + Math.round(f.y) + ', ' + Math.round(f.z) + '</div></div>' +
+          '<button class="btn btn-mini" data-fake-remove="' + esc(f.name) + '">移除</button></div>';
+      }).join('') : '<p class="empty">还没有假人</p>';
+    }).catch(function (e) { $('fake-list').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; });
+  }
+
+  function fakeAdd() {
+    var name = $('f-fake').value.trim();
+    if (!name) { toast('写个假人名字'); return; }
+    api('/api/admin/fake', { body: { op: 'add', name: name } }).then(function (r) {
+      var d = r.data || {};
+      toast(d.message || (d.ok ? '已召唤' : '失败'));
+      if (d.ok) { $('f-fake').value = ''; loadFakes(); }
+    }).catch(function (e) { toast(e.message); });
+  }
+
+  function fakeRemove(name) {
+    api('/api/admin/fake', { body: { op: 'remove', name: name } }).then(function (r) {
+      var d = r.data || {};
+      toast(d.message || '已移除');
+      loadFakes();
+    }).catch(function (e) { toast(e.message); });
+  }
+
+  // ── 接口地址 ─────────────────────────────────────────
 
   function saveServer() {
-    var s = normServer($('f-server-edit').value);
-    state.server = s;
-    LS.setItem(K.server, s);
-    $('f-server-edit').value = s;
-    $('set-server').textContent = s.replace(/^https?:\/\//, '');
-    $('server-msg').textContent = '已保存，正在重新拉数据…';
-    loadMe().then(function () {
-      $('server-msg').textContent = '已连上 ' + s.replace(/^https?:\/\//, '');
-    }).catch(function (e) {
-      $('server-msg').textContent = plain(e.message);
-    });
+    state.server = normServer($('f-server-edit').value);
+    $('f-server-edit').value = state.server;
+    persist();
+    $('set-server').textContent = state.server.replace(/^https?:\/\//, '');
+    $('server-msg').textContent = '已保存：' + state.server + '，正在重新拉数据…';
+    loadMe();
+    loadPlayers();
   }
 
   function testServer() {
-    var s = normServer($('f-server-edit').value);
-    $('server-msg').textContent = '测试中…';
-    fetch(s + '/api/health', { method: 'GET' }).then(function (r) {
-      return r.text().then(function (t) {
-        var j = null;
-        try { j = JSON.parse(t); } catch (e) { j = null; }
-        if (!r.ok || !j) throw new Error('返回了 ' + r.status + '，不像 NalxerApp 的接口');
-        var c = j.capabilities || {};
-        var pairs = [['authme', '登录'], ['coins', '金币'], ['points', '点券'],
-                     ['bans', '封禁'], ['teams', '队伍'], ['titles', '头衔']];
-        var marks = pairs.map(function (p) { return p[1] + (c[p[0]] ? '✓' : '✗'); });
-        $('server-msg').textContent = '通了：' + (j.app || 'NalxerApp') + ' v' + (j.version || '?') +
-          '（' + marks.join(' ') + '）';
+    var url = normServer($('f-server-edit').value);
+    $('server-msg').textContent = '正在连 ' + url + ' …';
+    fetch(url + '/api/health', { headers: { 'Accept': 'application/json' } })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var caps = d.capabilities || {};
+        var on = Object.keys(caps).filter(function (k) { return caps[k]; });
+        $('server-msg').textContent = d.ok
+          ? ('通了：' + (d.app || 'NalxerApp') + ' v' + (d.version || '?') +
+            '（' + (on.length ? on.join('、') + ' ✓' : '没接上任何插件') + '）')
+          : '连上了，但服务器说：' + (d.message || '不正常');
+      })
+      .catch(function (e) {
+        $('server-msg').textContent = '连不上 ' + url + ' —— ' + e.message;
       });
-    }).catch(function (e) {
-      $('server-msg').textContent = '连不上：' + (e.message || '网络错误');
-    });
   }
 
-  // ── 事件绑定 ────────────────────────────────────────────
+  function resetServer() {
+    state.server = normServer(DEFAULT_SERVER);
+    $('f-server-edit').value = state.server;
+    persist();
+    $('set-server').textContent = state.server.replace(/^https?:\/\//, '');
+    $('server-msg').textContent = '已恢复默认：' + state.server;
+    loadMe();
+  }
+
+  // ── 定时刷新 ─────────────────────────────────────────
+
+  function startTimers() {
+    stopTimers();
+    state.timer = setInterval(function () {
+      if (state.page === 'me') loadMe();
+      if (state.page === 'chat') loadChat();
+    }, 30000);
+    state.chatTimer = setInterval(function () {
+      if (state.page === 'chat') { loadChat(); return; }
+      api('/api/chat?since=' + (state.chatLast || 0)).then(function (r) {
+        var d = r.data || {};
+        var msgs = d.messages || [];
+        if (msgs.length) {
+          state.chatLast = d.last || state.chatLast;
+          state.chatMsgs = state.chatMsgs.concat(msgs).slice(-200);
+          $('chat-dot').classList.remove('hidden');
+        }
+      }).catch(function () {});
+    }, 12000);
+  }
+
+  function stopTimers() {
+    if (state.timer) clearInterval(state.timer);
+    if (state.chatTimer) clearInterval(state.chatTimer);
+    state.timer = 0;
+    state.chatTimer = 0;
+  }
+
+  // ── 事件绑定 ─────────────────────────────────────────
 
   function bind() {
-    $('btn-login').onclick = doLogin;
-    $('f-pass').addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') doLogin();
+    $('btn-login').addEventListener('click', doLogin);
+    $('f-pass').addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
+    $('btn-refresh').addEventListener('click', function () {
+      if (state.page === 'me') loadMe();
+      else if (state.page === 'chat') loadChat();
+      else if (state.page === 'team') loadTeam();
+      else if (state.page === 'title') loadTitles();
+      else if (state.page === 'more') { loadPlayers(); if (state.admin) loadStatus(); }
+      toast('已刷新');
     });
-    $('btn-refresh').onclick = function () {
-      toast('刷新中…');
-      loadMe();
-      if (state.page === 'chat') loadChat(true);
-      if (state.page === 'team') loadTeam();
-      if (state.page === 'title') loadTitles();
-      if (state.page === 'more') loadPlayers();
-    };
+
     Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (b) {
-      b.onclick = function () { switchPage(b.getAttribute('data-page')); };
+      b.addEventListener('click', function () { switchPage(b.getAttribute('data-page')); });
     });
 
-    $('btn-chat-send').onclick = sendChat;
-    $('f-chat').addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') sendChat();
-    });
-
-    $('btn-team-create').onclick = function () {
-      var name = String($('f-team-create').value || '').trim();
-      if (!name) { toast('先想个队名'); return; }
+    $('btn-checkin').addEventListener('click', doCheckin);
+    $('btn-chat-send').addEventListener('click', sendChat);
+    $('f-chat').addEventListener('keydown', function (e) { if (e.key === 'Enter') sendChat(); });
+    $('btn-team-create').addEventListener('click', function () {
+      var name = $('f-team-name').value.trim();
+      if (!name) { toast('先写队伍名字'); return; }
       teamAction('create', name);
-    };
-    $('btn-team-reload').onclick = loadTeam;
-    $('btn-team-leave').onclick = function () {
-      if (!confirm('确定退出队伍？')) return;
-      teamAction('leave', '');
-    };
-    $('btn-team-kick').onclick = function () {
-      var arg = String($('f-team-arg').value || '').trim();
-      if (!arg) { toast('要踢谁？填玩家名'); return; }
-      teamAction('kick', arg);
-    };
-    $('btn-team-transfer').onclick = function () {
-      var arg = String($('f-team-arg').value || '').trim();
-      if (!arg) { toast('转让给谁？填玩家名'); return; }
-      if (!confirm('确定把队长转给 ' + arg + '？')) return;
-      teamAction('transfer', arg);
-    };
-    $('btn-team-disband').onclick = function () {
-      if (!confirm('解散队伍不可恢复，确定？')) return;
-      teamAction('disband', '');
-    };
+    });
+    $('btn-team-leave').addEventListener('click', function () {
+      if (confirm('确定退出当前队伍？')) teamAction('leave', '');
+    });
+    $('btn-title-off').addEventListener('click', function () { equipTitle(''); });
 
-    $('btn-title-off').onclick = function () { equipTitle(''); };
+    document.addEventListener('click', function (ev) {
+      var t = ev.target.closest ? ev.target.closest('[data-team],[data-join],[data-kick],[data-title],[data-group],[data-cmd]') : null;
+      if (!t) return;
+      if (t.hasAttribute('data-team')) {
+        if (confirm('解散队伍？这个操作不可撤销')) teamAction(t.getAttribute('data-team'), '');
+      } else if (t.hasAttribute('data-join')) {
+        teamAction('join', t.getAttribute('data-join'));
+      } else if (t.hasAttribute('data-kick')) {
+        var who = t.getAttribute('data-kick');
+        if (confirm('把 ' + who + ' 踢出队伍？')) teamAction('kick', who);
+      } else if (t.hasAttribute('data-title')) {
+        var id = t.getAttribute('data-title');
+        var row = t.parentNode;
+        if (t.textContent === '查看') { toast('这个头衔还没解锁，条件见上面'); return; }
+        equipTitle(id);
+      } else if (t.hasAttribute('data-group')) {
+        state.cmdGroup = t.getAttribute('data-group');
+        renderCmdGroups();
+      } else if (t.hasAttribute('data-cmd')) {
+        var cmd = t.getAttribute('data-cmd');
+        $('f-cmd').value = cmd + ' ';
+        $('f-cmd').focus();
+      }
+    });
 
-    $('btn-players-reload').onclick = loadPlayers;
+    $('btn-run').addEventListener('click', runCommand);
+    $('f-cmd').addEventListener('keydown', function (e) { if (e.key === 'Enter') runCommand(); });
 
+    $('btn-load-players').addEventListener('click', loadPlayers);
     Array.prototype.forEach.call(document.querySelectorAll('#admin-tabs .seg-btn'), function (b) {
-      b.onclick = function () { setAdminTab(b.getAttribute('data-admin-tab')); };
+      b.addEventListener('click', function () { setAdminTab(b.getAttribute('data-admin')); });
     });
-    $('btn-search').onclick = searchPlayers;
-    $('f-search').addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') searchPlayers();
-    });
-    $('btn-ban').onclick = doBan;
-    $('btn-unban').onclick = function () {
-      if (!state.selectedTarget) { toast('先搜索并选一个玩家'); return; }
-      doUnban(state.selectedTarget);
-    };
-    $('btn-run').onclick = runCommand;
-    $('f-cmd').addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') runCommand();
+    $('btn-search').addEventListener('click', searchPlayers);
+    $('f-search').addEventListener('keydown', function (e) { if (e.key === 'Enter') searchPlayers(); });
+    $('btn-load-reports').addEventListener('click', loadReports);
+    $('btn-load-penalties').addEventListener('click', loadPenalties);
+    $('btn-fake-add').addEventListener('click', fakeAdd);
+
+    document.addEventListener('click', function (ev) {
+      var t = ev.target.closest ? ev.target.closest('[data-manage],[data-detail],[data-rep],[data-release],[data-pen],[data-ban],[data-fake-remove]') : null;
+      if (!t) return;
+      if (t.hasAttribute('data-manage')) { setAdminTab('player'); $('f-search').value = t.getAttribute('data-manage'); searchPlayers(); }
+      else if (t.hasAttribute('data-detail')) playerDetail(t.getAttribute('data-detail'));
+      else if (t.hasAttribute('data-rep')) handleReport(t.getAttribute('data-rep'), t.getAttribute('data-id'));
+      else if (t.hasAttribute('data-release')) releasePenalty(t.getAttribute('data-release'), t.getAttribute('data-who'));
+      else if (t.hasAttribute('data-fake-remove')) fakeRemove(t.getAttribute('data-fake-remove'));
+      else if (t.hasAttribute('data-pen')) {
+        var name = (t.getAttribute('data-detail') || '');
+        var sel = document.querySelector('#player-detail .card-title h2');
+        var who = sel ? sel.textContent : '';
+        if (!who) { toast('先在下面选一个玩家'); return; }
+        var kind = t.getAttribute('data-pen');
+        if (kind === 'banmsg') applyPenalty('banmsg', who, 10, 'App 管理员操作');
+        else releasePenalty('banmsg', who);
+      } else if (t.hasAttribute('data-ban')) {
+        var h = document.querySelector('#player-detail .card-title h2');
+        var target = h ? h.textContent : '';
+        if (!target) { toast('先选一个玩家'); return; }
+        if (t.getAttribute('data-ban') === '1') {
+          var res = prompt('封禁 ' + target + '，原因（留空为未填写）', '违反服务器规定');
+          if (res === null) return;
+          var mins = prompt('封多久（分钟，0 = 永久）', '0');
+          if (mins === null) return;
+          applyPenalty('ban', target, parseInt(mins, 10) || 0, res);
+        } else {
+          releasePenalty('ban', target);
+        }
+      }
     });
 
-    $('btn-save-server').onclick = saveServer;
-    $('btn-test-server').onclick = testServer;
-    $('btn-reset-server').onclick = function () {
-      state.server = DEFAULT_SERVER;
-      LS.setItem(K.server, DEFAULT_SERVER);
-      $('f-server-edit').value = DEFAULT_SERVER;
-      $('set-server').textContent = DEFAULT_SERVER.replace(/^https?:\/\//, '');
-      toast('已恢复默认地址');
-    };
-    $('btn-logout').onclick = function () {
-      if (!confirm('退出登录？')) return;
-      logout(false);
-    };
+    $('btn-save-server').addEventListener('click', saveServer);
+    $('btn-test-server').addEventListener('click', testServer);
+    $('btn-reset-server').addEventListener('click', resetServer);
+    $('sw-theme').addEventListener('click', toggleTheme);
+    $('btn-logout').addEventListener('click', function () { logout(false); });
   }
 
-  // ── 启动 ────────────────────────────────────────────────
+  // ── 启动 ─────────────────────────────────────────────
 
   function boot() {
+    initTheme();
     bind();
+
+    state.server = normServer(localStorage.getItem(LS.server) || DEFAULT_SERVER);
+    state.token = localStorage.getItem(LS.token) || '';
+    state.name = localStorage.getItem(LS.name) || '';
+    state.admin = localStorage.getItem(LS.admin) === '1';
     $('f-server').value = state.server;
-    $('f-server-edit').value = state.server;
-    var params = new URLSearchParams(location.search);
-    var page = (params.get('page') || '').trim();
-    if (page) state.page = page;
+
+    window.addEventListener('error', function (e) {
+      fatal('出错了', (e.message || '') + (e.filename ? '\n' + e.filename + ':' + e.lineno : ''));
+    });
+    window.addEventListener('unhandledrejection', function (e) {
+      fatal('请求出错', (e.reason && e.reason.message) || String(e.reason));
+    });
 
     if (state.token) {
       enterApp();
-      loadMe(true).then(function () {
-        var tab = (params.get('tab') || '').trim();
-        if (tab === 'cmd' && state.admin) setAdminTab('cmd');
-      });
-    } else {
-      $('login').classList.remove('hidden');
-      $('app').classList.add('hidden');
+      var tab = new URLSearchParams(location.search).get('page');
+      if (tab) switchPage(tab);
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
-  } else {
-    boot();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 })();
