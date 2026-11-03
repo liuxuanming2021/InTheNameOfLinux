@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#f4f6fa">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css?v=25">
+  <link rel="stylesheet" href="style.css?v=26">
 </head>
 <body>
 
@@ -41,25 +41,7 @@
 </div>
 
 <!-- 身份验证弹窗：盖在整个界面上，验完才让用 -->
-<div id="verify-modal" class="modal hidden">
-  <div class="modal-card">
-    <div class="modal-head">
-      <div class="modal-mark">🔒</div>
-      <div class="modal-title">
-        <h2>Linux 身份验证</h2>
-        <p id="verify-sub">请通过 Linux 身份验证</p>
-      </div>
-    </div>
-    <p class="hint" style="margin:10px 0 12px">登录已经通过，但要再用 <b>ITNOL 的验证密码</b> 确认一次身份。验证之前 App 里的数据、聊天、管理功能都不可用。</p>
-    <div class="field">
-      <label for="f-verify">ITNOL 密码</label>
-      <input id="f-verify" type="password" placeholder="在游戏里输的那个验证密码">
-    </div>
-    <p id="verify-err" class="tip-err hidden"></p>
-    <button id="btn-verify" class="btn btn-primary btn-block" style="margin-top:6px">验证</button>
-    <button id="btn-verify-logout" class="btn btn-block" style="margin-top:8px">退出登录</button>
-  </div>
-</div>
+
 
 <!-- su：验证过身份之后执行任意命令 -->
 
@@ -234,8 +216,9 @@
             <span class="hint" id="report-count"></span>
           </div>
           <div class="seg" id="report-tabs" style="margin:8px 0">
-            <button class="seg-btn active" data-report-tab="pending">待处理</button>
-            <button class="seg-btn" data-report-tab="handled">全部 / 已处理</button>
+            <button class="seg-btn active" data-report-tab="all">全部</button>
+            <button class="seg-btn" data-report-tab="pending">待处理</button>
+            <button class="seg-btn" data-report-tab="handled">已处理</button>
           </div>
           <div id="report-list" style="margin-top:10px"></div>
         </div>
@@ -319,7 +302,7 @@
           <span>服务器</span><b id="set-server">—</b>
           <span>管理权限</span><b id="set-admin">否</b>
           <span>玩家身份</span><b id="set-role">—</b>
-          <span>客户端版本</span><b>1.6.1</b>
+          <span>客户端版本</span><b>1.7.0</b>
         </div>
         <div class="switch-row">
           <div>
@@ -412,6 +395,6 @@
 
 <div id="fatal" class="hidden"></div>
 <div id="toast" class="toast hidden"></div>
-<script src="app.js?v=25"></script>
+<script src="app.js?v=26"></script>
 </body>
 </html>
