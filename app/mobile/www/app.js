@@ -15,11 +15,9 @@
 
   var PAGE_TITLE = {
     me: ['我的数据', ''],
-    chat: ['服务器聊天', '和游戏里的玩家一起聊'],
-    team: ['队伍', 'LinuxTeam'],
+    chat: ['服务器聊天', '公屏 / 队伍频道'],
     title: ['头衔', 'LinuxTitle'],
-    admin: ['服务器管理', '玩家 / 举报 / 惩罚 / 假人'],
-    cmd: ['服务器命令', '只有管理员能用'],
+    admin: ['服务器管理', '玩家 / 举报 / 惩罚 / 假人 / 命令'],
     more: ['更多', '在线玩家 / 设置']
   };
 
@@ -32,12 +30,23 @@
     me: null,
     chatLast: 0,
     chatMsgs: [],
+    chatChannel: 'world',
+    chatTeam: '',
+    myTeams: [],
     chatTimer: 0,
     adminTab: 'player',
+    reportHandled: false,
+    needVerify: false,
     cmdCatalog: null,
     cmdGroup: '',
     timer: 0
   };
+
+  // 元素可能因为改版被删掉，取不到就当没这回事，别让整个 boot 挂掉
+  function show(id, visible) {
+    var el = $(id);
+    if (el) el.classList.toggle('hidden', !visible);
+  }
 
   function $(id) { return document.getElementById(id); }
 
@@ -122,6 +131,10 @@
           if (!opts.quiet) { logout(true); }
           throw new Error((data && data.message) || '登录已过期，请重新登录');
         }
+        if (r.status === 403 && data && data.code === 'need_verify') {
+          showVerifyGate(true);
+          throw new Error('请先完成身份验证');
+        }
         return { status: r.status, data: data };
       });
     }).catch(function (err) {
@@ -161,6 +174,9 @@
       state.token = d.token || '';
       state.name = d.name || name;
       state.admin = !!d.admin;
+      // 这个号要二次验证：登录成功后先停在验证屏
+      state.verifyTarget = d.verifyTarget || '';
+      state.needVerify = !!d.verifyRequired && d.verified !== true;
       persist();
       enterApp();
     }).catch(function (e) {
@@ -170,6 +186,92 @@
       btn.disabled = false;
       btn.textContent = '登录';
     });
+  }
+
+  // ── 二次身份验证 ─────────────────────────────────────
+  // 身份验证改成盖在主界面上的弹窗：验证前能看到界面但什么都点不了
+  function showVerifyGate(on) {
+    var m = $('verify-modal');
+    if (!m) return;
+    m.classList.toggle('hidden', !on);
+    state.needVerify = !!on;
+    if (on) {
+      $('login').classList.add('hidden');
+      $('app').classList.remove('hidden');
+      $('verify-err').classList.add('hidden');
+      $('f-verify').value = '';
+      var who = state.verifyTarget || state.name || '';
+      $('verify-sub').textContent = who
+        ? '你登陆的是 ' + who + ' 账号，请通过 Linux 身份验证'
+        : '请通过 Linux 身份验证';
+      setTimeout(function () { try { $('f-verify').focus(); } catch (e) {} }, 60);
+    }
+  }
+
+  // su 弹窗：验证过身份才能开
+  function openSu() {
+    if (state.needVerify) { toast('先通过 Linux 身份验证'); return; }
+    $('su-out').classList.add('hidden');
+    $('su-out').textContent = '';
+    $('f-su').value = '';
+    $('su-modal').classList.remove('hidden');
+    setTimeout(function () { try { $('f-su').focus(); } catch (e) {} }, 60);
+  }
+
+  function closeSu() { $('su-modal').classList.add('hidden'); }
+
+  function runSu() {
+    var cmd = $('f-su').value.trim();
+    if (!cmd) { toast('先写一条命令'); return; }
+    var btn = $('btn-su-run');
+    btn.disabled = true;
+    btn.textContent = '执行中…';
+    api('/api/admin/su', { body: { command: cmd } }).then(function (r) {
+      var d = r.data || {};
+      showSuOut((d.ok ? '' : '失败：') + (d.message || '') + (d.output && d.output.length ? '' : '\n（没有回显）'), d.output || []);
+      if (d.ok) toast('已执行');
+    }).catch(function (e) {
+      showSuOut('失败：' + e.message, []);
+    }).then(function () {
+      btn.disabled = false;
+      btn.textContent = '执行';
+    });
+  }
+
+  function showSuOut(head, lines) {
+    var box = $('su-out');
+    var text = head ? head + '\n' : '';
+    if (lines && lines.length) text += lines.join('\n');
+    box.textContent = text.trim();
+    box.classList.toggle('hidden', !box.textContent);
+  }
+
+  function doVerify() {
+    var pw = $('f-verify').value;
+    if (!pw) { showVerifyErr('先输一下密码'); return; }
+    var btn = $('btn-verify');
+    btn.disabled = true;
+    btn.textContent = '验证中…';
+    api('/api/verify', { body: { password: pw } }).then(function (r) {
+      var d = r.data || {};
+      if (!d.ok) { showVerifyErr(d.message || '密码不对'); return; }
+      toast('验证通过');
+      showVerifyGate(false);
+      switchPage(state.page || 'me');
+      loadMe();
+    }).catch(function (e) {
+      showVerifyErr(e.message);
+    }).then(function () {
+      btn.disabled = false;
+      btn.textContent = '验证';
+    });
+  }
+
+  function showVerifyErr(msg) {
+    var el = $('verify-err');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.remove('hidden');
   }
 
   function logout(silent) {
@@ -191,14 +293,18 @@
   function enterApp() {
     $('login').classList.add('hidden');
     $('app').classList.remove('hidden');
-    $('tab-cmd').classList.toggle('hidden', !state.admin);
-    $('tab-admin').classList.toggle('hidden', !state.admin);
+    // 底栏现在只有「管理」一个入口，命令是管理页里的子标签
+    show('tab-admin', state.admin);
     $('admin-card').classList.toggle('hidden', !state.admin);
     $('status-card').classList.toggle('hidden', !state.admin);
     $('f-server-edit').value = state.server;
     $('set-name').textContent = state.name;
     $('set-server').textContent = state.server.replace(/^https?:\/\//, '');
     $('set-admin').textContent = state.admin ? '有' : '否';
+    if (state.needVerify) {
+      showVerifyGate(true);
+      return;
+    }
     switchPage(state.page || 'me');
     loadMe();
     startTimers();
@@ -207,8 +313,8 @@
   // ── 页面切换 ─────────────────────────────────────────
 
   var PAGE_IDS = {
-    me: 'page-me', chat: 'page-chat', team: 'page-team',
-    title: 'page-titles', admin: 'page-admin', cmd: 'page-cmd', more: 'page-more'
+    me: 'page-me', chat: 'page-chat',
+    title: 'page-titles', admin: 'page-admin', more: 'page-more'
   };
 
   function switchPage(page) {
@@ -230,10 +336,12 @@
     $('page-sub').textContent = meta[1] || state.name;
     window.scrollTo(0, 0);
 
-    if (page === 'chat') { $('chat-dot').classList.add('hidden'); loadChat(); }
-    if (page === 'team') loadTeam();
+    if (page === 'chat') {
+      $('chat-dot').classList.add('hidden');
+      loadChat();
+      loadTeam();   // 队伍面板也在聊天页里
+    }
     if (page === 'title') loadTitles();
-    if (page === 'cmd') loadCommands();
     if (page === 'admin') setAdminTab(state.adminTab || 'player');
     if (page === 'more') loadPlayers();
   }
@@ -274,6 +382,14 @@
     api('/api/me').then(function (r) {
       var d = r.data || {};
       if (!d.ok) { toast(d.message || '读不到数据'); return; }
+      // 服务端说这个号还要二次验证：先把闸门拉起来，别的什么都不做
+      if (d.verifyRequired && !d.verified) {
+        state.verifyTarget = d.verifyTarget || state.verifyTarget || '';
+        state.me = d.data;
+        showVerifyGate(true);
+        return;
+      }
+      state.needVerify = false;
       state.me = d.data;
       renderMe(d.data);
       loadCheckin();
@@ -400,8 +516,20 @@
 
   // ── 聊天 ─────────────────────────────────────────────
 
+  function chatQuery() {
+    var q = '?since=' + (state.chatLast || 0) + '&channel=' + encodeURIComponent(state.chatChannel || 'world');
+    if (state.chatChannel === 'team') {
+      q += '&team=' + encodeURIComponent(state.chatTeam || '');
+    }
+    return q;
+  }
+
   function loadChat() {
-    api('/api/chat?since=' + (state.chatLast || 0)).then(function (r) {
+    if (state.chatChannel === 'team' && !state.chatTeam) {
+      renderChat();
+      return;
+    }
+    api('/api/chat' + chatQuery()).then(function (r) {
       var d = r.data || {};
       if (!d.ok) return;
       $('chat-online').textContent = (d.online || 0) + ' 人在线';
@@ -416,6 +544,61 @@
     }).catch(function () {});
   }
 
+  /** 切频道：世界 / 队伍（队伍要在队伍里才切得过去）。 */
+  function setChatChannel(ch) {
+    if (ch === state.chatChannel) return;
+    if (ch === 'team' && !(state.myTeams || []).length) {
+      // 队伍还没加载回来：先记着，等 renderTeam 到了自动切过去
+      state.pendingChannel = 'team';
+      loadTeam();
+      return;
+    }
+    state.pendingChannel = '';
+    state.chatChannel = ch;
+    state.chatLast = 0;
+    state.chatMsgs = [];
+    if (ch === 'team' && !state.chatTeam && (state.myTeams || []).length) {
+      state.chatTeam = state.myTeams[0].id;
+    }
+    renderChatChannels();
+    renderChat();
+    loadChat();
+  }
+
+  function renderChatChannels() {
+    var team = state.chatChannel === 'team';
+    Array.prototype.forEach.call(document.querySelectorAll('#chat-channels .seg-btn'), function (b) {
+      b.classList.toggle('active', b.getAttribute('data-chat') === state.chatChannel);
+    });
+    $('chat-title').textContent = team ? '队伍频道' : '服务器公屏';
+    $('f-chat').placeholder = team ? '和队友说点什么…' : '说点什么…';
+    $('chat-team-panel').classList.toggle('hidden', !team);
+
+    var mine = state.myTeams || [];
+    var pick = $('chat-team-pick');
+    if (team && mine.length > 1) {
+      pick.classList.remove('hidden');
+      pick.innerHTML = mine.map(function (t) {
+        return '<button class="seg-btn' + (t.id === state.chatTeam ? ' active' : '') +
+          '" data-chatteam="' + esc(t.id) + '">' + esc(plain(t.coloredName || t.name)) + '</button>';
+      }).join('');
+    } else {
+      pick.classList.add('hidden');
+      pick.innerHTML = '';
+    }
+
+    var hint = $('chat-team-hint');
+    if (team) {
+      var cur = mine.filter(function (t) { return t.id === state.chatTeam; })[0];
+      hint.classList.remove('hidden');
+      hint.textContent = cur
+        ? ('只有「' + plain(cur.coloredName || cur.name) + '」的队友看得到这里发的消息')
+        : '你还没加入队伍';
+    } else {
+      hint.classList.add('hidden');
+    }
+  }
+
   function renderChat() {
     var box = $('chat-list');
     if (!state.chatMsgs.length) {
@@ -424,7 +607,9 @@
     }
     box.innerHTML = state.chatMsgs.map(function (m) {
       var mine = m.name === state.name && m.source === 'app';
-      var cls = 'msg' + (mine ? ' mine' : '') + (m.source === 'console' ? ' console' : '');
+      var cls = 'msg' + (mine ? ' mine' : '') +
+        (m.source === 'console' ? ' console' : '') +
+        (m.channel === 'team' ? ' team' : '');
       // 控制台发的话名字本来就是「控制台」，别再重复一次
       var tag = m.source === 'console' ? '' : (m.source === 'app' ? ' · App' : ' · 游戏');
       var t = new Date(m.time || Date.now());
@@ -442,7 +627,9 @@
     var text = input.value.trim();
     if (!text) return;
     input.value = '';
-    api('/api/chat', { body: { message: text } }).then(function (r) {
+    var body = { message: text, channel: state.chatChannel || 'world' };
+    if (state.chatChannel === 'team') body.team = state.chatTeam || '';
+    api('/api/chat', { body: body }).then(function (r) {
       var d = r.data || {};
       if (!d.ok) { toast(d.message || '发送失败'); return; }
       loadChat();
@@ -487,7 +674,20 @@
     // 一个人可能在好几个队里：先看 myTeams，老服务端只有 team 就退回单个
     var mine = d.myTeams || [];
     if (!mine.length && d.team) mine = [d.team];
-    var team = mine.length ? mine[0] : null;
+    state.myTeams = mine;
+    if (!state.chatTeam && mine.length) state.chatTeam = mine[0].id;
+    if (state.pendingChannel === 'team' && mine.length) {
+      state.pendingChannel = '';
+      state.chatChannel = 'team';
+      state.chatLast = 0;
+      state.chatMsgs = [];
+      renderChatChannels();
+      loadChat();
+    }
+    if (state.chatTeam && !mine.some(function (t) { return t.id === state.chatTeam; })) {
+      state.chatTeam = mine.length ? mine[0].id : '';
+    }
+    renderChatChannels();
 
     if (mine.length) {
       $('team-mine').classList.remove('hidden');
@@ -710,18 +910,22 @@
     }).catch(function () {});
   }
 
+  var ADMIN_TABS = ['player', 'report', 'penalty', 'fake', 'cmd'];
+
   function setAdminTab(tab) {
+    if (ADMIN_TABS.indexOf(tab) < 0) tab = 'player';
     state.adminTab = tab;
     Array.prototype.forEach.call(document.querySelectorAll('#admin-tabs .seg-btn'), function (b) {
       b.classList.toggle('active', b.getAttribute('data-admin') === tab);
     });
-    ['player', 'report', 'penalty', 'fake'].forEach(function (t) {
+    ADMIN_TABS.forEach(function (t) {
       var el = $('admin-' + t);
       if (el) el.classList.toggle('hidden', t !== tab);
     });
     if (tab === 'report') loadReports();
     if (tab === 'penalty') loadPenalties();
     if (tab === 'fake') loadFakes();
+    if (tab === 'cmd') loadCommands();
   }
 
   function searchPlayers() {
@@ -783,7 +987,7 @@
           var short = { banmsg: '解除禁言', banmove: '解除移动', banblock: '解除交互', all: '解除全部', ban: '解除封禁' };
           return '<button class="seg-btn" data-unpen="' + k[0] + '">' + (short[k[0]] || ('解除' + k[1])) + '</button>';
         }).join('') +
-        '<button class="seg-btn" data-ban="0">解封</button></div>' +
+        '</div>' +
         (penalties.length ? '<div class="hint" style="margin-top:8px">生效中：' + esc(penalties.join(' / ')) + '</div>' : '');
 
       var reps = d.reports || [];
@@ -818,25 +1022,50 @@
     }).catch(function (e) { toast(e.message); });
   }
 
+  function fakeToggle(name, key, on) {
+    api('/api/admin/fake', { body: { op: 'toggle', name: name, key: key, on: String(on) } }).then(function (r) {
+      var d = r.data || {};
+      toast(d.message || (d.ok ? '已设置' : '失败'));
+      loadFakes();
+    }).catch(function (e) { toast(e.message); });
+  }
+
   function loadReports() {
+    var showHandled = !!state.reportHandled;
     $('report-list').innerHTML = '<p class="empty">加载中…</p>';
-    api('/api/admin/reports?pending=1').then(function (r) {
+    api('/api/admin/reports?' + (showHandled ? 'pending=0' : 'pending=1')).then(function (r) {
       var d = r.data || {};
       var list = d.reports || [];
-      $('report-count').textContent = list.length ? list.length + ' 条待处理' : '没有待处理';
+      $('report-count').textContent = showHandled
+        ? (list.length ? list.length + ' 条（含已处理）' : '还没有举报记录')
+        : (list.length ? list.length + ' 条待处理' : '没有待处理');
+      renderReportTabs(showHandled);
       $('report-list').innerHTML = list.length ? list.map(function (x) {
         var t = new Date(x.time || Date.now());
+        var done = !!x.handled;
+        var head = '<div class="sub">举报人 ' + esc(x.reporter) + ' · ' + pad(t.getMonth() + 1) + '-' +
+          pad(t.getDate()) + ' ' + pad(t.getHours()) + ':' + pad(t.getMinutes()) + '</div>';
+        var tail = done
+          ? ('<div class="sub">处理：' + esc(x.result === 'reject' ? '驳回' : '受理') +
+             (x.handler ? (' · ' + esc(x.handler)) : '') + (x.note ? (' · ' + esc(plain(x.note))) : '') + '</div>')
+          : ('<div class="seg" style="margin-top:8px">' +
+             '<button class="seg-btn" data-rep="accept" data-id="' + x.id + '">受理</button>' +
+             '<button class="seg-btn" data-rep="reject" data-id="' + x.id + '">驳回</button>' +
+             '</div>');
         return '<div class="list-item" style="align-items:flex-start"><div class="main">' +
-          '<b>#' + x.id + ' ' + esc(x.target) + '</b>' +
-          '<div class="sub">' + esc(plain(x.reason || '')) + '</div>' +
-          '<div class="sub">举报人 ' + esc(x.reporter) + ' · ' + pad(t.getMonth() + 1) + '-' +
-          pad(t.getDate()) + ' ' + pad(t.getHours()) + ':' + pad(t.getMinutes()) + '</div>' +
-          '<div class="seg" style="margin-top:8px">' +
-          '<button class="seg-btn" data-rep="accept" data-id="' + x.id + '">受理</button>' +
-          '<button class="seg-btn" data-rep="reject" data-id="' + x.id + '">驳回</button>' +
-          '</div></div></div>';
-      }).join('') : '<p class="empty">没有待处理的举报</p>';
+          '<b>#' + x.id + ' ' + esc(x.target) + (done ? ' <span class="tag">已处理</span>' : '') + '</b>' +
+          '<div class="sub">' + esc(plain(x.reason || '')) + '</div>' + head + tail +
+          '</div></div>';
+      }).join('') : '<p class="empty">' + (showHandled ? '还没有举报记录' : '没有待处理的举报') + '</p>';
     }).catch(function (e) { $('report-list').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; });
+  }
+
+  function renderReportTabs(showHandled) {
+    var box = $('report-tabs');
+    if (!box) return;
+    Array.prototype.forEach.call(box.querySelectorAll('.seg-btn'), function (b) {
+      b.classList.toggle('active', (b.getAttribute('data-report-tab') === 'handled') === !!showHandled);
+    });
   }
 
   function handleReport(op, id) {
@@ -906,11 +1135,23 @@
       var list = d.fakes || [];
       $('fake-list').innerHTML = list.length ? list.map(function (f) {
         var who = f.creator ? (' · 召唤者 ' + esc(f.creator)) : '';
-        return '<div class="list-item"><i class="dot' + (f.active ? ' on' : '') + '"></i>' +
-          '<div class="main"><b>' + esc(f.name) + '</b><div class="sub">' + esc(f.world || '—') +
-          ' · ' + Math.round(f.x) + ', ' + Math.round(f.y) + ', ' + Math.round(f.z) + who + '</div></div>' +
-          '<button class="btn btn-mini" data-fake-respawn="' + esc(f.name) + '">重生</button>' +
-          '<button class="btn btn-mini" data-fake-remove="' + esc(f.name) + '">移除</button></div>';
+        var loaded = f.loaded !== false;
+        var spawn = f.mobSpawning !== false;
+        var tags = '<span class="tag ' + (loaded ? 'ok' : '') + '">' + (loaded ? '区块已加载' : '区块没加载') + '</span>' +
+          '<span class="tag ' + (spawn ? 'ok' : '') + '">' + (spawn ? '会刷怪' : '不刷怪') + '</span>';
+        return '<div class="list-item" style="align-items:flex-start"><i class="dot' + (f.active ? ' on' : '') + '"></i>' +
+          '<div class="main"><b>' + esc(f.name) + '</b>' +
+          '<div class="sub">' + esc(f.world || '—') + ' · ' + Math.round(f.x) + ', ' + Math.round(f.y) + ', ' +
+          Math.round(f.z) + who + '</div>' +
+          '<div class="tags" style="margin-top:6px">' + tags + '</div>' +
+          '<div class="seg" style="margin-top:8px">' +
+          '<button class="seg-btn" data-fake-toggle="load" data-on="' + (loaded ? '0' : '1') + '" data-name="' +
+          esc(f.name) + '">' + (loaded ? '停载区块' : '加载区块') + '</button>' +
+          '<button class="seg-btn" data-fake-toggle="spawn" data-on="' + (spawn ? '0' : '1') + '" data-name="' +
+          esc(f.name) + '">' + (spawn ? '关刷怪' : '开刷怪') + '</button>' +
+          '<button class="seg-btn" data-fake-respawn="' + esc(f.name) + '">重生</button>' +
+          '<button class="seg-btn" data-fake-remove="' + esc(f.name) + '">移除</button>' +
+          '</div></div></div>';
       }).join('') : '<p class="empty">还没有假人</p>';
     }).catch(function (e) { $('fake-list').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; });
   }
@@ -1005,6 +1246,11 @@
 
   function bind() {
     $('btn-login').addEventListener('click', doLogin);
+    $('btn-verify').addEventListener('click', doVerify);
+    $('f-verify').addEventListener('keydown', function (ev) { if (ev.key === 'Enter') doVerify(); });
+    $('btn-verify-logout').addEventListener('click', function () {
+      if (confirm('退出登录？')) logout(false);
+    });
     $('f-pass').addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
     $('btn-refresh').addEventListener('click', function () {
       if (state.page === 'me') loadMe();
@@ -1031,10 +1277,26 @@
       if (confirm('确定退出所有队伍？')) teamAction('leave', '');
     });
     $('btn-title-off').addEventListener('click', function () { equipTitle(''); });
+    if ($('btn-su')) $('btn-su').addEventListener('click', openSu);
+    if ($('btn-su-close')) $('btn-su-close').addEventListener('click', closeSu);
+    if ($('btn-su-run')) $('btn-su-run').addEventListener('click', runSu);
+    if ($('f-su')) $('f-su').addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter') { ev.preventDefault(); runSu(); }
+    });
 
     document.addEventListener('click', function (ev) {
-      var t = ev.target.closest ? ev.target.closest('[data-team],[data-leave],[data-join],[data-kick],[data-title],[data-group],[data-cmd]') : null;
+      var t = ev.target.closest ? ev.target.closest('[data-chat],[data-chatteam],[data-team],[data-leave],[data-join],[data-kick],[data-title],[data-group],[data-cmd]') : null;
       if (!t) return;
+      if (t.hasAttribute('data-chat')) { setChatChannel(t.getAttribute('data-chat')); return; }
+      if (t.hasAttribute('data-chatteam')) {
+        state.chatTeam = t.getAttribute('data-chatteam');
+        state.chatLast = 0;
+        state.chatMsgs = [];
+        renderChatChannels();
+        renderChat();
+        loadChat();
+        return;
+      }
       if (t.hasAttribute('data-leave')) {
         var tn = t.getAttribute('data-leave');
         if (confirm('退出队伍「' + tn + '」？')) teamAction('leave', tn);
@@ -1075,13 +1337,22 @@
     $('btn-fake-add').addEventListener('click', fakeAdd);
 
     document.addEventListener('click', function (ev) {
-      var t = ev.target.closest ? ev.target.closest('[data-manage],[data-detail],[data-rep],[data-release],[data-pen],[data-unpen],[data-ban],[data-fake-remove],[data-fake-respawn],[data-fake-set]') : null;
+      var t = ev.target.closest ? ev.target.closest('[data-manage],[data-detail],[data-rep],[data-release],[data-pen],[data-unpen],[data-ban],[data-fake-remove],[data-fake-respawn],[data-fake-set],[data-fake-toggle],[data-report-tab]') : null;
       if (!t) return;
       if (t.hasAttribute('data-fake-set')) {
         fakeSet(t.getAttribute('data-fake-set'), t.getAttribute('data-value'));
         return;
       }
       if (t.hasAttribute('data-fake-respawn')) { fakeRespawn(t.getAttribute('data-fake-respawn')); return; }
+      if (t.hasAttribute('data-report-tab')) {
+        state.reportHandled = t.getAttribute('data-report-tab') === 'handled';
+        loadReports();
+        return;
+      }
+      if (t.hasAttribute('data-fake-toggle')) {
+        fakeToggle(t.getAttribute('data-name'), t.getAttribute('data-fake-toggle'), t.getAttribute('data-on'));
+        return;
+      }
       if (t.hasAttribute('data-unpen')) {
         var h0 = document.querySelector('#player-detail .card-title h2');
         var w0 = h0 ? h0.textContent : '';
@@ -1151,8 +1422,14 @@
 
     if (state.token) {
       enterApp();
-      var tab = new URLSearchParams(location.search).get('page');
+      var qs = new URLSearchParams(location.search);
+      var tab = qs.get('page');
       if (tab) switchPage(tab);
+      // 调试用：?chat=team 直接切队伍频道、?tab=cmd 直接开管理页的命令子标签
+      var ch = qs.get('chat');
+      if (ch) setChatChannel(ch);
+      var at = qs.get('tab');
+      if (at && state.admin) setAdminTab(at);
     }
   }
 

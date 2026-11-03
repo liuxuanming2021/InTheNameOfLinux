@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#f4f6fa">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css?v=17">
+  <link rel="stylesheet" href="style.css?v=20">
 </head>
 <body>
 
@@ -38,6 +38,48 @@
   <button id="btn-login" class="btn btn-primary btn-block" style="margin-top:8px">登录</button>
   <p class="hint" style="margin-top:14px">用游戏里的 ID 和密码登录，和进服时是同一个密码。</p>
   <p id="login-err" class="tip-err hidden"></p>
+</div>
+
+<!-- 身份验证弹窗：盖在整个界面上，验完才让用 -->
+<div id="verify-modal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-mark">🔒</div>
+      <div class="modal-title">
+        <h2>Linux 身份验证</h2>
+        <p id="verify-sub">请通过 Linux 身份验证</p>
+      </div>
+    </div>
+    <p class="hint" style="margin:10px 0 12px">登录已经通过，但要再用 <b>ITNOL 的验证密码</b> 确认一次身份。验证之前 App 里的数据、聊天、管理功能都不可用。</p>
+    <div class="field">
+      <label for="f-verify">ITNOL 密码</label>
+      <input id="f-verify" type="password" placeholder="在游戏里输的那个验证密码">
+    </div>
+    <p id="verify-err" class="tip-err hidden"></p>
+    <button id="btn-verify" class="btn btn-primary btn-block" style="margin-top:6px">验证</button>
+    <button id="btn-verify-logout" class="btn btn-block" style="margin-top:8px">退出登录</button>
+  </div>
+</div>
+
+<!-- su：验证过身份之后执行任意命令 -->
+<div id="su-modal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-mark">⚡</div>
+      <div class="modal-title">
+        <h2>su 控制台</h2>
+        <p>输什么执行什么，不再看白名单</p>
+      </div>
+    </div>
+    <p class="hint" style="margin:10px 0 12px">只有验证过 Linux 身份才能用。<b>stop / restart</b> 这类关服命令这里也执行不了，别的都可以。</p>
+    <div class="field">
+      <label for="f-su">命令</label>
+      <input id="f-su" autocapitalize="off" spellcheck="false" placeholder="例如 op Steve">
+    </div>
+    <pre id="su-out" class="cmd-out hidden"></pre>
+    <button id="btn-su-run" class="btn btn-primary btn-block" style="margin-top:6px">执行</button>
+    <button id="btn-su-close" class="btn btn-block" style="margin-top:8px">关闭</button>
+  </div>
 </div>
 
 <!-- 主界面 -->
@@ -105,43 +147,50 @@
     <section id="page-chat" class="page hidden">
       <div class="card" style="padding:10px 12px">
         <div class="card-title" style="margin:0">
-          <h2>服务器公屏</h2>
+          <h2 id="chat-title">服务器公屏</h2>
           <span class="side" id="chat-online">—</span>
         </div>
+        <div class="seg" id="chat-channels" style="margin-top:10px">
+          <button class="seg-btn active" data-chat="world">世界</button>
+          <button class="seg-btn" data-chat="team">队伍</button>
+        </div>
+        <div class="seg hidden" id="chat-team-pick" style="margin-top:8px"></div>
+        <p class="hint hidden" id="chat-team-hint" style="margin:8px 2px 0"></p>
       </div>
+
       <div class="chat-list" id="chat-list"></div>
       <div class="chat-input-bar">
         <input id="f-chat" type="text" maxlength="200" placeholder="说点什么…" autocapitalize="off">
         <button id="btn-chat-send" class="btn btn-primary btn-send">发送</button>
       </div>
-    </section>
 
-    <!-- 队伍 -->
-    <section id="page-team" class="page hidden">
-      <div class="card hidden" id="team-mine">
-        <div class="team-head">
-          <div>
-            <div class="team-name" id="team-name">—</div>
-            <div class="hint" id="team-sub">—</div>
+      <div id="chat-team-panel" class="hidden">
+          <div class="card hidden" id="team-mine">
+            <div class="team-head">
+              <div>
+                <div class="team-name" id="team-name">—</div>
+                <div class="hint" id="team-sub">—</div>
+              </div>
+              <button id="btn-team-leave" class="btn btn-mini hidden">退出</button>
+            </div>
+            <div id="team-members" style="margin-top:8px"></div>
+            <div class="seg" style="margin-top:10px" id="team-actions"></div>
           </div>
-          <button id="btn-team-leave" class="btn btn-mini hidden">退出</button>
-        </div>
-        <div id="team-members" style="margin-top:8px"></div>
-        <div class="seg" style="margin-top:10px" id="team-actions"></div>
-      </div>
 
-      <div class="card" id="team-none">
-        <div class="card-title"><h2>还没有队伍</h2></div>
-        <div class="search-row">
-          <input id="f-team-name" type="text" maxlength="12" placeholder="新队伍名字（最多 12 字）">
-          <button id="btn-team-create" class="btn btn-primary">建队</button>
-        </div>
-        <p class="hint" style="margin:10px 2px 0">建队后你就是队长，可以邀请、踢人、转让、解散。</p>
-      </div>
+          <div class="card" id="team-none">
+            <div class="card-title"><h2>还没有队伍</h2></div>
+            <div class="search-row">
+              <input id="f-team-name" type="text" maxlength="12" placeholder="新队伍名字（最多 12 字）">
+              <button id="btn-team-create" class="btn btn-primary">建队</button>
+            </div>
+            <p class="hint" style="margin:10px 2px 0">建队后你就是队长，可以邀请、踢人、转让、解散。</p>
+          </div>
 
-      <div class="card">
-        <div class="card-title"><h2>服务器上的队伍</h2><span class="side" id="team-count">—</span></div>
-        <div id="team-list"></div>
+          <div class="card">
+            <div class="card-title"><h2>服务器上的队伍</h2><span class="side" id="team-count">—</span></div>
+            <div id="team-list"></div>
+          </div>
+    
       </div>
     </section>
 
@@ -161,23 +210,6 @@
       </div>
     </section>
 
-    <!-- 命令（管理员） -->
-    <section id="page-cmd" class="page hidden">
-      <div class="card">
-        <p class="hint" style="margin:0 0 10px">
-          点一条命令，参数会填进下面的框，补全后再按执行。危险命令会二次确认。
-        </p>
-        <div class="seg" id="cmd-groups" style="margin-bottom:12px"></div>
-        <div class="cmd-list" id="cmd-list"></div>
-      </div>
-      <div class="card">
-        <div class="card-title"><h2>要执行的命令</h2></div>
-        <input id="f-cmd" type="text" autocapitalize="off" spellcheck="false" placeholder="ltab info">
-        <button id="btn-run" class="btn btn-primary btn-block" style="margin-top:10px">执行</button>
-        <div id="cmd-out" class="cmd-out hidden"></div>
-      </div>
-    </section>
-
     <!-- 更多：在线玩家 / 管理 / 设置 -->
     <section id="page-admin" class="page hidden">
       <div class="card" id="admin-card">
@@ -187,6 +219,7 @@
           <button class="seg-btn" data-admin="report">举报</button>
           <button class="seg-btn" data-admin="penalty">惩罚</button>
           <button class="seg-btn" data-admin="fake">假人</button>
+          <button class="seg-btn" data-admin="cmd">命令</button>
         </div>
 
         <div id="admin-player">
@@ -202,6 +235,10 @@
           <div class="search-row">
             <button id="btn-load-reports" class="btn btn-primary">刷新待处理</button>
             <span class="hint" id="report-count"></span>
+          </div>
+          <div class="seg" id="report-tabs" style="margin:8px 0">
+            <button class="seg-btn active" data-report-tab="pending">待处理</button>
+            <button class="seg-btn" data-report-tab="handled">全部 / 已处理</button>
           </div>
           <div id="report-list" style="margin-top:10px"></div>
         </div>
@@ -242,6 +279,28 @@
         </div>
       </div>
 
+        <div id="admin-cmd" class="hidden">
+        <div class="card">
+          <div class="card-title"><h2>su 控制台</h2><span class="tag warn">需要身份验证</span></div>
+          <p class="hint" style="margin:0 0 10px">验证过 Linux 身份之后，可以在这里执行<b>任意命令</b>（白名单也管不着），弹窗输入。</p>
+          <button id="btn-su" class="btn btn-primary btn-block">打开 su 控制台</button>
+          <div id="su-out-inline" class="cmd-out hidden"></div>
+        </div>
+        <div class="card">
+          <p class="hint" style="margin:0 0 10px">
+            点一条命令，参数会填进下面的框，补全后再按执行。危险命令会二次确认。
+          </p>
+          <div class="seg" id="cmd-groups" style="margin-bottom:12px"></div>
+          <div class="cmd-list" id="cmd-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><h2>要执行的命令</h2></div>
+          <input id="f-cmd" type="text" autocapitalize="off" spellcheck="false" placeholder="ltab info">
+          <button id="btn-run" class="btn btn-primary btn-block" style="margin-top:10px">执行</button>
+          <div id="cmd-out" class="cmd-out hidden"></div>
+        </div>
+    
+        </div>
     </section>
 
     <section id="page-more" class="page hidden">
@@ -259,7 +318,7 @@
           <span>登录账号</span><b id="set-name">—</b>
           <span>服务器</span><b id="set-server">—</b>
           <span>管理权限</span><b id="set-admin">否</b>
-          <span>客户端版本</span><b>1.3.1</b>
+          <span>客户端版本</span><b>1.4.2</b>
         </div>
         <div class="switch-row">
           <div>
@@ -295,16 +354,14 @@
   <nav class="tabs">
     <button class="tab active" data-page="me"><span class="ico">👤</span><span>我的</span></button>
     <button class="tab" data-page="chat"><span class="ico">💬</span><span>聊天</span><span id="chat-dot" class="badge-dot hidden"></span></button>
-    <button class="tab" data-page="team"><span class="ico">🛡</span><span>队伍</span></button>
     <button class="tab" data-page="title"><span class="ico">🏷</span><span>头衔</span></button>
     <button class="tab hidden" id="tab-admin" data-page="admin"><span class="ico">🛠</span><span>管理</span></button>
-    <button class="tab hidden" id="tab-cmd" data-page="cmd"><span class="ico">⌨️</span><span>命令</span></button>
     <button class="tab" data-page="more"><span class="ico">⋯</span><span>更多</span></button>
   </nav>
 </div>
 
 <div id="fatal" class="hidden"></div>
 <div id="toast" class="toast hidden"></div>
-<script src="app.js?v=17"></script>
+<script src="app.js?v=20"></script>
 </body>
 </html>
