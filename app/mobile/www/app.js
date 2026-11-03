@@ -16,10 +16,11 @@
 
   var PAGE_TITLE = {
     me: ['我的数据', ''],
-    chat: ['服务器聊天', '公屏 / 队伍频道'],
+    chat: ['服务器聊天', '公屏 / 队伍频道 / 我的队伍'],
+    team: ['队伍', 'LinuxTeam'],
     title: ['头衔', 'LinuxTitle'],
     admin: ['服务器管理', '玩家 / 举报 / 惩罚 / 假人 / 命令'],
-    more: ['更多', '在线玩家 / 设置']
+    more: ['更多', '设置 / 接口地址 / 插件']
   };
 
   var state = {
@@ -32,6 +33,7 @@
     chatLast: 0,
     chatMsgs: [],
     chatChannel: 'world',
+    chatScrollPending: false,
     chatTeam: '',
     myTeams: [],
     chatTimer: 0,
@@ -130,11 +132,15 @@
         try { data = txt ? JSON.parse(txt) : {}; } catch (e) { data = { ok: false, message: '服务器返回的不是 JSON' }; }
         if (r.status === 401) {
           if (!opts.quiet) { logout(true); }
-          throw new Error((data && data.message) || '登录已过期，请重新登录');
+          var e401 = new Error((data && data.message) || '登录已过期，请重新登录');
+          e401.status = 401;
+          throw e401;
         }
         if (r.status === 403 && data && data.code === 'need_verify') {
           showVerifyGate(true);
-          throw new Error('请先完成身份验证');
+          var e403 = new Error((data && data.message) || '请先完成身份验证');
+          e403.needVerify = true;
+          throw e403;
         }
         return { status: r.status, data: data };
       });
@@ -143,6 +149,8 @@
       if (err && err.name === 'AbortError') {
         throw new Error('连接超时：' + url + '（10 秒没响应，多半是端口没放行或被防火墙挡了）');
       }
+      // 服务器已经说清楚原因了（密码不对 / 要验证 / 没权限），原样抛给界面
+      if (err && (err.status || err.needVerify)) throw err;
       if (err && err.message && err.message.indexOf('登录已过期') >= 0) throw err;
       if (err && err.message && err.message.indexOf('连接超时') >= 0) throw err;
       throw new Error('连不上 ' + url + ' —— 看这几点：服务器开着吗 / 云服务器安全组放行这个端口了吗 / plugins 里有没有 NalxerApp');
@@ -196,8 +204,11 @@
   function showVerifyGate(on, reason) {
     var m = $('verify-modal');
     if (!m) return;
+    // 这个弹窗是「不验证就别用」：一直盖住、点遮罩不关，只能验证或者退出登录
     m.classList.toggle('hidden', !on);
+    m.dataset.forced = on ? '1' : '';
     state.needVerify = !!on;
+    document.body.classList.toggle('verify-locked', !!on);
     var sub = $('verify-sub');
     if (sub) {
       sub.textContent = on && reason
@@ -218,41 +229,61 @@
   }
 
   // su 弹窗：验证过身份才能开
-  function openSu() {
-    if (state.needVerify) { toast('先通过 Linux 身份验证'); return; }
-    $('su-out').classList.add('hidden');
-    $('su-out').textContent = '';
-    $('f-su').value = '';
-    $('su-modal').classList.remove('hidden');
-    setTimeout(function () { try { $('f-su').focus(); } catch (e) {} }, 60);
+  // ── su 控制台（仿真控制台，以服务器控制台身份执行）────
+
+  function suAppend(text, cls) {
+    var box = $('su-log');
+    if (!box || !text) return;
+    var div = document.createElement('div');
+    if (cls) div.className = cls;
+    div.textContent = text;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
   }
 
-  function closeSu() { $('su-modal').classList.add('hidden'); }
+  function suReset() {
+    var box = $('su-log');
+    if (!box) return;
+    box.innerHTML = '';
+    suAppend('Nalxer App —— 服务器控制台', 'dim-line');
+    suAppend('输入的命令会以 CONSOLE 身份执行，回显就是服务器后台那份。', 'dim-line');
+    suAppend('stop / restart / end 不给执行。', 'dim-line');
+    suAppend('', 'dim-line');
+  }
 
-  function runSu() {
-    var cmd = $('f-su').value.trim();
+  function renderSuConsole() {
+    if (!isSuOn()) {
+      toast('先到设置里打开 su 控制台');
+      return;
+    }
+    if (!$('su-log').childNodes.length) suReset();
+    setTimeout(function () { try { $('f-su2').focus(); } catch (e) {} }, 80);
+  }
+
+  function runSuConsole() {
+    var input = $('f-su2');
+    var cmd = (input.value || '').trim();
     if (!cmd) { toast('先写一条命令'); return; }
+    if (!isSuOn()) { toast('su 控制台是关的，去设置里打开'); return; }
+    input.value = '';
+    suAppend('> ' + cmd, 'cmd-line');
     var btn = $('btn-su-run');
     btn.disabled = true;
     btn.textContent = '执行中…';
     api('/api/admin/su', { body: { command: cmd } }).then(function (r) {
       var d = r.data || {};
-      showSuOut((d.ok ? '' : '失败：') + (d.message || '') + (d.output && d.output.length ? '' : '\n（没有回显）'), d.output || []);
-      if (d.ok) toast('已执行');
+      (d.output || []).forEach(function (line) { suAppend(line); });
+      if (!d.ok) suAppend('✗ ' + (d.message || '执行失败'), 'err-line');
+      else if (!(d.output || []).length) suAppend('（没有回显）', 'dim-line');
+      else suAppend('✓ 执行完毕', 'ok-line');
+      state.suLast = cmd;
     }).catch(function (e) {
-      showSuOut('失败：' + e.message, []);
+      suAppend('✗ ' + e.message, 'err-line');
     }).then(function () {
       btn.disabled = false;
-      btn.textContent = '执行';
+      btn.textContent = '发送';
+      try { $('f-su2').focus(); } catch (e) {}
     });
-  }
-
-  function showSuOut(head, lines) {
-    var box = $('su-out');
-    var text = head ? head + '\n' : '';
-    if (lines && lines.length) text += lines.join('\n');
-    box.textContent = text.trim();
-    box.classList.toggle('hidden', !box.textContent);
   }
 
   function doVerify() {
@@ -326,7 +357,7 @@
   // ── 页面切换 ─────────────────────────────────────────
 
   var PAGE_IDS = {
-    me: 'page-me', chat: 'page-chat',
+    me: 'page-me', chat: 'page-chat', team: 'page-team',
     title: 'page-titles', admin: 'page-admin', more: 'page-more'
   };
 
@@ -347,9 +378,14 @@
     var meta = PAGE_TITLE[page] || ['Nalxer', ''];
     $('page-title').textContent = meta[0];
     $('page-sub').textContent = meta[1] || state.name;
+    measureTopbar();
     window.scrollTo(0, 0);
 
+    if (page === 'team') {
+      loadTeam();
+    }
     if (page === 'chat') {
+      state.chatScrollPending = true;
       if (state.chatMsgs && state.chatMsgs.length) scrollChatBottom();
       $('chat-dot').classList.add('hidden');
       loadChat();
@@ -357,7 +393,7 @@
     }
     if (page === 'title') loadTitles();
     if (page === 'admin') setAdminTab(state.adminTab || 'player');
-    if (page === 'more') loadPlayers();
+    if (page === 'more' && state.admin) loadStatus();
   }
 
   // ── 我的 ─────────────────────────────────────────────
@@ -369,6 +405,93 @@
     var n = String(text).length;
     el.classList.toggle('long', n >= 8 && n < 11);
     el.classList.toggle('xlong', n >= 11);
+  }
+
+
+  // ── Linux 系插件：列表 / 启停 / 改配置 ───────────────
+
+  function openLinux() {
+    var m = $('linux-modal');
+    if (!m) return;
+    m.classList.remove('hidden');
+    loadLinux();
+  }
+
+  function closeLinux() {
+    var m = $('linux-modal');
+    if (m) m.classList.add('hidden');
+  }
+
+  function loadLinux() {
+    var box = $('linux-list');
+    box.innerHTML = '<p class="empty">读取中…</p>';
+    api('/api/admin/linux', { quiet: true }).then(function (r) {
+      var d = r.data || {};
+      var list = d.plugins || [];
+      if (!list.length) {
+        box.innerHTML = '<p class="empty">服上没找到 Linux 开头的插件</p>';
+        return;
+      }
+      var on = list.filter(function (p) { return p.loaded; }).length;
+      $('linux-sum').textContent = on + ' / ' + list.length + ' 已加载';
+      box.innerHTML = list.map(function (p) {
+        return '<div class="list-item"><div class="main">' +
+          '<b>' + esc(p.name) + '</b>' +
+          '<div class="sub">v' + esc(p.version || '?') +
+          (p.hasConfig ? ' · config.yml ' + fmtSize(p.configSize) : ' · 没有 config.yml') + '</div>' +
+          '</div><span class="tag ' + (p.loaded ? 'ok' : '') + '">' + (p.loaded ? '运行中' : '已停用') + '</span></div>' +
+          '<div class="seg" style="margin:-2px 0 10px">' +
+          '<button class="seg-btn" data-linux-op="' + (p.loaded ? 'disable' : 'enable') + '" data-linux="' + esc(p.name) + '">' +
+          (p.loaded ? '停用' : '启用') + '</button>' +
+          '<button class="seg-btn" data-linux-op="reload" data-linux="' + esc(p.name) + '">重载配置</button>' +
+          (p.hasConfig ? '<button class="seg-btn" data-linux-op="edit" data-linux="' + esc(p.name) + '">改配置</button>' : '') +
+          '</div>';
+      }).join('');
+    }).catch(function (e) {
+      box.innerHTML = '<p class="empty">' + esc(e.message) + '</p>';
+    });
+  }
+
+  function linuxOp(name, op) {
+    if (op === 'edit') { openLinuxConfig(name); return; }
+    if (op === 'disable' && !confirm('停用 ' + name + '？停用后这个插件的功能会立刻失效（重启服务器才会回来）。')) return;
+    toast('处理中…');
+    api('/api/admin/linux/op', { body: { name: name, op: op }, quiet: true }).then(function (r) {
+      var d = r.data || {};
+      toast(d.message || '完成');
+      loadLinux();
+    }).catch(function (e) { toast(e.message); });
+  }
+
+  function openLinuxConfig(name) {
+    api('/api/admin/linux/config?name=' + encodeURIComponent(name), { quiet: true }).then(function (r) {
+      var d = r.data || {};
+      if (!d.ok) { toast(d.message || '读不到配置'); return; }
+      $('linux-cfg-title').textContent = name + ' / ' + (d.file || 'config.yml');
+      $('linux-cfg-sub').textContent = (d.size || 0) + ' 字节 · ' + (d.path || '');
+      $('f-linux-cfg').value = d.text || '';
+      $('linux-cfg-msg').textContent = '保存前会先做 YAML 语法检查，通过才写盘，并留一份 config.yml.app-bak。';
+      $('linux-modal').classList.add('hidden');
+      $('linux-cfg-modal').classList.remove('hidden');
+    }).catch(function (e) { toast(e.message); });
+  }
+
+  function saveLinuxConfig() {
+    var name = ($('linux-cfg-title').textContent || '').split(' / ')[0];
+    var text = $('f-linux-cfg').value;
+    var msg = $('linux-cfg-msg');
+    msg.textContent = '保存中…';
+    api('/api/admin/linux/config', { body: { name: name, text: text }, quiet: true }).then(function (r) {
+      var d = r.data || {};
+      msg.textContent = d.message || (d.ok ? '已保存' : '保存失败');
+      if (d.ok) { toast('已保存并重载'); loadLinux(); }
+    }).catch(function (e) { msg.textContent = e.message; });
+  }
+
+  function fmtSize(n) {
+    n = Number(n) || 0;
+    if (n > 1024) return (n / 1024).toFixed(1) + ' KB';
+    return n + ' B';
   }
 
   function fmt(n) {
@@ -410,6 +533,11 @@
       renderMe(d.data);
       renderIdentity(d.data);
       renderSuSwitch();
+    if (state.pendingAdminTab) {
+      var ptab = state.pendingAdminTab;
+      state.pendingAdminTab = '';
+      setAdminTab(ptab);
+    }
       loadCheckin();
       if (state.admin) loadStatus();
     }).catch(function (e) { fatal('读取数据失败', e.message); });
@@ -444,11 +572,16 @@
   /** su 控制台的入口（管理页「命令」子标签 + su 卡）只有「服主 + 设置里打开」才给 */
   function applySu() {
     var on = isSuOn();
-    var tabBtn = document.querySelector('[data-admin="cmd"]');
-    if (tabBtn) tabBtn.classList.toggle('hidden', !on);
-    if (state.adminTab === 'cmd' && !on) setAdminTab('player');
-    // 管理页副标题跟着走，别在不给命令的时候还写着「命令」
-    PAGE_TITLE.admin[1] = '玩家 / 举报 / 惩罚 / 假人' + (on ? ' / 命令' : '');
+    var cmdBtn = document.querySelector('[data-admin="cmd"]');
+    if (cmdBtn) cmdBtn.classList.toggle('hidden', !state.su);
+    var suBtn = document.querySelector('[data-admin="su"]');
+    if (suBtn) suBtn.classList.toggle('hidden', !(state.su && on));
+    if (state.adminTab === 'su' && !(state.su && on)) setAdminTab('online');
+    // 管理页副标题跟着走
+    var subs = ['在线', '玩家', '举报', '惩罚', '假人'];
+    if (state.su) subs.push('命令');
+    if (state.su && on) subs.push('su');
+    PAGE_TITLE.admin[1] = subs.join(' / ');
     if (state.page === 'admin' && $('page-sub')) $('page-sub').textContent = PAGE_TITLE.admin[1];
   }
 
@@ -641,19 +774,27 @@
     if (ch === 'team' && !state.chatTeam && (state.myTeams || []).length) {
       state.chatTeam = state.myTeams[0].id;
     }
+    state.chatScrollPending = true;
     renderChatChannels();
-    renderChat();
-    loadChat();
+    if (ch === 'mine') {
+      renderTeamView();
+    } else {
+      renderChat();
+      loadChat();
+    }
   }
 
   function renderChatChannels() {
     var team = state.chatChannel === 'team';
+    var mineView = state.chatChannel === 'mine';
     Array.prototype.forEach.call(document.querySelectorAll('#chat-channels .seg-btn'), function (b) {
       b.classList.toggle('active', b.getAttribute('data-chat') === state.chatChannel);
     });
-    $('chat-title').textContent = team ? '队伍频道' : '服务器公屏';
+    $('chat-title').textContent = mineView ? '我的队伍' : (team ? '队伍频道' : '服务器公屏');
     $('f-chat').placeholder = team ? '和队友说点什么…' : '说点什么…';
-    $('chat-team-panel').classList.toggle('hidden', !team);
+    $('chat-list').classList.toggle('hidden', mineView);
+    document.querySelector('.chat-input-bar').classList.toggle('hidden', mineView);
+    $('chat-team-view').classList.toggle('hidden', !mineView);
 
     var mine = state.myTeams || [];
     var pick = $('chat-team-pick');
@@ -680,6 +821,30 @@
     }
   }
 
+  /** 聊天页「我的队伍」：只读，管理在底栏「队伍」页。 */
+  function renderTeamView() {
+    var box = $('chat-team-view');
+    if (!box) return;
+    var mine = state.myTeams || [];
+    if (!mine.length) {
+      box.innerHTML = '<div class="card"><div class="card-title"><h2>还没有队伍</h2></div>' +
+        '<p class="hint" style="margin:6px 2px 0">去底栏「队伍」页可以建一个，或者加入别人已经建好的队伍。</p></div>';
+      return;
+    }
+    box.innerHTML = mine.map(function (t) {
+      var members = (t.members || []).map(function (m) {
+        return '<div class="row"><span>' + esc(m.name) + (m.online ? '' : ' <span class="tag">离线</span>') +
+          '</span><span class="side">贡献 ' + (m.contribution || 0) + ' · 在队 ' + (m.days || 0) + ' 天</span></div>';
+      }).join('');
+      return '<div class="card">' +
+        '<div class="card-title"><h2>' + esc(plain(t.coloredName || t.name)) + '</h2>' +
+        '<span class="side">' + (t.size || 0) + ' / ' + (t.maxSize || 0) + ' 人</span></div>' +
+        '<div class="hint" style="margin:2px 0 8px">队长 ' + esc(t.leaderName || '—') +
+        ' · 标识 ' + esc(plain(t.tag || '—')) + '</div>' + members + '</div>';
+    }).join('') +
+      '<p class="hint" style="margin:10px 2px">这里只能看。建队 / 退出 / 踢人 / 转让 / 解散都在底栏「队伍」页。</p>';
+  }
+
   function renderChat() {
     var box = $('chat-list');
     if (!state.chatMsgs.length) {
@@ -699,7 +864,11 @@
         '<div class="meta">' + esc(m.name) + ' · ' + when + esc(tag) + '</div>' +
         '<div class="bubble">' + esc(m.text) + '</div></div>';
     }).join('');
-    scrollChatBottom();
+    // 别每次都跳：只有切到聊天页 / 切频道 / 刚发完消息时才定位到最后一条
+    if (state.chatScrollPending) {
+      state.chatScrollPending = false;
+      scrollChatBottom();
+    }
   }
 
   /** 聊天记录默认停在最底下（最新的那条），刚进页面和发完消息都要跟一次 */
@@ -711,7 +880,11 @@
       // 滚到「最后一条消息的底部」而不是整页底部：队伍频道下面还挂着队伍管理面板，
       // 直接滚到整页底部会跳到队伍列表上去，看不到聊天
       var rect = box.getBoundingClientRect();
-      var target = window.scrollY + rect.bottom - window.innerHeight + 14;
+      // 顶上钉着标题栏 + 频道条，底下钉着输入框，两边都要让开
+      var head = $('chat-head') ? $('chat-head').getBoundingClientRect().height : 0;
+      var bar = document.querySelector('#page-chat .chat-input-bar');
+      var barH = bar ? bar.getBoundingClientRect().height : 0;
+      var target = window.scrollY + rect.bottom + head + barH - window.innerHeight + 16;
       var max = Math.max(0, document.body.scrollHeight - window.innerHeight);
       window.scrollTo(0, Math.max(0, Math.min(target, max)));
     };
@@ -722,6 +895,7 @@
   }
 
   function sendChat() {
+    state.chatScrollPending = true;
     var input = $('f-chat');
     var text = input.value.trim();
     if (!text) return;
@@ -775,6 +949,7 @@
     if (!mine.length && d.team) mine = [d.team];
     state.myTeams = mine;
     if (!state.chatTeam && mine.length) state.chatTeam = mine[0].id;
+    renderTeamView();
     if (state.pendingChannel === 'team' && mine.length) {
       state.pendingChannel = '';
       state.chatChannel = 'team';
@@ -984,7 +1159,10 @@
     api('/api/admin/status').then(function (r) {
       var d = r.data || {};
       if (!d.ok) return;
-      var plugins = d.plugins || [];
+      // 只显示 Linux 系插件；别的插件的信息不进 App
+      var plugins = (d.plugins || []).filter(function (p) {
+        return p && p.name && p.name.indexOf('Linux') === 0;
+      });
       var on = plugins.filter(function (p) { return p.loaded; }).length;
       $('status-sub').textContent = on + ' / ' + plugins.length + ' 已加载';
       $('status-list').innerHTML = plugins.map(function (p) {
@@ -1009,9 +1187,12 @@
     }).catch(function () {});
   }
 
-  var ADMIN_TABS = ['player', 'report', 'penalty', 'fake', 'cmd'];
+  var ADMIN_TABS = ['online', 'player', 'report', 'penalty', 'fake', 'cmd', 'su'];
 
   function setAdminTab(tab) {
+    if (tab === 'su' && !isSuOn()) tab = 'online';
+    if (tab === 'online') loadPlayers();
+    if (tab === 'su') renderSuConsole();
     if (ADMIN_TABS.indexOf(tab) < 0) tab = 'player';
     state.adminTab = tab;
     Array.prototype.forEach.call(document.querySelectorAll('#admin-tabs .seg-btn'), function (b) {
@@ -1054,6 +1235,7 @@
         ['点券', p.hasPoints ? fmt(p.points) : '—'],
         ['等级', p.level == null ? '—' : p.level],
         ['在线时长', hoursText(p.playtimeHours)],
+        ['身份', (p.identity && p.identity.label) || p.role || '无'],
         ['队伍', p.team ? plain(p.team) : '无'],
         ['头衔', p.titleName || '无'],
         ['封禁', p.banned ? ('是 · ' + (p.banReason || '未填写')) : '否']
@@ -1375,6 +1557,13 @@
     });
 
     $('btn-checkin').addEventListener('click', doCheckin);
+    $('btn-linux').addEventListener('click', openLinux);
+    $('btn-linux-close').addEventListener('click', closeLinux);
+    $('btn-linux-cfg-save').addEventListener('click', saveLinuxConfig);
+    $('btn-linux-cfg-close').addEventListener('click', function () {
+      $('linux-cfg-modal').classList.add('hidden');
+      openLinux();
+    });
     $('btn-chat-send').addEventListener('click', sendChat);
     $('f-chat').addEventListener('keydown', function (e) { if (e.key === 'Enter') sendChat(); });
     $('btn-team-create').addEventListener('click', function () {
@@ -1386,21 +1575,30 @@
       if (confirm('确定退出所有队伍？')) teamAction('leave', '');
     });
     $('btn-title-off').addEventListener('click', function () { equipTitle(''); });
-    if ($('btn-su')) $('btn-su').addEventListener('click', openSu);
-    if ($('btn-su-close')) $('btn-su-close').addEventListener('click', closeSu);
-    if ($('btn-su-run')) $('btn-su-run').addEventListener('click', runSu);
+    $('btn-su-run').addEventListener('click', runSuConsole);
+    $('f-su2').addEventListener('keydown', function (e) { if (e.key === 'Enter') runSuConsole(); });
+    $('btn-su-clear').addEventListener('click', suReset);
+    $('btn-su-stop-note').addEventListener('click', function () {
+      suAppend('能执行：任何 Bukkit / 插件命令（op、give、ltab reload…）。', 'dim-line');
+      suAppend('不能执行：stop、restart、end（关服这类永远不给）。', 'dim-line');
+    });
     if ($('f-su')) $('f-su').addEventListener('keydown', function (ev) {
       if (ev.key === 'Enter') { ev.preventDefault(); runSu(); }
     });
 
     document.addEventListener('click', function (ev) {
-      var t = ev.target.closest ? ev.target.closest('[data-chat],[data-chatteam],[data-team],[data-leave],[data-join],[data-kick],[data-title],[data-group],[data-cmd]') : null;
+      var t = ev.target.closest ? ev.target.closest('[data-linux-op],[data-chat],[data-chatteam],[data-team],[data-leave],[data-join],[data-kick],[data-title],[data-group],[data-cmd]') : null;
       if (!t) return;
+      if (t.hasAttribute('data-linux-op')) {
+        linuxOp(t.getAttribute('data-linux'), t.getAttribute('data-linux-op'));
+        return;
+      }
       if (t.hasAttribute('data-chat')) { setChatChannel(t.getAttribute('data-chat')); return; }
       if (t.hasAttribute('data-chatteam')) {
         state.chatTeam = t.getAttribute('data-chatteam');
         state.chatLast = 0;
         state.chatMsgs = [];
+        state.chatScrollPending = true;
         renderChatChannels();
         renderChat();
         loadChat();
@@ -1513,9 +1711,20 @@
 
   // ── 启动 ─────────────────────────────────────────────
 
+  // 顶栏高度算出来给吸顶的聊天频道条用
+  function measureTopbar() {
+    var bar = document.querySelector('.topbar');
+    if (!bar) return;
+    var h = Math.round(bar.getBoundingClientRect().height);
+    if (h > 0) document.documentElement.style.setProperty('--topbar-h', h + 'px');
+  }
+
   function boot() {
     initTheme();
     bind();
+    measureTopbar();
+    window.addEventListener('resize', measureTopbar);
+    window.addEventListener('orientationchange', function () { setTimeout(measureTopbar, 260); });
 
     state.server = normServer(localStorage.getItem(LS.server) || DEFAULT_SERVER);
     state.token = localStorage.getItem(LS.token) || '';
@@ -1539,7 +1748,8 @@
       var ch = qs.get('chat');
       if (ch) setChatChannel(ch);
       var at = qs.get('tab');
-      if (at && state.admin) setAdminTab(at);
+      // su / 命令子标签要等服务端回 su 才认，先记下来，loadMe 之后应用
+      if (at && state.admin) state.pendingAdminTab = at;
     }
   }
 

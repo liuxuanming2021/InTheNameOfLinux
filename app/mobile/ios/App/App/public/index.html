@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#f4f6fa">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css?v=22">
+  <link rel="stylesheet" href="style.css?v=25">
 </head>
 <body>
 
@@ -62,25 +62,7 @@
 </div>
 
 <!-- su：验证过身份之后执行任意命令 -->
-<div id="su-modal" class="modal hidden">
-  <div class="modal-card">
-    <div class="modal-head">
-      <div class="modal-mark">⚡</div>
-      <div class="modal-title">
-        <h2>su 控制台</h2>
-        <p>输什么执行什么，不再看白名单</p>
-      </div>
-    </div>
-    <p class="hint" style="margin:10px 0 12px">只有验证过 Linux 身份才能用。<b>stop / restart</b> 这类关服命令这里也执行不了，别的都可以。</p>
-    <div class="field">
-      <label for="f-su">命令</label>
-      <input id="f-su" autocapitalize="off" spellcheck="false" placeholder="例如 op Steve">
-    </div>
-    <pre id="su-out" class="cmd-out hidden"></pre>
-    <button id="btn-su-run" class="btn btn-primary btn-block" style="margin-top:6px">执行</button>
-    <button id="btn-su-close" class="btn btn-block" style="margin-top:8px">关闭</button>
-  </div>
-</div>
+
 
 <!-- 主界面 -->
 <div id="app" class="hidden">
@@ -153,6 +135,7 @@
         <div class="seg" id="chat-channels">
           <button class="seg-btn active" data-chat="world">世界</button>
           <button class="seg-btn" data-chat="team">队伍</button>
+          <button class="seg-btn" data-chat="mine">我的队伍</button>
         </div>
         <div class="seg hidden" id="chat-team-pick"></div>
         <p class="hint hidden" id="chat-team-hint"></p>
@@ -164,33 +147,35 @@
         <button id="btn-chat-send" class="btn btn-primary btn-send">发送</button>
       </div>
 
-      <div id="chat-team-panel" class="hidden">
-          <div class="card hidden" id="team-mine">
-            <div class="team-head">
-              <div>
-                <div class="team-name" id="team-name">—</div>
-                <div class="hint" id="team-sub">—</div>
-              </div>
-              <button id="btn-team-leave" class="btn btn-mini hidden">退出</button>
-            </div>
-            <div id="team-members" style="margin-top:8px"></div>
-            <div class="seg" style="margin-top:10px" id="team-actions"></div>
-          </div>
+      <div id="chat-team-view" class="hidden"></div>
+    </section>
 
-          <div class="card" id="team-none">
-            <div class="card-title"><h2>还没有队伍</h2></div>
-            <div class="search-row">
-              <input id="f-team-name" type="text" maxlength="12" placeholder="新队伍名字（最多 12 字）">
-              <button id="btn-team-create" class="btn btn-primary">建队</button>
-            </div>
-            <p class="hint" style="margin:10px 2px 0">建队后你就是队长，可以邀请、踢人、转让、解散。</p>
-          </div>
-
-          <div class="card">
-            <div class="card-title"><h2>服务器上的队伍</h2><span class="side" id="team-count">—</span></div>
-            <div id="team-list"></div>
-          </div>
-    
+    <!-- 队伍：管理（我的队伍 / 建队 / 服务器上的队伍） -->
+    <section id="page-team" class="page hidden">
+      <div class="card hidden" id="team-mine">
+      <div class="team-head">
+      <div>
+      <div class="team-name" id="team-name">—</div>
+      <div class="hint" id="team-sub">—</div>
+      </div>
+      <button id="btn-team-leave" class="btn btn-mini hidden">退出</button>
+      </div>
+      <div id="team-members" style="margin-top:8px"></div>
+      <div class="seg" style="margin-top:10px" id="team-actions"></div>
+      </div>
+      
+      <div class="card" id="team-none">
+      <div class="card-title"><h2>还没有队伍</h2></div>
+      <div class="search-row">
+      <input id="f-team-name" type="text" maxlength="12" placeholder="新队伍名字（最多 12 字）">
+      <button id="btn-team-create" class="btn btn-primary">建队</button>
+      </div>
+      <p class="hint" style="margin:10px 2px 0">建队后你就是队长，可以邀请、踢人、转让、解散。</p>
+      </div>
+      
+      <div class="card">
+      <div class="card-title"><h2>服务器上的队伍</h2><span class="side" id="team-count">—</span></div>
+      <div id="team-list"></div>
       </div>
     </section>
 
@@ -215,14 +200,26 @@
       <div class="card" id="admin-card">
         <div class="card-title"><h2>管理</h2><span class="side" style="color:var(--green)">有权限</span></div>
         <div class="seg" id="admin-tabs" style="margin-bottom:12px">
-          <button class="seg-btn active" data-admin="player">玩家</button>
+          <button class="seg-btn active" data-admin="online">在线</button>
+          <button class="seg-btn" data-admin="player">玩家</button>
           <button class="seg-btn" data-admin="report">举报</button>
           <button class="seg-btn" data-admin="penalty">惩罚</button>
           <button class="seg-btn" data-admin="fake">假人</button>
           <button class="seg-btn" data-admin="cmd">命令</button>
+          <button class="seg-btn hidden" data-admin="su" id="tab-su">su 控制台</button>
         </div>
 
-        <div id="admin-player">
+        <div id="admin-online">
+          <div class="card">
+            <div class="card-title">
+              <h2>在线玩家</h2>
+              <button id="btn-load-players" class="btn btn-mini">刷新</button>
+            </div>
+            <div id="online-list"><p class="empty">还没有加载</p></div>
+          </div>
+        </div>
+
+        <div id="admin-player" class="hidden">
           <div class="search-row">
             <input id="f-search" type="text" autocapitalize="off" placeholder="搜玩家名字">
             <button id="btn-search" class="btn btn-primary">搜索</button>
@@ -281,12 +278,6 @@
 
         <div id="admin-cmd" class="hidden">
         <div class="card">
-          <div class="card-title"><h2>su 控制台</h2><span class="tag warn">需要身份验证</span></div>
-          <p class="hint" style="margin:0 0 10px">验证过 Linux 身份之后，可以在这里执行<b>任意命令</b>（白名单也管不着），弹窗输入。</p>
-          <button id="btn-su" class="btn btn-primary btn-block">打开 su 控制台</button>
-          <div id="su-out-inline" class="cmd-out hidden"></div>
-        </div>
-        <div class="card">
           <p class="hint" style="margin:0 0 10px">
             点一条命令，参数会填进下面的框，补全后再按执行。危险命令会二次确认。
           </p>
@@ -301,17 +292,26 @@
         </div>
     
         </div>
+
+        <div id="admin-su" class="hidden">
+          <div class="card">
+            <div class="card-title"><h2>服务器控制台</h2><span class="side" id="su-sub">控制台身份</span></div>
+            <div class="mc-console" id="su-log"></div>
+            <div class="console-bar">
+              <span class="prompt">&gt;</span>
+              <input id="f-su2" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="例如 say 服务器今晚八点维护">
+              <button id="btn-su-run" class="btn btn-primary btn-send">发送</button>
+            </div>
+            <div class="seg" style="margin-top:10px">
+              <button class="seg-btn" id="btn-su-clear">清屏</button>
+              <button class="seg-btn" id="btn-su-stop-note">能执行什么？</button>
+            </div>
+          </div>
+        </div>
+
     </section>
 
     <section id="page-more" class="page hidden">
-      <div class="card">
-        <div class="card-title">
-          <h2>在线玩家</h2>
-          <button id="btn-load-players" class="btn btn-mini">刷新</button>
-        </div>
-        <div id="online-list"><p class="empty">还没有加载</p></div>
-      </div>
-
       <div class="card">
         <div class="card-title"><h2>设置</h2></div>
         <div class="kv">
@@ -319,7 +319,7 @@
           <span>服务器</span><b id="set-server">—</b>
           <span>管理权限</span><b id="set-admin">否</b>
           <span>玩家身份</span><b id="set-role">—</b>
-          <span>客户端版本</span><b>1.5.0</b>
+          <span>客户端版本</span><b>1.6.0</b>
         </div>
         <div class="switch-row">
           <div>
@@ -336,6 +336,13 @@
           <button id="sw-su" class="switch" role="switch" aria-checked="false"></button>
         </div>
         <div class="hint" id="su-switch-hint" style="display:none">命令控制台只对服主账号开放，你这个号没有这个权限。</div>
+      </div>
+
+
+      <div class="card">
+        <div class="card-title"><h2>Linux 系插件</h2><span class="side" id="linux-sum">—</span></div>
+        <p class="hint" style="margin:2px 0 10px">开关、重载、直接改 config.yml。改完会先备份成 <code>config.yml.app-bak</code>。</p>
+        <button id="btn-linux" class="btn btn-block">打开插件管理</button>
       </div>
 
       <div class="card">
@@ -363,14 +370,48 @@
   <nav class="tabs">
     <button class="tab active" data-page="me"><span class="ico">👤</span><span>我的</span></button>
     <button class="tab" data-page="chat"><span class="ico">💬</span><span>聊天</span><span id="chat-dot" class="badge-dot hidden"></span></button>
+    <button class="tab" data-page="team"><span class="ico">🛡</span><span>队伍</span></button>
     <button class="tab" data-page="title"><span class="ico">🏷</span><span>头衔</span></button>
     <button class="tab hidden" id="tab-admin" data-page="admin"><span class="ico">🛠</span><span>管理</span></button>
     <button class="tab" data-page="more"><span class="ico">⋯</span><span>更多</span></button>
   </nav>
 </div>
 
+
+<!-- Linux 系插件管理 -->
+<div id="linux-modal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-mark">🧩</div>
+      <div class="modal-title">
+        <h2>Linux 系插件</h2>
+        <p>启用 / 停用 / 重载 / 改配置</p>
+      </div>
+    </div>
+    <div id="linux-list" class="modal-list"><p class="empty">读取中…</p></div>
+    <button id="btn-linux-close" class="btn btn-block" style="margin-top:10px">关闭</button>
+  </div>
+</div>
+
+<!-- 插件配置编辑 -->
+<div id="linux-cfg-modal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-mark">📝</div>
+      <div class="modal-title">
+        <h2 id="linux-cfg-title">config.yml</h2>
+        <p id="linux-cfg-sub">—</p>
+      </div>
+    </div>
+    <textarea id="f-linux-cfg" class="cfg-area" spellcheck="false" autocapitalize="off"></textarea>
+    <p id="linux-cfg-msg" class="hint"></p>
+    <button id="btn-linux-cfg-save" class="btn btn-primary btn-block">保存并重载</button>
+    <button id="btn-linux-cfg-close" class="btn btn-block" style="margin-top:8px">返回</button>
+  </div>
+</div>
+
 <div id="fatal" class="hidden"></div>
 <div id="toast" class="toast hidden"></div>
-<script src="app.js?v=22"></script>
+<script src="app.js?v=25"></script>
 </body>
 </html>

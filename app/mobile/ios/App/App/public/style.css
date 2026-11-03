@@ -120,7 +120,7 @@ a { color: var(--accent); }
 /* ── 框架 ────────────────────────────────────────── */
 #app { min-height: 100dvh; }
 .topbar {
-  position: sticky; top: 0; z-index: 20;
+  position: sticky; top: 0; z-index: 30;
   display: flex; align-items: center; justify-content: space-between;
   gap: 10px;
   padding: calc(10px + var(--safe-t)) 16px 10px;
@@ -231,8 +231,9 @@ a { color: var(--accent); }
 /* ── 聊天 ────────────────────────────────────────── */
 #page-chat { display: flex; flex-direction: column; min-height: calc(100dvh - 150px - var(--safe-b)); }
 /* 频道切换条钉在屏幕顶部：滚聊天记录时它不跟着走 */
+/* 顶栏是吸顶的，这条要贴在它下面，否则滚动时会把「服务器聊天」标题盖住 */
 .chat-head {
-  position: sticky; top: 0; z-index: 25;
+  position: sticky; top: var(--topbar-h, 60px); z-index: 25;
   margin: -2px -2px 6px; padding: 8px 10px 10px;
   border-radius: 0 0 16px 16px;
   background: var(--bg);
@@ -441,3 +442,64 @@ a { color: var(--accent); }
 }
 .modal-title h2 { margin: 0; font-size: 16.5px; }
 .modal-title p { margin: 3px 0 0; font-size: 12px; color: var(--muted); line-height: 1.45; }
+
+/* ── 验证锁：没验证前别让后面的界面能点 ───────────── */
+body.verify-locked #app { pointer-events: none; user-select: none; }
+body.verify-locked { overflow: hidden; }
+
+/* ── Linux 系插件：列表 / 配置编辑 ─────────────────── */
+.modal-list { max-height: 46vh; overflow: auto; margin: 6px 0 2px; }
+.modal-list .list-item { padding: 9px 0; }
+.cfg-area {
+  width: 100%;
+  height: 44vh;
+  margin: 10px 0 6px;
+  padding: 10px 11px;
+  border-radius: 12px;
+  border: 1px solid var(--card-b);
+  background: var(--bg-soft);
+  color: var(--text);
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+/* ── su：仿真控制台 ─────────────────────────────── */
+.mc-console {
+  height: 46vh;
+  min-height: 220px;
+  overflow: auto;
+  margin: 4px 0 10px;
+  padding: 10px 11px;
+  border-radius: 12px;
+  border: 1px solid #1c2430;
+  background: #0b0f14;
+  color: #cbd5e1;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.mc-console .cmd-line { color: #7dd3fc; }
+.mc-console .ok-line { color: #86efac; }
+.mc-console .err-line { color: #fca5a5; }
+.mc-console .dim-line { color: #64748b; }
+.console-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.console-bar .prompt {
+  flex: 0 0 auto;
+  color: var(--accent);
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-weight: 700;
+}
+.console-bar input {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 13px;
+}
