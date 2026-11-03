@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#f4f6fa">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css?v=21">
+  <link rel="stylesheet" href="style.css?v=22">
 </head>
 <body>
 
@@ -145,17 +145,17 @@
 
     <!-- 聊天 -->
     <section id="page-chat" class="page hidden">
-      <div class="card" style="padding:10px 12px">
-        <div class="card-title" style="margin:0">
+      <div class="chat-head" id="chat-head">
+        <div class="chat-head-row">
           <h2 id="chat-title">服务器公屏</h2>
           <span class="side" id="chat-online">—</span>
         </div>
-        <div class="seg" id="chat-channels" style="margin-top:10px">
+        <div class="seg" id="chat-channels">
           <button class="seg-btn active" data-chat="world">世界</button>
           <button class="seg-btn" data-chat="team">队伍</button>
         </div>
-        <div class="seg hidden" id="chat-team-pick" style="margin-top:8px"></div>
-        <p class="hint hidden" id="chat-team-hint" style="margin:8px 2px 0"></p>
+        <div class="seg hidden" id="chat-team-pick"></div>
+        <p class="hint hidden" id="chat-team-hint"></p>
       </div>
 
       <div class="chat-list" id="chat-list"></div>
@@ -371,6 +371,6 @@
 
 <div id="fatal" class="hidden"></div>
 <div id="toast" class="toast hidden"></div>
-<script src="app.js?v=21"></script>
+<script src="app.js?v=22"></script>
 </body>
 </html>

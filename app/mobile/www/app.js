@@ -350,6 +350,7 @@
     window.scrollTo(0, 0);
 
     if (page === 'chat') {
+      if (state.chatMsgs && state.chatMsgs.length) scrollChatBottom();
       $('chat-dot').classList.add('hidden');
       loadChat();
       loadTeam();   // 队伍面板也在聊天页里
@@ -698,8 +699,20 @@
         '<div class="meta">' + esc(m.name) + ' · ' + when + esc(tag) + '</div>' +
         '<div class="bubble">' + esc(m.text) + '</div></div>';
     }).join('');
-    box.scrollTop = box.scrollHeight;
-    window.scrollTo(0, document.body.scrollHeight);
+    scrollChatBottom();
+  }
+
+  /** 聊天记录默认停在最底下（最新的那条），刚进页面和发完消息都要跟一次 */
+  function scrollChatBottom() {
+    var go = function () {
+      var box = $('chat-list');
+      if (box) box.scrollTop = box.scrollHeight;
+      window.scrollTo(0, document.body.scrollHeight);
+    };
+    go();
+    requestAnimationFrame(go);
+    setTimeout(go, 60);
+    setTimeout(go, 240);
   }
 
   function sendChat() {
