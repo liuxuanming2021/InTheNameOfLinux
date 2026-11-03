@@ -166,7 +166,7 @@
 
 <section class="page-hero">
   <div class="container">
-    <span class="plug-hero-ver">26.11.14 · Android / iOS</span>
+    <span class="plug-hero-ver">26.11.15 · Android / iOS</span>
     <h1>Nalxer App 帮助中心</h1>
     <p>安装、配置、接口、App 用法，一页看完</p>
   </div>
@@ -199,7 +199,7 @@
 
 <section class="help-section" id="install">
     <h2><span class="num">1</span>安装插件</h2>
-    <p><b>两个 jar</b>：<b>NalxerApp.jar</b> 硬依赖 <b>InTheNameOfLinux.jar</b> —— 26.11.14 起 App 的服务端是直接调 ITNOL 的 API，老版本 ITNOL 缺这些方法会报「服务器没有 ITNOL 插件」，所以两个必须一起换、版本对齐。AuthMe、经济插件、LinuxTeam、LinuxTitle 这些是接上就用，没接就少一块数据，不会报错。</p>
+    <p><b>两个 jar</b>：<b>NalxerApp.jar</b> 硬依赖 <b>InTheNameOfLinux.jar</b> —— 26.11.15 起 App 的服务端是直接调 ITNOL 的 API，老版本 ITNOL 缺这些方法会报「服务器没有 ITNOL 插件」，所以两个必须一起换、版本对齐。AuthMe、经济插件、LinuxTeam、LinuxTitle 这些是接上就用，没接就少一块数据，不会报错。</p>
 
     <ol class="steps">
       <li>把 <code>NalxerApp.jar</code> 放进服务器的 <code>plugins/</code> 目录。服务端用 Paper 或 Spigot 1.12.2，Java 8。</li>
@@ -210,7 +210,7 @@
 
     <p>正常启动时控制台会依次打出这几行（装了什么就出现什么，没装的那一项不会打）：</p>
 
-    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v 26.11.14</div><div>[NalxerApp] Enabling NalxerApp v 26.11.14</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍（信息 / 建队 / 加入 / 退出 / 踢人 / 转让）</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔（列表 / 佩戴）</div><div>[NalxerApp] [联动] 已接上 ITNOL 禁言判定（App 里发聊天前会先查）</div><div>[NalxerApp] [联动] 已接上 ITNOL 身份（只用来读身份，26.11.14 起不再要求 App 里二次验证）</div><div>[NalxerApp] [联动] 已接上 ITNOL 举报（列表 / 提交 / 接受 / 驳回）</div><div>[NalxerApp] [联动] 已接上 FakePlayerPlugin 假人（列表 / 召唤 / 移除）</div><div>[NalxerApp] [联动] 已接上 XlandCore 身份（服主 / 副服主 / 市长 / 协管）</div><div>[NalxerApp] [联动] 已接上 NalxerLink 1.24.0 —— 安卓客户端发的消息会进公屏，标「FS1安卓端」</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49282/api/health（明文直连，手机里填 http://服务器IP:49282 就能用）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是，队伍：是，头衔：是）</div><div>[NalxerApp] 聊天通道已开启 —— 游戏里说话会同步到 App，App 发的消息带 [LinuxAPP]  前缀广播进游戏</div><div>[NalxerApp] 二次身份验证：关闭（26.11.14 起整套去掉，登录成功直接进主界面）</div><div>[NalxerApp] 命令控制台 / su 名单：[Linux582021, fs1]（不在名单里的管理员只能封禁 / 惩罚 / 处理举报 / 管假人）</div></div>
+    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v 26.11.15</div><div>[NalxerApp] Enabling NalxerApp v 26.11.15</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍（信息 / 建队 / 加入 / 退出 / 踢人 / 转让）</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔（列表 / 佩戴）</div><div>[NalxerApp] [联动] 已接上 ITNOL 禁言判定（App 里发聊天前会先查）</div><div>[NalxerApp] [联动] 已接上 ITNOL 身份（只用来读身份，26.11.15 起不再要求 App 里二次验证）</div><div>[NalxerApp] [联动] 已接上 ITNOL 举报（列表 / 提交 / 接受 / 驳回）</div><div>[NalxerApp] [联动] 已接上 FakePlayerPlugin 假人（列表 / 召唤 / 移除）</div><div>[NalxerApp] [联动] 已接上 XlandCore 身份（服主 / 副服主 / 市长 / 协管）</div><div>[NalxerApp] [联动] 已接上 NalxerLink 1.24.0 —— 安卓客户端发的消息会进公屏，标「FS1安卓端」</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49282/api/health（明文直连，手机里填 http://服务器IP:49282 就能用）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是，队伍：是，头衔：是）</div><div>[NalxerApp] 聊天通道已开启 —— 游戏里说话会同步到 App，App 发的消息带 [LinuxAPP]  前缀广播进游戏</div><div>[NalxerApp] 二次身份验证：关闭（26.11.15 起整套去掉，登录成功直接进主界面）</div><div>[NalxerApp] 命令控制台 / su 名单：[Linux582021, fs1]（不在名单里的管理员只能封禁 / 惩罚 / 处理举报 / 管假人）</div></div>
 
     <p>哪一行结尾写的是「未检测到」，就是对应的插件没装、没启用或者版本不认识。那一项在 App 里会显示成 <code>—</code>，其余功能照常，不用为了一行日志去折腾服务器。</p>
 
@@ -498,8 +498,8 @@
           <tr><th>平台</th><th>文件</th><th>怎么装</th></tr>
         </thead>
         <tbody>
-          <tr><td>安卓</td><td><code>Nalxer-26.11.14.apk</code>（约 2.9 MB）</td><td>传到手机点开装；系统提示「未知来源」时给浏览器一次安装权限</td></tr>
-          <tr><td>iOS</td><td><code>Nalxer-26.11.14-unsigned.ipa</code>（约 560 KB）</td><td>电脑装 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>，插上 iPhone，把 ipa 拖进去、填 Apple ID、点 Start</td></tr>
+          <tr><td>安卓</td><td><code>Nalxer-26.11.15.apk</code>（约 2.9 MB）</td><td>传到手机点开装；系统提示「未知来源」时给浏览器一次安装权限</td></tr>
+          <tr><td>iOS</td><td><code>Nalxer-26.11.15-unsigned.ipa</code>（约 560 KB）</td><td>电脑装 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>，插上 iPhone，把 ipa 拖进去、填 Apple ID、点 Start</td></tr>
         </tbody>
       </table>
     </div>
@@ -630,9 +630,13 @@
   </section>
 
 <section class="help-section" id="whatsnew">
-    <h2><span class="num">7</span>26.11.14 更新说明</h2>
-    <p>这一版主要修「队伍点了没反应」和「举报看不到已处理」，顺手把设置页收拾了一遍。</p>
+    <h2><span class="num">7</span>26.11.15 更新说明</h2>
+    <p>这一版加了主题（风格 + 颜色），把聊天的实时刷新彻底修好，并让 App 里做的操作在执行人一栏写成「APP端（用户名）」。</p>
     <ul>
+      <li><b>主题</b>：更多页 →「显示」→「主题」，点开是二级菜单。风格可选 <b>默认</b> 和 <b>Miuix</b>（大圆角、无边框卡片、胶囊按钮、浅底输入框）；颜色可选 天蓝色 / 淡粉色 / 淡绿色 / 古董白 / 黑色 / 灰色，默认天蓝色，深色模式会自动换成对应的深色版本。选完立刻生效并记在本地。</li>
+      <li><b>聊天实时刷新</b>：服务端 <code>/api/chat</code> 原来返回的是全局最后一条消息的 id，游标会被别的频道推过去；重启后 id 又从 1 重来，旧游标就永远查不到新消息。现在返回本次实际最后一条的 id，并在游标跑飞时回 <code>reset</code> 让客户端重拉。App 里聊天页改成 2 秒一轮、8 秒卡死自愈、切到后台再回来立刻刷一次，<b>每次切页也会重拉该页数据</b>。</li>
+      <li><b>只认 <code>[APP]</code> 日志</b>：<code>[NalxerLink] [Link] 有效 token：0</code> 这种插件自身的运行日志不会再被当成玩家发言，只把 <code>[APP] 玩家名：内容</code> 当成 FS1 安卓端的消息。</li>
+      <li><b>执行人写 APP端</b>：从 App 里做的举报受理/驳回、禁言/禁止移动/禁止交互/全部禁止、封禁/解封，记录里的执行人是 <code>APP端（用户名）</code>；在游戏里做的保持原样。</li>
       <li><b>队伍离线可用</b>：人不在游戏里也能建队 / 加入 / 退出 / 踢人 / 转让 / 解散 —— 之前只要离线，所有队伍按钮都回一句「你现在不在游戏里」。</li>
       <li><b>队伍管理补齐</b>：邀请、改队标、队伍聊天开关、转让队长、踢人、解散；多队玩家每张卡片上的按钮只对那一支队生效。</li>
       <li><b>举报筛选</b>：全部 / 待处理 / 已处理，已处理的显示受理还是驳回、处理人和备注。</li>
@@ -640,7 +644,7 @@
       <li><b>设置页分组</b>：账号 / 显示 / 管理 / 接口地址 / 插件联动 / 关于软件 / 退出登录，版本号和作者只在「关于软件」和页面最底下出现一次。</li>
       <li><b>权限收紧</b>：普通玩家看不到「改 Linux 系插件配置文件」的入口。</li>
       <li><b>26.11.14 NalxerLink 的安卓消息进公屏</b>：装了 <code>NalxerLink</code> 的服务器，安卓客户端（FS1 安卓端）发的聊天会出现在 App 的「世界」频道，名字后面标「· FS1安卓端」，和游戏发言、App 发言一眼分清。只在服务端读日志，不改 NalxerLink；开关 <code>chat.capture-link</code>，前缀名单 <code>chat.link-speakers</code>。</li>
-      <li><b>26.11.14 队伍 / 转账 / 聊天</b>：加入队伍成功却弹「加入失败」已修（LinuxTeam 的 <code>join</code> 是 void，以前把 null 当 false）；接上 <b>NalxerECO</b> 的转账，聊天输入框旁边多一个「转账」按钮，金币走 Vault、点券走 PlayerPoints，规则和税都沿用那个插件的实现；聊天重复显示修好（服务端 1.5 秒内同一句只存一次，App 端按消息 id 去重、请求串行，不再丢最新一条）；有人上线/下线时公屏中间出现灰条提示；在线玩家点「管理」直接进详情页。</li>
+      <li><b>26.11.12 队伍 / 转账 / 聊天</b>：加入队伍成功却弹「加入失败」已修（LinuxTeam 的 <code>join</code> 是 void，以前把 null 当 false）；接上 <b>NalxerECO</b> 的转账，聊天输入框旁边多一个「转账」按钮，金币走 Vault、点券走 PlayerPoints，规则和税都沿用那个插件的实现；聊天重复显示修好（服务端 1.5 秒内同一句只存一次，App 端按消息 id 去重、请求串行，不再丢最新一条）；有人上线/下线时公屏中间出现灰条提示；在线玩家点「管理」直接进详情页。</li>
           <li><b>26.11.11 硬依赖 ITNOL</b>：举报 / 惩罚 / 封禁 / 身份验证以前靠反射猜方法名，线上 ITNOL 版本一对不上就报「服务器没有 ITNOL 插件」，已处理的举报也读不出来。现在 plugin.yml 写死 <code>depend: [InTheNameOfLinux]</code>，代码直接调 <code>ReportManager</code> / <code>LinuxPenalty</code> / <code>BanManager</code> / <code>LoginManager</code>，缺插件直接不启动并说明原因。</li>
       <li><b>26.11.10 我的页加了举报</b>：以前只有管理员能在管理页看举报，普通玩家既没地方提交、也看不到自己举报的结果。现在「我的」页有一张「举报玩家」卡：填 ID 和理由就能提交，下面按时间列出自己的举报，已处理的会写受理还是驳回、谁处理、备注是什么。</li>
       <li><b>26.11.9 补两处点击</b>：队伍卡片上的按钮（邀请 / 改队标 / 队伍聊天开关 / 转让 / 踢人 / 解散 / 退出）之前按了没反应，是点击事件的匹配列表里漏了这几个按钮；玩家详情页里开惩罚提示「先选一个玩家」，是详情搬成独立页后还去旧位置找名字。</li>
@@ -648,6 +652,24 @@
     <div class="tip tip-info">
       <div class="tip-title">版本号的写法</div>
       从这里开始版本号跟服务端插件对齐，写成 <code>26.11.x</code> 这种「年份.月份.序号」，不再用 1.x。
+    </div>
+  </section>
+
+
+<section class="help-section" id="theme">
+    <h2><span class="num">8</span>换主题：风格与颜色（26.11.15）</h2>
+    <p>更多页 →「显示」卡 →「主题」，点开是二级菜单：</p>
+    <table>
+      <thead><tr><th>项目</th><th>可选</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>风格</td><td><code>默认</code> / <code>Miuix</code></td><td>默认是原来的界面；Miuix 把卡片改成大圆角无边框、按钮和开关改成胶囊、输入框改成浅底无边框、底栏去上边框加阴影。</td></tr>
+        <tr><td>颜色</td><td>天蓝色 / 淡粉色 / 淡绿色 / 古董白 / 黑色 / 灰色</td><td>改的是强调色：按钮、选中态、标签、未读小红点。默认天蓝色；深色模式自动用同一颜色的深色版，不会深底深字。</td></tr>
+      </tbody>
+    </table>
+    <p>选完立刻生效，存在浏览器本地（<code>nalxer.skin</code>、<code>nalxer.accent</code>），换设备或清缓存会回到「默认 · 天蓝色」。</p>
+    <div class="tip tip-info">
+      <div class="tip-title">深色和颜色是两个开关</div>
+      「深色模式」在设置的显卡片里，「主题」只管风格和强调色；两者可以随便组合，比如 Miuix + 淡粉色 + 深色。
     </div>
   </section>
 
@@ -987,7 +1009,7 @@
     <div class="footer-brand">Nalxer App 帮助</div>
     <p>安装、配置、接口、App 用法，一页看完</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v 26.11.14 · Android / iOS · Made with ♥ by Linux582021
+      v 26.11.15 · Android / iOS · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
 <a href="index.html">← 插件列表</a>
