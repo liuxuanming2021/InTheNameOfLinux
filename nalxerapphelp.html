@@ -166,7 +166,7 @@
 
 <section class="page-hero">
   <div class="container">
-    <span class="plug-hero-ver">1.3.0 · Android / iOS</span>
+    <span class="plug-hero-ver">1.3.1 · Android / iOS</span>
     <h1>Nalxer App 帮助中心</h1>
     <p>安装、配置、接口、App 用法，一页看完</p>
   </div>
@@ -210,7 +210,7 @@
 
     <p>正常启动时控制台会依次打出这几行（装了什么就出现什么，没装的那一项不会打）：</p>
 
-    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v1.3.0</div><div>[NalxerApp] Enabling NalxerApp v1.3.0</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍（信息 / 建队 / 加入 / 退出 / 踢人 / 转让）</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔（列表 / 佩戴）</div><div>[NalxerApp] [联动] 已接上 ITNOL 禁言判定（App 里发聊天前会先查）</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49282/api/health（明文直连，手机里填 http://服务器IP:49282 就能用）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是，队伍：是，头衔：是）</div><div>[NalxerApp] 聊天通道已开启 —— 游戏里说话会同步到 App，App 发的消息带 [LinuxAPP]  前缀广播进游戏</div></div>
+    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v1.3.1</div><div>[NalxerApp] Enabling NalxerApp v1.3.1</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍（信息 / 建队 / 加入 / 退出 / 踢人 / 转让）</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔（列表 / 佩戴）</div><div>[NalxerApp] [联动] 已接上 ITNOL 禁言判定（App 里发聊天前会先查）</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49282/api/health（明文直连，手机里填 http://服务器IP:49282 就能用）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是，队伍：是，头衔：是）</div><div>[NalxerApp] 聊天通道已开启 —— 游戏里说话会同步到 App，App 发的消息带 [LinuxAPP]  前缀广播进游戏</div></div>
 
     <p>哪一行结尾写的是「未检测到」，就是对应的插件没装、没启用或者版本不认识。那一项在 App 里会显示成 <code>—</code>，其余功能照常，不用为了一行日志去折腾服务器。</p>
 
@@ -486,8 +486,8 @@
           <tr><th>平台</th><th>文件</th><th>怎么装</th></tr>
         </thead>
         <tbody>
-          <tr><td>安卓</td><td><code>Nalxer-1.3.0.apk</code>（约 2.9 MB）</td><td>传到手机点开装；系统提示「未知来源」时给浏览器一次安装权限</td></tr>
-          <tr><td>iOS</td><td><code>Nalxer-1.3.0-unsigned.ipa</code>（约 560 KB）</td><td>电脑装 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>，插上 iPhone，把 ipa 拖进去、填 Apple ID、点 Start</td></tr>
+          <tr><td>安卓</td><td><code>Nalxer-1.3.1.apk</code>（约 2.9 MB）</td><td>传到手机点开装；系统提示「未知来源」时给浏览器一次安装权限</td></tr>
+          <tr><td>iOS</td><td><code>Nalxer-1.3.1-unsigned.ipa</code>（约 560 KB）</td><td>电脑装 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>，插上 iPhone，把 ipa 拖进去、填 Apple ID、点 Start</td></tr>
         </tbody>
       </table>
     </div>
@@ -517,6 +517,17 @@
     <p>游戏里公屏说的每句话都会同步到这里（带 <code>· 游戏</code> 标记），在 App 里发的消息会以 <code>[LinuxAPP] 你的名字：内容</code> 的格式广播回服务器，游戏里的人能看见。30 秒自动拉一次新消息，有未读时底部页签上会出现小红点。</p>
     <p>发不出去通常就两个原因：被 ITNOL 禁言了（返回「你被禁言了，现在不能在服务器说话」），或者单条超过 200 字。</p>
 
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>控制台 / RCON 的 say 也会进来（1.3.1）</strong>
+        服务器控制台敲 <code>say 今晚八点维护</code>、面板用 RCON 发播报，都会以「控制台」的身份出现在聊天里。
+        万一你那边的面板走的是别的派发方式，插件还会盯 <code>logs/latest.log</code> 里
+        <code>[Server]</code> / <code>[Rcon]</code> / <code>[CONSOLE]</code> 开头的播报行兜底
+        （<code>chat.capture-log</code>，默认开）。同一句话不会重复出现。
+      </div>
+    </div>
+
     <h3>「队伍」页怎么用</h3>
     <p>没队伍时给的是「建队」按钮和全服队伍列表，点一个就能申请加入；有队伍时显示队长、队标、成员（在线的人名是亮的），队长能踢人 / 转让 / 解散，队员只能退出。所有操作直接调 LinuxTeam，和游戏里 <code>/team</code> 命令是同一套数据。</p>
     <div class="tip tip-info">
@@ -527,8 +538,26 @@
       </div>
     </div>
 
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>一个人可以在好几个队里（1.3.1）</strong>
+        LinuxTeam 支持多队，App 现在按「我所在的全部队伍」一张张列出来，每张卡有自己的退出 / 解散按钮。
+      </div>
+    </div>
+
     <h3>「头衔」页怎么用</h3>
     <p>顶上是你现在戴的头衔（右边有「卸下」），下面是全部头衔和它们的解锁条件 —— 条件都翻成了人话：「今日在线 12 小时」「挖矿 99999 次」「管理员发放」「节日活动」。已解锁的点一下就能戴上，进服或重新进服后会在名字前面显示。</p>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>离线也能看到自己戴的头衔（1.3.1）</strong>
+        以前这块要走玩家对象，人不在线就读不出来 —— 明明戴着却显示「没有」。
+        现在直接读 LinuxTitle 的存档（active id + titles.yml），离线也在。
+        另外解锁判断统一按小写比，titles.yml 里 id 写成大写也认。
+      </div>
+    </div>
 
     <h3>管理页怎么封人</h3>
     <p>只有 <code>admin.players</code> 名单里的人或者 OP 才看得到这个入口。流程是五步，一步都不能少：</p>
@@ -848,7 +877,7 @@
     <div class="footer-brand">Nalxer App 帮助</div>
     <p>安装、配置、接口、App 用法，一页看完</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v1.3.0 · Android / iOS · Made with ♥ by Linux582021
+      v1.3.1 · Android / iOS · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
 <a href="index.html">← 插件列表</a>
