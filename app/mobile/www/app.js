@@ -10,7 +10,8 @@
     name: 'nalxer.name',
     admin: 'nalxer.admin',
     expire: 'nalxer.expire',
-    theme: 'nalxer.theme'
+    theme: 'nalxer.theme',
+    suon: 'nalxer.suon'
   };
 
   var PAGE_TITLE = {
@@ -177,6 +178,8 @@
       // 这个号要二次验证：登录成功后先停在验证屏
       state.verifyTarget = d.verifyTarget || '';
       state.needVerify = !!d.verifyRequired && d.verified !== true;
+      state.verified = d.verified === true;
+      state.su = !!d.su;
       persist();
       enterApp();
     }).catch(function (e) {
@@ -190,11 +193,17 @@
 
   // ── 二次身份验证 ─────────────────────────────────────
   // 身份验证改成盖在主界面上的弹窗：验证前能看到界面但什么都点不了
-  function showVerifyGate(on) {
+  function showVerifyGate(on, reason) {
     var m = $('verify-modal');
     if (!m) return;
     m.classList.toggle('hidden', !on);
     state.needVerify = !!on;
+    var sub = $('verify-sub');
+    if (sub) {
+      sub.textContent = on && reason
+        ? reason
+        : ('你登陆的是 ' + (state.verifyTarget || state.name || '这个') + ' 账号，请通过 Linux 身份验证');
+    }
     if (on) {
       $('login').classList.add('hidden');
       $('app').classList.remove('hidden');
@@ -256,8 +265,12 @@
       var d = r.data || {};
       if (!d.ok) { showVerifyErr(d.message || '密码不对'); return; }
       toast('验证通过');
+      state.verified = true;
       showVerifyGate(false);
       switchPage(state.page || 'me');
+      var after = state.afterVerify;
+      state.afterVerify = null;
+      if (after) { try { after(); } catch (e) {} }
       loadMe();
     }).catch(function (e) {
       showVerifyErr(e.message);
@@ -390,11 +403,74 @@
         return;
       }
       state.needVerify = false;
+      state.verified = d.verified === true || !d.verifyRequired;
+      state.su = !!d.su;
       state.me = d.data;
       renderMe(d.data);
+      renderIdentity(d.data);
+      renderSuSwitch();
       loadCheckin();
       if (state.admin) loadStatus();
     }).catch(function (e) { fatal('读取数据失败', e.message); });
+  }
+
+  /** 设置页的「玩家身份」一行：服主 / 副服主 / 市长 / 协管 / 管理员 / 普通玩家 */
+  function renderIdentity(d) {
+    var role = (d && d.identity && d.identity.label) || (d && d.role) || '普通玩家';
+    if (state.admin && role === '普通玩家') role = '管理员';
+    $('set-role').textContent = role;
+  }
+
+  /** su 开关只在服主名单里出现；不是 su 的号只看到一句说明 */
+  function renderSuSwitch() {
+    var row = $('su-switch-row');
+    var hint = $('su-switch-hint');
+    if (!row) return;
+    row.style.display = state.su ? '' : 'none';
+    if (hint) hint.style.display = (state.admin && !state.su) ? '' : 'none';
+    var sw = $('sw-su');
+    if (sw) {
+      sw.classList.toggle('on', isSuOn());
+      sw.setAttribute('aria-checked', isSuOn() ? 'true' : 'false');
+    }
+    applySu();
+  }
+
+  function isSuOn() {
+    return state.su && localStorage.getItem(LS.suon) === '1';
+  }
+
+  /** su 控制台的入口（管理页「命令」子标签 + su 卡）只有「服主 + 设置里打开」才给 */
+  function applySu() {
+    var on = isSuOn();
+    var tabBtn = document.querySelector('[data-admin="cmd"]');
+    if (tabBtn) tabBtn.classList.toggle('hidden', !on);
+    if (state.adminTab === 'cmd' && !on) setAdminTab('player');
+    // 管理页副标题跟着走，别在不给命令的时候还写着「命令」
+    PAGE_TITLE.admin[1] = '玩家 / 举报 / 惩罚 / 假人' + (on ? ' / 命令' : '');
+    if (state.page === 'admin' && $('page-sub')) $('page-sub').textContent = PAGE_TITLE.admin[1];
+  }
+
+  function toggleSu() {
+    if (!state.su) { toast('命令控制台只对服主账号开放'); return; }
+    if (isSuOn()) {
+      localStorage.removeItem(LS.suon);
+      renderSuSwitch();
+      toast('su 控制台已关闭');
+      return;
+    }
+    if (!state.verified) {
+      state.afterVerify = function () {
+        localStorage.setItem(LS.suon, '1');
+        renderSuSwitch();
+        toast('su 控制台已打开');
+      };
+      showVerifyGate(true, '打开 su 控制台前，先用 ' + (state.verifyTarget || state.name) + ' 的 ITNOL 口令验一次');
+      return;
+    }
+    localStorage.setItem(LS.suon, '1');
+    renderSuSwitch();
+    toast('su 控制台已打开');
   }
 
   function renderMe(d) {
@@ -402,6 +478,10 @@
     $('me-dot').classList.toggle('on', !!d.online);
 
     var badges = [];
+    // 身份来自 XlandCore（服主 / 副服主 / 市长 / 协管），没有就当普通玩家
+    if (d.identity && d.identity.label) {
+      badges.push('<span class="badge role">' + esc(d.identity.label) + '</span>');
+    }
     if (d.team) badges.push('<span class="badge">' + esc(plain(d.team)) + '</span>');
     else badges.push('<span class="badge gray">无队伍</span>');
     if (d.titleName) badges.push('<span class="badge gold">' + esc(d.titleName) + '</span>');
@@ -1398,6 +1478,7 @@
     $('btn-test-server').addEventListener('click', testServer);
     $('btn-reset-server').addEventListener('click', resetServer);
     $('sw-theme').addEventListener('click', toggleTheme);
+    if ($('sw-su')) $('sw-su').addEventListener('click', toggleSu);
     $('btn-logout').addEventListener('click', function () { logout(false); });
   }
 

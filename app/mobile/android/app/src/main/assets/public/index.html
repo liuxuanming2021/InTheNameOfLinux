@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#f4f6fa">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css?v=20">
+  <link rel="stylesheet" href="style.css?v=21">
 </head>
 <body>
 
@@ -318,7 +318,8 @@
           <span>登录账号</span><b id="set-name">—</b>
           <span>服务器</span><b id="set-server">—</b>
           <span>管理权限</span><b id="set-admin">否</b>
-          <span>客户端版本</span><b>1.4.2</b>
+          <span>玩家身份</span><b id="set-role">—</b>
+          <span>客户端版本</span><b>1.5.0</b>
         </div>
         <div class="switch-row">
           <div>
@@ -327,6 +328,14 @@
           </div>
           <button id="sw-theme" class="switch" role="switch" aria-checked="false"></button>
         </div>
+        <div class="switch-row" id="su-switch-row" style="display:none">
+          <div>
+            <div style="font-weight:600">启用 su 控制台</div>
+            <div class="hint">服主专用：打开要先验一次 Linux 身份，通过后才能执行任意命令</div>
+          </div>
+          <button id="sw-su" class="switch" role="switch" aria-checked="false"></button>
+        </div>
+        <div class="hint" id="su-switch-hint" style="display:none">命令控制台只对服主账号开放，你这个号没有这个权限。</div>
       </div>
 
       <div class="card">
@@ -362,6 +371,6 @@
 
 <div id="fatal" class="hidden"></div>
 <div id="toast" class="toast hidden"></div>
-<script src="app.js?v=20"></script>
+<script src="app.js?v=21"></script>
 </body>
 </html>

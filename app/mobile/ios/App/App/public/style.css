@@ -175,6 +175,7 @@ a { color: var(--accent); }
   border: 1px solid transparent;
 }
 .badge.gold { background: rgba(255, 204, 102, 0.20); color: var(--gold); }
+.badge.role { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
 .badge.gray { background: var(--chip); color: var(--muted); }
 .badge.red { background: var(--red-soft); color: var(--red); }
 
