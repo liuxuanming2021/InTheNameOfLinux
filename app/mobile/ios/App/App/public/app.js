@@ -587,9 +587,12 @@
         return;
       }
       box.innerHTML = list.slice(0, 8).map(function (x) {
-        var tag = x.handled
-          ? '<span class="tag on">' + (x.result === 'rejected' ? '已驳回' : '已受理') + '</span>'
-          : '<span class="tag">待处理</span>';
+        var res = (x.result || '').toLowerCase();
+        var label = x.handled
+          ? (res.indexOf('reject') >= 0 || res.indexOf('驳回') >= 0 ? '已驳回'
+             : (res.indexOf('accept') >= 0 || res.indexOf('受理') >= 0 ? '已受理' : '已处理'))
+          : '待处理';
+        var tag = '<span class="tag' + (x.handled ? ' on' : '') + '">' + label + '</span>';
         var note = x.handled && (x.handler || x.note)
           ? '<div class="sub">处理：' + esc(x.handler || '管理员') + (x.note ? ' · ' + esc(x.note) : '') + '</div>'
           : '';
