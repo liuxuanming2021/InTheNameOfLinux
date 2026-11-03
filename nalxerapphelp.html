@@ -166,7 +166,7 @@
 
 <section class="page-hero">
   <div class="container">
-    <span class="plug-hero-ver">1.3.1 · Android / iOS</span>
+    <span class="plug-hero-ver">1.4.2 · Android / iOS</span>
     <h1>Nalxer App 帮助中心</h1>
     <p>安装、配置、接口、App 用法，一页看完</p>
   </div>
@@ -210,7 +210,7 @@
 
     <p>正常启动时控制台会依次打出这几行（装了什么就出现什么，没装的那一项不会打）：</p>
 
-    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v1.3.1</div><div>[NalxerApp] Enabling NalxerApp v1.3.1</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍（信息 / 建队 / 加入 / 退出 / 踢人 / 转让）</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔（列表 / 佩戴）</div><div>[NalxerApp] [联动] 已接上 ITNOL 禁言判定（App 里发聊天前会先查）</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49282/api/health（明文直连，手机里填 http://服务器IP:49282 就能用）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是，队伍：是，头衔：是）</div><div>[NalxerApp] 聊天通道已开启 —— 游戏里说话会同步到 App，App 发的消息带 [LinuxAPP]  前缀广播进游戏</div></div>
+    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v1.4.2</div><div>[NalxerApp] Enabling NalxerApp v1.4.2</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍（信息 / 建队 / 加入 / 退出 / 踢人 / 转让）</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔（列表 / 佩戴）</div><div>[NalxerApp] [联动] 已接上 ITNOL 禁言判定（App 里发聊天前会先查）</div><div>[NalxerApp] [联动] 已接上 ITNOL 身份验证（受保护账号 Linux582021 在 App 里要验口令）</div><div>[NalxerApp] [联动] 已接上 ITNOL 举报（列表 / 提交 / 接受 / 驳回）</div><div>[NalxerApp] [联动] 已接上 FakePlayerPlugin 假人（列表 / 召唤 / 移除）</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49282/api/health（明文直连，手机里填 http://服务器IP:49282 就能用）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是，队伍：是，头衔：是）</div><div>[NalxerApp] 聊天通道已开启 —— 游戏里说话会同步到 App，App 发的消息带 [LinuxAPP]  前缀广播进游戏</div></div>
 
     <p>哪一行结尾写的是「未检测到」，就是对应的插件没装、没启用或者版本不认识。那一项在 App 里会显示成 <code>—</code>，其余功能照常，不用为了一行日志去折腾服务器。</p>
 
@@ -262,6 +262,8 @@
           <tr><td><code>login.requests-per-minute</code></td><td><code>180</code></td><td>每个 IP 每分钟允许多少次<strong>请求</strong>（所有接口合计）。App 自动刷新 30 秒一次，180 有富余。</td></tr>
           <tr><td><code>admin.players</code></td><td><code>[]</code></td><td>管理员名单，填游戏 ID。名单里的人能看到玩家管理页；服务器 OP 自动算管理员，不用重复填。</td></tr>
           <tr><td><code>data.*</code></td><td>全 <code>true</code></td><td>某一项数据要不要对外提供（<code>coins</code> / <code>points</code> / <code>level</code> / <code>playtime</code> / <code>team</code> / <code>title</code>）。关掉哪一项，App 里对应的那一块就显示 <code>—</code>，接口也不返回。</td></tr>
+          <tr><td><code>verify.enabled</code></td><td><code>true</code></td><td>1.4.1 的 Linux 身份验证总开关。开着时，<code>verify.players</code> 里的账号登录 App 后要先输一次 ITNOL 密码，验完才能用其它功能。</td></tr>
+          <tr><td><code>verify.players</code></td><td><code>[Linux582021]</code></td><td>哪些账号要二次验证。留空就退回「插件里那个受保护账号」。</td></tr>
           <tr><td><code>features.*</code></td><td>全 <code>true</code></td><td>1.3.0 起的功能开关：<code>chat</code> / <code>team</code> / <code>titles</code> / <code>checkin</code> / <code>report</code> / <code>penalty</code> / <code>fakes</code> / <code>console</code>。关掉后对应接口直接返回 <code>403</code>，App 里那一页也不再出现。</td></tr>
           <tr><td><code>debug</code></td><td><code>false</code></td><td>打开后每个请求都往控制台打一行（路径、耗时、来源 IP），排查连不上时用，平时关着。</td></tr>
         </tbody>
@@ -378,6 +380,7 @@
           <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/fake</code></td><td>是</td><td><code>op=add|remove</code>。召唤要求本人正在游戏里（假人要站在你脚下）。</td></tr>
           <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/commands</code></td><td>是</td><td>命令白名单 + 分组清单，App 的「服务器命令」页靠它渲染。</td></tr>
           <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/exec</code></td><td>是</td><td>执行一条白名单命令，body：<code>command</code>。返回真实回显，最多 40 行。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/su</code></td><td>是</td><td>1.4.2 的 su：验证过 Linux 身份后执行<b>任意命令</b>（不走白名单，<code>stop</code> / <code>restart</code> 仍然拦），body：<code>command</code>。</td></tr>
           <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/search?q=st</code></td><td>是</td><td>按名字模糊搜玩家，最多 30 条，每条带 <code>name</code> / <code>online</code> / <code>banned</code>。需要管理员。</td></tr>
           <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/bans</code></td><td>是</td><td>当前生效的封禁列表，带原因和到期时间。需要管理员。</td></tr>
           <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/ban</code></td><td>是</td><td>封禁，body：<code>name</code> / <code>reason</code> / <code>minutes</code>。需要管理员。</td></tr>
@@ -465,8 +468,8 @@
 
 <section class="help-section" id="use">
     <h2><span class="num">6</span>App 使用</h2>
-    <p>普通玩家五个页签：<strong>我的</strong>（数据 + 签到）、<strong>聊天</strong>（服务器公屏）、<strong>队伍</strong>、<strong>头衔</strong>、<strong>更多</strong>（在线玩家 / 设置）。
-       管理员会多一个独立的<strong>命令</strong>页签（白名单命令控制台），管理工具集中在「更多 → 管理」里。</p>
+    <p>普通玩家五个页签：<strong>我的</strong>（数据 + 签到）、<strong>聊天</strong>（公屏 + 队伍频道 + 队伍管理）、<strong>头衔</strong>、<strong>更多</strong>（在线玩家 / 设置）。管理员会多一个<strong>管理</strong>页签，里面分「玩家 / 举报 / 惩罚 / 假人 / 命令」五块。</p>
+    <p>1.4.0 把原来单独的「队伍」「命令」两页合了进来：队伍相关全在聊天页，命令在管理页的最后一个子标签里。</p>
 
     <h3>每日签到</h3>
     <p>「我的」页顶部那张卡就是签到：点一下领奖励，<strong>50% 是 5000 金币</strong>，剩下的是 <strong>1–5 点券</strong>。
@@ -486,8 +489,8 @@
           <tr><th>平台</th><th>文件</th><th>怎么装</th></tr>
         </thead>
         <tbody>
-          <tr><td>安卓</td><td><code>Nalxer-1.3.1.apk</code>（约 2.9 MB）</td><td>传到手机点开装；系统提示「未知来源」时给浏览器一次安装权限</td></tr>
-          <tr><td>iOS</td><td><code>Nalxer-1.3.1-unsigned.ipa</code>（约 560 KB）</td><td>电脑装 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>，插上 iPhone，把 ipa 拖进去、填 Apple ID、点 Start</td></tr>
+          <tr><td>安卓</td><td><code>Nalxer-1.4.2.apk</code>（约 2.9 MB）</td><td>传到手机点开装；系统提示「未知来源」时给浏览器一次安装权限</td></tr>
+          <tr><td>iOS</td><td><code>Nalxer-1.4.2-unsigned.ipa</code>（约 560 KB）</td><td>电脑装 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>，插上 iPhone，把 ipa 拖进去、填 Apple ID、点 Start</td></tr>
         </tbody>
       </table>
     </div>
@@ -515,6 +518,13 @@
 
     <h3>「聊天」页怎么用</h3>
     <p>游戏里公屏说的每句话都会同步到这里（带 <code>· 游戏</code> 标记），在 App 里发的消息会以 <code>[LinuxAPP] 你的名字：内容</code> 的格式广播回服务器，游戏里的人能看见。30 秒自动拉一次新消息，有未读时底部页签上会出现小红点。</p>
+    <h3>队伍频道（1.4.0）</h3>
+    <p>聊天页顶部有「世界 / 队伍」两个小按钮。点「队伍」就只看队内消息：发出去的话只有队友看得到，游戏里也会以 <code>[队伍] 队标 名字 » 内容</code> 的样子出现。</p>
+    <ul>
+      <li>一个人在几个队里时，队伍频道下面会多出一排队名，点哪个看哪个、发到哪个。</li>
+      <li>队伍管理也在这一页：成员、贡献、退出、踢人、转让、解散、建队、加入，都在聊天记录下面。</li>
+      <li>队长把队伍聊天关了（<code>/team setting chat off</code>），App 这边发会被挡回来。</li>
+    </ul>
     <p>发不出去通常就两个原因：被 ITNOL 禁言了（返回「你被禁言了，现在不能在服务器说话」），或者单条超过 200 字。</p>
 
     <div class="tip tip-info">
@@ -731,6 +741,44 @@
     <div class="tip">
       <span class="tip-icon">💡</span>
       <div class="tip-body">
+        <strong>命令现在是管理页里的一个子标签</strong>
+        1.4.0 起底栏没有单独的「命令」了，进「管理 → 命令」；白名单、危险命令二次确认这些规则没变。
+      </div>
+    </div>
+
+    <h3>Linux 身份验证（1.4.1）</h3>
+    <p><code>verify.players</code> 里的账号（默认就是 ITNOL 那个受保护号 Linux582021）登录 App 后，会先弹一个密码框：
+       <strong>「你登陆的是 Linux582021 账号，请通过 Linux 身份验证」</strong>。输的是 ITNOL 的验证密码，不是游戏密码。</p>
+    <ul>
+      <li>验证之前，除了 <code>/api/me</code> 和退出登录，其它接口一律 <code>403 need_verify</code>，界面上什么都点不动。</li>
+      <li>验证状态跟着令牌走，重开 App 不用再验一次；令牌过期或换设备要重验。</li>
+      <li>连错 5 次锁 10 分钟，服务端 <code>audit.log</code> 里有记录。</li>
+    </ul>
+
+    <h3>su 控制台（1.4.2）</h3>
+    <p>「管理 → 命令」最上面那张卡。验证过 Linux 身份之后，可以在弹窗里输入<b>任意命令</b>，不再受
+       <code>admin.commands.allow</code> 白名单限制 —— 给东西、传送、改权限、装插件都行。</p>
+    <ul>
+      <li>只拦 <code>stop</code> / <code>restart</code> / <code>end</code>：这三条按下去服务器就没了，App 里补救不了。</li>
+      <li>每条都写 <code>audit.log</code>，格式 <code>X su 执行 命令</code>。</li>
+      <li>回显里要是「错误 / 找不到 / Unknown command」，App 会直接标红说失败，不会假装成功。</li>
+    </ul>
+
+    <h3>假人逐个开关（1.4.1）</h3>
+    <p>假人列表每个名字下面会标「区块已加载 / 没加载」「会刷怪 / 不刷怪」，右边四个按钮：</p>
+    <ul>
+      <li><b>停载区块 / 加载区块</b> —— 对应 FakePlayerPlugin 的区块常驻（<code>keep-loaded-chunks</code>）；</li>
+      <li><b>关刷怪 / 开刷怪</b> —— 对应 <code>spawn.*</code>，假人站着的地方刷不刷怪；</li>
+      <li><b>重生</b>（按新设置重新出现）、<b>移除</b>。</li>
+    </ul>
+
+    <h3>举报能看已处理（1.4.1）</h3>
+    <p>举报子页分「待处理 / 已处理」两个标签，已处理的会显示处理结果（受理 / 驳回）、处理人和备注。
+       接口是 <code>GET /api/admin/reports?pending=0</code>，返回里带 <code>count</code> / <code>handledCount</code> / <code>pendingCount</code>。</p>
+
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <div class="tip-body">
         <strong>命令页要重新登录才出现</strong>
         刚被加进 <code>admin.players</code> 的人，手上的令牌还是普通令牌；让他在设置页退出登录再登一次，管理页和命令标签才会出来。
       </div>
@@ -877,7 +925,7 @@
     <div class="footer-brand">Nalxer App 帮助</div>
     <p>安装、配置、接口、App 用法，一页看完</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v1.3.1 · Android / iOS · Made with ♥ by Linux582021
+      v1.4.2 · Android / iOS · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
 <a href="index.html">← 插件列表</a>
