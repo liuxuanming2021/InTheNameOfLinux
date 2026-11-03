@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><style>html,body{margin:0;background:#111}iframe{width:390px;height:844px;border:0;display:block}</style></head>
+<body><iframe id="fr"></iframe>
+<script>
+// 不要再往里 scrollTo(0,0)：聊天页要停在最新一条
+document.getElementById('fr').src = '__demo.html' + (location.search || '');
+</script>
+</body></html>

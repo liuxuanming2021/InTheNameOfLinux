@@ -83,7 +83,7 @@ a { color: var(--accent); }
 .brand p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
 .field { margin-bottom: 12px; }
 .field label { display: block; font-size: 12.5px; color: var(--text-2); margin: 0 2px 6px; }
-.field input, .search-row input, .chat-input-bar input, #f-cmd, #f-reason, #f-note, #report-card input {
+.field input, .search-row input, .chat-input-bar input, #f-cmd, #f-reason, #f-note, #report-card input, #transfer-modal input {
   width: 100%;
   padding: 13px 14px;
   font-size: 16px;
@@ -521,3 +521,24 @@ body.verify-locked { overflow: hidden; }
 
 /* 举报卡里的两个输入框要占满一行 */
 #report-card input { width: 100%; }
+
+/* 上下线提示：微信「消息已撤回」那种居中灰条 */
+.chat-notice {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+}
+.chat-notice span {
+  background: var(--chip);
+  color: var(--muted);
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  max-width: 82%;
+  text-align: center;
+  word-break: break-all;
+}
+#btn-transfer { flex: 0 0 auto; }
+
+#transfer-modal input { width: 100%; margin-top: 8px; }
+#transfer-msg { min-height: 18px; }

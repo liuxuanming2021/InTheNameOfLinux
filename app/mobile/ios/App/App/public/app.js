@@ -677,19 +677,34 @@
       renderChat();
       return;
     }
+    // 两次请求挨太近时（轮询 + 切页 + 刚发完消息）会拿到同一段，串行并去重
+    if (state.chatLoading) { state.chatPending = true; return; }
+    state.chatLoading = true;
     api('/api/chat' + chatQuery()).then(function (r) {
       var d = r.data || {};
       if (!d.ok) return;
       $('chat-online').textContent = (d.online || 0) + ' 人在线';
       var msgs = d.messages || [];
+      state.chatFetchFailed = false;
       if (msgs.length) {
         state.chatLast = d.last || state.chatLast;
-        state.chatMsgs = state.chatMsgs.concat(msgs).slice(-200);
-        renderChat();
+        var seen = {};
+        (state.chatMsgs || []).forEach(function (m) { if (m && m.id) seen[m.id] = 1; });
+        var fresh = msgs.filter(function (m) { return m && m.id && !seen[m.id]; });
+        if (fresh.length) {
+          state.chatMsgs = state.chatMsgs.concat(fresh).slice(-200);
+          renderChat();
+        }
       } else if (!state.chatMsgs.length) {
+        state.chatFetchFailed = false;
         renderChat();
       }
-    }).catch(function () {});
+    }).catch(function () {
+      state.chatFetchFailed = true;
+    }).then(function () {
+      state.chatLoading = false;
+      if (state.chatPending) { state.chatPending = false; setTimeout(loadChat, 250); }
+    });
   }
 
   /** 切频道：世界 / 队伍（队伍要在队伍里才切得过去）。 */
@@ -786,6 +801,9 @@
       return;
     }
     box.innerHTML = state.chatMsgs.map(function (m) {
+      if (m.source === 'notice') {
+        return '<div class="chat-notice"><span>' + esc(m.text) + '</span></div>';
+      }
       var mine = m.name === state.name && m.source === 'app';
       var cls = 'msg' + (mine ? ' mine' : '') +
         (m.source === 'console' ? ' console' : '') +
@@ -896,6 +914,73 @@
       if (!d.ok) { toast(d.message || '发送失败'); return; }
       loadChat();
     }).catch(function (e) { toast(e.message); });
+  }
+
+  // ── 转账（走服务端的 NalxerECO 接口）─────────────────
+
+  function openTransfer() {
+    $('transfer-modal').classList.remove('hidden');
+    $('transfer-msg').textContent = '';
+    var type = state.transferType || 'coins';
+    setTransferTab(type);
+    api('/api/transfer').then(function (r) {
+      var d = r.data || {};
+      if (!d.available) {
+        $('transfer-balance').textContent = '服务器没接上 NalxerECO，暂时不能转账';
+        return;
+      }
+      state.transferBalance = d;
+      showTransferBalance();
+    }).catch(function (e) { $('transfer-balance').textContent = e.message; });
+  }
+
+  function showTransferBalance() {
+    var d = state.transferBalance || {};
+    var type = state.transferType || 'coins';
+    var val = type === 'coins' ? d.coins : d.points;
+    $('transfer-balance').textContent = '你现在有 ' +
+      (val == null ? '—' : (type === 'coins' ? fmt(val) + ' 金币' : val + ' 点券'));
+  }
+
+  function setTransferTab(type) {
+    state.transferType = type;
+    [].slice.call(document.querySelectorAll('[data-ttab]')).forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-ttab') === type);
+    });
+    $('f-trans-amount').placeholder = type === 'coins' ? '金额（金币）' : '数量（点券，整数）';
+    showTransferBalance();
+  }
+
+  function closeTransfer() {
+    $('transfer-modal').classList.add('hidden');
+  }
+
+  function doTransfer() {
+    var target = $('f-trans-target').value.trim();
+    var amount = parseFloat($('f-trans-amount').value);
+    var msgEl = $('transfer-msg');
+    if (!target) { msgEl.textContent = '要转给谁？'; return; }
+    if (!amount || amount <= 0) { msgEl.textContent = '金额要大于 0'; return; }
+    if (target.toLowerCase() === (state.name || '').toLowerCase()) { msgEl.textContent = '不能转给自己'; return; }
+    var btn = $('btn-transfer-go');
+    btn.disabled = true;
+    btn.textContent = '转账中…';
+    api('/api/transfer', { body: { type: state.transferType || 'coins', target: target, amount: amount } })
+      .then(function (r) {
+        var d = r.data || {};
+        msgEl.textContent = d.message || (d.ok ? '已转账' : '转账失败');
+        msgEl.style.color = d.ok ? 'var(--green)' : 'var(--red)';
+        if (d.ok) {
+          $('f-trans-amount').value = '';
+          toast(d.message || '已转账');
+          setTimeout(closeTransfer, 900);
+        }
+      })
+      .catch(function (e) { msgEl.textContent = e.message; })
+      .then(function () {
+        btn.disabled = false;
+        btn.textContent = '确认转账';
+      });
   }
 
   // ── 队伍 ─────────────────────────────────────────────
@@ -1564,6 +1649,12 @@
       openLinux();
     });
     $('btn-chat-send').addEventListener('click', sendChat);
+    $('btn-transfer').addEventListener('click', openTransfer);
+    $('btn-transfer-go').addEventListener('click', doTransfer);
+    $('btn-transfer-close').addEventListener('click', closeTransfer);
+    [].slice.call(document.querySelectorAll('[data-ttab]')).forEach(function (b) {
+      b.addEventListener('click', function () { setTransferTab(b.getAttribute('data-ttab')); });
+    });
     $('f-chat').addEventListener('keydown', function (e) { if (e.key === 'Enter') sendChat(); });
     $('btn-team-create').addEventListener('click', function () {
       var name = $('f-team-name').value.trim();
@@ -1689,7 +1780,7 @@
         releasePenalty(t.getAttribute('data-unpen'), w0);
         return;
       }
-      if (t.hasAttribute('data-manage')) { setAdminTab('player'); $('f-search').value = t.getAttribute('data-manage'); searchPlayers(); }
+      if (t.hasAttribute('data-manage')) { playerDetail(t.getAttribute('data-manage')); }
       else if (t.hasAttribute('data-detail')) playerDetail(t.getAttribute('data-detail'));
       else if (t.hasAttribute('data-rep')) handleReport(t.getAttribute('data-rep'), t.getAttribute('data-id'));
       else if (t.hasAttribute('data-release')) releasePenalty(t.getAttribute('data-release'), t.getAttribute('data-who'));

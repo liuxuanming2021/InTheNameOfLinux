@@ -1,0 +1,13 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#111}iframe{width:390px;height:844px;border:0}</style></head>
+<body><iframe id="fr"></iframe>
+<script>
+var fr=document.getElementById('fr');
+fr.src='__demo.html?page=admin&tab=online';
+setTimeout(function(){
+  try{
+    var d=fr.contentDocument;
+    var b=d.querySelector('[data-manage]');
+    if(b) b.click();
+  }catch(e){}
+}, 5000);
+</script></body></html>
