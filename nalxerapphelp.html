@@ -166,7 +166,7 @@
 
 <section class="page-hero">
   <div class="container">
-    <span class="plug-hero-ver">1.2.0 · Android / iOS</span>
+    <span class="plug-hero-ver">1.3.0 · Android / iOS</span>
     <h1>Nalxer App 帮助中心</h1>
     <p>安装、配置、接口、App 用法，一页看完</p>
   </div>
@@ -210,7 +210,7 @@
 
     <p>正常启动时控制台会依次打出这几行（装了什么就出现什么，没装的那一项不会打）：</p>
 
-    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v1.2.0</div><div>[NalxerApp] Enabling NalxerApp v1.2.0</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍（信息 / 建队 / 加入 / 退出 / 踢人 / 转让）</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔（列表 / 佩戴）</div><div>[NalxerApp] [联动] 已接上 ITNOL 禁言判定（App 里发聊天前会先查）</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49282/api/health（明文直连，手机里填 http://服务器IP:49282 就能用）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是，队伍：是，头衔：是）</div><div>[NalxerApp] 聊天通道已开启 —— 游戏里说话会同步到 App，App 发的消息带 [LinuxAPP]  前缀广播进游戏</div></div>
+    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v1.3.0</div><div>[NalxerApp] Enabling NalxerApp v1.3.0</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍（信息 / 建队 / 加入 / 退出 / 踢人 / 转让）</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔（列表 / 佩戴）</div><div>[NalxerApp] [联动] 已接上 ITNOL 禁言判定（App 里发聊天前会先查）</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49282/api/health（明文直连，手机里填 http://服务器IP:49282 就能用）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是，队伍：是，头衔：是）</div><div>[NalxerApp] 聊天通道已开启 —— 游戏里说话会同步到 App，App 发的消息带 [LinuxAPP]  前缀广播进游戏</div></div>
 
     <p>哪一行结尾写的是「未检测到」，就是对应的插件没装、没启用或者版本不认识。那一项在 App 里会显示成 <code>—</code>，其余功能照常，不用为了一行日志去折腾服务器。</p>
 
@@ -342,7 +342,7 @@
 
 <section class="help-section" id="api">
     <h2><span class="num">4</span>接口表</h2>
-    <p>一共 13 个普通接口 + 5 个管理员接口，除了 <code>health</code> 和 <code>login</code>，其它都要在请求头里带 <code>Authorization: Bearer &lt;token&gt;</code>。</p>
+    <p>一共 16 个普通接口 + 13 个管理员接口，除了 <code>health</code> 和 <code>login</code>，其它都要在请求头里带 <code>Authorization: Bearer &lt;token&gt;</code>。</p>
 
     <div class="table-scroll">
       <table class="help-table">
@@ -362,6 +362,19 @@
           <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/team</code></td><td>是</td><td>队伍操作，body：<code>action</code>（create / join / leave / kick / disband / transfer）+ <code>arg</code>。</td></tr>
           <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/titles</code></td><td>是</td><td>头衔总览：当前佩戴、已解锁数量、全部头衔 + 解锁条件。</td></tr>
           <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/titles</code></td><td>是</td><td>佩戴 / 卸下，body：<code>id</code>（传空串是卸下）。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/checkin</code></td><td>是</td><td>签到状态：今天签没签、连续多少天、累计多少天、下次重置时间（北京时间 0 点）。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/checkin</code></td><td>是</td><td>签今天的到。返回 <code>reward</code>（5000 金币 / N 点券）；当天重复调用返回 <code>400</code> 和「今天已经签过了」。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/reports</code></td><td>是</td><td>我提交过的举报 + 处理结果。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/report</code></td><td>是</td><td>举报别人，body：<code>target</code> / <code>reason</code>。返回举报编号。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/status</code></td><td>是</td><td>插件联动状态（11 个插件 + 8 个功能开关），App 设置页那张状态表就是它。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/players?q=st</code></td><td>是</td><td>在线 + 离线一起搜（离线名字来自 ITNOL 的历史记录），最多 60 条。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/player?name=Steve</code></td><td>是</td><td>单个玩家详情：数据 + 他身上生效的惩罚 + 举报记录。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/penalties</code></td><td>是</td><td>当前所有惩罚记录（禁言 / 移动 / 方块 / 封禁）。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/penalty</code></td><td>是</td><td><code>op=apply|release</code>，apply 传 <code>type</code> / <code>name</code> / <code>minutes</code> / <code>reason</code>。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/reports?pending=1</code></td><td>是</td><td>举报列表，<code>pending=1</code> 只看没处理的。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/report</code></td><td>是</td><td>处理举报：<code>op=accept|reject</code> + <code>id</code> + <code>note</code>。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/fakes</code></td><td>是</td><td>假人列表：名字 / UUID / 世界 / 是否活跃 / 坐标。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/fake</code></td><td>是</td><td><code>op=add|remove</code>。召唤要求本人正在游戏里（假人要站在你脚下）。</td></tr>
           <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/commands</code></td><td>是</td><td>命令白名单 + 分组清单，App 的「服务器命令」页靠它渲染。</td></tr>
           <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/exec</code></td><td>是</td><td>执行一条白名单命令，body：<code>command</code>。返回真实回显，最多 40 行。</td></tr>
           <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/search?q=st</code></td><td>是</td><td>按名字模糊搜玩家，最多 30 条，每条带 <code>name</code> / <code>online</code> / <code>banned</code>。需要管理员。</td></tr>
@@ -451,7 +464,17 @@
 
 <section class="help-section" id="use">
     <h2><span class="num">6</span>App 使用</h2>
-    <p>五个页签：<strong>我的</strong>（数据）、<strong>聊天</strong>（服务器公屏）、<strong>队伍</strong>、<strong>头衔</strong>、<strong>更多</strong>（在线玩家 / 管理 / 设置）。</p>
+    <p>普通玩家五个页签：<strong>我的</strong>（数据 + 签到）、<strong>聊天</strong>（服务器公屏）、<strong>队伍</strong>、<strong>头衔</strong>、<strong>更多</strong>（在线玩家 / 设置）。
+       管理员会多一个独立的<strong>命令</strong>页签（白名单命令控制台），管理工具集中在「更多 → 管理」里。</p>
+
+    <h3>每日签到</h3>
+    <p>「我的」页顶部那张卡就是签到：点一下领奖励，<strong>50% 是 5000 金币</strong>，剩下的是 <strong>1–5 点券</strong>。
+       每天北京时间 0 点重置。</p>
+    <ul>
+      <li>连续签到天数会累加，断一天就从 1 重新算；累计天数永远只增不减。</li>
+      <li>当天签过按钮变「已签到」，再点会被服务端挡回来（`400`）。</li>
+      <li>奖励真的进游戏账户，下线也算数 —— 走的是 Vault 和 PlayerPoints。</li>
+    </ul>
 
     <h3>装到手机上</h3>
     <p>两个平台给的包不一样，别装错：</p>
@@ -462,8 +485,8 @@
           <tr><th>平台</th><th>文件</th><th>怎么装</th></tr>
         </thead>
         <tbody>
-          <tr><td>安卓</td><td><code>Nalxer-1.2.0.apk</code>（约 2.9 MB）</td><td>传到手机点开装；系统提示「未知来源」时给浏览器一次安装权限</td></tr>
-          <tr><td>iOS</td><td><code>Nalxer-1.2.0-unsigned.ipa</code>（约 560 KB）</td><td>电脑装 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>，插上 iPhone，把 ipa 拖进去、填 Apple ID、点 Start</td></tr>
+          <tr><td>安卓</td><td><code>Nalxer-1.3.0.apk</code>（约 2.9 MB）</td><td>传到手机点开装；系统提示「未知来源」时给浏览器一次安装权限</td></tr>
+          <tr><td>iOS</td><td><code>Nalxer-1.3.0-unsigned.ipa</code>（约 560 KB）</td><td>电脑装 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>，插上 iPhone，把 ipa 拖进去、填 Apple ID、点 Start</td></tr>
         </tbody>
       </table>
     </div>
@@ -543,6 +566,31 @@
     <div class="code-block"><div>admin:</div><div>  players:</div><div>    - Linux582021    <span class="comment"># 一个 ID 一行（不区分大小写）</span></div><div>    - Steve</div></div>
 
     <p>改完 <code>/nalxerapp reload</code>，名单里的人下次打开 App 就能看到管理页。被移出名单的人要重新登录一次才会掉权限 —— 他手上的令牌还是管理员令牌，直到过期。</p>
+
+    <h3>管理页：玩家 / 举报 / 惩罚 / 假人</h3>
+    <p>管理员的「更多」页会多出一张<strong>管理</strong>卡，四个子标签：</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>子标签</th><th>能做什么</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>玩家</td><td>搜在线或离线的玩家 → 点开详情（等级 / 金币 / 点券 / 队伍 / 头衔 / 历史惩罚 / 相关举报）→ 直接封禁或开惩罚。</td></tr>
+          <tr><td>举报</td><td>看玩家提交的举报（举报人、被举报人、理由、时间），逐条<strong>受理</strong>或<strong>驳回</strong>，可以写处理备注。</td></tr>
+          <tr><td>惩罚</td><td>所有生效中的禁言 / 移动封禁 / 方块封禁 / 封禁，按类型分组，点一下就解除。</td></tr>
+          <tr><td>假人</td><td>FakePlayerPlugin 的假人列表（坐标、在线状态），能直接移除；召唤需要你本人正在游戏里。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠️</span>
+      <div class="tip-body">
+        <strong>举报有 30 分钟冷却</strong>
+        同一份举报提交后 30 分钟内不能受理，这是 ITNOL 留的调查时间，不是 App 的 bug。
+      </div>
+    </div>
 
     <h3>封禁时长选项</h3>
     <p>App 里给的是四个档，对应的就是接口里的 <code>minutes</code>：</p>
@@ -799,7 +847,7 @@
     <div class="footer-brand">Nalxer App 帮助</div>
     <p>安装、配置、接口、App 用法，一页看完</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v1.2.0 · Android / iOS · Made with ♥ by Linux582021
+      v1.3.0 · Android / iOS · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
 <a href="index.html">← 插件列表</a>
