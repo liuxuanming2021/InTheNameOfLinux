@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#f4f6fa">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css?v=32">
+  <link rel="stylesheet" href="style.css?v=34">
 </head>
 <body>
 
@@ -329,6 +329,13 @@
           </div>
           <button id="sw-theme" class="switch" role="switch" aria-checked="false"></button>
         </div>
+        <button class="set-row" id="btn-theme" style="border-bottom:0">
+          <div>
+            <div style="font-weight:600">主题</div>
+            <div class="hint" id="set-theme-hint">默认 · 天蓝色</div>
+          </div>
+          <span class="chev">›</span>
+        </button>
       </div>
 
       <div class="card hidden" id="admin-panel-card">
@@ -372,10 +379,10 @@
         <div class="card-title"><h2>关于软件</h2></div>
         <div class="kv">
           <span>软件名称</span><b>Nalxer App</b>
-          <span>版本</span><b>26.11.14</b>
+          <span>版本</span><b>26.11.15</b>
           <span>作者</span><b>Linux582021</b>
           <span>官网</span><b>linux.nalxer.top</b>
-          <span>配套服务端</span><b>NalxerApp 26.11.14</b>
+          <span>配套服务端</span><b>NalxerApp 26.11.15</b>
         </div>
         <p class="hint" style="margin:10px 2px 0">数据来自服务器上的 InTheNameOfLinux 与 Linux 系插件；App 只是把这些数据搬到手机上，不改动任何存档。</p>
       </div>
@@ -383,7 +390,7 @@
       <button id="btn-logout" class="btn btn-block" style="margin-bottom:8px">退出登录</button>
 
       <div class="about-foot">
-        <span>Nalxer App 26.11.14</span>
+        <span>Nalxer App 26.11.15</span>
         <span class="dot">·</span>
         <span>作者 Linux582021</span>
       </div>
@@ -400,6 +407,34 @@
   </nav>
 </div>
 
+
+<!-- 主题：风格 + 颜色 -->
+<div id="theme-modal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-mark">🎨</div>
+      <div class="modal-title">
+        <h2>主题</h2>
+        <p id="theme-sub">风格和颜色都能换，改完立刻生效</p>
+      </div>
+    </div>
+    <div class="hint" style="margin:14px 0 7px">风格</div>
+    <div class="seg" id="theme-styles">
+      <button class="seg-btn" data-theme-style="default">默认</button>
+      <button class="seg-btn" data-theme-style="miuix">Miuix</button>
+    </div>
+    <div class="hint" style="margin:16px 0 8px">颜色</div>
+    <div class="swatches" id="theme-swatches">
+      <button class="swatch" data-accent="sky"><i style="background:#1f7ae0"></i><span>天蓝色</span></button>
+      <button class="swatch" data-accent="pink"><i style="background:#e0568a"></i><span>淡粉色</span></button>
+      <button class="swatch" data-accent="green"><i style="background:#1f9d63"></i><span>淡绿色</span></button>
+      <button class="swatch" data-accent="antique"><i style="background:#a9793f"></i><span>古董白</span></button>
+      <button class="swatch" data-accent="black"><i style="background:#1b1f27"></i><span>黑色</span></button>
+      <button class="swatch" data-accent="gray"><i style="background:#6b7280"></i><span>灰色</span></button>
+    </div>
+    <button id="btn-theme-close" class="btn btn-block" style="margin-top:16px">完成</button>
+  </div>
+</div>
 
 <!-- Linux 系插件管理 -->
 <div id="transfer-modal" class="modal hidden">
@@ -457,6 +492,6 @@
 
 <div id="fatal" class="hidden"></div>
 <div id="toast" class="toast hidden"></div>
-<script src="app.js?v=32"></script>
+<script src="app.js?v=34"></script>
 </body>
 </html>

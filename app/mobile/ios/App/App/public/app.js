@@ -11,6 +11,8 @@
     admin: 'nalxer.admin',
     expire: 'nalxer.expire',
     theme: 'nalxer.theme',
+    skin: 'nalxer.skin',
+    accent: 'nalxer.accent',
     suon: 'nalxer.suon'
   };
 
@@ -97,11 +99,81 @@
     if (meta) meta.setAttribute('content', dark ? '#0b0f14' : '#f4f6fa');
     var sw = $('sw-theme');
     if (sw) sw.setAttribute('aria-checked', dark ? 'true' : 'false');
+    if (typeof applySkin === 'function' && localStorage.getItem(LS.skin) !== null) applySkin();
+  }
+
+  /** 强调色：浅色/深色各一套，默认天蓝色（跟原来一样）。 */
+  var ACCENTS = {
+    sky:     { name: '天蓝色', light: ['#1f7ae0', 'rgba(31,122,224,0.10)'], dark: ['#4cc2ff', 'rgba(76,194,255,0.16)'] },
+    pink:    { name: '淡粉色', light: ['#e0568a', 'rgba(224,86,138,0.12)'], dark: ['#ff8fb8', 'rgba(255,143,184,0.18)'] },
+    green:   { name: '淡绿色', light: ['#1f9d63', 'rgba(31,157,99,0.12)'], dark: ['#4bd99a', 'rgba(75,217,154,0.18)'] },
+    antique: { name: '古董白', light: ['#a9793f', 'rgba(169,121,63,0.14)'], dark: ['#e3bc87', 'rgba(227,188,135,0.18)'] },
+    black:   { name: '黑色', light: ['#1b1f27', 'rgba(27,31,39,0.10)'], dark: ['#e8edf4', 'rgba(232,237,244,0.14)'] },
+    gray:    { name: '灰色', light: ['#6b7280', 'rgba(107,114,128,0.14)'], dark: ['#aab3c0', 'rgba(170,179,192,0.18)'] }
+  };
+  var SKINS = { 'default': '默认', miuix: 'Miuix' };
+
+  function currentSkin() { return localStorage.getItem(LS.skin) || 'default'; }
+  function currentAccent() {
+    var a = localStorage.getItem(LS.accent) || 'sky';
+    return ACCENTS[a] ? a : 'sky';
+  }
+
+  /** 把风格 + 颜色刷到界面上（深色/浅色各用各的强调色）。 */
+  function applySkin() {
+    var skin = currentSkin();
+    var key = currentAccent();
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.body.setAttribute('data-skin', skin);
+    var pair = dark ? ACCENTS[key].dark : ACCENTS[key].light;
+    document.documentElement.style.setProperty('--accent', pair[0]);
+    document.documentElement.style.setProperty('--accent-soft', pair[1]);
+    renderThemeUi();
+  }
+
+  function renderThemeUi() {
+    var skin = currentSkin();
+    var key = currentAccent();
+    var hint = $('set-theme-hint');
+    if (hint) hint.textContent = (SKINS[skin] || '默认') + ' · ' + ACCENTS[key].name;
+    Array.prototype.forEach.call(document.querySelectorAll('#theme-styles .seg-btn'), function (b) {
+      b.classList.toggle('active', b.getAttribute('data-theme-style') === skin);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('#theme-swatches .swatch'), function (b) {
+      b.classList.toggle('active', b.getAttribute('data-accent') === key);
+    });
+  }
+
+  function openTheme() {
+    var m = $('theme-modal');
+    if (!m) return;
+    m.classList.remove('hidden');
+    renderThemeUi();
+  }
+
+  function closeTheme() {
+    var m = $('theme-modal');
+    if (m) m.classList.add('hidden');
+  }
+
+  function setSkin(skin) {
+    if (!SKINS[skin]) skin = 'default';
+    localStorage.setItem(LS.skin, skin);
+    applySkin();
+    toast('主题风格：' + SKINS[skin]);
+  }
+
+  function setAccent(key) {
+    if (!ACCENTS[key]) key = 'sky';
+    localStorage.setItem(LS.accent, key);
+    applySkin();
+    toast('颜色：' + ACCENTS[key].name);
   }
 
   function initTheme() {
     var saved = localStorage.getItem(LS.theme);
     applyTheme(saved === 'dark');
+    applySkin();
   }
 
   function toggleTheme() {
@@ -275,20 +347,29 @@
       // 详情页只显示一个人，返回就回管理页的玩家子标签
       $('page-sub').textContent = state.detailName || state.name;
     }
-    if (page === 'team') {
-      loadTeam();
-    }
-    if (page === 'chat') {
+    // 每次切页都把这一页的数据重新拉一遍（保持最新），不只是第一次进来
+    refreshPage();
+  }
+
+  /** 重新拉取当前页面的数据。切页、回到前台、点刷新都走它。 */
+  function refreshPage() {
+    var page = state.page;
+    if (page === 'me') { loadMe(); loadMyReports(); }
+    else if (page === 'chat') {
       state.chatScrollPending = true;
       if (state.chatMsgs && state.chatMsgs.length) scrollChatBottom();
       $('chat-dot').classList.add('hidden');
       loadChat();
       loadTeam();   // 队伍面板也在聊天页里
     }
-    if (page === 'me') loadMyReports();
-    if (page === 'title') loadTitles();
-    if (page === 'admin') setAdminTab(state.adminTab || 'player');
-    if (page === 'more' && state.admin) loadStatus();
+    else if (page === 'team') loadTeam();
+    else if (page === 'title') loadTitles();
+    else if (page === 'admin') setAdminTab(state.adminTab || 'player');
+    else if (page === 'pdetail' && state.detailName) playerDetail(state.detailName);
+    else if (page === 'more') {
+      loadMe();
+      if (state.admin) loadStatus();
+    }
   }
 
   // ── 我的 ─────────────────────────────────────────────
@@ -680,31 +761,52 @@
     // 两次请求挨太近时（轮询 + 切页 + 刚发完消息）会拿到同一段，串行并去重
     if (state.chatLoading) { state.chatPending = true; return; }
     state.chatLoading = true;
+    state.chatFetchAt = Date.now();
     api('/api/chat' + chatQuery()).then(function (r) {
       var d = r.data || {};
       if (!d.ok) return;
       $('chat-online').textContent = (d.online || 0) + ' 人在线';
-      var msgs = d.messages || [];
       state.chatFetchFailed = false;
+      // 服务器重启过（id 从头开始）：之前攒的全作废，从 0 重来
+      if (d.reset) {
+        state.chatMsgs = [];
+        state.chatLast = 0;
+      }
+      var msgs = d.messages || [];
+      var atBottom = isChatNearBottom();
       if (msgs.length) {
-        state.chatLast = d.last || state.chatLast;
         var seen = {};
         (state.chatMsgs || []).forEach(function (m) { if (m && m.id) seen[m.id] = 1; });
         var fresh = msgs.filter(function (m) { return m && m.id && !seen[m.id]; });
-        if (fresh.length) {
+        var last = d.last || 0;
+        if (d.reset) {
+          state.chatMsgs = msgs.slice(-200);
+          fresh = state.chatMsgs;
+        } else if (fresh.length) {
           state.chatMsgs = state.chatMsgs.concat(fresh).slice(-200);
+        }
+        if (last > (state.chatLast || 0)) state.chatLast = last;
+        if (fresh.length) {
           renderChat();
+          if (atBottom) scrollChatBottom();
         }
       } else if (!state.chatMsgs.length) {
-        state.chatFetchFailed = false;
         renderChat();
       }
     }).catch(function () {
       state.chatFetchFailed = true;
     }).then(function () {
       state.chatLoading = false;
-      if (state.chatPending) { state.chatPending = false; setTimeout(loadChat, 250); }
+      if (state.chatPending) { state.chatPending = false; setTimeout(loadChat, 150); }
     });
+  }
+
+  /** 聊天区是否已经贴在底部（贴底时来新消息才跟着滚）。 */
+  function isChatNearBottom() {
+    var box = $('chat-list');
+    if (!box) return false;
+    var r = box.getBoundingClientRect();
+    return r.bottom <= window.innerHeight + 60;
   }
 
   /** 切频道：世界 / 队伍（队伍要在队伍里才切得过去）。 */
@@ -1600,26 +1702,33 @@
   function startTimers() {
     stopTimers();
     state.timer = setInterval(function () {
-      if (state.page === 'me') loadMe();
+      if (state.page === 'me') { loadMe(); loadMyReports(); }
     }, 30000);
-    // 聊天每 3 秒刷一次；不在聊天页时每 4 拍（12 秒）查一次，只为点亮红点
+    // 聊天每 2 秒查一次（就是「实时」）；不在聊天页时每 5 拍（10 秒）查一次，只为点亮红点
     state.chatTick = 0;
     state.chatTimer = setInterval(function () {
+      // 上一次请求卡死（弱网、切后台）时把它放掉，否则轮询会一直空转不再发请求
+      if (state.chatLoading && Date.now() - (state.chatFetchAt || 0) > 8000) {
+        state.chatLoading = false;
+        state.chatPending = false;
+      }
       state.chatTick = (state.chatTick || 0) + 1;
       if (state.page === 'chat') { loadChat(); return; }
-      if (state.chatTick % 4 !== 0) return;
+      if (state.chatTick % 5 !== 0) return;
+      if (state.chatLoading) return;
       api('/api/chat?since=' + (state.chatLast || 0)).then(function (r) {
         var d = r.data || {};
+        if (d.reset) { state.chatMsgs = []; state.chatLast = 0; }
         var msgs = d.messages || [];
         if (!msgs.length) return;
-        state.chatLast = d.last || state.chatLast;
         var seen = {};
         (state.chatMsgs || []).forEach(function (m) { if (m && m.id) seen[m.id] = 1; });
         var fresh = msgs.filter(function (m) { return m && m.id && !seen[m.id]; });
         if (fresh.length) state.chatMsgs = state.chatMsgs.concat(fresh).slice(-200);
+        if ((d.last || 0) > (state.chatLast || 0)) state.chatLast = d.last;
         $('chat-dot').classList.remove('hidden');
       }).catch(function () {});
-    }, 3000);
+    }, 2000);
   }
 
   function stopTimers() {
@@ -1637,11 +1746,7 @@
     $('btn-login').addEventListener('click', doLogin);
     $('f-pass').addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
     $('btn-refresh').addEventListener('click', function () {
-      if (state.page === 'me') loadMe();
-      else if (state.page === 'chat') loadChat();
-      else if (state.page === 'team') loadTeam();
-      else if (state.page === 'title') loadTitles();
-      else if (state.page === 'more') { loadPlayers(); if (state.admin) loadStatus(); }
+      refreshPage();
       toast('已刷新');
     });
 
@@ -1688,8 +1793,10 @@
     });
 
     document.addEventListener('click', function (ev) {
-      var t = ev.target.closest ? ev.target.closest('[data-linux-op],[data-chat],[data-chatteam],[data-tact],[data-team],[data-leave],[data-join],[data-kick],[data-title],[data-group],[data-cmd]') : null;
+      var t = ev.target.closest ? ev.target.closest('[data-linux-op],[data-chat],[data-chatteam],[data-tact],[data-team],[data-leave],[data-join],[data-kick],[data-title],[data-group],[data-cmd],[data-theme-style],[data-accent]') : null;
       if (!t) return;
+      if (t.hasAttribute('data-theme-style')) { setSkin(t.getAttribute('data-theme-style')); return; }
+      if (t.hasAttribute('data-accent')) { setAccent(t.getAttribute('data-accent')); return; }
       if (t.hasAttribute('data-linux-op')) {
         linuxOp(t.getAttribute('data-linux'), t.getAttribute('data-linux-op'));
         return;
@@ -1825,6 +1932,11 @@
     $('btn-test-server').addEventListener('click', testServer);
     $('btn-reset-server').addEventListener('click', resetServer);
     $('sw-theme').addEventListener('click', toggleTheme);
+    if ($('btn-theme')) $('btn-theme').addEventListener('click', openTheme);
+    if ($('btn-theme-close')) $('btn-theme-close').addEventListener('click', closeTheme);
+    if ($('theme-modal')) $('theme-modal').addEventListener('click', function (ev) {
+      if (ev.target === $('theme-modal')) closeTheme();
+    });
     if ($('sw-su')) $('sw-su').addEventListener('click', toggleSu);
     $('btn-logout').addEventListener('click', function () { logout(false); });
   }
@@ -1845,6 +1957,13 @@
     measureTopbar();
     window.addEventListener('resize', measureTopbar);
     window.addEventListener('orientationchange', function () { setTimeout(measureTopbar, 260); });
+    // 手机切回前台时立刻同步一次，别等着轮询慢慢补
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible' || !state.token) return;
+      state.chatLoading = false;
+      state.chatPending = false;
+      refreshPage();
+    });
 
     state.server = normServer(localStorage.getItem(LS.server) || DEFAULT_SERVER);
     state.token = localStorage.getItem(LS.token) || '';
