@@ -549,9 +549,10 @@
 
     <h3>FS1 安卓端（NalxerLink）发的消息也能看见（26.11.14）</h3>
     <p>如果服务器上装了 <code>NalxerLink</code>（给安卓客户端用的登录 / 聊天接口），那边发的聊天会以
-      <code>[App]</code> 前缀广播到控制台。NalxerApp 会把这行认出来，放进 App 的「世界」频道，
-      并在名字后面标 <b>· FS1安卓端</b>——一眼能分清是 <b>游戏里</b> 说的、<b>NalxerApp</b> 发的、
-      还是 <b>FS1 安卓端</b> 发的。</p>
+      <code>[App] 用户名: 内容</code> 的形式广播到控制台。<b>这里的用户名就是对方在 FS1 安卓客户端登录时
+      填的那个账号</b>（比如 <code>Linux582021</code>），不是固定的「FS1玩家」字样。NalxerApp 会把这行认出来，
+      原样用这个用户名进 App 的「世界」频道，后面标 <b>· FS1安卓端</b>——一眼能分清是 <b>游戏里</b> 说的、
+      <b>NalxerApp</b> 发的、还是 <b>FS1 安卓端</b> 发的。显示形如：<code>Linux582021 · 23:59 · FS1安卓端</code>。</p>
     <ul>
       <li>开关：<code>chat.capture-link</code>，默认 <code>true</code>；关掉就不再读这类广播。</li>
       <li>前缀名单：<code>chat.link-speakers</code>，默认 <code>[app]</code>。别的客户端广播前缀不是 <code>[App]</code> 的话，把它加进这个列表。</li>
