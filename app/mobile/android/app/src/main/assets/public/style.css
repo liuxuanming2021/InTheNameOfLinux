@@ -212,6 +212,13 @@ a { color: var(--accent); }
 /* 签到 */
 .checkin-head { display: flex; align-items: center; gap: 12px; }
 #btn-checkin { min-width: 84px; letter-spacing: 0.5px; }
+/* 签过之后不要再压暗：opacity 层在部分渲染器里会把中文渲染糊 */
+#btn-checkin:disabled {
+  opacity: 1;
+  background: var(--accent-soft);
+  color: var(--accent);
+  cursor: default;
+}
 .checkin-icon {
   width: 46px; height: 46px; border-radius: 14px; flex: 0 0 auto;
   background: linear-gradient(160deg, #ffd479, #ff9d5c);
