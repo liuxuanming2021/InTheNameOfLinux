@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#f4f6fa">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css?v=16">
+  <link rel="stylesheet" href="style.css?v=17">
 </head>
 <body>
 
@@ -124,7 +124,7 @@
             <div class="team-name" id="team-name">—</div>
             <div class="hint" id="team-sub">—</div>
           </div>
-          <button id="btn-team-leave" class="btn btn-mini">退出</button>
+          <button id="btn-team-leave" class="btn btn-mini hidden">退出</button>
         </div>
         <div id="team-members" style="margin-top:8px"></div>
         <div class="seg" style="margin-top:10px" id="team-actions"></div>
@@ -179,16 +179,8 @@
     </section>
 
     <!-- 更多：在线玩家 / 管理 / 设置 -->
-    <section id="page-more" class="page hidden">
-      <div class="card">
-        <div class="card-title">
-          <h2>在线玩家</h2>
-          <button id="btn-load-players" class="btn btn-mini">刷新</button>
-        </div>
-        <div id="online-list"><p class="empty">还没有加载</p></div>
-      </div>
-
-      <div class="card hidden" id="admin-card">
+    <section id="page-admin" class="page hidden">
+      <div class="card" id="admin-card">
         <div class="card-title"><h2>管理</h2><span class="side" style="color:var(--green)">有权限</span></div>
         <div class="seg" id="admin-tabs" style="margin-bottom:12px">
           <button class="seg-btn active" data-admin="player">玩家</button>
@@ -228,8 +220,37 @@
             <button id="btn-fake-add" class="btn btn-primary">召唤</button>
           </div>
           <p class="hint" style="margin:8px 2px">召唤要在游戏里（用管理员账号进服），移除随时都能点。</p>
+          <div class="sub-card" style="margin-top:12px">
+            <div class="card-title" style="margin-bottom:8px"><h2 style="font-size:14px">假人设置</h2>
+              <span class="side" id="fake-settings-sub">—</span></div>
+            <div class="kv" style="margin-bottom:10px">
+              <span>游戏模式</span><b id="fake-gm-text">—</b>
+              <span>是否无敌</span><b id="fake-inv-text">—</b>
+            </div>
+            <div class="seg">
+              <button class="seg-btn" data-fake-set="gamemode" data-value="CREATIVE">创造</button>
+              <button class="seg-btn" data-fake-set="gamemode" data-value="SURVIVAL">生存</button>
+              <button class="seg-btn" data-fake-set="gamemode" data-value="ADVENTURE">冒险</button>
+            </div>
+            <div class="seg" style="margin-top:8px">
+              <button class="seg-btn" data-fake-set="invulnerable" data-value="true">开无敌</button>
+              <button class="seg-btn" data-fake-set="invulnerable" data-value="false">关无敌</button>
+            </div>
+            <p class="hint" style="margin:8px 2px 0">改完对以后召唤的假人生效；已经在线的点它右边的「重生」就会套用。</p>
+          </div>
           <div id="fake-list" style="margin-top:6px"></div>
         </div>
+      </div>
+
+    </section>
+
+    <section id="page-more" class="page hidden">
+      <div class="card">
+        <div class="card-title">
+          <h2>在线玩家</h2>
+          <button id="btn-load-players" class="btn btn-mini">刷新</button>
+        </div>
+        <div id="online-list"><p class="empty">还没有加载</p></div>
       </div>
 
       <div class="card">
@@ -238,7 +259,7 @@
           <span>登录账号</span><b id="set-name">—</b>
           <span>服务器</span><b id="set-server">—</b>
           <span>管理权限</span><b id="set-admin">否</b>
-          <span>客户端版本</span><b>1.3.0</b>
+          <span>客户端版本</span><b>1.3.1</b>
         </div>
         <div class="switch-row">
           <div>
@@ -276,6 +297,7 @@
     <button class="tab" data-page="chat"><span class="ico">💬</span><span>聊天</span><span id="chat-dot" class="badge-dot hidden"></span></button>
     <button class="tab" data-page="team"><span class="ico">🛡</span><span>队伍</span></button>
     <button class="tab" data-page="title"><span class="ico">🏷</span><span>头衔</span></button>
+    <button class="tab hidden" id="tab-admin" data-page="admin"><span class="ico">🛠</span><span>管理</span></button>
     <button class="tab hidden" id="tab-cmd" data-page="cmd"><span class="ico">⌨️</span><span>命令</span></button>
     <button class="tab" data-page="more"><span class="ico">⋯</span><span>更多</span></button>
   </nav>
@@ -283,6 +305,6 @@
 
 <div id="fatal" class="hidden"></div>
 <div id="toast" class="toast hidden"></div>
-<script src="app.js?v=14"></script>
+<script src="app.js?v=17"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-/* Nalxer App 1.3.0 —— 我的 / 聊天 / 队伍 / 头衔 / 命令 / 更多 */
+/* Nalxer App 1.3.1 —— 我的 / 聊天 / 队伍 / 头衔 / 命令 / 更多 */
 (function () {
   'use strict';
 
@@ -18,8 +18,9 @@
     chat: ['服务器聊天', '和游戏里的玩家一起聊'],
     team: ['队伍', 'LinuxTeam'],
     title: ['头衔', 'LinuxTitle'],
+    admin: ['服务器管理', '玩家 / 举报 / 惩罚 / 假人'],
     cmd: ['服务器命令', '只有管理员能用'],
-    more: ['更多', '在线玩家 / 管理 / 设置']
+    more: ['更多', '在线玩家 / 设置']
   };
 
   var state = {
@@ -191,6 +192,7 @@
     $('login').classList.add('hidden');
     $('app').classList.remove('hidden');
     $('tab-cmd').classList.toggle('hidden', !state.admin);
+    $('tab-admin').classList.toggle('hidden', !state.admin);
     $('admin-card').classList.toggle('hidden', !state.admin);
     $('status-card').classList.toggle('hidden', !state.admin);
     $('f-server-edit').value = state.server;
@@ -206,12 +208,13 @@
 
   var PAGE_IDS = {
     me: 'page-me', chat: 'page-chat', team: 'page-team',
-    title: 'page-titles', cmd: 'page-cmd', more: 'page-more'
+    title: 'page-titles', admin: 'page-admin', cmd: 'page-cmd', more: 'page-more'
   };
 
   function switchPage(page) {
     if (!PAGE_IDS[page]) page = 'me';
-    if (page === 'cmd' && !state.admin) page = 'more';
+    // 管理 / 命令只有管理员能进
+    if ((page === 'cmd' || page === 'admin') && !state.admin) page = 'more';
     state.page = page;
 
     Object.keys(PAGE_IDS).forEach(function (p) {
@@ -231,7 +234,8 @@
     if (page === 'team') loadTeam();
     if (page === 'title') loadTitles();
     if (page === 'cmd') loadCommands();
-    if (page === 'more') { loadPlayers(); if (state.admin) setAdminTab(state.adminTab || 'player'); }
+    if (page === 'admin') setAdminTab(state.adminTab || 'player');
+    if (page === 'more') loadPlayers();
   }
 
   // ── 我的 ─────────────────────────────────────────────
@@ -455,33 +459,45 @@
     }).catch(function (e) { fatal('读取队伍失败', e.message); });
   }
 
+  function teamCard(team, idx) {
+    var isLeader = (team.leaderName || '').toLowerCase() === state.name.toLowerCase();
+    var members = team.members || [];
+    var head = '<div class="card-title">' +
+      '<h2>' + esc(plain(team.coloredName || team.name)) +
+      (team.tag ? '<span class="side" style="font-weight:400">（' + esc(plain(team.coloredTag || team.tag)) + '）</span>' : '') +
+      '</h2><span class="side">' + (team.size || 0) + ' / ' + (team.maxSize || 0) + ' 人</span></div>' +
+      '<div class="hint" style="margin:-4px 0 8px">队长 ' + esc(team.leaderName || '—') + '</div>';
+    var body = members.map(function (m) {
+      var canKick = isLeader && (m.name || '').toLowerCase() !== state.name.toLowerCase();
+      return '<div class="member">' +
+        '<i class="dot' + (m.online ? ' on' : '') + '"></i>' +
+        '<div class="who"><b>' + esc(m.name) + '</b><span>贡献 ' + (m.contribution || 0) +
+        ' · 在队 ' + (m.days || 0) + ' 天</span></div>' +
+        (canKick ? '<button class="btn btn-mini" data-kick="' + esc(m.name) + '">踢出</button>' : '') +
+        '</div>';
+    }).join('') || '<p class="empty">队伍里只有你</p>';
+    var acts = '<div class="seg" style="margin-top:10px">' +
+      '<button class="seg-btn" data-leave="' + esc(team.name) + '">退出这个队伍</button>' +
+      (isLeader ? '<button class="seg-btn" data-team="disband" data-tname="' + esc(team.name) + '">解散</button>' : '') +
+      '</div>';
+    return '<div class="card">' + head + body + acts + '</div>';
+  }
+
   function renderTeam(d) {
-    var team = d.team;
-    if (team) {
+    // 一个人可能在好几个队里：先看 myTeams，老服务端只有 team 就退回单个
+    var mine = d.myTeams || [];
+    if (!mine.length && d.team) mine = [d.team];
+    var team = mine.length ? mine[0] : null;
+
+    if (mine.length) {
       $('team-mine').classList.remove('hidden');
       $('team-none').classList.add('hidden');
-      $('team-name').textContent = plain(team.coloredName || team.name) +
-        (team.tag ? '（' + plain(team.coloredTag || team.tag) + '）' : '');
-      $('team-sub').textContent = '队长 ' + (team.leaderName || '—') + ' · ' +
-        (team.size || 0) + ' / ' + (team.maxSize || 0) + ' 人';
-
-      var isLeader = (team.leaderName || '').toLowerCase() === state.name.toLowerCase();
-      var members = team.members || [];
-      $('team-members').innerHTML = members.map(function (m) {
-        var canKick = isLeader && (m.name || '').toLowerCase() !== state.name.toLowerCase();
-        return '<div class="member">' +
-          '<i class="dot' + (m.online ? ' on' : '') + '"></i>' +
-          '<div class="who"><b>' + esc(m.name) + '</b><span>贡献 ' + (m.contribution || 0) +
-          ' · 在队 ' + (m.days || 0) + ' 天</span></div>' +
-          (canKick ? '<button class="btn btn-mini" data-kick="' + esc(m.name) + '">踢出</button>' : '') +
-          '</div>';
-      }).join('') || '<p class="empty">队伍里只有你</p>';
-
-      var acts = [];
-      if (isLeader) {
-        acts.push('<button class="seg-btn" data-team="disband">解散队伍</button>');
-      }
-      $('team-actions').innerHTML = acts.join('');
+      $('team-name').textContent = mine.length + ' 个队伍';
+      $('team-sub').textContent = mine.map(function (t) {
+        return plain(t.coloredName || t.name);
+      }).join(' / ');
+      $('team-members').innerHTML = mine.map(teamCard).join('');
+      $('team-actions').innerHTML = '';
     } else {
       $('team-mine').classList.add('hidden');
       $('team-none').classList.remove('hidden');
@@ -490,7 +506,7 @@
     var list = d.teams || [];
     $('team-count').textContent = list.length ? list.length + ' 个' : '—';
     $('team-list').innerHTML = list.length ? list.map(function (t) {
-      var joined = team && t.name === team.name;
+      var joined = mine.some(function (x) { return x.name === t.name; });
       return '<div class="list-item"><div class="main"><b>' + esc(plain(t.coloredName || t.name)) + '</b>' +
         '<div class="sub">队长 ' + esc(t.leaderName || '—') + ' · ' + (t.size || 0) + '/' + (t.maxSize || 0) + ' 人</div>' +
         '<div class="tags"><span class="tag">标识 ' + esc(plain(t.tag || '—')) + '</span></div></div>' +
@@ -752,12 +768,23 @@
         '<span class="side">' + (penalties.length ? '在惩罚中：' + esc(penalties.join(' / ')) : '没有惩罚') + '</span></div>' +
         '<div class="kv">' + rows + '</div></div>';
 
-      html += '<div class="seg" style="margin-top:10px">' +
-        '<button class="seg-btn" data-pen="banmsg">禁言 10 分钟</button>' +
-        '<button class="seg-btn" data-pen="banmsg-off">解除禁言</button>' +
-        '<button class="seg-btn" data-ban="1">封禁…</button>' +
-        '<button class="seg-btn" data-ban="0">解封</button>' +
-        '</div>';
+      var kinds = [
+        ['banmsg', '禁言'], ['banmove', '禁止移动'], ['banblock', '禁止交互'],
+        ['all', '全部禁止'], ['ban', '封禁']
+      ];
+      html += '<div class="hint" style="margin-top:12px">惩罚（分钟数留空 = 永久）</div>' +
+        '<div class="seg" style="margin-top:6px">' +
+        kinds.map(function (k) {
+          return '<button class="seg-btn" data-pen="' + k[0] + '">' + k[1] + '</button>';
+        }).join('') +
+        '</div>' +
+        '<div class="seg" style="margin-top:8px">' +
+        kinds.map(function (k) {
+          var short = { banmsg: '解除禁言', banmove: '解除移动', banblock: '解除交互', all: '解除全部', ban: '解除封禁' };
+          return '<button class="seg-btn" data-unpen="' + k[0] + '">' + (short[k[0]] || ('解除' + k[1])) + '</button>';
+        }).join('') +
+        '<button class="seg-btn" data-ban="0">解封</button></div>' +
+        (penalties.length ? '<div class="hint" style="margin-top:8px">生效中：' + esc(penalties.join(' / ')) + '</div>' : '');
 
       var reps = d.reports || [];
       if (reps.length) {
@@ -838,6 +865,35 @@
     }).catch(function (e) { $('penalty-list').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; });
   }
 
+  var fakeSettings = {};
+
+  function renderFakeSettings(st) {
+    fakeSettings = st || {};
+    var gm = fakeSettings.gamemode || 'CREATIVE';
+    var inv = !!fakeSettings.invulnerable;
+    $('fake-gm-text').textContent = gm === 'CREATIVE' ? '创造' : (gm === 'SURVIVAL' ? '生存'
+      : (gm === 'ADVENTURE' ? '冒险' : gm));
+    $('fake-inv-text').textContent = inv ? '是' : '否';
+    $('fake-settings-sub').textContent = fakeSettings.prefix
+      ? ('名字前缀 ' + fakeSettings.prefix) : '—';
+  }
+
+  function fakeSet(key, value) {
+    api('/api/admin/fake', { body: { op: 'set', key: key, value: value } }).then(function (r) {
+      var d = r.data || {};
+      toast(d.message || '已保存');
+      if (d.ok) loadFakes();
+    }).catch(function (e) { toast(e.message); });
+  }
+
+  function fakeRespawn(name) {
+    api('/api/admin/fake', { body: { op: 'respawn', name: name } }).then(function (r) {
+      var d = r.data || {};
+      toast(d.message || '已重生');
+      loadFakes();
+    }).catch(function (e) { toast(e.message); });
+  }
+
   function loadFakes() {
     $('fake-list').innerHTML = '<p class="empty">加载中…</p>';
     api('/api/admin/fakes').then(function (r) {
@@ -846,11 +902,14 @@
         $('fake-list').innerHTML = '<p class="empty">服务器没装 FakePlayerPlugin</p>';
         return;
       }
+      renderFakeSettings(d.settings || {});
       var list = d.fakes || [];
       $('fake-list').innerHTML = list.length ? list.map(function (f) {
+        var who = f.creator ? (' · 召唤者 ' + esc(f.creator)) : '';
         return '<div class="list-item"><i class="dot' + (f.active ? ' on' : '') + '"></i>' +
           '<div class="main"><b>' + esc(f.name) + '</b><div class="sub">' + esc(f.world || '—') +
-          ' · ' + Math.round(f.x) + ', ' + Math.round(f.y) + ', ' + Math.round(f.z) + '</div></div>' +
+          ' · ' + Math.round(f.x) + ', ' + Math.round(f.y) + ', ' + Math.round(f.z) + who + '</div></div>' +
+          '<button class="btn btn-mini" data-fake-respawn="' + esc(f.name) + '">重生</button>' +
           '<button class="btn btn-mini" data-fake-remove="' + esc(f.name) + '">移除</button></div>';
       }).join('') : '<p class="empty">还没有假人</p>';
     }).catch(function (e) { $('fake-list').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; });
@@ -969,15 +1028,19 @@
       teamAction('create', name);
     });
     $('btn-team-leave').addEventListener('click', function () {
-      if (confirm('确定退出当前队伍？')) teamAction('leave', '');
+      if (confirm('确定退出所有队伍？')) teamAction('leave', '');
     });
     $('btn-title-off').addEventListener('click', function () { equipTitle(''); });
 
     document.addEventListener('click', function (ev) {
-      var t = ev.target.closest ? ev.target.closest('[data-team],[data-join],[data-kick],[data-title],[data-group],[data-cmd]') : null;
+      var t = ev.target.closest ? ev.target.closest('[data-team],[data-leave],[data-join],[data-kick],[data-title],[data-group],[data-cmd]') : null;
       if (!t) return;
-      if (t.hasAttribute('data-team')) {
-        if (confirm('解散队伍？这个操作不可撤销')) teamAction(t.getAttribute('data-team'), '');
+      if (t.hasAttribute('data-leave')) {
+        var tn = t.getAttribute('data-leave');
+        if (confirm('退出队伍「' + tn + '」？')) teamAction('leave', tn);
+      } else if (t.hasAttribute('data-team')) {
+        var tname = t.getAttribute('data-tname') || '';
+        if (confirm('解散队伍' + (tname ? '「' + tname + '」' : '') + '？这个操作不可撤销')) teamAction('disband', tname);
       } else if (t.hasAttribute('data-join')) {
         teamAction('join', t.getAttribute('data-join'));
       } else if (t.hasAttribute('data-kick')) {
@@ -1012,21 +1075,38 @@
     $('btn-fake-add').addEventListener('click', fakeAdd);
 
     document.addEventListener('click', function (ev) {
-      var t = ev.target.closest ? ev.target.closest('[data-manage],[data-detail],[data-rep],[data-release],[data-pen],[data-ban],[data-fake-remove]') : null;
+      var t = ev.target.closest ? ev.target.closest('[data-manage],[data-detail],[data-rep],[data-release],[data-pen],[data-unpen],[data-ban],[data-fake-remove],[data-fake-respawn],[data-fake-set]') : null;
       if (!t) return;
+      if (t.hasAttribute('data-fake-set')) {
+        fakeSet(t.getAttribute('data-fake-set'), t.getAttribute('data-value'));
+        return;
+      }
+      if (t.hasAttribute('data-fake-respawn')) { fakeRespawn(t.getAttribute('data-fake-respawn')); return; }
+      if (t.hasAttribute('data-unpen')) {
+        var h0 = document.querySelector('#player-detail .card-title h2');
+        var w0 = h0 ? h0.textContent : '';
+        if (!w0) { toast('先选一个玩家'); return; }
+        releasePenalty(t.getAttribute('data-unpen'), w0);
+        return;
+      }
       if (t.hasAttribute('data-manage')) { setAdminTab('player'); $('f-search').value = t.getAttribute('data-manage'); searchPlayers(); }
       else if (t.hasAttribute('data-detail')) playerDetail(t.getAttribute('data-detail'));
       else if (t.hasAttribute('data-rep')) handleReport(t.getAttribute('data-rep'), t.getAttribute('data-id'));
       else if (t.hasAttribute('data-release')) releasePenalty(t.getAttribute('data-release'), t.getAttribute('data-who'));
       else if (t.hasAttribute('data-fake-remove')) fakeRemove(t.getAttribute('data-fake-remove'));
       else if (t.hasAttribute('data-pen')) {
-        var name = (t.getAttribute('data-detail') || '');
         var sel = document.querySelector('#player-detail .card-title h2');
         var who = sel ? sel.textContent : '';
         if (!who) { toast('先在下面选一个玩家'); return; }
         var kind = t.getAttribute('data-pen');
-        if (kind === 'banmsg') applyPenalty('banmsg', who, 10, 'App 管理员操作');
-        else releasePenalty('banmsg', who);
+        var label = { banmsg: '禁言', banmove: '禁止移动', banblock: '禁止交互', all: '全部禁止', ban: '封禁' }[kind] || kind;
+        var minStr = prompt('给 ' + who + ' 开「' + label + '」多少分钟？（留空 = 永久）', '10');
+        if (minStr === null) return;
+        var minutes = parseInt(minStr, 10);
+        if (isNaN(minutes) || minutes < 0) minutes = 0;
+        var why = prompt('原因（可留空）', 'App 管理员操作');
+        if (why === null) return;
+        applyPenalty(kind, who, minutes, why || '');
       } else if (t.hasAttribute('data-ban')) {
         var h = document.querySelector('#player-detail .card-title h2');
         var target = h ? h.textContent : '';
