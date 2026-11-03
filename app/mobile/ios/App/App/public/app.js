@@ -1160,8 +1160,9 @@
       var d = r.data || {};
       if (!d.ok) return;
       // 只显示 Linux 系插件；别的插件的信息不进 App
+      // Linux 系 + 假人插件都属于自家插件，一起显示
       var plugins = (d.plugins || []).filter(function (p) {
-        return p && p.name && p.name.indexOf('Linux') === 0;
+        return p && p.name && (p.name.indexOf('Linux') === 0 || p.name.indexOf('FakePlayer') === 0);
       });
       var on = plugins.filter(function (p) { return p.loaded; }).length;
       $('status-sub').textContent = on + ' / ' + plugins.length + ' 已加载';
