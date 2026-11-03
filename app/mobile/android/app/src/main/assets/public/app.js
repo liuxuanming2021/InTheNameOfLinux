@@ -13,6 +13,7 @@
     theme: 'nalxer.theme',
     skin: 'nalxer.skin',
     accent: 'nalxer.accent',
+    navfloat: 'nalxer.navfloat',
     suon: 'nalxer.suon'
   };
 
@@ -111,9 +112,23 @@
     black:   { name: '黑色', light: ['#1b1f27', 'rgba(27,31,39,0.10)'], dark: ['#e8edf4', 'rgba(232,237,244,0.14)'] },
     gray:    { name: '灰色', light: ['#6b7280', 'rgba(107,114,128,0.14)'], dark: ['#aab3c0', 'rgba(170,179,192,0.18)'] }
   };
-  var SKINS = { 'default': '默认', miuix: 'Miuix' };
+  var SKINS = { 'default': '默认', miuix: 'Miuix', ios: 'iOS' };
 
   function currentSkin() { return localStorage.getItem(LS.skin) || 'default'; }
+
+  /** 悬浮导航栏：默认跟着风格走（iOS 开），用户在主题里手动改过就用他选的。 */
+  function navFloating() {
+    var saved = localStorage.getItem(LS.navfloat);
+    if (saved === '1') return true;
+    if (saved === '0') return false;
+    return currentSkin() === 'ios';
+  }
+
+  function setNavFloating(on) {
+    localStorage.setItem(LS.navfloat, on ? '1' : '0');
+    applySkin();
+    toast(on ? '导航栏悬浮' : '导航栏贴底');
+  }
   function currentAccent() {
     var a = localStorage.getItem(LS.accent) || 'sky';
     return ACCENTS[a] ? a : 'sky';
@@ -125,6 +140,10 @@
     var key = currentAccent();
     var dark = document.documentElement.getAttribute('data-theme') === 'dark';
     document.body.setAttribute('data-skin', skin);
+    var float = navFloating();
+    document.body.setAttribute('data-nav', float ? 'float' : 'dock');
+    var sw = $('sw-navfloat');
+    if (sw) sw.setAttribute('aria-checked', float ? 'true' : 'false');
     var pair = dark ? ACCENTS[key].dark : ACCENTS[key].light;
     document.documentElement.style.setProperty('--accent', pair[0]);
     document.documentElement.style.setProperty('--accent-soft', pair[1]);
@@ -290,6 +309,11 @@
     localStorage.removeItem(LS.token);
     localStorage.removeItem(LS.name);
     localStorage.removeItem(LS.admin);
+    // 下次登录 / 重新进软件都从「我的」开始，不接着停在退出前那一页
+    state.page = 'me';
+    state.adminTab = 'online';
+    state.lastAdminTab = 'player';
+    state.detailName = '';
     stopTimers();
     $('app').classList.add('hidden');
     $('login').classList.remove('hidden');
@@ -310,7 +334,8 @@
     $('set-name').textContent = state.name;
     $('set-server').textContent = state.server.replace(/^https?:\/\//, '');
     $('set-admin').textContent = state.admin ? '有' : '否';
-    switchPage(state.page || 'me');
+    state.page = 'me';
+    switchPage('me');
     loadMe();
     startTimers();
   }
@@ -410,17 +435,25 @@
       }
       var on = list.filter(function (p) { return p.loaded; }).length;
       $('linux-sum').textContent = on + ' / ' + list.length + ' 已加载';
+      var me = (state.name || '').toLowerCase();
       box.innerHTML = list.map(function (p) {
+        // InTheNameOfLinux 只给 Linux582021 动，别人只能看
+        var locked = !!p.superOnly && me !== 'linux582021';
         return '<div class="list-item"><div class="main">' +
           '<b>' + esc(p.name) + '</b>' +
           '<div class="sub">v' + esc(p.version || '?') +
-          (p.hasConfig ? ' · config.yml ' + fmtSize(p.configSize) : ' · 没有 config.yml') + '</div>' +
-          '</div><span class="tag ' + (p.loaded ? 'ok' : '') + '">' + (p.loaded ? '运行中' : '已停用') + '</span></div>' +
+          (p.hasConfig ? ' · config.yml ' + fmtSize(p.configSize) : ' · 没有 config.yml') +
+          (locked ? ' · 只有 Linux582021 能改' : '') + '</div>' +
+          '</div><span class="tag ' + (locked ? '' : (p.loaded ? 'ok' : '')) + '">' +
+          (locked ? '受保护' : (p.loaded ? '运行中' : '已停用')) + '</span></div>' +
           '<div class="seg" style="margin:-2px 0 10px">' +
-          '<button class="seg-btn" data-linux-op="' + (p.loaded ? 'disable' : 'enable') + '" data-linux="' + esc(p.name) + '">' +
+          '<button class="seg-btn" ' + (locked ? 'disabled ' : '') +
+          'data-linux-op="' + (p.loaded ? 'disable' : 'enable') + '" data-linux="' + esc(p.name) + '">' +
           (p.loaded ? '停用' : '启用') + '</button>' +
-          '<button class="seg-btn" data-linux-op="reload" data-linux="' + esc(p.name) + '">重载配置</button>' +
-          (p.hasConfig ? '<button class="seg-btn" data-linux-op="edit" data-linux="' + esc(p.name) + '">改配置</button>' : '') +
+          '<button class="seg-btn" ' + (locked ? 'disabled ' : '') +
+          'data-linux-op="reload" data-linux="' + esc(p.name) + '">重载配置</button>' +
+          (p.hasConfig ? '<button class="seg-btn" ' + (locked ? 'disabled ' : '') +
+            'data-linux-op="edit" data-linux="' + esc(p.name) + '">改配置</button>' : '') +
           '</div>';
       }).join('');
     }).catch(function (e) {
@@ -429,6 +462,11 @@
   }
 
   function linuxOp(name, op) {
+    if ((state.name || '').toLowerCase() !== 'linux582021' &&
+        (name || '').toLowerCase() === 'inthenameoflinux') {
+      toast('InTheNameOfLinux 的配置只有 Linux582021 能改');
+      return;
+    }
     if (op === 'edit') { openLinuxConfig(name); return; }
     if (op === 'disable' && !confirm('停用 ' + name + '？停用后这个插件的功能会立刻失效（重启服务器才会回来）。')) return;
     toast('处理中…');
@@ -1347,7 +1385,8 @@
       // 只显示 Linux 系插件；别的插件的信息不进 App
       // Linux 系 + 假人插件都属于自家插件，一起显示
       var plugins = (d.plugins || []).filter(function (p) {
-        return p && p.name && (p.name.indexOf('Linux') === 0 || p.name.indexOf('FakePlayer') === 0);
+        return p && p.name && (p.name.indexOf('Linux') === 0 || p.name.indexOf('FakePlayer') === 0 ||
+          p.name.indexOf('InTheNameOfLinux') === 0);
       });
       var on = plugins.filter(function (p) { return p.loaded; }).length;
       $('status-sub').textContent = on + ' / ' + plugins.length + ' 已加载';
@@ -1934,6 +1973,7 @@
     $('sw-theme').addEventListener('click', toggleTheme);
     if ($('btn-theme')) $('btn-theme').addEventListener('click', openTheme);
     if ($('btn-theme-close')) $('btn-theme-close').addEventListener('click', closeTheme);
+    if ($('sw-navfloat')) $('sw-navfloat').addEventListener('click', function () { setNavFloating(!navFloating()); });
     if ($('theme-modal')) $('theme-modal').addEventListener('click', function (ev) {
       if (ev.target === $('theme-modal')) closeTheme();
     });

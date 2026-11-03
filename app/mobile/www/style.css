@@ -639,3 +639,172 @@ body[data-skin="miuix"] .bubble { border-radius: 18px; }
 
 /* 深色下「黑色」那个色点在深底上几乎看不见，加一圈描边 */
 [data-theme="dark"] .swatch i { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.28), 0 2px 6px rgba(0, 0, 0, 0.4); }
+
+
+/* ── 分段控件：圆角与阴影统一 ─────────────────────── */
+/* 容器用胶囊，里面的滑块不再自己投影（多层圆角+外投影就是「r角不对」的来源），
+   滑块被容器裁掉，视觉上永远和容器同一条曲线。 */
+.seg { overflow: hidden; }
+.seg-btn.active { box-shadow: none; }
+
+body[data-skin="miuix"] .seg {
+  flex-wrap: nowrap; gap: 4px; padding: 3px; border-radius: 999px;
+  background: var(--chip); overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: none;
+}
+body[data-skin="miuix"] .seg::-webkit-scrollbar { display: none; }
+body[data-skin="miuix"] .seg-btn {
+  flex: 0 0 auto; border: 0; border-radius: 999px; background: transparent;
+  box-shadow: none; padding: 9px 14px;
+}
+body[data-skin="miuix"] .seg-btn.active {
+  background: var(--bg-soft); color: var(--accent);
+  box-shadow: none; font-weight: 600;
+}
+body[data-skin="miuix"] #admin-tabs { padding: 3px 4px; }
+
+/* Miuix 布局：卡片更松、行更高、按钮全胶囊（不只是配色） */
+body[data-skin="miuix"] .card { padding: 18px 16px; margin-bottom: 12px; }
+body[data-skin="miuix"] .card-title { margin-bottom: 14px; }
+body[data-skin="miuix"] .set-row { padding: 15px 2px; }
+body[data-skin="miuix"] .list-item { padding: 14px 0; }
+body[data-skin="miuix"] .list-item b { font-size: 15px; }
+body[data-skin="miuix"] .btn-mini { border-radius: 999px; padding: 8px 14px; }
+body[data-skin="miuix"] .member { padding: 12px 0; }
+body[data-skin="miuix"] .page { padding: 12px 12px calc(var(--tab-h) + var(--safe-b) + 22px); }
+body[data-skin="miuix"] .topbar { padding: calc(12px + var(--safe-t)) 16px 12px; }
+
+/* ── 主题：iOS（液态玻璃） ───────────────────────── */
+body[data-skin="ios"] { --radius: 22px; }
+body[data-skin="ios"] .card {
+  background: rgba(255, 255, 255, 0.60);
+  -webkit-backdrop-filter: saturate(180%) blur(22px);
+  backdrop-filter: saturate(180%) blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 22px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+[data-theme="dark"] body[data-skin="ios"] .card {
+  background: rgba(24, 30, 40, 0.62);
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+body[data-skin="ios"] .topbar {
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.07);
+}
+[data-theme="dark"] body[data-skin="ios"] .topbar {
+  background: rgba(14, 18, 26, 0.62);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+body[data-skin="ios"] .topbar h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.6px; }
+body[data-skin="ios"] .topbar .sub { font-size: 12.5px; }
+body[data-skin="ios"] .icon-btn {
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.10);
+}
+[data-theme="dark"] body[data-skin="ios"] .icon-btn {
+  border-color: rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.07);
+}
+body[data-skin="ios"] .seg {
+  gap: 2px; padding: 2px; border-radius: 12px;
+  background: rgba(120, 130, 150, 0.16);
+}
+body[data-skin="ios"] .seg-btn {
+  border: 0; background: transparent; border-radius: 10px;
+  color: var(--text-2); font-weight: 500; box-shadow: none;
+}
+body[data-skin="ios"] .seg-btn.active {
+  background: var(--bg-soft); color: var(--text);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.16); font-weight: 600;
+}
+[data-theme="dark"] body[data-skin="ios"] .seg-btn.active { background: rgba(255, 255, 255, 0.16); color: #fff; }
+body[data-skin="ios"] .btn {
+  border: 0; border-radius: 14px; background: var(--bg-soft);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.10); font-weight: 600;
+}
+[data-theme="dark"] body[data-skin="ios"] .btn { background: rgba(255, 255, 255, 0.10); box-shadow: none; }
+body[data-skin="ios"] .btn-primary {
+  background: var(--accent); color: var(--accent-text);
+  box-shadow: 0 8px 22px var(--accent-soft);
+}
+body[data-skin="ios"] .btn-block { border-radius: 16px; padding: 15px; }
+body[data-skin="ios"] .list-item { border-bottom-color: rgba(15, 23, 42, 0.06); padding: 14px 0; }
+[data-theme="dark"] body[data-skin="ios"] .list-item { border-bottom-color: rgba(255, 255, 255, 0.07); }
+body[data-skin="ios"] .set-row { padding: 15px 2px; }
+body[data-skin="ios"] .tag { border-radius: 8px; }
+body[data-skin="ios"] .modal-card {
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: saturate(180%) blur(28px);
+  backdrop-filter: saturate(180%) blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 26px 70px rgba(8, 14, 24, 0.34);
+}
+[data-theme="dark"] body[data-skin="ios"] .modal-card {
+  background: rgba(22, 28, 38, 0.86); border-color: rgba(255, 255, 255, 0.12);
+}
+body[data-skin="ios"] .modal-mark { border-radius: 18px; }
+body[data-skin="ios"] .switch { background: rgba(120, 130, 150, 0.28); }
+body[data-skin="ios"] .switch[aria-checked="true"] { background: var(--green); }
+body[data-skin="ios"] .chat-head {
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: saturate(180%) blur(18px);
+  backdrop-filter: saturate(180%) blur(18px);
+  border-radius: 0 0 22px 22px;
+}
+[data-theme="dark"] body[data-skin="ios"] .chat-head { background: rgba(16, 21, 29, 0.66); }
+body[data-skin="ios"] .bubble { border-radius: 18px; }
+
+/* ── 悬浮导航栏（任意风格都能开） ────────────────── */
+body[data-nav="float"] .tabs {
+  left: 14px; right: 14px;
+  bottom: calc(12px + var(--safe-b));
+  height: auto; min-height: 54px;
+  padding: 7px 6px;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  backdrop-filter: saturate(180%) blur(24px);
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.20);
+}
+[data-theme="dark"] body[data-nav="float"] .tabs {
+  background: rgba(16, 21, 29, 0.68);
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.5);
+}
+body[data-nav="float"] .tab { border-radius: 18px; padding: 4px 0 3px; }
+body[data-nav="float"] .tab.active { background: var(--accent-soft); }
+body[data-nav="float"] .tab .badge-dot { top: 7px; }
+body[data-nav="float"] .page { padding-bottom: calc(var(--tab-h) + var(--safe-b) + 40px); }
+body[data-nav="float"] .chat-input-bar { bottom: calc(var(--tab-h) + var(--safe-b) + 20px); }
+body[data-nav="float"] .toast { bottom: calc(var(--tab-h) + var(--safe-b) + 36px); }
+body[data-nav="float"] #fatal { bottom: calc(var(--tab-h) + var(--safe-b) + 34px); }
+
+/* 深色下主按钮/危险按钮不能被通用 .btn 底色盖掉 */
+[data-theme="dark"] body[data-skin="ios"] .btn-primary,
+[data-theme="dark"] body[data-skin="miuix"] .btn-primary {
+  background: var(--accent); color: var(--accent-text);
+  border-color: transparent; box-shadow: 0 8px 22px var(--accent-soft);
+}
+[data-theme="dark"] body[data-skin="ios"] .btn-danger,
+[data-theme="dark"] body[data-skin="miuix"] .btn-danger {
+  background: var(--red); color: #fff; border-color: transparent; box-shadow: none;
+}
+
+/* iOS 的分段控件也不要折行：条目多了就横向滑（跟系统一样） */
+body[data-skin="ios"] #admin-tabs,
+body[data-skin="ios"] #cmd-groups {
+  flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: none; padding: 2px;
+}
+body[data-skin="ios"] #admin-tabs::-webkit-scrollbar,
+body[data-skin="ios"] #cmd-groups::-webkit-scrollbar { display: none; }
+body[data-skin="ios"] #admin-tabs .seg-btn,
+body[data-skin="ios"] #cmd-groups .seg-btn { flex: 0 0 auto; white-space: nowrap; }
