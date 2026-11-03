@@ -317,6 +317,7 @@
     stopTimers();
     $('app').classList.add('hidden');
     $('login').classList.remove('hidden');
+    setTimeout(hideSplash, 260);
     if (!silent) toast('已退出登录');
   }
 
@@ -338,6 +339,8 @@
     switchPage('me');
     loadMe();
     startTimers();
+    // 开屏至少停一下再收，不然一闪而过
+    setTimeout(hideSplash, 420);
   }
 
   // ── 页面切换 ─────────────────────────────────────────
@@ -348,10 +351,14 @@
     pdetail: 'page-pdetail'
   };
 
+  // 底栏顺序，用来决定切页时从左边还是右边滑进来
+  var PAGE_ORDER = ['me', 'chat', 'team', 'title', 'admin', 'more'];
+
   function switchPage(page) {
     if (!PAGE_IDS[page]) page = 'me';
     // 管理 / 命令只有管理员能进
     if ((page === 'cmd' || page === 'admin') && !state.admin) page = 'more';
+    var prevPage = state.page;
     state.page = page;
 
     Object.keys(PAGE_IDS).forEach(function (p) {
@@ -365,6 +372,13 @@
     var meta = PAGE_TITLE[page] || ['Nalxer', ''];
     $('page-title').textContent = meta[0];
     $('page-sub').textContent = meta[1] || state.name;
+    // 顶栏标题淡入一下，别硬跳
+    var tb = document.querySelector('.topbar');
+    if (tb && prevPage !== page) {
+      tb.classList.add('swap');
+      requestAnimationFrame(function () { tb.classList.remove('swap'); });
+    }
+    playPageIn(page, prevPage);
     measureTopbar();
     window.scrollTo(0, 0);
 
@@ -374,6 +388,42 @@
     }
     // 每次切页都把这一页的数据重新拉一遍（保持最新），不只是第一次进来
     refreshPage();
+  }
+
+  /** 新页面滑进来：按底栏顺序决定方向，详情页这种就用淡入。 */
+  function playPageIn(page, prevPage) {
+    var el = $(PAGE_IDS[page]);
+    if (!el) return;
+    var CLS = ['page-in-right', 'page-in-left', 'page-in-fade'];
+    CLS.forEach(function (c) { el.classList.remove(c); });
+    // 读一次布局，动画才能重新播
+    void el.offsetWidth;
+    var a = PAGE_ORDER.indexOf(prevPage), b = PAGE_ORDER.indexOf(page);
+    var cls = (a < 0 || b < 0 || a === b) ? 'page-in-fade' : (b > a ? 'page-in-right' : 'page-in-left');
+    el.classList.add(cls);
+    setTimeout(function () { el.classList.remove(cls); }, 360);
+    // 这一页里可能有新的横滑控件（比如管理页的命令分组），补一次箭头
+    wrapSegs();
+    setTimeout(updateSegArrows, 60);
+  }
+
+  // ── 可横滑的分段控件：两侧箭头 ────────────────────
+
+  /** 分段控件不再横向滑动（容易误触），现在是一排合体按钮，放不下就换行，不需要外层包装。 */
+  function wrapSegs() { return; }
+
+  function updateSegArrows() { /* 已改为合体按钮，不再需要箭头 */ }
+
+  // ── 开屏 ──────────────────────────────────────────
+
+  var splashGone = false;
+  function hideSplash() {
+    if (splashGone) return;
+    splashGone = true;
+    var el = $('splash');
+    if (!el) return;
+    el.classList.add('hide');
+    setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 500);
   }
 
   /** 重新拉取当前页面的数据。切页、回到前台、点刷新都走它。 */
@@ -390,7 +440,7 @@
     else if (page === 'team') loadTeam();
     else if (page === 'title') loadTitles();
     else if (page === 'admin') setAdminTab(state.adminTab || 'player');
-    else if (page === 'pdetail' && state.detailName) playerDetail(state.detailName);
+    else if (page === 'pdetail' && state.detailName) playerDetail(state.detailName, true);
     else if (page === 'more') {
       loadMe();
       if (state.admin) loadStatus();
@@ -1361,7 +1411,43 @@
 
   // ── 更多：在线玩家 / 管理 / 设置 ─────────────────────
 
+  var STAFF_ROLES = [
+    { key: 'owner', label: '服主', ico: '👑' },
+    { key: 'coowner', label: '副服主', ico: '🎖' },
+    { key: 'admin', label: '管理员', ico: '🛡' },
+    { key: 'moderator', label: '协管', ico: '🔧' }
+  ];
+
+  function loadStaff() {
+    api('/api/admin/staff').then(function (r) {
+      var d = r.data || {};
+      var list = d.staff || [];
+      var box = $('staff-list');
+      if (!box) return;
+      if (!list.length) { box.innerHTML = '<p class="empty">还没有名单</p>'; return; }
+      var online = list.filter(function (p) { return p.online; }).length;
+      $('staff-sum').textContent = list.length + ' 人 · ' + online + ' 在线';
+      box.innerHTML = STAFF_ROLES.map(function (role) {
+        var group = list.filter(function (p) { return p.role === role.key; });
+        if (!group.length) return '';
+        return '<div class="staff-group"><div class="staff-head">' + role.ico + ' ' + role.label +
+          '<span class="side">' + group.length + ' 人</span></div>' +
+          group.map(function (p) {
+            return '<div class="list-item"><i class="dot' + (p.online ? ' on' : '') + '"></i>' +
+              '<div class="main"><b>' + esc(p.name) + '</b>' +
+              '<div class="sub">' + (p.online ? '在线' : '离线') +
+              (p.identity && p.identity.label ? ' · ' + esc(p.identity.label) : '') + '</div></div>' +
+              '<button class="btn btn-mini" data-manage="' + esc(p.name) + '">详情</button></div>';
+          }).join('') + '</div>';
+      }).join('');
+    }).catch(function (e) {
+      var box = $('staff-list');
+      if (box) box.innerHTML = '<p class="empty">' + esc(e.message) + '</p>';
+    });
+  }
+
   function loadPlayers() {
+    loadStaff();
     api('/api/players').then(function (r) {
       var d = r.data || {};
       var list = d.players || [];
@@ -1449,9 +1535,11 @@
     }).catch(function (e) { $('search-list').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; });
   }
 
-  function playerDetail(name) {
+  function playerDetail(name, silent) {
     state.detailName = name;
+    var seq = (state.detailSeq = (state.detailSeq || 0) + 1);
     api('/api/admin/player?name=' + encodeURIComponent(name)).then(function (r) {
+      if (seq !== state.detailSeq) return;   // 已经返回列表了，别再把用户拽回详情页
       var d = r.data || {};
       if (!d.ok) { toast(d.message || '读不到'); return; }
       var p = d.data || {};
@@ -1508,7 +1596,7 @@
       var box = $('pdetail-body');
       box.innerHTML = html;
       $('page-sub').textContent = name;
-      switchPage('pdetail');
+      if (!silent) switchPage('pdetail');   // 静默刷新（refreshPage）时不要再跳一次
     }).catch(function (e) { toast(e.message); });
   }
 
@@ -1518,7 +1606,7 @@
     }).then(function (r) {
       var d = r.data || {};
       toast(d.message || (d.ok ? '已执行' : '失败'));
-      if (d.ok) { loadPenalties(); playerDetail(name); }
+      if (d.ok) { loadPenalties(); playerDetail(name, true); }
     }).catch(function (e) { toast(e.message); });
   }
 
@@ -1527,7 +1615,7 @@
       var d = r.data || {};
       toast(d.message || '已解除');
       loadPenalties();
-      if (name) playerDetail(name);
+      if (name) playerDetail(name, true);
     }).catch(function (e) { toast(e.message); });
   }
 
@@ -1819,7 +1907,10 @@
     });
     $('btn-title-off').addEventListener('click', function () { equipTitle(''); });
     $('btn-report').addEventListener('click', submitReport);
-    $('btn-pdetail-back').addEventListener('click', function () { setAdminTab(state.lastAdminTab || 'player'); switchPage('admin'); });
+    $('btn-pdetail-back').addEventListener('click', function () {
+      state.detailSeq = (state.detailSeq || 0) + 1;   // 作废还没回来的详情请求
+      setAdminTab(state.lastAdminTab || 'player'); switchPage('admin');
+    });
     $('btn-su-run').addEventListener('click', runSuConsole);
     $('f-su2').addEventListener('keydown', function (e) { if (e.key === 'Enter') runSuConsole(); });
     $('btn-su-clear').addEventListener('click', suReset);
@@ -1995,7 +2086,12 @@
     initTheme();
     bind();
     measureTopbar();
+    wrapSegs();
+    setTimeout(updateSegArrows, 320);
+    // 兜底：两秒半还没收开屏就强制收掉，别让用户盯着看
+    setTimeout(hideSplash, 2500);
     window.addEventListener('resize', measureTopbar);
+    window.addEventListener('resize', function () { setTimeout(updateSegArrows, 120); });
     window.addEventListener('orientationchange', function () { setTimeout(measureTopbar, 260); });
     // 手机切回前台时立刻同步一次，别等着轮询慢慢补
     document.addEventListener('visibilitychange', function () {

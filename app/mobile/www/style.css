@@ -808,3 +808,263 @@ body[data-skin="ios"] #admin-tabs::-webkit-scrollbar,
 body[data-skin="ios"] #cmd-groups::-webkit-scrollbar { display: none; }
 body[data-skin="ios"] #admin-tabs .seg-btn,
 body[data-skin="ios"] #cmd-groups .seg-btn { flex: 0 0 auto; white-space: nowrap; }
+
+/* ── 开屏动画 ────────────────────────────────────── */
+.splash {
+  position: fixed; inset: 0; z-index: 300;
+  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(120% 80% at 50% 0%, var(--accent-soft), transparent 60%),
+    var(--bg);
+  transition: opacity .42s ease, transform .42s ease;
+}
+.splash.hide { opacity: 0; transform: scale(1.03); pointer-events: none; }
+.splash-inner { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.splash-mark {
+  width: 84px; height: 84px; border-radius: 26px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 42px; font-weight: 800; color: #fff;
+  background: linear-gradient(160deg, var(--accent), #7fd0ff);
+  box-shadow: 0 14px 34px var(--accent-soft);
+  animation: splashMark .62s cubic-bezier(.2,.9,.25,1.05) both;
+}
+.splash-name {
+  margin-top: 6px; font-size: 21px; font-weight: 800; letter-spacing: .04em;
+  animation: splashUp .5s .12s both;
+}
+.splash-sub { font-size: 12.5px; color: var(--muted); animation: splashUp .5s .2s both; }
+.splash-bar {
+  margin-top: 14px; width: 96px; height: 3px; border-radius: 999px;
+  background: var(--chip); overflow: hidden;
+  animation: splashUp .4s .26s both;
+}
+.splash-bar i {
+  display: block; width: 38%; height: 100%; border-radius: 999px;
+  background: var(--accent);
+  animation: splashSlide 1.05s ease-in-out infinite;
+}
+@keyframes splashMark { from { opacity: 0; transform: scale(.7) translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes splashUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes splashSlide { 0% { transform: translateX(-60%); } 100% { transform: translateX(280%); } }
+
+/* ── 页面切换过渡 ────────────────────────────────── */
+.page { will-change: opacity, transform; }
+.page.page-in-right { animation: pageInRight .3s cubic-bezier(.22,.9,.24,1) both; }
+.page.page-in-left { animation: pageInLeft .3s cubic-bezier(.22,.9,.24,1) both; }
+.page.page-in-fade { animation: pageInFade .26s ease both; }
+@keyframes pageInRight { from { opacity: 0; transform: translate3d(22px, 0, 0); } to { opacity: 1; transform: none; } }
+@keyframes pageInLeft { from { opacity: 0; transform: translate3d(-22px, 0, 0); } to { opacity: 1; transform: none; } }
+@keyframes pageInFade { from { opacity: 0; transform: translate3d(0, 10px, 0); } to { opacity: 1; transform: none; } }
+
+/* 切页时顶栏标题也淡入一下，别硬跳 */
+.topbar h1, .topbar .sub { transition: opacity .18s ease, transform .18s ease; }
+.topbar.swap h1, .topbar.swap .sub { opacity: 0; transform: translateY(-3px); }
+
+/* ── 底栏切换过渡 ────────────────────────────────── */
+.tabs .tab { transition: color .2s ease, background .22s ease, transform .2s ease; }
+.tabs .tab .tab-ico { transition: transform .22s cubic-bezier(.2,.9,.25,1.1); }
+.tabs .tab.active .tab-ico { transform: translateY(-1.5px) scale(1.08); }
+.tabs .tab:active { transform: scale(.94); }
+
+/* ── 弹窗过渡（.hidden 不再 display:none，改成淡入淡出） ── */
+.modal {
+  transition: opacity .2s ease, visibility .2s ease;
+}
+.modal.hidden {
+  display: flex !important;
+  opacity: 0; visibility: hidden; pointer-events: none;
+}
+.modal .modal-card {
+  transform: translateY(10px) scale(.985);
+  opacity: .5;
+  transition: transform .26s cubic-bezier(.2,.9,.25,1), opacity .22s ease;
+}
+.modal:not(.hidden) .modal-card { transform: none; opacity: 1; }
+
+/* ── 可横滑的分段控件：两侧箭头 ──────────────────── */
+.seg-wrap { position: relative; display: flex; align-items: center; gap: 6px; }
+.seg-wrap .seg { flex: 1 1 auto; min-width: 0; }
+.seg-arrow {
+  flex: 0 0 auto;
+  width: 24px; height: 24px; border-radius: 999px;
+  display: none; align-items: center; justify-content: center;
+  padding: 0; font-size: 15px; line-height: 1;
+  color: var(--muted);
+  background: var(--card);
+  border: 1px solid var(--card-b);
+  box-shadow: 0 2px 8px rgba(9, 14, 22, .08);
+  transition: opacity .18s ease, transform .18s ease;
+}
+.seg-wrap.can-left > .seg-arrow.prev,
+.seg-wrap.can-right > .seg-arrow.next { display: flex; }
+.seg-arrow:active { transform: scale(.9); }
+body[data-skin="miuix"] .seg-arrow { background: var(--chip); border-color: transparent; box-shadow: none; }
+body[data-skin="ios"] .seg-arrow {
+  background: rgba(255, 255, 255, .72); border-color: transparent;
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+[data-theme="dark"] .seg-arrow { background: rgba(255, 255, 255, .1); border-color: transparent; color: var(--text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .splash, .splash-mark, .splash-name, .splash-sub, .splash-bar, .splash-bar i,
+  .page.page-in-right, .page.page-in-left, .page.page-in-fade { animation: none !important; transition: none !important; }
+}
+
+/* ── 分段控件改成「合体按钮」：不横滑、不折出第二套胶囊 ── */
+.seg {
+  display: flex; flex-wrap: wrap; gap: 0;
+  padding: 0;
+  background: var(--card);
+  border: 1px solid var(--card-b);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.seg-btn {
+  flex: 1 1 0;
+  min-width: 64px;
+  padding: 10px 8px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: inset -1px 0 0 var(--card-b);
+  transition: background .2s ease, color .2s ease;
+}
+.seg-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: inset -1px 0 0 transparent;
+}
+.seg-btn:last-child { box-shadow: none; }
+/* 旧的箭头/胶囊样式一律失效 */
+.seg-wrap { display: block; }
+.seg-arrow { display: none !important; }
+body[data-skin="ios"] .seg,
+body[data-skin="miuix"] .seg {
+  flex-wrap: wrap; overflow: visible;
+  background: var(--card); border-radius: 14px;
+}
+body[data-skin="ios"] .seg-btn,
+body[data-skin="miuix"] .seg-btn {
+  flex: 1 1 0; min-width: 64px; white-space: normal;
+  border-radius: 0; box-shadow: inset -1px 0 0 var(--card-b);
+}
+body[data-skin="ios"] .seg-btn.active,
+body[data-skin="miuix"] .seg-btn.active {
+  background: var(--accent-soft); color: var(--accent); box-shadow: none;
+}
+
+/* 合体按钮：文字居中、绝不超过容器宽度（不再被裁掉） */
+.seg { width: 100%; box-sizing: border-box; }
+.seg-btn {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+body[data-skin="ios"] .seg-btn,
+body[data-skin="miuix"] .seg-btn { min-width: 0; }
+/* 行内的按钮组、操作条统一居中 */
+.row-actions, .action-row, .btn-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.btn-block, .btn-send { text-align: center; }
+
+/* 分段/按钮组里的所有子按钮统一：等分、居中、放不下就换行，绝不超出卡片 */
+.seg { max-width: 100%; box-sizing: border-box; }
+.seg > *, .seg > .btn, .seg > .seg-btn {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 10px 9px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  box-shadow: inset -1px 0 0 var(--card-b);
+}
+.seg > .active, .seg > button.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: none;
+}
+
+/* 皮肤下的分段按钮也要跟着「合体按钮」的规则走（之前 white-space:normal 把文字挤成竖排） */
+body[data-skin="ios"] .seg > *,
+body[data-skin="ios"] .seg > .btn,
+body[data-skin="ios"] .seg > .seg-btn,
+body[data-skin="miuix"] .seg > *,
+body[data-skin="miuix"] .seg > .btn,
+body[data-skin="miuix"] .seg > .seg-btn {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  padding: 10px 9px;
+  border: 0; border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  box-shadow: inset -1px 0 0 var(--card-b);
+}
+body[data-skin="ios"] .seg > .active,
+body[data-skin="miuix"] .seg > .active,
+body[data-skin="ios"] .seg > button.active,
+body[data-skin="miuix"] .seg > button.active {
+  background: var(--accent-soft); color: var(--accent); font-weight: 600; box-shadow: none;
+}
+body[data-skin="ios"] .seg,
+body[data-skin="miuix"] .seg { flex-wrap: wrap; overflow: visible; }
+
+/* 管理层名单分组 */
+.staff-group + .staff-group { margin-top: 12px; }
+.staff-head {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 13px; font-weight: 600; color: var(--muted);
+  padding: 4px 2px 6px;
+}
+.staff-head .side { font-weight: 400; }
+
+/* 分段控件里被 hidden 的项必须真的消失（不然「命令 / su」会占一格空白） */
+.seg > [hidden], .seg > .hidden, .seg > button[hidden] { display: none !important; }
+
+/* 这几处早期用过 ID 选择器写死 flex:0 0 auto，特异性更高，得在这里压回来 */
+#admin-tabs .seg-btn, #cmd-groups .seg-btn,
+#report-tabs .seg-btn, #chat-channels .seg-btn, #theme-styles .seg-btn {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+}
+
+/* iOS 皮肤里这几处也写过 flex:0 0 auto（带 body[data-skin] 前缀），同样压回来 */
+body[data-skin="ios"] #admin-tabs .seg-btn,
+body[data-skin="ios"] #cmd-groups .seg-btn,
+body[data-skin="ios"] #report-tabs .seg-btn,
+body[data-skin="ios"] #chat-channels .seg-btn,
+body[data-skin="ios"] #theme-styles .seg-btn,
+body[data-skin="miuix"] #admin-tabs .seg-btn,
+body[data-skin="miuix"] #cmd-groups .seg-btn,
+body[data-skin="miuix"] #report-tabs .seg-btn,
+body[data-skin="miuix"] #chat-channels .seg-btn,
+body[data-skin="miuix"] #theme-styles .seg-btn {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  text-align: center;
+  display: flex; align-items: center; justify-content: center;
+}
