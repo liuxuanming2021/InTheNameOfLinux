@@ -249,7 +249,7 @@
           <tr><th>键</th><th>默认值</th><th>说明</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>http.host</code></td><td><code>0.0.0.0</code></td><td>监听地址。只接受本机连接，别改成 <code>0.0.0.0</code>，理由见上一节。</td></tr>
+          <tr><td><code>http.host</code></td><td><code>0.0.0.0</code></td><td>监听地址。<code>0.0.0.0</code> = 所有网卡（手机才能直连）；只想让本机 Nginx 转发就写 <code>127.0.0.1</code>。</td></tr>
           <tr><td><code>http.port</code></td><td><code>49282</code></td><td>接口端口。改了记得同步改 Nginx 里的 <code>proxy_pass</code>，两边要对得上。</td></tr>
           <tr><td><code>http.threads</code></td><td><code>8</code></td><td>处理请求的线程数。几十个人的服 8 个足够，没必要往上加。</td></tr>
           <tr><td><code>http.tls</code></td><td><code>false</code></td><td>插件自带 HTTPS 的总开关。开了就不用在前面挂 Nginx，地址直接写 <code>https://域名:49282</code>。</td></tr>
@@ -261,7 +261,8 @@
           <tr><td><code>login.attempts-per-minute</code></td><td><code>5</code></td><td>每个 IP 每分钟允许几次<strong>登录尝试</strong>。这是防撞库的第一道闸。</td></tr>
           <tr><td><code>login.requests-per-minute</code></td><td><code>180</code></td><td>每个 IP 每分钟允许多少次<strong>请求</strong>（所有接口合计）。App 自动刷新 30 秒一次，180 有富余。</td></tr>
           <tr><td><code>admin.players</code></td><td><code>[]</code></td><td>管理员名单，填游戏 ID。名单里的人能看到玩家管理页；服务器 OP 自动算管理员，不用重复填。</td></tr>
-          <tr><td><code>data.coins</code> / <code>data.points</code> / <code>data.level</code> / <code>data.playtime</code> / <code>data.team</code> / <code>data.title</code></td><td>全 <code>true</code></td><td>某一项数据要不要对外提供。关掉哪一项，App 里对应的那一块就显示 <code>—</code>，接口也不返回。</td></tr>
+          <tr><td><code>data.*</code></td><td>全 <code>true</code></td><td>某一项数据要不要对外提供（<code>coins</code> / <code>points</code> / <code>level</code> / <code>playtime</code> / <code>team</code> / <code>title</code>）。关掉哪一项，App 里对应的那一块就显示 <code>—</code>，接口也不返回。</td></tr>
+          <tr><td><code>features.*</code></td><td>全 <code>true</code></td><td>1.3.0 起的功能开关：<code>chat</code> / <code>team</code> / <code>titles</code> / <code>checkin</code> / <code>report</code> / <code>penalty</code> / <code>fakes</code> / <code>console</code>。关掉后对应接口直接返回 <code>403</code>，App 里那一页也不再出现。</td></tr>
           <tr><td><code>debug</code></td><td><code>false</code></td><td>打开后每个请求都往控制台打一行（路径、耗时、来源 IP），排查连不上时用，平时关着。</td></tr>
         </tbody>
       </table>
