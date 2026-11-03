@@ -285,6 +285,7 @@
       loadChat();
       loadTeam();   // 队伍面板也在聊天页里
     }
+    if (page === 'me') loadMyReports();
     if (page === 'title') loadTitles();
     if (page === 'admin') setAdminTab(state.adminTab || 'player');
     if (page === 'more' && state.admin) loadStatus();
@@ -570,6 +571,48 @@
     $('me-rows').innerHTML = info.map(function (r) {
       return '<span>' + esc(r[0]) + '</span><b>' + esc(r[1]) + '</b>';
     }).join('');
+  }
+
+  /** 我的举报：提交后直接在这张卡里看处理结果 */
+  function loadMyReports() {
+    var box = $('my-reports');
+    if (!box) return;
+    api('/api/reports').then(function (r) {
+      var d = r.data || {};
+      var list = d.reports || [];
+      var pending = list.filter(function (x) { return !x.handled; }).length;
+      if ($('report-sum')) $('report-sum').textContent = list.length ? (list.length + ' 条 · 待处理 ' + pending) : '';
+      if (!list.length) {
+        box.innerHTML = '<p class="empty">还没有举报记录</p>';
+        return;
+      }
+      box.innerHTML = list.slice(0, 8).map(function (x) {
+        var tag = x.handled
+          ? '<span class="tag on">' + (x.result === 'rejected' ? '已驳回' : '已受理') + '</span>'
+          : '<span class="tag">待处理</span>';
+        var note = x.handled && (x.handler || x.note)
+          ? '<div class="sub">处理：' + esc(x.handler || '管理员') + (x.note ? ' · ' + esc(x.note) : '') + '</div>'
+          : '';
+        return '<div class="list-item"><div class="main"><div class="row-head"><b>#' + x.id + ' ' + esc(x.target) + '</b>' + tag + '</div>' +
+          '<div class="sub">' + esc(x.reason || '未填写理由') + '</div>' + note + '</div></div>';
+      }).join('');
+    }).catch(function () { box.innerHTML = '<p class="empty">读不到举报记录</p>'; });
+  }
+
+  function submitReport() {
+    var name = ($('f-report-name').value || '').trim();
+    var why = ($('f-report-why').value || '').trim();
+    if (!name) { toast('先写要举报谁'); return; }
+    if (!why) { toast('写一下举报理由'); return; }
+    api('/api/report', { body: { target: name, reason: why } }).then(function (r) {
+      var d = r.data || {};
+      toast(d.message || (d.ok ? '举报已提交' : '提交失败'));
+      if (d.ok) {
+        $('f-report-name').value = '';
+        $('f-report-why').value = '';
+        loadMyReports();
+      }
+    }).catch(function (e) { toast(e.message); });
   }
 
   function loadCheckin() {
@@ -1528,6 +1571,7 @@
       if (confirm('确定退出当前队伍？')) teamAction('leave', '');
     });
     $('btn-title-off').addEventListener('click', function () { equipTitle(''); });
+    $('btn-report').addEventListener('click', submitReport);
     $('btn-pdetail-back').addEventListener('click', function () { setAdminTab(state.lastAdminTab || 'player'); switchPage('admin'); });
     $('btn-su-run').addEventListener('click', runSuConsole);
     $('f-su2').addEventListener('keydown', function (e) { if (e.key === 'Enter') runSuConsole(); });

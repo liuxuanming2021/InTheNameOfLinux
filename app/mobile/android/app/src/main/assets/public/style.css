@@ -83,7 +83,7 @@ a { color: var(--accent); }
 .brand p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
 .field { margin-bottom: 12px; }
 .field label { display: block; font-size: 12.5px; color: var(--text-2); margin: 0 2px 6px; }
-.field input, .search-row input, .chat-input-bar input, #f-cmd, #f-reason, #f-note {
+.field input, .search-row input, .chat-input-bar input, #f-cmd, #f-reason, #f-note, #report-card input {
   width: 100%;
   padding: 13px 14px;
   font-size: 16px;
@@ -515,3 +515,9 @@ body.verify-locked { overflow: hidden; }
   font-size: 12px;
 }
 .about-foot .dot { opacity: .6; }
+
+/* 列表行标题：左边名字，右边状态标签 */
+.row-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+/* 举报卡里的两个输入框要占满一行 */
+#report-card input { width: 100%; }
