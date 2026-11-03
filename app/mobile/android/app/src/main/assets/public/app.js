@@ -706,8 +706,14 @@
   function scrollChatBottom() {
     var go = function () {
       var box = $('chat-list');
-      if (box) box.scrollTop = box.scrollHeight;
-      window.scrollTo(0, document.body.scrollHeight);
+      if (!box) return;
+      box.scrollTop = box.scrollHeight;
+      // 滚到「最后一条消息的底部」而不是整页底部：队伍频道下面还挂着队伍管理面板，
+      // 直接滚到整页底部会跳到队伍列表上去，看不到聊天
+      var rect = box.getBoundingClientRect();
+      var target = window.scrollY + rect.bottom - window.innerHeight + 14;
+      var max = Math.max(0, document.body.scrollHeight - window.innerHeight);
+      window.scrollTo(0, Math.max(0, Math.min(target, max)));
     };
     go();
     requestAnimationFrame(go);
