@@ -1385,3 +1385,14 @@ body[data-skin="miuix"] #f-cmd,
 body[data-skin="miuix"] #f-team-name {
   border-color: rgba(15, 23, 42, 0.13) !important;
 }
+.list-item .row-actions { flex: 0 0 auto; justify-content: flex-end; gap: 6px; }
+.team-switches { margin-top: 10px; }
+.team-switches .set-row { padding: 8px 0; }
+
+/* 开关行：标题与说明各占一行，右侧开关不被挤 */
+.switch-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--card-b); }
+.switch-row > div:first-child { min-width: 0; flex: 1 1 auto; display: flex; flex-direction: column; gap: 3px; }
+.switch-row .hint { color: var(--muted); font-size: 13px; line-height: 1.45; }
+.set-row .set-main { min-width: 0; flex: 1 1 auto; display: flex; flex-direction: column; gap: 3px; }
+.set-row .set-main b { font-size: 16px; font-weight: 600; }
+.set-row .set-main span { color: var(--muted); font-size: 13px; line-height: 1.45; }

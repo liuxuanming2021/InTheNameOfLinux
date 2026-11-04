@@ -1423,16 +1423,40 @@
     }).join('') || '<p class="empty">队伍里只有你</p>';
     var tid = esc(team.id || '');
     var chatOn = team.chatOn !== false;
+    var apps = team.applications || [];
+    var appsBlock = (isLeader && apps.length) ? (
+      '<div class="card-title" style="margin-top:12px"><h2>加入申请</h2><span class="side">' + apps.length + ' 条</span></div>' +
+      apps.map(function (a) {
+        return '<div class="list-item"><div class="main"><b>' + esc(a.player) + '</b>' +
+          '<div class="sub">申请加入「' + esc(plain(team.name)) + '」</div></div>' +
+          '<div class="row-actions">' +
+          '<button class="btn btn-mini" data-decide="accept" data-tid="' + tid + '" data-name="' + esc(a.player) + '">同意</button>' +
+          '<button class="btn btn-mini" data-decide="reject" data-tid="' + tid + '" data-name="' + esc(a.player) + '">拒绝</button>' +
+          '</div></div>';
+      }).join('')
+    ) : '';
+    var chatOn2 = team.chatOn !== false;
+    var ffOn = team.friendlyFire === true;
+    var applyOn = team.applyNeeded === true || team.publicJoin === false;
+    function setRow(label, hint, key, on) {
+      return '<div class="set-row"><div class="set-main"><b>' + label + '</b><span>' + hint + '</span></div>' +
+        '<button class="switch" role="switch" aria-checked="' + (on ? 'true' : 'false') + '"' +
+        (isLeader ? ' data-tset="' + key + '" data-tid="' + tid + '" data-on="' + (on ? '1' : '0') + '"' : ' disabled') +
+        '></button></div>';
+    }
+    var switches = '<div class="team-switches">' +
+      setRow('队伍聊天', '队员之间收发队伍消息', 'chat', chatOn2) +
+      setRow('队伍伤害', '队友之间可以互相造成伤害', 'friendly-fire', ffOn) +
+      setRow('队伍申请', '打开后加入要队长批准，关掉就是直接加入', 'apply', applyOn) +
+      '</div>';
     var acts = '<div class="action-grid" style="margin-top:10px">' +
       (isLeader ? '<button class="seg-btn" data-tact="invite" data-tid="' + tid + '">邀请</button>' : '') +
-      (isLeader ? '<button class="seg-btn" data-tact="setting" data-targ="chat:' + (chatOn ? 'off' : 'on') + '" data-tid="' + tid + '">' +
-        (chatOn ? '关队伍聊天' : '开队伍聊天') + '</button>' : '') +
       (isLeader ? '<button class="seg-btn" data-tact="tag" data-tid="' + tid + '">改队标</button>' : '') +
       (isLeader ? '<button class="seg-btn" data-tact="transfer" data-tid="' + tid + '">转让队长</button>' : '') +
       '<button class="seg-btn" data-tact="leave" data-tid="' + tid + '">退出这个队伍</button>' +
       (isLeader ? '<button class="seg-btn" data-tact="disband" data-tid="' + tid + '">解散</button>' : '') +
       '</div>';
-    return '<div class="card">' + head + body + acts + '</div>';
+    return '<div class="card">' + head + body + switches + appsBlock + acts + '</div>';
   }
 
   function renderTeam(d) {
@@ -1475,11 +1499,23 @@
       var joined = mine.some(function (x) { return x.name === t.name; });
       return '<div class="list-item"><div class="main"><b>' + esc(plain(t.coloredName || t.name)) + '</b>' +
         '<div class="sub">队长 ' + esc(t.leaderName || '—') + ' · ' + (t.size || 0) + '/' + (t.maxSize || 0) + ' 人</div>' +
-        '<div class="tags"><span class="tag">标识 ' + esc(plain(t.tag || '—')) + '</span></div></div>' +
+        '<div class="tags"><span class="tag">标识 ' + esc(plain(t.tag || '—')) + '</span>' +
+        (t.publicJoin === false ? '<span class="tag">需申请</span>' : '') + '</div></div>' +
         (joined ? '<span class="tag on">我的队伍</span>'
-          : '<button class="btn btn-mini" data-join="' + esc(t.name) + '">加入</button>') +
+          : (t.publicJoin === false
+            ? '<button class="btn btn-mini" data-apply="' + esc(t.id || '') + '" data-tname="' + esc(t.name) + '">申请加入</button>'
+            : '<button class="btn btn-mini" data-join="' + esc(t.name) + '">加入</button>')) +
         '</div>';
     }).join('') : '<p class="empty">服务器上还没有队伍</p>';
+  }
+
+  function teamDecide(teamId, player, accept) {
+    api('/api/team', { body: { action: 'decide', team: teamId, arg: player, accept: accept ? '1' : '0' } })
+      .then(function (r) {
+        var d = r.data || {};
+        toast(d.message || (d.ok ? '完成' : '失败'));
+        loadTeam();
+      }).catch(function (e) { toast(e.message); });
   }
 
   function teamAction(action, arg, teamId) {
@@ -2158,7 +2194,7 @@
     }, true);
 
     document.addEventListener('click', function (ev) {
-      var t = ev.target.closest ? ev.target.closest('[data-linux-op],[data-chat],[data-chatteam],[data-tact],[data-team],[data-leave],[data-join],[data-kick],[data-title],[data-group],[data-cmd],[data-theme-style],[data-accent]') : null;
+      var t = ev.target.closest ? ev.target.closest('[data-linux-op],[data-chat],[data-chatteam],[data-tact],[data-team],[data-leave],[data-join],[data-apply],[data-decide],[data-tset],[data-kick],[data-title],[data-group],[data-cmd],[data-theme-style],[data-accent]') : null;
       if (!t) return;
       if (t.hasAttribute('data-theme-style')) { setSkin(t.getAttribute('data-theme-style')); return; }
       if (t.hasAttribute('data-accent')) { setAccent(t.getAttribute('data-accent')); return; }
@@ -2197,6 +2233,21 @@
         } else if (act === 'setting') {
           teamAction('setting', targ, tid);
         }
+        return;
+      }
+      if (t.hasAttribute('data-tset')) {
+        var k = t.getAttribute('data-tset');
+        var on = t.getAttribute('data-on') === '1';
+        teamAction('setting', k + ':' + (on ? 'off' : 'on'), t.getAttribute('data-tid'));
+        return;
+      }
+      if (t.hasAttribute('data-apply')) {
+        teamAction('apply', t.getAttribute('data-apply'), t.getAttribute('data-apply'));
+        return;
+      }
+      if (t.hasAttribute('data-decide')) {
+        var dec = t.getAttribute('data-decide');
+        teamDecide(t.getAttribute('data-tid'), t.getAttribute('data-name'), dec === 'accept');
         return;
       }
       if (t.hasAttribute('data-leave')) {
