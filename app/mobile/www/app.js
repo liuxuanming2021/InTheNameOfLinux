@@ -163,6 +163,8 @@
   }
 
   function openTheme() {
+    if (typeof syncSegs === "function") setTimeout(function () { syncSegs(true); }, 30);
+
     var m = $('theme-modal');
     if (!m) return;
     m.classList.remove('hidden');
@@ -471,6 +473,8 @@
   // ── Linux 系插件：列表 / 启停 / 改配置 ───────────────
 
   function openLinux() {
+    if (typeof syncSegs === "function") setTimeout(function () { syncSegs(true); }, 30);
+
     var m = $('linux-modal');
     if (!m) return;
     m.classList.remove('hidden');
@@ -537,6 +541,8 @@
   }
 
   function openLinuxConfig(name) {
+    if (typeof syncSegs === "function") setTimeout(function () { syncSegs(true); }, 30);
+
     api('/api/admin/linux/config?name=' + encodeURIComponent(name), { quiet: true }).then(function (r) {
       var d = r.data || {};
       if (!d.ok) { toast(d.message || '读不到配置'); return; }
@@ -945,6 +951,7 @@
     if ($('chat-team-view')) $('chat-team-view').classList.add('hidden');
     if ($('team-manage')) $('team-manage').classList.toggle('hidden', !manage);
     if ($('chat-online')) $('chat-online').classList.toggle('hidden', manage);
+    if (typeof syncSegs === 'function') setTimeout(function () { syncSegs(true); }, 20);
 
     var mine = state.myTeams || [];
     var pick = $('chat-team-pick');
@@ -1122,6 +1129,8 @@
   // ── 转账（走服务端的 NalxerECO 接口）─────────────────
 
   function openTransfer() {
+    if (typeof syncSegs === "function") setTimeout(function () { syncSegs(true); }, 30);
+
     $('transfer-modal').classList.remove('hidden');
     $('transfer-msg').textContent = '';
     var type = state.transferType || 'coins';
@@ -1514,6 +1523,8 @@
   var ADMIN_TABS = ['online', 'player', 'report', 'penalty', 'fake', 'cmd', 'su'];
 
   function setAdminTab(tab) {
+    if (typeof syncSegs === "function") setTimeout(function () { syncSegs(true); }, 30);
+
     if (tab === 'su' && !isSuOn()) tab = 'online';
     if (tab === 'online') loadPlayers();
     if (tab === 'su') renderSuConsole();
@@ -2176,9 +2187,9 @@
     }
     var tr = tabs.getBoundingClientRect();
     var ar = active.getBoundingClientRect();
-    thumb.style.width = (active.offsetWidth - 12) + 'px';
-    thumb.style.height = (active.offsetHeight - 12) + 'px';
-    thumb.style.transform = 'translate(' + (ar.left - tr.left + 6) + 'px,' + (ar.top - tr.top + 6) + 'px)';
+    thumb.style.width = (active.offsetWidth - 4) + 'px';
+    thumb.style.height = (active.offsetHeight - 6) + 'px';
+    thumb.style.transform = 'translate(' + (ar.left - tr.left + 2) + 'px,' + (ar.top - tr.top + 3) + 'px)';
     thumb.classList.add('on');
     if (animate === false) {
       thumb.style.transition = 'none';

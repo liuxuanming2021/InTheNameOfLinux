@@ -1227,7 +1227,7 @@ body[data-skin="miuix"] .action-grid .seg-btn:active { background: var(--accent-
   position: absolute !important; left: 0; top: 0;
   border-radius: 9px;
   background: var(--card) !important;
-  box-shadow: 0 1px 1px rgba(15, 23, 42, 0.04), 0 3px 8px rgba(15, 23, 42, 0.10) !important;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.045), 0 2px 5px rgba(15, 23, 42, 0.10), 0 6px 14px rgba(15, 23, 42, 0.08) !important;
   pointer-events: none;
   z-index: 0;
   transition: transform .28s cubic-bezier(.32, .72, 0, 1),
