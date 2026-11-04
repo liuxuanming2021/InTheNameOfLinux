@@ -609,6 +609,28 @@
     return Number(n).toLocaleString('en-US');
   }
 
+  /** 金币 / 点券这类大数字：1000 起带单位（K / M / B / T / Q）。 */
+  function fmtAmount(n) {
+    if (n == null || n === '') return '—';
+    var v = Number(String(n).replace(/,/g, ''));
+    if (!isFinite(v)) return String(n);
+    var neg = v < 0;
+    v = Math.abs(v);
+    var units = [[1e15, 'Q'], [1e12, 'T'], [1e9, 'B'], [1e6, 'M'], [1e3, 'K']];
+    for (var i = 0; i < units.length; i++) {
+      if (v >= units[i][0]) {
+        var x = v / units[i][0];
+        var s = x >= 100 ? x.toFixed(0) : (x >= 10 ? x.toFixed(1) : x.toFixed(2));
+        s = s.replace(/\.0+$/, '').replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
+        return (neg ? '-' : '') + s + units[i][1];
+      }
+    }
+    var raw = (v % 1) ? v.toFixed(2).replace(/0+$/, '').replace(/\.$/, '') : String(v);
+    if (raw === '') raw = '0';
+    var num = Number(raw);
+    return (neg ? '-' : '') + (isFinite(num) ? num.toLocaleString('en-US') : raw);
+  }
+
   function fmtTime(ms) {
     if (!ms || Number(ms) <= 0) return '—';
     var d = new Date(Number(ms));
@@ -722,8 +744,8 @@
     if (d.online) badges.push('<span class="badge">在线</span>');
     $('me-badges').innerHTML = badges.join('');
 
-    setStat('me-coins', d.hasCoins ? fmt(d.coins) : '—');
-    setStat('me-points', d.hasPoints ? fmt(d.points) : '—');
+    setStat('me-coins', d.hasCoins ? fmtAmount(d.coins) : '—');
+    setStat('me-points', d.hasPoints ? fmtAmount(d.points) : '—');
     setStat('me-level', d.level == null ? '—' : '' + d.level);
 
     var into = d.expIntoLevel || 0;
@@ -979,7 +1001,22 @@
     }
   }
 
+  function chatTeams() {
+    return (state.myTeams || []).filter(function (t) { return t.chatOn !== false; });
+  }
+
   function renderChatChannels() {
+    // 队长关掉的队伍聊天，对应的队伍频道要整段消失
+    var usable = chatTeams();
+    var teamBtn = document.querySelector('#chat-channels [data-chat="team"]');
+    if (teamBtn) teamBtn.classList.toggle('hidden', !usable.length);
+    var dropped = false;
+    if (state.chatChannel === 'team' && !usable.length) { state.chatChannel = 'world'; dropped = true; }
+    if (state.chatChannel === 'team' && usable.length && !state.chatTeam) state.chatTeam = usable[0].id;
+    if (state.chatChannel === 'team' && usable.length
+        && !usable.some(function (t) { return t.id === state.chatTeam; })) {
+      state.chatTeam = usable[0].id;
+    }
     var team = state.chatChannel === 'team';
     var manage = state.chatChannel === 'manage';
     Array.prototype.forEach.call(document.querySelectorAll('#chat-channels .seg-btn'), function (b) {
@@ -993,12 +1030,18 @@
     if ($('team-manage')) $('team-manage').classList.toggle('hidden', !manage);
     if ($('chat-online')) $('chat-online').classList.toggle('hidden', manage);
     if (typeof syncSegs === 'function') setTimeout(function () { syncSegs(true); }, 20);
+    if (dropped) {
+      state.chatMsgs = [];
+      state.chatLast = 0;
+      state.chatRenderedMax = 0;
+      setTimeout(function () { loadChat(); }, 0);
+    }
 
     var mine = state.myTeams || [];
     var pick = $('chat-team-pick');
-    if (team && mine.length > 1) {
+    if (team && usable.length > 1) {
       pick.classList.remove('hidden');
-      pick.innerHTML = mine.map(function (t) {
+      pick.innerHTML = usable.map(function (t) {
         return '<button class="seg-btn' + (t.id === state.chatTeam ? ' active' : '') +
           '" data-chatteam="' + esc(t.id) + '">' + esc(plain(t.coloredName || t.name)) + '</button>';
       }).join('');
@@ -1009,11 +1052,11 @@
 
     var hint = $('chat-team-hint');
     if (team) {
-      var cur = mine.filter(function (t) { return t.id === state.chatTeam; })[0];
+      var cur = usable.filter(function (t) { return t.id === state.chatTeam; })[0];
       hint.classList.remove('hidden');
       hint.textContent = cur
         ? ('只有「' + plain(cur.coloredName || cur.name) + '」的队友看得到这里发的消息')
-        : '你还没加入队伍';
+        : '队伍聊天被关掉了，等队长打开';
     } else {
       hint.classList.add('hidden');
     }
@@ -1350,7 +1393,7 @@
     var type = state.transferType || 'coins';
     var val = type === 'coins' ? d.coins : d.points;
     $('transfer-balance').textContent = '你现在有 ' +
-      (val == null ? '—' : (type === 'coins' ? fmt(val) + ' 金币' : val + ' 点券'));
+      (val == null ? '—' : fmtAmount(val) + (type === 'coins' ? ' 金币' : ' 点券'));
   }
 
   function setTransferTab(type) {
@@ -1805,8 +1848,8 @@
       var p = d.data || {};
       var rows = [
         ['状态', p.online ? '在线' : '离线'],
-        ['金币', p.hasCoins ? fmt(p.coins) : '—'],
-        ['点券', p.hasPoints ? fmt(p.points) : '—'],
+        ['金币', p.hasCoins ? fmtAmount(p.coins) : '—'],
+        ['点券', p.hasPoints ? fmtAmount(p.points) : '—'],
         ['等级', p.level == null ? '—' : p.level],
         ['在线时长', hoursText(p.playtimeHours)],
         ['身份', (p.identity && p.identity.label) || p.role || '无'],
