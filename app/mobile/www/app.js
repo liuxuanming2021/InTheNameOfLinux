@@ -938,7 +938,6 @@
         state.chatLast = 0;
       }
       var msgs = d.messages || [];
-      var atBottom = isChatNearBottom();
       if (msgs.length) {
         var seen = {};
         (state.chatMsgs || []).forEach(function (m) { if (m && m.id) seen[m.id] = 1; });
@@ -953,7 +952,7 @@
         if (last > (state.chatLast || 0)) state.chatLast = last;
         if (fresh.length) {
           renderChat();
-          if (atBottom) scrollChatBottom();
+          scrollChatBottom();
         }
       } else if (!state.chatMsgs.length) {
         renderChat();
@@ -1338,22 +1337,23 @@
     var go = function () {
       var box = $('chat-list');
       if (!box) return;
+      // 聊天区自己可滚就滚到底
       box.scrollTop = box.scrollHeight;
-      // 滚到「最后一条消息的底部」而不是整页底部：队伍频道下面还挂着队伍管理面板，
-      // 直接滚到整页底部会跳到队伍列表上去，看不到聊天
-      var rect = box.getBoundingClientRect();
-      // 顶上钉着标题栏 + 频道条，底下钉着输入框，两边都要让开
-      var head = $('chat-head') ? $('chat-head').getBoundingClientRect().height : 0;
+      // 整页也要跟着走：让最后一条消息正好露在输入条上方
+      var last = box.lastElementChild;
       var bar = document.querySelector('#page-chat .chat-input-bar');
-      var barH = bar ? bar.getBoundingClientRect().height : 0;
-      var target = window.scrollY + rect.bottom + head + barH - window.innerHeight + 16;
+      var barH = bar && !bar.classList.contains('hidden') ? bar.getBoundingClientRect().height : 0;
+      var bottomDoc = last
+        ? window.scrollY + last.getBoundingClientRect().bottom
+        : window.scrollY + box.getBoundingClientRect().bottom;
+      var target = bottomDoc + 14 - (window.innerHeight - barH);
       var max = Math.max(0, document.body.scrollHeight - window.innerHeight);
       window.scrollTo(0, Math.max(0, Math.min(target, max)));
     };
     go();
     requestAnimationFrame(go);
     setTimeout(go, 60);
-    setTimeout(go, 240);
+    setTimeout(go, 200);
   }
 
   function sendChat() {
@@ -1368,6 +1368,7 @@
       var d = r.data || {};
       if (!d.ok) { toast(d.message || '发送失败'); return; }
       loadChat();
+      setTimeout(scrollChatBottom, 260);
     }).catch(function (e) { toast(e.message); });
   }
 
