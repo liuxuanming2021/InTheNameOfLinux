@@ -1290,7 +1290,10 @@ html, body { overscroll-behavior-y: none; }
 
 /* 顶部消息弹窗（1.5 秒） */
 .msg-pop {
-  position: fixed; left: 12px; right: 12px; top: 10px; z-index: 9000;
+  /* 顶部让开灵动岛 / 刘海：safe-area-inset-top 在 iOS 上约 59px */
+  position: fixed; left: 10px; right: 10px;
+  top: calc(env(safe-area-inset-top, 0px) + 8px);
+  z-index: 9000;
   display: flex; align-items: center; gap: 10px;
   padding: 11px 13px; border-radius: 16px;
   background: var(--card); border: 1px solid var(--card-b);

@@ -1220,9 +1220,12 @@
   var popTimer = null;
   function showMsgPop(m) {
     if (!m) return;
+    // 声音 + 震动 + （后台时）系统通知：每页都算
     alertSound();
     alertVibrate();
     pushSystemNotice(m);
+    // 聊天页只看消息流，不再盖一张卡片；其它页面才弹
+    if (state.page === 'chat') return;
     var pop = $('msg-pop');
     if (!pop) return;
     var who = $('msg-pop-name');
@@ -2144,7 +2147,7 @@
       }
       state.chatTick = (state.chatTick || 0) + 1;
       if (state.page === 'chat') { loadChat(); return; }
-      if (state.chatTick % 5 !== 0) return;
+      if (state.chatTick % 2 !== 0) return;
       if (state.chatLoading) return;
       api('/api/chat?since=' + (state.chatLast || 0)).then(function (r) {
         var d = r.data || {};
