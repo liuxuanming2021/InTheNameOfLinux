@@ -509,7 +509,7 @@
           '<b>' + esc(p.name) + '</b>' +
           '<div class="sub">v' + esc(p.version || '?') +
           (p.hasConfig ? ' · config.yml ' + fmtSize(p.configSize) : ' · 没有 config.yml') +
-          (locked ? ' · 只有 Linux582021 能改' : '') + '</div>' +
+          (locked ? ' · 只有服主能改' : '') + '</div>' +
           '</div><span class="tag ' + (locked ? '' : (p.loaded ? 'ok' : '')) + '">' +
           (locked ? '受保护' : (p.loaded ? '运行中' : '已停用')) + '</span></div>' +
           '<div class="seg" style="margin:-2px 0 10px">' +
@@ -530,7 +530,7 @@
   function linuxOp(name, op) {
     if (!state.owner &&
         (name || '').toLowerCase() === 'inthenameoflinux') {
-      toast('InTheNameOfLinux 的配置只有 Linux582021 能改');
+      toast('插件配置只有服主能改');
       return;
     }
     if (op === 'edit') { openLinuxConfig(name); return; }
