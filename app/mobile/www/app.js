@@ -2076,6 +2076,12 @@
     $('btn-save-server').addEventListener('click', saveServer);
     $('btn-test-server').addEventListener('click', testServer);
     $('btn-reset-server').addEventListener('click', resetServer);
+    document.addEventListener('click', function (ev) {
+      var seg = ev.target && ev.target.closest ? ev.target.closest('.seg') : null;
+      if (seg) setTimeout(function () { placeSegThumb(seg, true); }, 0);
+    });
+    window.addEventListener('resize', function () { scheduleSegSync(false); });
+
     $('sw-theme').addEventListener('click', toggleTheme);
     if ($('btn-theme')) $('btn-theme').addEventListener('click', openTheme);
     if ($('btn-theme-close')) $('btn-theme-close').addEventListener('click', closeTheme);
@@ -2129,6 +2135,11 @@
       fatal('请求出错', (e.reason && e.reason.message) || String(e.reason));
     });
 
+    var segObs = new MutationObserver(function () { scheduleSegSync(true); });
+    segObs.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+    setTimeout(function () { syncSegs(false); }, 60);
+    setTimeout(function () { syncSegs(false); }, 600);
+
     if (state.token) {
       enterApp();
       var qs = new URLSearchParams(location.search);
@@ -2141,6 +2152,65 @@
       // su / 命令子标签要等服务端回 su 才认，先记下来，loadMe 之后应用
       if (at && state.admin) state.pendingAdminTab = at;
     }
+  }
+
+  /* ── iOS 16/17 式分段控件：白色滑块跟手滑到选中项 ────────────── */
+  function segThumbOf(seg) {
+    var t = null;
+    for (var i = 0; i < seg.children.length; i++) {
+      if (seg.children[i].classList && seg.children[i].classList.contains('seg-thumb')) { t = seg.children[i]; break; }
+    }
+    return t;
+  }
+
+  function placeSegThumb(seg, animate) {
+    var active = null;
+    for (var i = 0; i < seg.children.length; i++) {
+      var c = seg.children[i];
+      if (c.classList && c.classList.contains('active') && !c.classList.contains('seg-thumb')) { active = c; break; }
+    }
+    var thumb = segThumbOf(seg);
+    if (!active) {
+      if (thumb) thumb.parentNode.removeChild(thumb);
+      seg.classList.remove('has-thumb');
+      return;
+    }
+    if (getComputedStyle(seg).position === 'static') seg.style.position = 'relative';
+    var fresh = false;
+    if (!thumb) {
+      thumb = document.createElement('i');
+      thumb.className = 'seg-thumb';
+      thumb.style.transition = 'none';
+      seg.insertBefore(thumb, seg.firstChild);
+      fresh = true;
+    }
+    seg.classList.add('has-thumb');
+    var sr = seg.getBoundingClientRect();
+    var ar = active.getBoundingClientRect();
+    thumb.style.width = ar.width + 'px';
+    thumb.style.height = ar.height + 'px';
+    thumb.style.transform = 'translate(' + (ar.left - sr.left) + 'px,' + (ar.top - sr.top) + 'px)';
+    if (fresh || animate === false) {
+      void thumb.offsetWidth;
+      thumb.style.transition = '';
+    }
+  }
+
+  function syncSegs(animate) {
+    var segs = document.querySelectorAll('.seg');
+    for (var i = 0; i < segs.length; i++) {
+      if (segs[i].closest('.hidden')) continue;
+      placeSegThumb(segs[i], animate !== false);
+    }
+  }
+
+  var segSyncTimer = null;
+  function scheduleSegSync(animate) {
+    if (segSyncTimer) return;
+    segSyncTimer = requestAnimationFrame(function () {
+      segSyncTimer = null;
+      syncSegs(animate !== false);
+    });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
