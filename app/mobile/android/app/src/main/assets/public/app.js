@@ -1336,19 +1336,8 @@
   function scrollChatBottom() {
     var go = function () {
       var box = $('chat-list');
-      if (!box) return;
-      // 聊天区自己可滚就滚到底
-      box.scrollTop = box.scrollHeight;
-      // 整页也要跟着走：让最后一条消息正好露在输入条上方
-      var last = box.lastElementChild;
-      var bar = document.querySelector('#page-chat .chat-input-bar');
-      var barH = bar && !bar.classList.contains('hidden') ? bar.getBoundingClientRect().height : 0;
-      var bottomDoc = last
-        ? window.scrollY + last.getBoundingClientRect().bottom
-        : window.scrollY + box.getBoundingClientRect().bottom;
-      var target = bottomDoc + 14 - (window.innerHeight - barH);
-      var max = Math.max(0, document.body.scrollHeight - window.innerHeight);
-      window.scrollTo(0, Math.max(0, Math.min(target, max)));
+      if (box) box.scrollTop = box.scrollHeight;
+      window.scrollTo(0, Math.max(0, document.body.scrollHeight - window.innerHeight));
     };
     go();
     requestAnimationFrame(go);
