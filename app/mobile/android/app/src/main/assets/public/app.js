@@ -19,8 +19,7 @@
 
   var PAGE_TITLE = {
     me: ['我的数据', ''],
-    chat: ['服务器聊天', '公屏 / 队伍频道 / 我的队伍'],
-    team: ['队伍', 'LinuxTeam'],
+    chat: ['社交', '公屏 / 队伍频道 / 队伍'],
     title: ['头衔', 'LinuxTitle'],
     admin: ['服务器管理', '玩家 / 举报 / 惩罚 / 假人 / 命令'],
     more: ['更多', '设置 / 接口地址 / 关于'],
@@ -346,13 +345,13 @@
   // ── 页面切换 ─────────────────────────────────────────
 
   var PAGE_IDS = {
-    me: 'page-me', chat: 'page-chat', team: 'page-team',
+    me: 'page-me', chat: 'page-chat',
     title: 'page-titles', admin: 'page-admin', more: 'page-more',
     pdetail: 'page-pdetail'
   };
 
   // 底栏顺序，用来决定切页时从左边还是右边滑进来
-  var PAGE_ORDER = ['me', 'chat', 'team', 'title', 'admin', 'more'];
+  var PAGE_ORDER = ['me', 'chat', 'title', 'admin', 'more'];
 
   function switchPage(page) {
     if (!PAGE_IDS[page]) page = 'me';
@@ -447,7 +446,6 @@
       loadChat();
       loadTeam();   // 队伍面板也在聊天页里
     }
-    else if (page === 'team') loadTeam();
     else if (page === 'title') loadTitles();
     else if (page === 'admin') setAdminTab(state.adminTab || 'player');
     else if (page === 'pdetail' && state.detailName) playerDetail(state.detailName, true);
@@ -926,8 +924,8 @@
     }
     state.chatScrollPending = true;
     renderChatChannels();
-    if (ch === 'mine') {
-      renderTeamView();
+    if (ch === 'manage') {
+      loadTeam();
     } else {
       renderChat();
       loadChat();
@@ -936,15 +934,17 @@
 
   function renderChatChannels() {
     var team = state.chatChannel === 'team';
-    var mineView = state.chatChannel === 'mine';
+    var manage = state.chatChannel === 'manage';
     Array.prototype.forEach.call(document.querySelectorAll('#chat-channels .seg-btn'), function (b) {
       b.classList.toggle('active', b.getAttribute('data-chat') === state.chatChannel);
     });
-    $('chat-title').textContent = mineView ? '我的队伍' : (team ? '队伍频道' : '服务器公屏');
+    $('chat-title').textContent = manage ? '队伍' : (team ? '队伍频道' : '服务器公屏');
     $('f-chat').placeholder = team ? '和队友说点什么…' : '说点什么…';
-    $('chat-list').classList.toggle('hidden', mineView);
-    document.querySelector('.chat-input-bar').classList.toggle('hidden', mineView);
-    $('chat-team-view').classList.toggle('hidden', !mineView);
+    $('chat-list').classList.toggle('hidden', manage);
+    document.querySelector('.chat-input-bar').classList.toggle('hidden', manage);
+    if ($('chat-team-view')) $('chat-team-view').classList.add('hidden');
+    if ($('team-manage')) $('team-manage').classList.toggle('hidden', !manage);
+    if ($('chat-online')) $('chat-online').classList.toggle('hidden', manage);
 
     var mine = state.myTeams || [];
     var pick = $('chat-team-pick');
