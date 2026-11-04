@@ -1254,7 +1254,9 @@
     var newMax = prevMax;
     box.innerHTML = state.chatMsgs.map(function (m) {
       if (m.source === 'notice') {
-        return '<div class="chat-notice"><span>' + esc(m.text) + '</span></div>';
+        var nt = new Date(m.time || Date.now());
+        var nw = pad(nt.getHours()) + ':' + pad(nt.getMinutes());
+        return '<div class="chat-notice"><span>' + esc(m.text) + ' · ' + nw + '</span></div>';
       }
       var fresh = (m.id || 0) > prevMax;
       if ((m.id || 0) > newMax) newMax = m.id || 0;
