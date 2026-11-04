@@ -1288,7 +1288,7 @@ html, body { overscroll-behavior-y: none; }
 
 /* 顶部消息弹窗（1.5 秒） */
 .msg-pop {
-  position: fixed; left: 12px; right: 12px; top: 10px; z-index: 90;
+  position: fixed; left: 12px; right: 12px; top: 10px; z-index: 9000;
   display: flex; align-items: center; gap: 10px;
   padding: 11px 13px; border-radius: 16px;
   background: var(--card); border: 1px solid var(--card-b);

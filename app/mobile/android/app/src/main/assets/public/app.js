@@ -352,6 +352,7 @@
     switchPage('me');
     loadMe();
     startTimers();
+    if (notifyOn()) askNoticePermission();
     // 开屏至少停一下再收，不然一闪而过
     setTimeout(hideSplash, 420);
   }
@@ -1030,6 +1031,7 @@
 
   function setNotify(on) {
     localStorage.setItem(LS.notify, on ? '1' : '0');
+    if (on) askNoticePermission();
     renderNotifySwitch();
     toast(on ? '消息弹窗提醒已打开' : '消息弹窗提醒已关闭');
   }
@@ -1039,8 +1041,81 @@
     if (el) el.setAttribute('aria-checked', notifyOn() ? 'true' : 'false');
   }
 
+  // Capacitor 原生插件（Haptics / LocalNotifications），网页版没有就用 Web API 兜底
+  function capPlugin(name) {
+    return (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins[name]) || null;
+  }
+
+  var audioCtx = null;
+  function alertSound() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      audioCtx = audioCtx || new AC();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      var t0 = audioCtx.currentTime;
+      [880, 1174].forEach(function (f, i) {
+        var o = audioCtx.createOscillator();
+        var g = audioCtx.createGain();
+        o.type = 'sine';
+        o.frequency.value = f;
+        var at = t0 + i * 0.15;
+        g.gain.setValueAtTime(0.0001, at);
+        g.gain.exponentialRampToValueAtTime(0.2, at + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, at + 0.13);
+        o.connect(g);
+        g.connect(audioCtx.destination);
+        o.start(at);
+        o.stop(at + 0.14);
+      });
+    } catch (e) {}
+  }
+
+  function alertVibrate() {
+    var h = capPlugin('Haptics');
+    if (h && h.impact) {
+      try { h.impact({ style: 'MEDIUM' }).catch(function () {}); return; } catch (e) {}
+    }
+    try { if (navigator.vibrate) navigator.vibrate(180); } catch (e) {}
+  }
+
+  // 软件在后台时：用系统通知栏提醒（安卓 / iOS 原生本地通知）
+  var localSeq = 1;
+  function pushSystemNotice(m) {
+    var ln = capPlugin('LocalNotifications');
+    if (!ln || !document.hidden) return;
+    var who = m.name + (m.channel === 'team' ? ' · 队伍频道' : ' · 公屏');
+    try {
+      ln.schedule({
+        notifications: [{
+          id: (Math.floor(Date.now() / 1000) + localSeq++) % 2147483647,
+          title: who,
+          body: m.text,
+          schedule: { at: new Date(Date.now() + 200) },
+          smallIcon: 'ic_launcher',
+          sound: 'default'
+        }]
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
+  function askNoticePermission() {
+    var ln = capPlugin('LocalNotifications');
+    if (!ln || !ln.requestPermissions) return;
+    try {
+      ln.checkPermissions().then(function (p) {
+        if (p && p.display === 'granted') return;
+        ln.requestPermissions().catch(function () {});
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
   var popTimer = null;
   function showMsgPop(m) {
+    if (!m) return;
+    alertSound();
+    alertVibrate();
+    pushSystemNotice(m);
     var pop = $('msg-pop');
     if (!pop) return;
     var who = $('msg-pop-name');
@@ -1085,7 +1160,7 @@
     }).join('');
     state.chatRenderedMax = newMax;
     // 别人发来的新消息：不在聊天页时顶部弹一条
-    if (newMax > prevMax && state.page !== 'chat' && notifyOn()) {
+    if (newMax > prevMax && notifyOn() && !state.suppressPop) {
       var last = null;
       for (var i = state.chatMsgs.length - 1; i >= 0; i--) {
         var mm = state.chatMsgs[i];
@@ -1948,7 +2023,7 @@
         if ((d.last || 0) > (state.chatLast || 0)) state.chatLast = d.last;
         $('chat-dot').classList.remove('hidden');
         // 不在聊天页：别人发来的新消息，顶部弹一条（1.5 秒）
-        if (fresh.length && notifyOn()) {
+        if (fresh.length && notifyOn() && !state.suppressPop) {
           var show = null;
           for (var q = fresh.length - 1; q >= 0; q--) {
             var f = fresh[q];
@@ -2217,6 +2292,9 @@
       if (document.visibilityState !== 'visible' || !state.token) return;
       state.chatLoading = false;
       state.chatPending = false;
+      // 回前台补拉消息时不要把几十条都弹一遍
+      state.suppressPop = true;
+      setTimeout(function () { state.suppressPop = false; }, 1600);
       refreshPage();
     });
 

@@ -1,0 +1,17 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{font:12px monospace;padding:8px;white-space:pre-wrap}iframe{width:390px;height:620px;border:1px solid #ccc}</style></head>
+<body><pre id="out">…</pre><iframe id="fr"></iframe>
+<script>
+var q = new URLSearchParams(location.search);
+document.getElementById('fr').src = '__demo.html?page=' + (q.get('page') || 'me');
+var log = [], t0 = Date.now();
+function say(s) { log.push(((Date.now() - t0) / 1000).toFixed(1) + 's ' + s); document.getElementById('out').textContent = log.join('\n'); }
+setTimeout(function () {
+  var d = document.getElementById('fr').contentDocument;
+  var pop = d.getElementById('msg-pop');
+  say('page=' + (q.get('page') || 'me') + ' pop=' + !!pop);
+  if (!pop) return;
+  new MutationObserver(function () {
+    say('class=' + pop.className + ' text=' + (d.getElementById('msg-pop-text') || {}).textContent);
+  }).observe(pop, { attributes: true, attributeFilter: ['class'] });
+}, 6000);
+</script></body></html>
