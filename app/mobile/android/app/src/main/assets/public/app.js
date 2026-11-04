@@ -2187,9 +2187,9 @@
     }
     var tr = tabs.getBoundingClientRect();
     var ar = active.getBoundingClientRect();
-    thumb.style.width = active.offsetWidth + 'px';
-    thumb.style.height = active.offsetHeight + 'px';
-    thumb.style.transform = 'translate(' + (ar.left - tr.left) + 'px,' + (ar.top - tr.top) + 'px)';
+    thumb.style.width = (active.offsetWidth + 10) + 'px';
+    thumb.style.height = (active.offsetHeight + 4) + 'px';
+    thumb.style.transform = 'translate(' + (ar.left - tr.left - 5) + 'px,' + (ar.top - tr.top - 2) + 'px)';
     thumb.classList.add('on');
     if (animate === false) {
       thumb.style.transition = 'none';
@@ -2224,26 +2224,41 @@
     var ar = active.getBoundingClientRect();
     var box = { x: ar.left - sr.left, y: ar.top - sr.top, w: ar.width, h: ar.height };
     var prev = seg._thumbBox;
-    var fresh = false;
+    var from = (animate !== false && prev) ? prev : box;
     if (!thumb) {
       thumb = document.createElement('i');
       thumb.className = 'seg-thumb';
       thumb.style.transition = 'none';
-      // 上一次的位置还在（比如按钮被整块重绘过）：先停在那里，再滑过去，
+      // 上一次的位置还在（比如按钮被整块重绘过）：先停在那里，下一帧再滑过去，
       // 这样「命令分组」「多队伍切换」这种每次重建的控件也有平移效果
-      var from = (animate !== false && prev) ? prev : box;
       thumb.style.width = from.w + 'px';
       thumb.style.height = from.h + 'px';
       thumb.style.transform = 'translate(' + from.x + 'px,' + from.y + 'px)';
       seg.insertBefore(thumb, seg.firstChild);
-      fresh = true;
+      seg.classList.add('has-thumb');
+      void thumb.offsetWidth;
+      thumb.style.transition = '';
+      if (animate !== false && prev) {
+        requestAnimationFrame(function () {
+          thumb.style.width = box.w + 'px';
+          thumb.style.height = box.h + 'px';
+          thumb.style.transform = 'translate(' + box.x + 'px,' + box.y + 'px)';
+        });
+      } else {
+        thumb.style.width = box.w + 'px';
+        thumb.style.height = box.h + 'px';
+        thumb.style.transform = 'translate(' + box.x + 'px,' + box.y + 'px)';
+      }
+      seg._thumbBox = box;
+      return;
     }
     seg.classList.add('has-thumb');
+    if (animate === false) thumb.style.transition = 'none';
     thumb.style.width = box.w + 'px';
     thumb.style.height = box.h + 'px';
     thumb.style.transform = 'translate(' + box.x + 'px,' + box.y + 'px)';
     seg._thumbBox = box;
-    if (fresh || animate === false) {
+    if (animate === false) {
       void thumb.offsetWidth;
       thumb.style.transition = '';
     }
@@ -2268,7 +2283,7 @@
 
   /* ── iOS 式上下回弹：滚到顶/底还继续拉，页面跟手，松手弹回去 ── */
   (function bindBounce() {
-    var MAX = 110, DAMP = 0.42;
+    var MAX = 150, DAMP = 0.55;
     var el = null, startY = 0, active = false, moved = 0;
 
     function currentPage() {
