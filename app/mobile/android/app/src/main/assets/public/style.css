@@ -1248,11 +1248,11 @@ body[data-skin="ios"] .seg-thumb {
 
 /* ── 26.11.20：底栏也做 iOS 那样的滑动高亮块 ── */
 .tabs { position: fixed; }
-.tabs .tab { position: relative; z-index: 1; border-radius: 16px; }
+.tabs .tab { position: relative; z-index: 1; border-radius: 18px; }
 .tab-thumb {
   position: absolute; left: 0; top: 0;
   height: 0; width: 0;
-  border-radius: 16px;
+  border-radius: 18px;
   background: var(--accent-soft);
   pointer-events: none;
   z-index: 0;
@@ -1265,6 +1265,10 @@ body[data-skin="ios"] .seg-thumb {
 }
 .tab-thumb.on { opacity: 1; }
 .tabs .tab.active { background: transparent !important; }
-body[data-nav="float"] .tab-thumb { border-radius: 18px; background: var(--accent-soft); }
+body[data-nav="float"] .tab-thumb { border-radius: 20px; background: var(--accent-soft); }
 [data-theme="dark"] .tab-thumb { background: var(--accent-soft); }
 @media (prefers-reduced-motion: reduce) { .tab-thumb { transition: none; } }
+
+/* 26.11.24：上下回弹交给脚本，关掉浏览器自带的边缘效果，避免双重反馈 */
+html, body { overscroll-behavior-y: none; }
+.page { will-change: transform; }

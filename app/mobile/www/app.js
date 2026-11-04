@@ -2187,9 +2187,9 @@
     }
     var tr = tabs.getBoundingClientRect();
     var ar = active.getBoundingClientRect();
-    thumb.style.width = (active.offsetWidth - 4) + 'px';
-    thumb.style.height = (active.offsetHeight - 6) + 'px';
-    thumb.style.transform = 'translate(' + (ar.left - tr.left + 2) + 'px,' + (ar.top - tr.top + 3) + 'px)';
+    thumb.style.width = active.offsetWidth + 'px';
+    thumb.style.height = active.offsetHeight + 'px';
+    thumb.style.transform = 'translate(' + (ar.left - tr.left) + 'px,' + (ar.top - tr.top) + 'px)';
     thumb.classList.add('on');
     if (animate === false) {
       thumb.style.transition = 'none';
@@ -2220,20 +2220,29 @@
       return;
     }
     if (getComputedStyle(seg).position === 'static') seg.style.position = 'relative';
+    var sr = seg.getBoundingClientRect();
+    var ar = active.getBoundingClientRect();
+    var box = { x: ar.left - sr.left, y: ar.top - sr.top, w: ar.width, h: ar.height };
+    var prev = seg._thumbBox;
     var fresh = false;
     if (!thumb) {
       thumb = document.createElement('i');
       thumb.className = 'seg-thumb';
       thumb.style.transition = 'none';
+      // 上一次的位置还在（比如按钮被整块重绘过）：先停在那里，再滑过去，
+      // 这样「命令分组」「多队伍切换」这种每次重建的控件也有平移效果
+      var from = (animate !== false && prev) ? prev : box;
+      thumb.style.width = from.w + 'px';
+      thumb.style.height = from.h + 'px';
+      thumb.style.transform = 'translate(' + from.x + 'px,' + from.y + 'px)';
       seg.insertBefore(thumb, seg.firstChild);
       fresh = true;
     }
     seg.classList.add('has-thumb');
-    var sr = seg.getBoundingClientRect();
-    var ar = active.getBoundingClientRect();
-    thumb.style.width = ar.width + 'px';
-    thumb.style.height = ar.height + 'px';
-    thumb.style.transform = 'translate(' + (ar.left - sr.left) + 'px,' + (ar.top - sr.top) + 'px)';
+    thumb.style.width = box.w + 'px';
+    thumb.style.height = box.h + 'px';
+    thumb.style.transform = 'translate(' + box.x + 'px,' + box.y + 'px)';
+    seg._thumbBox = box;
     if (fresh || animate === false) {
       void thumb.offsetWidth;
       thumb.style.transition = '';
@@ -2256,6 +2265,59 @@
       syncSegs(animate !== false);
     });
   }
+
+  /* ── iOS 式上下回弹：滚到顶/底还继续拉，页面跟手，松手弹回去 ── */
+  (function bindBounce() {
+    var MAX = 110, DAMP = 0.42;
+    var el = null, startY = 0, active = false, moved = 0;
+
+    function currentPage() {
+      var ps = document.querySelectorAll('.page');
+      for (var i = 0; i < ps.length; i++) if (!ps[i].classList.contains('hidden')) return ps[i];
+      return null;
+    }
+    function atTop() { return (window.scrollY || document.documentElement.scrollTop || 0) <= 0; }
+    function atBottom() { return (window.scrollY || 0) + window.innerHeight >= document.documentElement.scrollHeight - 2; }
+    function skip(t) { return !!(t && t.closest && t.closest('.modal, .chat-list, .mc-console, textarea, .tabs, .seg')); }
+
+    document.addEventListener('touchstart', function (e) {
+      if (e.touches.length !== 1 || skip(e.target)) { el = null; return; }
+      el = currentPage();
+      if (!el) return;
+      startY = e.touches[0].clientY;
+      active = false;
+      moved = 0;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', function (e) {
+      if (!el || e.touches.length !== 1) return;
+      var dy = e.touches[0].clientY - startY;
+      if (!active) {
+        if (dy > 0 && atTop()) active = true;
+        else if (dy < 0 && atBottom()) active = true;
+        else if (Math.abs(dy) > 8) { el = null; return; }
+        else return;
+        el.style.transition = 'none';
+      }
+      moved = Math.min(MAX, Math.abs(dy)) * DAMP * (dy > 0 ? 1 : -1);
+      el.style.transform = 'translate3d(0,' + moved.toFixed(1) + 'px,0)';
+      if (e.cancelable) e.preventDefault();
+    }, { passive: false });
+
+    function release() {
+      if (!el) return;
+      var node = el;
+      el = null; active = false;
+      node.style.transition = 'transform .45s cubic-bezier(.22,.61,.36,1)';
+      node.style.transform = 'translate3d(0,0,0)';
+      setTimeout(function () {
+        node.style.transition = '';
+        node.style.transform = '';
+      }, 470);
+    }
+    document.addEventListener('touchend', release);
+    document.addEventListener('touchcancel', release);
+  })();
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
