@@ -1212,7 +1212,7 @@
     }).join('') || '<p class="empty">队伍里只有你</p>';
     var tid = esc(team.id || '');
     var chatOn = team.chatOn !== false;
-    var acts = '<div class="seg" style="margin-top:10px">' +
+    var acts = '<div class="action-grid" style="margin-top:10px">' +
       (isLeader ? '<button class="seg-btn" data-tact="invite" data-tid="' + tid + '">邀请</button>' : '') +
       (isLeader ? '<button class="seg-btn" data-tact="setting" data-targ="chat:' + (chatOn ? 'off' : 'on') + '" data-tid="' + tid + '">' +
         (chatOn ? '关队伍聊天' : '开队伍聊天') + '</button>' : '') +

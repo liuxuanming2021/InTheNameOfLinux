@@ -1114,3 +1114,103 @@ body[data-skin="miuix"] .switch[aria-checked="true"] { background: var(--accent)
 body[data-skin="ios"] .seg, body[data-skin="miuix"] .seg { overflow: hidden; }
 .card > .seg, .card .seg { max-width: 100%; }
 .chat-head { margin-left: 0 !important; margin-right: 0 !important; }
+
+
+/* ── 26.11.19：分段控件改成 iOS 16/17 那种「灰底 + 白色滑块」 ── */
+.seg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 3px;
+  background: var(--chip);
+  border: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.seg > *, .seg > .btn, .seg > .seg-btn {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  transition: background .18s ease, color .18s ease, box-shadow .18s ease;
+}
+.seg > .active, .seg > button.active {
+  background: var(--card);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: 0 1px 1px rgba(15, 23, 42, 0.04), 0 3px 8px rgba(15, 23, 42, 0.10);
+}
+.seg > *:active { background: var(--bg-soft); }
+
+/* iOS 皮肤：更像 iOS 16/17 的分段控件 */
+body[data-skin="ios"] .seg {
+  background: rgba(120, 128, 145, 0.16);
+  border-radius: 11px;
+  padding: 2px;
+  gap: 0;
+}
+body[data-skin="ios"] .seg > *,
+body[data-skin="ios"] .seg > .btn,
+body[data-skin="ios"] .seg > .seg-btn {
+  border-radius: 9px;
+  padding: 7px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  background: transparent;
+  box-shadow: none;
+}
+body[data-skin="ios"] .seg > .active,
+body[data-skin="ios"] .seg > button.active {
+  background: var(--card);
+  color: var(--text);
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.12), 0 1px 1px rgba(15, 23, 42, 0.06);
+}
+[data-theme="dark"] body[data-skin="ios"] .seg { background: rgba(255, 255, 255, 0.10); }
+[data-theme="dark"] body[data-skin="ios"] .seg > .active,
+[data-theme="dark"] body[data-skin="ios"] .seg > button.active { background: rgba(255, 255, 255, 0.16); }
+
+/* 队伍里的六个动作：不再挤成一条，用等分小按钮 */
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.action-grid.action-grid > .seg-btn,
+.action-grid.action-grid > .btn,
+body[data-skin="ios"] .action-grid .seg-btn,
+body[data-skin="miuix"] .action-grid .seg-btn,
+body[data-skin="ios"] .action-grid .btn,
+body[data-skin="miuix"] .action-grid .btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%;
+  padding: 11px 6px;
+  border: 0;
+  border-radius: 11px;
+  background: var(--chip);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: none;
+}
+.action-grid.action-grid > .seg-btn:active,
+.action-grid.action-grid > .btn:active,
+body[data-skin="ios"] .action-grid .seg-btn:active,
+body[data-skin="miuix"] .action-grid .seg-btn:active { background: var(--accent-soft); color: var(--accent); }
+.action-grid > :only-child { grid-column: 1 / -1; }
