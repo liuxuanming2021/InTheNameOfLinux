@@ -994,6 +994,11 @@
     renderChatChannels();
     if (ch === 'manage') {
       loadTeam();
+      // 队伍页不跟随聊天滚动：切过来时直接把页面拉回顶部，别停在公屏的末尾
+      var backTop = function () { window.scrollTo(0, 0); };
+      backTop();
+      setTimeout(backTop, 60);
+      setTimeout(backTop, 240);
     } else {
       renderChat();
       loadChat();
