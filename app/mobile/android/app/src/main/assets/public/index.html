@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#f4f6fa">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css?v=71">
+  <link rel="stylesheet" href="style.css?v=75">
 </head>
 <body>
 
@@ -57,7 +57,9 @@
 
 
 <!-- 主界面 -->
-<div id="app" class="hidden">
+<div id="msg-pop" class="msg-pop"><div class="msg-pop-mark">💬</div><div class="msg-pop-body"><div class="msg-pop-name" id="msg-pop-name"></div><div class="msg-pop-text" id="msg-pop-text"></div></div></div>
+
+  <div id="app" class="hidden">
   <header class="topbar">
     <div>
       <h1 id="page-title">我的数据</h1>
@@ -345,6 +347,13 @@
           </div>
           <button id="sw-theme" class="switch" role="switch" aria-checked="false"></button>
         </div>
+        <div class="switch-row">
+          <div>
+            <div style="font-weight:600">消息弹窗提醒</div>
+            <div class="hint">收到别人消息时顶部弹一条，1.5 秒自动收</div>
+          </div>
+          <button id="sw-notify" class="switch" role="switch" aria-checked="true"><i></i></button>
+        </div>
         <button class="set-row" id="btn-theme" style="border-bottom:0">
           <div>
             <div style="font-weight:600">主题</div>
@@ -395,10 +404,10 @@
         <div class="card-title"><h2>关于软件</h2></div>
         <div class="kv">
           <span>软件名称</span><b>Nalxer App</b>
-          <span>版本</span><b>26.11.25</b>
+          <span>版本</span><b>26.11.26</b>
           <span>作者</span><b>Linux582021</b>
           <span>官网</span><b>linux.nalxer.top</b>
-          <span>配套服务端</span><b>NalxerApp 26.11.25</b>
+          <span>配套服务端</span><b>NalxerApp 26.11.26</b>
         </div>
         <p class="hint" style="margin:10px 2px 0">数据来自服务器上的 InTheNameOfLinux 与 Linux 系插件；App 只是把这些数据搬到手机上，不改动任何存档。</p>
       </div>
@@ -406,7 +415,7 @@
       <button id="btn-logout" class="btn btn-block" style="margin-bottom:8px">退出登录</button>
 
       <div class="about-foot">
-        <span>Nalxer App 26.11.25</span>
+        <span>Nalxer App 26.11.26</span>
         <span class="dot">·</span>
         <span>作者 Linux582021</span>
       </div>
@@ -515,6 +524,6 @@
 
 <div id="fatal" class="hidden"></div>
 <div id="toast" class="toast hidden"></div>
-<script src="app.js?v=71"></script>
+<script src="app.js?v=75"></script>
 </body>
 </html>

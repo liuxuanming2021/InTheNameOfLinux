@@ -1272,3 +1272,44 @@ body[data-nav="float"] .tab-thumb { border-radius: 20px; background: var(--accen
 /* 26.11.24：上下回弹交给脚本，关掉浏览器自带的边缘效果，避免双重反馈 */
 html, body { overscroll-behavior-y: none; }
 .page { will-change: transform; }
+
+/* 消息气泡入场：只有新到的消息带 .fresh */
+@keyframes bubbleInUp {
+  from { opacity: 0; transform: translateY(8px) scale(.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes bubbleInSide {
+  from { opacity: 0; transform: translateX(-10px) scale(.985); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+.chat-list .msg.fresh .bubble { animation: bubbleInUp .26s cubic-bezier(.22,.61,.36,1) both; }
+.chat-list .msg.fresh:not(.mine) .bubble { animation-name: bubbleInSide; }
+.chat-list .msg.fresh .meta { animation: bubbleInUp .26s cubic-bezier(.22,.61,.36,1) both; }
+
+/* 顶部消息弹窗（1.5 秒） */
+.msg-pop {
+  position: fixed; left: 12px; right: 12px; top: 10px; z-index: 90;
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 13px; border-radius: 16px;
+  background: var(--card); border: 1px solid var(--card-b);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.18);
+  transform: translateY(-130%); opacity: 0;
+  transition: transform .32s cubic-bezier(.22,.61,.36,1), opacity .22s ease;
+  pointer-events: none;
+}
+.msg-pop.show { transform: translateY(0); opacity: 1; }
+.msg-pop-mark {
+  width: 34px; height: 34px; border-radius: 11px; flex: 0 0 auto;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent-soft); font-size: 17px;
+}
+.msg-pop-body { min-width: 0; }
+.msg-pop-name { font-size: 12.5px; color: var(--muted); margin-bottom: 2px; }
+.msg-pop-text {
+  font-size: 14px; font-weight: 600; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* 底栏高亮块：圆角跟导航栏本身的曲率走，不再用整颗胶囊 */
+.tabs .tab-thumb { border-radius: 18px; }
+body[data-nav="float"] .tab-thumb { border-radius: 22px; }

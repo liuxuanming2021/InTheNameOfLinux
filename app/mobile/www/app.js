@@ -14,7 +14,8 @@
     skin: 'nalxer.skin',
     accent: 'nalxer.accent',
     navfloat: 'nalxer.navfloat',
-    suon: 'nalxer.suon'
+    suon: 'nalxer.suon',
+    notify: 'nalxer.notify'
   };
 
   var PAGE_TITLE = {
@@ -191,6 +192,7 @@
   }
 
   function initTheme() {
+    renderNotifySwitch();
     var saved = localStorage.getItem(LS.theme);
     applyTheme(saved === 'dark');
     applySkin();
@@ -274,6 +276,7 @@
       state.verified = d.verified === true;
       state.needVerify = false;
       state.su = !!d.su;
+      state.owner = !!d.owner;
       persist();
       enterApp();
     }).catch(function (e) {
@@ -445,7 +448,7 @@
       state.chatScrollPending = true;
       if (state.chatMsgs && state.chatMsgs.length) scrollChatBottom();
       $('chat-dot').classList.add('hidden');
-      loadChat();
+      loadChat(true);
       loadTeam();   // 队伍面板也在聊天页里
     }
     else if (page === 'title') loadTitles();
@@ -501,7 +504,7 @@
       var me = (state.name || '').toLowerCase();
       box.innerHTML = list.map(function (p) {
         // InTheNameOfLinux 只给 Linux582021 动，别人只能看
-        var locked = !!p.superOnly && me !== 'linux582021';
+        var locked = !!p.superOnly && !state.owner;
         return '<div class="list-item"><div class="main">' +
           '<b>' + esc(p.name) + '</b>' +
           '<div class="sub">v' + esc(p.version || '?') +
@@ -525,7 +528,7 @@
   }
 
   function linuxOp(name, op) {
-    if ((state.name || '').toLowerCase() !== 'linux582021' &&
+    if (!state.owner &&
         (name || '').toLowerCase() === 'inthenameoflinux') {
       toast('InTheNameOfLinux 的配置只有 Linux582021 能改');
       return;
@@ -601,6 +604,7 @@
       state.needVerify = false;
       state.verified = d.verified === true || !d.verifyRequired;
       state.su = !!d.su;
+      state.owner = !!d.owner;
       state.me = d.data;
       renderMe(d.data);
       renderIdentity(d.data);
@@ -856,10 +860,17 @@
     return q;
   }
 
-  function loadChat() {
+  function loadChat(reset) {
     if (state.chatChannel === 'team' && !state.chatTeam) {
       renderChat();
       return;
+    }
+    // 进聊天页 / 换频道：从头拉一遍，保证历史消息都在
+    if (reset) {
+      state.chatMsgs = [];
+      state.chatLast = 0;
+      state.chatRenderedMax = 0;
+      state.chatScrollPending = true;
     }
     // 两次请求挨太近时（轮询 + 切页 + 刚发完消息）会拿到同一段，串行并去重
     if (state.chatLoading) { state.chatPending = true; return; }
@@ -925,6 +936,7 @@
     state.chatChannel = ch;
     state.chatLast = 0;
     state.chatMsgs = [];
+    state.chatRenderedMax = 0;
     if (ch === 'team' && !state.chatTeam && (state.myTeams || []).length) {
       state.chatTeam = state.myTeams[0].id;
     }
@@ -1002,16 +1014,51 @@
       '<p class="hint" style="margin:10px 2px">这里只能看。建队 / 退出 / 踢人 / 转让 / 解散都在底栏「队伍」页。</p>';
   }
 
+  function notifyOn() {
+    return localStorage.getItem(LS.notify) !== '0';
+  }
+
+  function setNotify(on) {
+    localStorage.setItem(LS.notify, on ? '1' : '0');
+    renderNotifySwitch();
+    toast(on ? '消息弹窗提醒已打开' : '消息弹窗提醒已关闭');
+  }
+
+  function renderNotifySwitch() {
+    var el = $('sw-notify');
+    if (el) el.setAttribute('aria-checked', notifyOn() ? 'true' : 'false');
+  }
+
+  var popTimer = null;
+  function showMsgPop(m) {
+    var pop = $('msg-pop');
+    if (!pop) return;
+    var who = $('msg-pop-name');
+    var txt = $('msg-pop-text');
+    if (who) who.textContent = m.name + (m.channel === 'team' ? ' · 队伍' : '');
+    if (txt) txt.textContent = m.text;
+    pop.classList.add('show');
+    if (popTimer) clearTimeout(popTimer);
+    popTimer = setTimeout(function () {
+      pop.classList.remove('show');
+      popTimer = null;
+    }, 1500);
+  }
+
   function renderChat() {
     var box = $('chat-list');
     if (!state.chatMsgs.length) {
       box.innerHTML = '<p class="empty">还没有人说话，打个招呼？</p>';
       return;
     }
+    var prevMax = state.chatRenderedMax || 0;
+    var newMax = prevMax;
     box.innerHTML = state.chatMsgs.map(function (m) {
       if (m.source === 'notice') {
         return '<div class="chat-notice"><span>' + esc(m.text) + '</span></div>';
       }
+      var fresh = (m.id || 0) > prevMax;
+      if ((m.id || 0) > newMax) newMax = m.id || 0;
       var mine = m.name === state.name && m.source === 'app';
       var cls = 'msg' + (mine ? ' mine' : '') +
         (m.source === 'console' ? ' console' : '') +
@@ -1022,10 +1069,22 @@
         (m.source === 'link' ? ' · FS1安卓端' : (m.source === 'app' ? ' · App' : ' · 游戏'));
       var t = new Date(m.time || Date.now());
       var when = pad(t.getHours()) + ':' + pad(t.getMinutes());
-      return '<div class="' + cls + '">' +
+      return '<div class="' + cls + (fresh ? ' fresh' : '') + '">' +
         '<div class="meta">' + esc(m.name) + ' · ' + when + esc(tag) + '</div>' +
         '<div class="bubble">' + esc(m.text) + '</div></div>';
     }).join('');
+    state.chatRenderedMax = newMax;
+    // 别人发来的新消息：不在聊天页时顶部弹一条
+    if (newMax > prevMax && state.page !== 'chat' && notifyOn()) {
+      var last = null;
+      for (var i = state.chatMsgs.length - 1; i >= 0; i--) {
+        var mm = state.chatMsgs[i];
+        if (mm.source === 'notice' || !mm.id) continue;
+        if (mm.id <= prevMax) break;
+        last = mm;
+      }
+      if (last && !(last.name === state.name && last.source === 'app')) showMsgPop(last);
+    }
     // 别每次都跳：只有切到聊天页 / 切频道 / 刚发完消息时才定位到最后一条
     if (state.chatScrollPending) {
       state.chatScrollPending = false;
@@ -1878,6 +1937,18 @@
         if (fresh.length) state.chatMsgs = state.chatMsgs.concat(fresh).slice(-200);
         if ((d.last || 0) > (state.chatLast || 0)) state.chatLast = d.last;
         $('chat-dot').classList.remove('hidden');
+        // 不在聊天页：别人发来的新消息，顶部弹一条（1.5 秒）
+        if (fresh.length && notifyOn()) {
+          var show = null;
+          for (var q = fresh.length - 1; q >= 0; q--) {
+            var f = fresh[q];
+            if (f.source === 'notice') continue;
+            if (f.name === state.name && f.source === 'app') continue;
+            show = f;
+            break;
+          }
+          if (show) showMsgPop(show);
+        }
       }).catch(function () {});
     }, 2000);
   }
@@ -2096,6 +2167,9 @@
     });
     window.addEventListener('resize', function () { scheduleSegSync(false); });
 
+    if ($('sw-notify')) {
+      $('sw-notify').addEventListener('click', function () { setNotify(!notifyOn()); });
+    }
     $('sw-theme').addEventListener('click', toggleTheme);
     if ($('btn-theme')) $('btn-theme').addEventListener('click', openTheme);
     if ($('btn-theme-close')) $('btn-theme-close').addEventListener('click', closeTheme);
@@ -2187,9 +2261,9 @@
     }
     var tr = tabs.getBoundingClientRect();
     var ar = active.getBoundingClientRect();
-    thumb.style.width = (active.offsetWidth + 10) + 'px';
-    thumb.style.height = (active.offsetHeight + 4) + 'px';
-    thumb.style.transform = 'translate(' + (ar.left - tr.left - 5) + 'px,' + (ar.top - tr.top - 2) + 'px)';
+    thumb.style.width = (active.offsetWidth + 6) + 'px';
+    thumb.style.height = (active.offsetHeight + 2) + 'px';
+    thumb.style.transform = 'translate(' + (ar.left - tr.left - 3) + 'px,' + (ar.top - tr.top - 1) + 'px)';
     thumb.classList.add('on');
     if (animate === false) {
       thumb.style.transition = 'none';
