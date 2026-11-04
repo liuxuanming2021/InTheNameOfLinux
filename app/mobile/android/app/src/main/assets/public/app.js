@@ -277,6 +277,7 @@
       state.needVerify = false;
       state.su = !!d.su;
       state.owner = !!d.owner;
+      applyOwnerPanels();
       persist();
       enterApp();
     }).catch(function (e) {
@@ -325,16 +326,24 @@
     if (!silent) toast('已退出登录');
   }
 
+  /** 设置页里那块「管理」只对服主显示；普通管理员连入口都看不见。 */
+  function applyOwnerPanels() {
+    var panel = $('admin-panel-card');
+    if (panel) panel.classList.toggle('hidden', !state.owner);
+    var status = $('status-card');
+    if (status) status.classList.toggle('hidden', !state.owner);
+  }
+
   function enterApp() {
     $('login').classList.add('hidden');
     $('app').classList.remove('hidden');
     // 底栏现在只有「管理」一个入口，命令是管理页里的子标签
     show('tab-admin', state.admin);
     $('admin-card').classList.toggle('hidden', !state.admin);
-    $('status-card').classList.toggle('hidden', !state.admin);
-    // 普通玩家连入口都不该看到：Linux 系插件 / 联动状态都在管理员卡片里
-    var panel = $('admin-panel-card');
-    if (panel) panel.classList.toggle('hidden', !state.admin);
+    $('status-card').classList.toggle('hidden', !state.owner);
+    // 设置页的「管理」整块（su 开关 + Linux 系插件 + 联动状态）只给服主看，
+    // 普通管理员只保留底栏「管理」页
+    applyOwnerPanels();
     $('f-server-edit').value = state.server;
     $('set-name').textContent = state.name;
     $('set-server').textContent = state.server.replace(/^https?:\/\//, '');
@@ -605,6 +614,7 @@
       state.verified = d.verified === true || !d.verifyRequired;
       state.su = !!d.su;
       state.owner = !!d.owner;
+      applyOwnerPanels();
       state.me = d.data;
       renderMe(d.data);
       renderIdentity(d.data);
