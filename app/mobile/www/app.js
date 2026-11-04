@@ -1333,8 +1333,19 @@
     });
   }
 
+  /** 只有「公屏 / 队伍频道」这两个聊天视图才需要跟着滚；队伍管理页要留在原地。 */
+  function chatListVisible() {
+    var page = $('page-chat');
+    if (!page || page.classList.contains('hidden')) return false;
+    if ((state.chatChannel || 'world') === 'manage') return false;
+    var list = $('chat-list');
+    return !!(list && !list.classList.contains('hidden'));
+  }
+
   function scrollChatBottom() {
+    if (!chatListVisible()) return;
     var go = function () {
+      if (!chatListVisible()) return;
       var box = $('chat-list');
       if (box) box.scrollTop = box.scrollHeight;
       window.scrollTo(0, Math.max(0, document.body.scrollHeight - window.innerHeight));
