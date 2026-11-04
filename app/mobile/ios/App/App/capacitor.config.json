@@ -11,6 +11,7 @@
 	},
 	"packageClassList": [
 		"HapticsPlugin",
-		"LocalNotificationsPlugin"
+		"LocalNotificationsPlugin",
+		"StatusBarPlugin"
 	]
 }

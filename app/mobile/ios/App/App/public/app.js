@@ -95,12 +95,26 @@
 
   // ── 主题 ─────────────────────────────────────────────
 
+  // 顶部状态栏：浅色主题要「深色字」，深色主题要「浅色字」，否则白字压在浅色顶栏上看不清
+  function syncStatusBar(dark) {
+    var sb = (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) || null;
+    if (!sb) return;
+    try {
+      if (sb.setStyle) sb.setStyle({ style: dark ? 'DARK' : 'LIGHT' }).catch(function () {});
+      if (sb.setBackgroundColor) {
+        // iOS 不支持改背景色（会 reject），这行只对安卓生效
+        sb.setBackgroundColor({ color: dark ? '#0b0f14' : '#f4f6fa' }).catch(function () {});
+      }
+    } catch (e) {}
+  }
+
   function applyTheme(dark) {
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
     var meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.setAttribute('content', dark ? '#0b0f14' : '#f4f6fa');
     var sw = $('sw-theme');
     if (sw) sw.setAttribute('aria-checked', dark ? 'true' : 'false');
+    syncStatusBar(dark);
     if (typeof applySkin === 'function' && localStorage.getItem(LS.skin) !== null) applySkin();
   }
 
@@ -374,6 +388,9 @@
     // 管理 / 命令只有管理员能进
     if ((page === 'cmd' || page === 'admin') && !state.admin) page = 'more';
     var prevPage = state.page;
+    // 每次从别的页面进管理页，都回到「在线」这一项
+    if (page === 'admin' && prevPage !== 'admin' && !state.keepAdminTab) state.adminTab = 'online';
+    state.keepAdminTab = false;
     state.page = page;
 
     Object.keys(PAGE_IDS).forEach(function (p) {
@@ -463,7 +480,7 @@
       loadTeam();   // 队伍面板也在聊天页里
     }
     else if (page === 'title') loadTitles();
-    else if (page === 'admin') setAdminTab(state.adminTab || 'player');
+    else if (page === 'admin') { state.adminTab = 'online'; setAdminTab('online'); }
     else if (page === 'pdetail' && state.detailName) playerDetail(state.detailName, true);
     else if (page === 'more') {
       loadMe();
@@ -1125,6 +1142,38 @@
     } catch (e) {}
   }
 
+
+  // 只有「新到」的消息才提醒：记一个水位，历史消息、回前台补拉、整页刷新都不再重复推
+  function resetNoticeWatermark() {
+    state.notifiedMax = 0;
+    state.notifiedInit = false;
+  }
+
+  function notifyNewest(list) {
+    if (!notifyOn()) return;
+    if (!list || !list.length) return;
+    var maxId = 0;
+    var pick = null;
+    for (var i = 0; i < list.length; i++) {
+      var m = list[i];
+      if (!m || !m.id) continue;
+      if (m.source === 'notice') continue;
+      if (m.name === state.name && m.source === 'app') continue;
+      if (m.id > maxId) { maxId = m.id; pick = m; }
+    }
+    if (!state.notifiedInit) {
+      // 第一次拿到聊天记录：只把水位抬到最新，不提醒
+      var top = 0;
+      for (var k = 0; k < list.length; k++) if (list[k] && list[k].id > top) top = list[k].id;
+      state.notifiedMax = Math.max(state.notifiedMax || 0, top);
+      state.notifiedInit = true;
+      return;
+    }
+    if (!pick || pick.id <= (state.notifiedMax || 0)) return;
+    state.notifiedMax = Math.max(state.notifiedMax || 0, maxId);
+    showMsgPop(pick);
+  }
+
   var popTimer = null;
   function showMsgPop(m) {
     if (!m) return;
@@ -1142,7 +1191,7 @@
     popTimer = setTimeout(function () {
       pop.classList.remove('show');
       popTimer = null;
-    }, 1500);
+    }, 2000);
   }
 
   function renderChat() {
@@ -1174,17 +1223,8 @@
         '<div class="bubble">' + esc(m.text) + '</div></div>';
     }).join('');
     state.chatRenderedMax = newMax;
-    // 别人发来的新消息：不在聊天页时顶部弹一条
-    if (newMax > prevMax && notifyOn() && !state.suppressPop) {
-      var last = null;
-      for (var i = state.chatMsgs.length - 1; i >= 0; i--) {
-        var mm = state.chatMsgs[i];
-        if (mm.source === 'notice' || !mm.id) continue;
-        if (mm.id <= prevMax) break;
-        last = mm;
-      }
-      if (last && !(last.name === state.name && last.source === 'app')) showMsgPop(last);
-    }
+    // 只有真的来了新消息才提醒（历史 / 补拉 / 整页刷新都不重复弹）
+    if (!state.suppressPop) notifyNewest(state.chatMsgs);
     // 别每次都跳：只有切到聊天页 / 切频道 / 刚发完消息时才定位到最后一条
     if (state.chatScrollPending) {
       state.chatScrollPending = false;
@@ -1719,6 +1759,7 @@
   }
 
   function playerDetail(name, silent) {
+    if (!silent) state.detailFrom = state.adminTab || 'online';
     state.detailName = name;
     var seq = (state.detailSeq = (state.detailSeq || 0) + 1);
     api('/api/admin/player?name=' + encodeURIComponent(name)).then(function (r) {
@@ -2028,7 +2069,7 @@
       if (state.chatLoading) return;
       api('/api/chat?since=' + (state.chatLast || 0)).then(function (r) {
         var d = r.data || {};
-        if (d.reset) { state.chatMsgs = []; state.chatLast = 0; }
+        if (d.reset) { state.chatMsgs = []; state.chatLast = 0; resetNoticeWatermark(); }
         var msgs = d.messages || [];
         if (!msgs.length) return;
         var seen = {};
@@ -2037,18 +2078,8 @@
         if (fresh.length) state.chatMsgs = state.chatMsgs.concat(fresh).slice(-200);
         if ((d.last || 0) > (state.chatLast || 0)) state.chatLast = d.last;
         $('chat-dot').classList.remove('hidden');
-        // 不在聊天页：别人发来的新消息，顶部弹一条（1.5 秒）
-        if (fresh.length && notifyOn() && !state.suppressPop) {
-          var show = null;
-          for (var q = fresh.length - 1; q >= 0; q--) {
-            var f = fresh[q];
-            if (f.source === 'notice') continue;
-            if (f.name === state.name && f.source === 'app') continue;
-            show = f;
-            break;
-          }
-          if (show) showMsgPop(show);
-        }
+        // 不在聊天页：只对「新到」的消息弹一条
+        if (!state.suppressPop) notifyNewest(fresh);
       }).catch(function () {});
     }, 2000);
   }
@@ -2104,7 +2135,11 @@
     $('btn-report').addEventListener('click', submitReport);
     $('btn-pdetail-back').addEventListener('click', function () {
       state.detailSeq = (state.detailSeq || 0) + 1;   // 作废还没回来的详情请求
-      setAdminTab(state.lastAdminTab || 'player'); switchPage('admin');
+      var back = state.detailFrom || state.lastAdminTab || 'online';
+      state.adminTab = back;
+      state.keepAdminTab = true;                     // 切回管理页时别再被「默认在线」覆盖
+      switchPage('admin');
+      setAdminTab(back);
     });
     $('btn-su-run').addEventListener('click', runSuConsole);
     $('f-su2').addEventListener('keydown', function (e) { if (e.key === 'Enter') runSuConsole(); });

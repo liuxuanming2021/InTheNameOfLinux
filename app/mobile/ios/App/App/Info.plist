@@ -43,10 +43,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<!-- 状态栏由 Capacitor StatusBar 插件按主题动态控制：浅色主题深色字、深色主题浅色字 -->
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
+	<true/>
 	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleLightContent</string>
+	<string>UIStatusBarStyleDefault</string>
 	<!-- 纯 HTTPS 接口（api.nalxer.top），不涉及自研加密，申报时不用走出口合规材料 -->
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
