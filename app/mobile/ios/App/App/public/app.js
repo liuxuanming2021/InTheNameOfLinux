@@ -15,7 +15,8 @@
     accent: 'nalxer.accent',
     navfloat: 'nalxer.navfloat',
     suon: 'nalxer.suon',
-    notify: 'nalxer.notify'
+    notify: 'nalxer.notify',
+    noticeOut: 'nalxer.notice.out'
   };
 
   var PAGE_TITLE = {
@@ -1029,6 +1030,18 @@
     return localStorage.getItem(LS.notify) !== '0';
   }
 
+  // 软件外提醒（系统通知栏）单独一个开关
+  function notifyOutOn() {
+    return localStorage.getItem(LS.noticeOut) !== '0';
+  }
+
+  function setNotifyOut(on) {
+    localStorage.setItem(LS.noticeOut, on ? '1' : '0');
+    if (on) askNoticePermission();
+    renderNotifySwitch();
+    toast(on ? '软件外提醒（系统通知）已打开' : '软件外提醒已关闭');
+  }
+
   function setNotify(on) {
     localStorage.setItem(LS.notify, on ? '1' : '0');
     if (on) askNoticePermission();
@@ -1039,6 +1052,8 @@
   function renderNotifySwitch() {
     var el = $('sw-notify');
     if (el) el.setAttribute('aria-checked', notifyOn() ? 'true' : 'false');
+    var out = $('sw-notice-out');
+    if (out) out.setAttribute('aria-checked', notifyOutOn() ? 'true' : 'false');
   }
 
   // Capacitor 原生插件（Haptics / LocalNotifications），网页版没有就用 Web API 兜底
@@ -1083,7 +1098,7 @@
   var localSeq = 1;
   function pushSystemNotice(m) {
     var ln = capPlugin('LocalNotifications');
-    if (!ln || !document.hidden) return;
+    if (!ln || !document.hidden || !notifyOutOn()) return;
     var who = m.name + (m.channel === 'team' ? ' · 队伍频道' : ' · 公屏');
     try {
       ln.schedule({
@@ -2252,6 +2267,9 @@
     });
     window.addEventListener('resize', function () { scheduleSegSync(false); });
 
+    if ($('sw-notice-out')) {
+      $('sw-notice-out').addEventListener('click', function () { setNotifyOut(!notifyOutOn()); });
+    }
     if ($('sw-notify')) {
       $('sw-notify').addEventListener('click', function () { setNotify(!notifyOn()); });
     }

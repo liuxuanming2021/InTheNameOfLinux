@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#f4f6fa">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css?v=79">
+  <link rel="stylesheet" href="style.css?v=83">
 </head>
 <body>
 
@@ -349,10 +349,17 @@
         </div>
         <div class="switch-row">
           <div>
-            <div style="font-weight:600">消息弹窗提醒</div>
-            <div class="hint">收到别人消息时顶部弹一条，1.5 秒自动收</div>
+            <div style="font-weight:600">软件内提醒</div>
+            <div class="hint">顶部弹一条 + 提示音 + 振动，1.5 秒自动收</div>
           </div>
           <button id="sw-notify" class="switch" role="switch" aria-checked="true"><i></i></button>
+        </div>
+        <div class="switch-row">
+          <div>
+            <div style="font-weight:600">软件外提醒</div>
+            <div class="hint">退到后台也推一条系统通知，需要通知权限</div>
+          </div>
+          <button id="sw-notice-out" class="switch" role="switch" aria-checked="true"><i></i></button>
         </div>
         <button class="set-row" id="btn-theme" style="border-bottom:0">
           <div>
@@ -524,6 +531,6 @@
 
 <div id="fatal" class="hidden"></div>
 <div id="toast" class="toast hidden"></div>
-<script src="app.js?v=79"></script>
+<script src="app.js?v=83"></script>
 </body>
 </html>

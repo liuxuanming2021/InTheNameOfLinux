@@ -1313,3 +1313,75 @@ html, body { overscroll-behavior-y: none; }
 /* 底栏高亮块：圆角跟导航栏本身的曲率走，不再用整颗胶囊 */
 .tabs .tab-thumb { border-radius: 18px; }
 body[data-nav="float"] .tab-thumb { border-radius: 22px; }
+
+/* ── Miuix：控件统一大圆角（之前被「合体按钮」的直角规则吃掉了）── */
+body[data-skin="miuix"] .seg {
+  border-radius: 999px !important;
+  border: 0;
+  padding: 3px;
+  background: var(--chip);
+  overflow: hidden;
+}
+body[data-skin="miuix"] .seg > *,
+body[data-skin="miuix"] .seg > .btn,
+body[data-skin="miuix"] .seg > .seg-btn {
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  background: transparent;
+}
+body[data-skin="miuix"] .seg > .active,
+body[data-skin="miuix"] .seg > button.active {
+  background: var(--accent-soft) !important;
+  color: var(--accent) !important;
+}
+body[data-skin="miuix"] .seg-thumb {
+  border-radius: 999px !important;
+  background: var(--bg-soft) !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .10) !important;
+}
+body[data-skin="miuix"] .card { border-radius: 26px; }
+body[data-skin="miuix"] .modal-card { border-radius: 28px; }
+body[data-skin="miuix"] .list-item,
+body[data-skin="miuix"] .stat,
+body[data-skin="miuix"] .staff-group { border-radius: 20px; }
+body[data-skin="miuix"] .btn,
+body[data-skin="miuix"] .btn-mini,
+body[data-skin="miuix"] .switch,
+body[data-skin="miuix"] .chip { border-radius: 999px; }
+body[data-skin="miuix"] .field input,
+body[data-skin="miuix"] .search-row input,
+body[data-skin="miuix"] .chat-input-bar input,
+body[data-skin="miuix"] #f-server-edit,
+body[data-skin="miuix"] #f-report-name,
+body[data-skin="miuix"] #f-report-why,
+body[data-skin="miuix"] #f-reason,
+body[data-skin="miuix"] #f-note { border-radius: 16px; }
+body[data-skin="miuix"] .chat-list .msg .bubble { border-radius: 18px; }
+body[data-skin="miuix"] .icon-btn { border-radius: 999px; }
+body[data-skin="miuix"] .field input,
+body[data-skin="miuix"] .search-row input,
+body[data-skin="miuix"] .chat-input-bar input,
+body[data-skin="miuix"] #f-server-edit,
+body[data-skin="miuix"] #f-report-name,
+body[data-skin="miuix"] #f-report-why,
+body[data-skin="miuix"] #f-reason,
+body[data-skin="miuix"] #f-note,
+body[data-skin="miuix"] #f-cmd,
+body[data-skin="miuix"] #f-team-name {
+  border: 1px solid var(--card-b) !important;
+  background: var(--bg-soft) !important;
+  border-radius: 16px !important;
+}
+body[data-skin="miuix"] .switch { border-radius: 999px; }
+body[data-skin="miuix"] .field input,
+body[data-skin="miuix"] .search-row input,
+body[data-skin="miuix"] .chat-input-bar input,
+body[data-skin="miuix"] #f-server-edit,
+body[data-skin="miuix"] #f-report-name,
+body[data-skin="miuix"] #f-report-why,
+body[data-skin="miuix"] #f-reason,
+body[data-skin="miuix"] #f-note,
+body[data-skin="miuix"] #f-cmd,
+body[data-skin="miuix"] #f-team-name {
+  border-color: rgba(15, 23, 42, 0.13) !important;
+}
