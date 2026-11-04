@@ -379,6 +379,8 @@
       requestAnimationFrame(function () { tb.classList.remove('swap'); });
     }
     playPageIn(page, prevPage);
+    placeTabThumb(true);
+    setTimeout(function () { placeTabThumb(false); }, 260);
     measureTopbar();
     window.scrollTo(0, 0);
 
@@ -462,8 +464,9 @@
     if (!el) return;
     el.textContent = text;
     var n = String(text).length;
-    el.classList.toggle('long', n >= 8 && n < 11);
-    el.classList.toggle('xlong', n >= 11);
+    el.classList.toggle('long', n >= 8 && n < 10);
+    el.classList.toggle('xlong', n >= 10 && n < 13);
+    el.classList.toggle('tiny', n >= 13);
   }
 
 
@@ -2139,6 +2142,8 @@
     segObs.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
     setTimeout(function () { syncSegs(false); }, 60);
     setTimeout(function () { syncSegs(false); }, 600);
+    setTimeout(function () { placeTabThumb(false); }, 80);
+    window.addEventListener('resize', function () { placeTabThumb(false); });
 
     if (state.token) {
       enterApp();
@@ -2151,6 +2156,34 @@
       var at = qs.get('tab');
       // su / 命令子标签要等服务端回 su 才认，先记下来，loadMe 之后应用
       if (at && state.admin) state.pendingAdminTab = at;
+    }
+  }
+
+  /* ── 底栏：高亮块平移（iOS 那种） ─────────────────────────── */
+  function placeTabThumb(animate) {
+    var tabs = document.querySelector('.tabs');
+    if (!tabs) return;
+    var active = tabs.querySelector('.tab.active');
+    var thumb = tabs.querySelector('.tab-thumb');
+    if (!active) { if (thumb) thumb.classList.remove('on'); return; }
+    if (!thumb) {
+      thumb = document.createElement('i');
+      thumb.className = 'tab-thumb';
+      thumb.style.transition = 'none';
+      tabs.insertBefore(thumb, tabs.firstChild);
+      void thumb.offsetWidth;
+      thumb.style.transition = '';
+    }
+    var tr = tabs.getBoundingClientRect();
+    var ar = active.getBoundingClientRect();
+    thumb.style.width = (active.offsetWidth - 12) + 'px';
+    thumb.style.height = (active.offsetHeight - 12) + 'px';
+    thumb.style.transform = 'translate(' + (ar.left - tr.left + 6) + 'px,' + (ar.top - tr.top + 6) + 'px)';
+    thumb.classList.add('on');
+    if (animate === false) {
+      thumb.style.transition = 'none';
+      void thumb.offsetWidth;
+      thumb.style.transition = '';
     }
   }
 
