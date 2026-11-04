@@ -166,7 +166,7 @@
 
 <section class="page-hero">
   <div class="container">
-    <span class="plug-hero-ver">26.11.30 · Android / iOS</span>
+    <span class="plug-hero-ver">26.11.31 · Android / iOS</span>
     <h1>Nalxer App 帮助中心</h1>
     <p>安装、配置、接口、App 用法，一页看完</p>
   </div>
@@ -199,7 +199,7 @@
 
 <section class="help-section" id="install">
     <h2><span class="num">1</span>安装插件</h2>
-    <p><b>两个 jar</b>：<b>NalxerApp.jar</b> 硬依赖 <b>InTheNameOfLinux.jar</b> —— 26.11.30 起 App 的服务端是直接调 ITNOL 的 API，老版本 ITNOL 缺这些方法会报「服务器没有 ITNOL 插件」，所以两个必须一起换、版本对齐。AuthMe、经济插件、LinuxTeam、LinuxTitle 这些是接上就用，没接就少一块数据，不会报错。</p>
+    <p><b>两个 jar</b>：<b>NalxerApp.jar</b> 硬依赖 <b>InTheNameOfLinux.jar</b> —— 26.11.31 起 App 的服务端是直接调 ITNOL 的 API，老版本 ITNOL 缺这些方法会报「服务器没有 ITNOL 插件」，所以两个必须一起换、版本对齐。AuthMe、经济插件、LinuxTeam、LinuxTitle 这些是接上就用，没接就少一块数据，不会报错。</p>
 
     <ol class="steps">
       <li>把 <code>NalxerApp.jar</code> 放进服务器的 <code>plugins/</code> 目录。服务端用 Paper 或 Spigot 1.12.2，Java 8。</li>
@@ -210,7 +210,7 @@
 
     <p>正常启动时控制台会依次打出这几行（装了什么就出现什么，没装的那一项不会打）：</p>
 
-    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v 26.11.30</div><div>[NalxerApp] Enabling NalxerApp v 26.11.30</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍（信息 / 建队 / 加入 / 退出 / 踢人 / 转让）</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔（列表 / 佩戴）</div><div>[NalxerApp] [联动] 已接上 ITNOL 禁言判定（App 里发聊天前会先查）</div><div>[NalxerApp] [联动] 已接上 ITNOL 身份（只用来读身份，26.11.30 起不再要求 App 里二次验证）</div><div>[NalxerApp] [联动] 已接上 ITNOL 举报（列表 / 提交 / 接受 / 驳回）</div><div>[NalxerApp] [联动] 已接上 FakePlayerPlugin 假人（列表 / 召唤 / 移除）</div><div>[NalxerApp] [联动] 已接上 XlandCore 身份（服主 / 副服主 / 市长 / 协管）</div><div>[NalxerApp] [联动] 已接上 NalxerLink 1.24.0 —— 安卓客户端发的消息会进公屏，标「FS1安卓端」</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49282/api/health（明文直连，手机里填 http://服务器IP:49282 就能用）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是，队伍：是，头衔：是）</div><div>[NalxerApp] 聊天通道已开启 —— 游戏里说话会同步到 App，App 发的消息带 [LinuxAPP]  前缀广播进游戏</div><div>[NalxerApp] 二次身份验证：关闭（26.11.30 起整套去掉，登录成功直接进主界面）</div><div>[NalxerApp] 命令控制台 / su 名单：[Linux582021, fs1]（不在名单里的管理员只能封禁 / 惩罚 / 处理举报 / 管假人）</div></div>
+    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v 26.11.31</div><div>[NalxerApp] Enabling NalxerApp v 26.11.31</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍（信息 / 建队 / 加入 / 退出 / 踢人 / 转让）</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔（列表 / 佩戴）</div><div>[NalxerApp] [联动] 已接上 ITNOL 禁言判定（App 里发聊天前会先查）</div><div>[NalxerApp] [联动] 已接上 ITNOL 身份（只用来读身份，26.11.31 起不再要求 App 里二次验证）</div><div>[NalxerApp] [联动] 已接上 ITNOL 举报（列表 / 提交 / 接受 / 驳回）</div><div>[NalxerApp] [联动] 已接上 FakePlayerPlugin 假人（列表 / 召唤 / 移除）</div><div>[NalxerApp] [联动] 已接上 XlandCore 身份（服主 / 副服主 / 市长 / 协管）</div><div>[NalxerApp] [联动] 已接上 NalxerLink 1.24.0 —— 安卓客户端发的消息会进公屏，标「FS1安卓端」</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49282/api/health（明文直连，手机里填 http://服务器IP:49282 就能用）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是，队伍：是，头衔：是）</div><div>[NalxerApp] 聊天通道已开启 —— 游戏里说话会同步到 App，App 发的消息带 [LinuxAPP]  前缀广播进游戏</div><div>[NalxerApp] 二次身份验证：关闭（26.11.31 起整套去掉，登录成功直接进主界面）</div><div>[NalxerApp] 命令控制台 / su 名单：[Linux582021, fs1]（不在名单里的管理员只能封禁 / 惩罚 / 处理举报 / 管假人）</div></div>
 
     <p>哪一行结尾写的是「未检测到」，就是对应的插件没装、没启用或者版本不认识。那一项在 App 里会显示成 <code>—</code>，其余功能照常，不用为了一行日志去折腾服务器。</p>
 
@@ -498,8 +498,8 @@
           <tr><th>平台</th><th>文件</th><th>怎么装</th></tr>
         </thead>
         <tbody>
-          <tr><td>安卓</td><td><code>Nalxer-26.11.30.apk</code>（约 2.9 MB）</td><td>传到手机点开装；系统提示「未知来源」时给浏览器一次安装权限</td></tr>
-          <tr><td>iOS</td><td><code>Nalxer-26.11.30-unsigned.ipa</code>（约 560 KB）</td><td>电脑装 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>，插上 iPhone，把 ipa 拖进去、填 Apple ID、点 Start</td></tr>
+          <tr><td>安卓</td><td><code>Nalxer-26.11.31.apk</code>（约 2.9 MB）</td><td>传到手机点开装；系统提示「未知来源」时给浏览器一次安装权限</td></tr>
+          <tr><td>iOS</td><td><code>Nalxer-26.11.31-unsigned.ipa</code>（约 560 KB）</td><td>电脑装 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>，插上 iPhone，把 ipa 拖进去、填 Apple ID、点 Start</td></tr>
         </tbody>
       </table>
     </div>
@@ -630,7 +630,7 @@
   </section>
 
 <section class="help-section" id="whatsnew">
-    <h2><span class="num">7</span>26.11.30 更新说明</h2>
+    <h2><span class="num">7</span>26.11.31 更新说明</h2>
     <p>这一版加了主题（风格 + 颜色），把聊天的实时刷新彻底修好，并让 App 里做的操作在执行人一栏写成「APP端（用户名）」。</p>
     <ul>
       <li><b>动效</b>：开屏动画、切页滑入（按底栏顺序决定方向）、顶栏标题淡入、底栏选中态过渡、弹窗淡入缩放；系统开了「减少动态效果」就自动关掉。</li>
@@ -666,7 +666,7 @@
   </section>
     
         <section class="help-section" id="whatsnew22">
-      <h2>26.11.30 队伍和聊天合成「社交」</h2>
+      <h2>26.11.31 队伍和聊天合成「社交」</h2>
       <ul class="news">
         <li>底栏变成：我的 / 社交 / 头衔 / 管理 / 更多，队伍不再是单独一页。</li>
         <li>社交页顶部的切换控件是三段：公屏 / 队伍频道 / 队伍；最后一段就是队伍管理（我的队伍、建队、服务器上的队伍）。</li>
@@ -674,7 +674,7 @@
       </ul>
     </section>
                 <section class="help-section" id="whatsnew28">
-      <h2>26.11.30 消息提醒：提示音 + 振动 + 系统通知</h2>
+      <h2>26.11.31 消息提醒：提示音 + 振动 + 系统通知</h2>
       <ul class="news">
         <li>以前只有顶部弹窗，现在同时响提示音、振动一下（走系统原生的振动与音频，网页版退回浏览器能力）。</li>
         <li>停在聊天页也会弹，不再只在别的页面弹。</li>
@@ -684,8 +684,17 @@
       </ul>
     </section>
 
-        <section class="help-section" id="whatsnew30">
-      <h2>26.11.30 队伍申请与队长审批</h2>
+            <section class="help-section" id="whatsnew31">
+      <h2>26.11.31 队伍频道会跟着开关消失 / 大数字带单位</h2>
+      <ul class="news">
+        <li>队长把某个队的<b>队伍聊天</b>关掉后，聊天页顶部的「队伍频道」如果没别的队能用，整段就不显示了；正在队伍频道的话会自己回到公屏。</li>
+        <li>队伍频道里多个队的切换条，也会把关了聊天的队过滤掉。</li>
+        <li>所有开关（深色模式、软件内/外提醒、队伍三个开关）都加了滑动过渡，点下去是滑过去的，不是瞬间跳。</li>
+        <li>金币、点券带单位了：1000 → <b>1K</b>，一百万 → <b>1M</b>，十亿 → <b>1B</b>，再往上还有 T / Q。转账弹窗里的余额也一起改了。</li>
+      </ul>
+    </section>
+<section class="help-section" id="whatsnew30">
+      <h2>26.11.31 队伍申请与队长审批</h2>
       <ul class="news">
         <li>队伍页多了一排开关：<b>队伍聊天</b>、<b>队伍伤害</b>、<b>队伍申请</b>，队长点一下就能改，非队长只能看。</li>
         <li>「队伍申请」打开后，这个队就<b>不再直接进</b>：别人点「申请加入」，队长的队伍卡片上会出现「加入申请 N 条」，可以逐条<b>同意</b>或<b>拒绝</b>。</li>
@@ -694,7 +703,7 @@
       </ul>
     </section>
 <section class="help-section" id="whatsnew29">
-      <h2>26.11.30 提醒更靠谱、名字不分大小写</h2>
+      <h2>26.11.31 提醒更靠谱、名字不分大小写</h2>
       <ul class="news">
         <li>消息提醒只在真的来了新消息时出现，点来点去不会再重复弹旧消息；软件内提醒弹 2 秒。</li>
         <li>提醒带提示音与震动（系统原生方式）；退到后台可以推一条系统通知，两个开关各管一边。</li>
@@ -704,7 +713,7 @@
       </ul>
     </section>
 <section class="help-section" id="whatsnew27">
-      <h2>26.11.30 管理入口只给服主</h2>
+      <h2>26.11.31 管理入口只给服主</h2>
       <ul class="news">
         <li>普通管理员在「更多」页看不到「管理」那一块了：su 开关、Linux 系插件、插件联动状态一起隐藏。</li>
         <li>导航栏的「管理」页照旧：在线、玩家、举报、惩罚、假人、命令、su 都在。</li>
@@ -712,7 +721,7 @@
       </ul>
     </section>
 <section class="help-section" id="whatsnew26">
-      <h2>26.11.30 权限、提醒、历史消息</h2>
+      <h2>26.11.31 权限、提醒、历史消息</h2>
       <ul class="news">
         <li>插件配置文件的读取、保存、启停、重载只有服主能做；普通管理员进到插件管理只能看，按钮是灰的。</li>
         <li>主题（风格 + 颜色）对所有人都开放，在「更多 → 显示 → 主题」。</li>
@@ -722,7 +731,7 @@
       </ul>
     </section>
 <section class="help-section" id="whatsnew25">
-      <h2>26.11.30 一点手感上的修补</h2>
+      <h2>26.11.31 一点手感上的修补</h2>
       <ul class="news">
         <li>命令分组、多队伍切换、举报筛选这些「点一下会重建按钮」的选择控件，白块现在也会滑过去，不再直接跳。</li>
         <li>底栏选中块再放大一圈，圆角 18px（悬浮导航 20px）。</li>
@@ -730,7 +739,7 @@
       </ul>
     </section>
 <section class="help-section" id="whatsnew20">
-      <h2>26.11.30 选择控件的白块会滑过去</h2>
+      <h2>26.11.31 选择控件的白块会滑过去</h2>
       <ul class="news">
         <li>点开哪个选项，白色滑块就平移到哪一格，0.28 秒的缓动，和 iOS 的分段控件手感一致。</li>
         <li>选项换行到第二行时，滑块也会跟着跳到对应的一行。</li>
@@ -738,7 +747,7 @@
       </ul>
     </section>
 <section class="help-section" id="whatsnew18">
-      <h2>26.11.30 又改了这些</h2>
+      <h2>26.11.31 又改了这些</h2>
       <ul class="news">
         <li><b>iOS 风格回到普通配色</b>：不再做半透明毛玻璃，卡片 / 顶栏 / 弹窗都是实底；圆角、间距、胶囊按钮、悬浮导航这些布局保持原样。</li>
         <li><b>开屏停 2 秒</b>：最少显示两秒再进入，不会一闪而过。</li>
@@ -752,7 +761,7 @@
 
 
 <section class="help-section" id="theme">
-    <h2><span class="num">8</span>换主题：风格与颜色（26.11.30）</h2>
+    <h2><span class="num">8</span>换主题：风格与颜色（26.11.31）</h2>
     <p>更多页 →「显示」卡 →「主题」，点开是二级菜单：</p>
     <table>
       <thead><tr><th>项目</th><th>可选</th><th>说明</th></tr></thead>
@@ -771,7 +780,7 @@
 
 
 <section class="help-section" id="staff">
-    <h2><span class="num">10</span>管理层名单（26.11.30）</h2>
+    <h2><span class="num">10</span>管理层名单（26.11.31）</h2>
     <p>管理页的「在线」子标签，最上面多了一张「管理层」卡：</p>
     <ul>
       <li><b>服主 / 副服主 / 管理员 / 协管</b>四组，在不在线都列出来，右边写每组多少人；</li>
@@ -782,7 +791,7 @@
   </section>
 
 <section class="help-section" id="navfloat">
-    <h2><span class="num">9</span>悬浮导航栏（26.11.30）</h2>
+    <h2><span class="num">9</span>悬浮导航栏（26.11.31）</h2>
     <p>主题弹窗里有一个「悬浮导航栏」开关。打开后底部那排页签会从贴底的一条，变成浮在屏幕下方的一颗胶囊：</p>
     <ul>
       <li>半透明底 + 背景毛玻璃 + 大投影，页面内容从它下面滚过去；</li>
@@ -1128,7 +1137,7 @@
     <div class="footer-brand">Nalxer App 帮助</div>
     <p>安装、配置、接口、App 用法，一页看完</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v 26.11.30 · Android / iOS · Made with ♥ by Linux582021
+      v 26.11.31 · Android / iOS · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
 <a href="index.html">← 插件列表</a>
