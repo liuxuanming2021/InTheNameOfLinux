@@ -271,6 +271,47 @@
     localStorage.setItem(LS.admin, state.admin ? '1' : '0');
   }
 
+  /** 登录页的「测试连接」：只打 /api/health，把原始错误原样展示。 */
+  function diagServer() {
+    var NL = String.fromCharCode(10);
+    var box = $('diag-box');
+    var btn = $('btn-diag');
+    var url = normServer($('f-server').value);
+    $('f-server').value = url;
+    if (!box) return;
+    box.classList.remove('hidden');
+    box.textContent = '正在连接 ' + url + ' …';
+    if (btn) { btn.disabled = true; btn.textContent = '测试中…'; }
+    var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 8000) : 0;
+    fetch(url + '/api/health', { headers: { 'Accept': 'application/json' }, signal: ctrl ? ctrl.signal : undefined })
+      .then(function (r) {
+        if (timer) clearTimeout(timer);
+        return r.text().then(function (t) { return { code: r.status, body: t }; });
+      })
+      .then(function (res) {
+        var v = '';
+        try { v = JSON.parse(res.body).version || ''; } catch (e) {}
+        box.textContent = '连接成功：HTTP ' + res.code + (v ? '，服务端版本 ' + v : '') + NL + '地址 ' + url;
+      })
+      .catch(function (e) {
+        if (timer) clearTimeout(timer);
+        var msg = (e && e.message) ? e.message : String(e);
+        var tip = '';
+        if (/App Transport Security|ATS/i.test(msg)) {
+          tip = '这是 iOS 的 ATS 拦了 http：重新签名时 Info.plist 被改过（全能签这类工具会重写），重签时不要勾「修改 Info.plist」，或换回我们提供的未签名 ipa 再签。';
+        } else if (/Load failed|Failed to fetch|NetworkError/i.test(msg)) {
+          tip = '网络层没连上：先在 Safari 打开「' + url + '/api/health」，能看到 JSON 说明网络没问题、是签名包限制了 http；Safari 也打不开就是地址/端口/防火墙的问题。';
+        } else if (/abort|超时/i.test(msg)) {
+          tip = '8 秒没响应：地址写错、端口没放行、或者服务器只在内网。';
+        }
+        box.textContent = '连接失败' + NL + '地址 ' + url + NL + '原始错误：' + msg + (tip ? NL + NL + tip : '');
+      })
+      .then(function () {
+        if (btn) { btn.disabled = false; btn.textContent = '测试连接'; }
+      });
+  }
+
   function doLogin() {
     var btn = $('btn-login');
     var err = $('login-err');
@@ -2187,6 +2228,7 @@
 
   function bind() {
     $('btn-login').addEventListener('click', doLogin);
+    if ($('btn-diag')) $('btn-diag').addEventListener('click', diagServer);
     $('f-pass').addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
     $('btn-refresh').addEventListener('click', function () {
       refreshPage();

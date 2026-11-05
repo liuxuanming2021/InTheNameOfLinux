@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#f4f6fa">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css?v=100">
+  <link rel="stylesheet" href="style.css?v=102">
 </head>
 <body>
 
@@ -46,8 +46,10 @@
     <input id="f-pass" type="password" placeholder="进游戏用的那个密码">
   </div>
   <button id="btn-login" class="btn btn-primary btn-block" style="margin-top:8px">登录</button>
+  <button id="btn-diag" class="btn btn-block" style="margin-top:8px">测试连接</button>
   <p class="hint" style="margin-top:14px">用游戏里的 ID 和密码登录，和进服时是同一个密码。</p>
   <p id="login-err" class="tip-err hidden"></p>
+  <div id="diag-box" class="hidden" style="margin-top:10px;font-size:13px;line-height:1.6;color:var(--muted);word-break:break-all"></div>
 </div>
 
 <!-- 身份验证弹窗：盖在整个界面上，验完才让用 -->
@@ -411,10 +413,10 @@
         <div class="card-title"><h2>关于软件</h2></div>
         <div class="kv">
           <span>软件名称</span><b>Nalxer App</b>
-          <span>版本</span><b>26.12.1 正式版</b>
+          <span>版本</span><b>26.12.2 正式版</b>
           <span>作者</span><b>Linux582021</b>
           <span>官网</span><b>linux.nalxer.top</b>
-          <span>配套服务端</span><b>NalxerApp 26.12.1</b>
+          <span>配套服务端</span><b>NalxerApp 26.12.2</b>
         </div>
         <p class="hint" style="margin:10px 2px 0">数据来自服务器上的 InTheNameOfLinux 与 Linux 系插件；App 只是把这些数据搬到手机上，不改动任何存档。</p>
       </div>
@@ -422,7 +424,7 @@
       <button id="btn-logout" class="btn btn-block" style="margin-bottom:8px">退出登录</button>
 
       <div class="about-foot">
-        <span>Nalxer App 26.12.1 正式版</span>
+        <span>Nalxer App 26.12.2 正式版</span>
         <span class="dot">·</span>
         <span>作者 Linux582021</span>
       </div>
@@ -531,6 +533,6 @@
 
 <div id="fatal" class="hidden"></div>
 <div id="toast" class="toast hidden"></div>
-<script src="app.js?v=100"></script>
+<script src="app.js?v=102"></script>
 </body>
 </html>

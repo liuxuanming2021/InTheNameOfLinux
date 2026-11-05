@@ -1401,3 +1401,6 @@ body[data-skin="miuix"] #f-team-name {
 .set-row .set-main { min-width: 0; flex: 1 1 auto; display: flex; flex-direction: column; gap: 3px; }
 .set-row .set-main b { font-size: 16px; font-weight: 600; }
 .set-row .set-main span { color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+/* 登录页「测试连接」的输出：保留换行，别挤成一行 */
+#diag-box { white-space: pre-line; }

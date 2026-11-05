@@ -52,6 +52,12 @@
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<!-- 调试时允许连局域网里的 http://192.168.x.x:8787，正式接口仍是 https -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>需要访问局域网里的服务器接口（自建服常用内网地址）</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_http._tcp</string>
+	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
