@@ -2011,7 +2011,8 @@
       var noPenaltyPerm = !kinds.length;
       if (!kinds.length) kinds = [];
       html += '<div class="hint" style="margin-top:12px">' +
-        (noPenaltyPerm ? '你没有处罚权限（需要 inthenameoflinux.penalty / .ban），这里只能看。' : '惩罚（分钟数留空 = 永久）') + '</div>' +
+        (noPenaltyPerm ? '你没有处罚权限（需要 inthenameoflinux.penalty / .ban），这里只能看。'
+          : (state.moderatorOnly ? '惩罚（分钟数必填，1 ~ 43200，最多 30 天）' : '惩罚（分钟数留空 = 永久）')) + '</div>' +
         '<div class="seg" style="margin-top:6px">' +
         kinds.map(function (k) {
           return '<button class="seg-btn" data-pen="' + k[0] + '">' + k[1] + '</button>';
@@ -2043,9 +2044,10 @@
   var MODERATOR_MAX_MINUTES = 30 * 24 * 60;   // 协管的处罚上限：30 天
 
   function applyPenalty(type, name, minutes, reason) {
-    if (state.moderatorOnly && Number(minutes || 0) > MODERATOR_MAX_MINUTES) {
-      toast('协管最多只能处罚 30 天，要更久请让管理员操作');
-      return;
+    if (state.moderatorOnly) {
+      var mins = Number(minutes || 0);
+      if (!mins || mins <= 0) { toast('请填写处罚时长（1 ~ 43200 分钟），协管不能永久处罚'); return; }
+      if (mins > MODERATOR_MAX_MINUTES) { toast('协管最多只能处罚 30 天，要更久请让管理员操作'); return; }
     }
     api('/api/admin/penalty', {
       body: { op: 'apply', type: type, name: name, minutes: minutes || 0, reason: reason || '' }
