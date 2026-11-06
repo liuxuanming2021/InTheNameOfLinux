@@ -351,3 +351,5 @@ LinuxTeam 官网页面（2026-10-14 新增）
   · _tools/check_html.py 结构校验：10 个页面全部通过
   · 无头 Edge 整页截图（--headless=new --window-size=1440,7000）逐版对比
   · 站内链接与同页锚点全量扫描：无缺失
+
+<!-- pages rebuild 26.12.9 -->
