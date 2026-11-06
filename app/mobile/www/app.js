@@ -350,7 +350,7 @@
       state.token = d.token || '';
       state.name = d.name || name;
       state.admin = !!d.admin;
-      applyRole(d.role || (d.owner ? 'owner' : (d.su ? 'su' : (d.admin ? 'admin' : 'player'))));
+      applyRole(d.role || (d.owner ? 'owner' : (d.su ? 'su' : (d.admin ? 'admin' : 'player'))), d.caps);
       state.verified = d.verified === true;
       state.needVerify = false;
       state.su = !!d.su;
@@ -420,10 +420,13 @@
   }
 
   /** 把角色落到 state，并同步底栏「管理」入口与子标签的可见性 */
-  function applyRole(role) {
+  function applyRole(role, caps) {
     state.role = role || 'player';
-    state.canManage = state.role === 'owner' || state.role === 'su' || state.role === 'admin' || state.role === 'moderator';
-    state.moderatorOnly = state.role === 'moderator';
+    if (caps && typeof caps === 'object') state.caps = caps;
+    var c = state.caps || {};
+    // 管理页给不给、里面能点什么，全看服务端发下来的能力表，不按角色猜
+    state.canManage = c.view === true;
+    state.moderatorOnly = state.canManage && state.role !== 'owner' && state.role !== 'su' && state.role !== 'admin';
 
     show('tab-admin', state.canManage);
     var card = $('admin-card');
@@ -431,10 +434,21 @@
 
     var fakeTab = $('admin-tabs') ? $('admin-tabs').querySelector('[data-admin="fake"]') : null;
     var cmdTab = $('admin-tabs') ? $('admin-tabs').querySelector('[data-admin="cmd"]') : null;
-    if (fakeTab) fakeTab.classList.toggle('hidden', state.moderatorOnly);
-    if (cmdTab) cmdTab.classList.toggle('hidden', state.moderatorOnly);
+    var penTab = $('admin-tabs') ? $('admin-tabs').querySelector('[data-admin="penalty"]') : null;
+    if (fakeTab) fakeTab.classList.toggle('hidden', c.fake !== true);
+    if (cmdTab) cmdTab.classList.toggle('hidden', c.su !== true);
+    if (penTab) penTab.classList.toggle('hidden', !(c.mute === true || c.ban === true));
     var note = $('mod-note');
-    if (note) note.classList.toggle('hidden', !state.moderatorOnly);
+    if (note) {
+      var bits = [];
+      if (c.mute === true) bits.push('禁言 / 解除禁言' + (state.moderatorOnly ? '（一次最长 30 天）' : ''));
+      if (c.ban === true) bits.push('封禁类处罚');
+      if (c.fake === true) bits.push('假人管理');
+      note.textContent = '你的管理权限：看在线与玩家详情、处理举报' +
+        (bits.length ? '、' + bits.join('、') : '') + '。' +
+        (c.config === true ? '' : '插件配置只有服主能改。');
+      note.classList.toggle('hidden', !state.canManage || state.role === 'owner' || c.ban === true);
+    }
     var setAdmin = $('set-admin');
     if (setAdmin) setAdmin.textContent = state.moderatorOnly ? '协管' : '管理员';
     return state.role;
@@ -749,7 +763,7 @@
       state.su = !!d.su;
       state.owner = !!d.owner;
       state.admin = d.admin === true || state.owner || state.su;
-      if (d.role) applyRole(d.role);
+      if (d.role) applyRole(d.role, d.caps);
       if (state.pendingPage && state.canManage) {
         var want = state.pendingPage;
         state.pendingPage = '';
@@ -811,8 +825,11 @@
     var suBtn = document.querySelector('[data-admin="su"]');
     if (suBtn) suBtn.classList.toggle('hidden', !(state.su && on));
     if (state.adminTab === 'su' && !(state.su && on)) setAdminTab('online');
-    // 管理页副标题跟着走
-    var subs = ['在线', '玩家', '举报', '惩罚', '假人'];
+    // 管理页副标题只写这个人真的能用的标签
+    var c = state.caps || {};
+    var subs = ['在线', '玩家', '举报'];
+    if (c.mute === true || c.ban === true) subs.push('惩罚');
+    if (c.fake === true) subs.push('假人');
     if (state.su) subs.push('命令');
     if (state.su && on) subs.push('su');
     PAGE_TITLE.admin[1] = subs.join(' / ');
@@ -1985,11 +2002,16 @@
         '<span class="side">' + (penalties.length ? '在惩罚中：' + esc(penalties.join(' / ')) : '没有惩罚') + '</span></div>' +
         '<div class="kv">' + rows + '</div></div>';
 
-      var kinds = state.moderatorOnly
-        ? [['banmsg', '禁言']]
-        : [['banmsg', '禁言'], ['banmove', '禁止移动'], ['banblock', '禁止交互'],
-           ['all', '全部禁止'], ['ban', '封禁']];
-      html += '<div class="hint" style="margin-top:12px">惩罚（分钟数留空 = 永久）</div>' +
+      var caps = state.caps || {};
+      var kinds = [];
+      if (caps.mute === true) kinds.push(['banmsg', '禁言']);
+      if (caps.ban === true) {
+        kinds.push(['banmove', '禁止移动'], ['banblock', '禁止交互'], ['all', '全部禁止'], ['ban', '封禁']);
+      }
+      var noPenaltyPerm = !kinds.length;
+      if (!kinds.length) kinds = [];
+      html += '<div class="hint" style="margin-top:12px">' +
+        (noPenaltyPerm ? '你没有处罚权限（需要 inthenameoflinux.penalty / .ban），这里只能看。' : '惩罚（分钟数留空 = 永久）') + '</div>' +
         '<div class="seg" style="margin-top:6px">' +
         kinds.map(function (k) {
           return '<button class="seg-btn" data-pen="' + k[0] + '">' + k[1] + '</button>';
