@@ -107,6 +107,12 @@ jobs:
             exit 1
           fi
 
+      - name: 再出一份 ad-hoc 签名包（补 application-identifier，装不上时用它）
+        run: |
+          bash .github/scripts/adhoc-sign.sh \
+            "app/mobile/ios/App/build/Build/Products/Release-iphoneos/App.app" \
+            "$GITHUB_WORKSPACE/Nalxer-adhoc.ipa"
+
       - name: 顺带验证模拟器也能编
         if: always()
         working-directory: app/mobile/ios/App
@@ -124,7 +130,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: Nalxer-ios-ipa
-          path: Nalxer-unsigned.ipa
+          path: |
+            Nalxer-unsigned.ipa
+            Nalxer-adhoc.ipa
           if-no-files-found: warn
 
   # iOS 12 分支：Capacitor 3.9.0，部署目标 12.0，前端共用 app/mobile/www
@@ -184,8 +192,16 @@ jobs:
           cd payload12 && zip -qry "$GITHUB_WORKSPACE/Nalxer-$VERSION-ios12-unsigned.ipa" Payload
           cd .. && unzip -l "$GITHUB_WORKSPACE/Nalxer-$VERSION-ios12-unsigned.ipa" | head -20
 
+      - name: 再出一份 ad-hoc 签名包（iOS 12）
+        run: |
+          bash .github/scripts/adhoc-sign.sh \
+            "app/mobile-ios12/ios/App/build/Build/Products/Release-iphoneos/App.app" \
+            "$GITHUB_WORKSPACE/Nalxer-$VERSION-ios12-adhoc.ipa"
+
       - uses: actions/upload-artifact@v4
         with:
           name: Nalxer-ios12-ipa
-          path: Nalxer-*-ios12-unsigned.ipa
+          path: |
+            Nalxer-*-ios12-unsigned.ipa
+            Nalxer-*-ios12-adhoc.ipa
           if-no-files-found: warn
