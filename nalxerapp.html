@@ -406,16 +406,29 @@
 
       <div class="card reveal">
         <div class="card-icon">🍎</div>
-        <h3>iOS · 未签名 ipa</h3>
-        <p>在苹果的 macOS 机器上编出来的真机包，<strong>约 560 KB</strong>，
+        <h3>iOS 13+ · 未签名 ipa</h3>
+        <p>在 macOS 机器上编出来的真机包，<strong>约 716 KB</strong>，
            没签名所以不能直接装，用电脑上的 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>
            或 AltStore 拿你的 Apple ID 重签一次就行。</p>
         <p><a href="download/Nalxer-26.12.2-unsigned.ipa" download>下载 Nalxer-26.12.2-unsigned.ipa</a></p>
         <ul>
-          <li>要 iOS 13 及以上，支持 arm64 真机</li>
+          <li>要 iOS 13 及以上，arm64 真机</li>
           <li>Sideloadly 在 Windows / Mac 都能跑，插上线点 Start 即可</li>
           <li>免费 Apple ID 签出来的 App <strong>7 天要重签一次</strong>，证书不会掉数据</li>
-          <li>想自己编：<code>mobile/ios</code> 里是完整 Xcode 工程，见帮助页</li>
+          <li>签名时<strong>别勾「修改 Info.plist」</strong>，否则 http 接口会被 iOS 拦掉，表现就是「无法连接服务器」</li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon">🧓</div>
+        <h3>iOS 12 老系统专用 · 未签名 ipa</h3>
+        <p>给 iPhone 6 / 6 Plus / 5s 这类停在 iOS 12 的机器用的独立包，<strong>约 15.8 MB</strong>
+           （Capacitor 3 会把 Swift 运行库一起打进去，所以比新系统版大很多）。</p>
+        <p><a href="download/Nalxer-26.12.2-ios12-unsigned.ipa" download>下载 Nalxer-26.12.2-ios12-unsigned.ipa</a></p>
+        <ul>
+          <li>最低 iOS 12.0，只支持 arm64 真机（32 位设备最高 iOS 10，装不了）</li>
+          <li>功能和主版本一致：公屏/队伍/管理/转账/主题全都在</li>
+          <li>老系统的 WebKit 不支持 flex gap，包里带了兼容层，界面不会挤在一起</li>
         </ul>
       </div>
     </div>

@@ -684,6 +684,17 @@
       </ul>
     </section>
 
+                <section class="help-section" id="ios12">
+                  <h2>iOS 12 老系统版（26.12.2 起）</h2>
+                  <ul class="news">
+                    <li>下载页多了一个 <code>Nalxer-26.12.2-ios12-unsigned.ipa</code>，最低 <b>iOS 12.0</b>，给 iPhone 6 / 6 Plus / 5s / iPad 4 这类老机器用。</li>
+                    <li>它用的是 Capacitor 3.9.0（新版框架最低要 iOS 13），前端和主版本是<strong>同一套</strong> <code>mobile/www</code>，功能没有删减。</li>
+                    <li>包体约 15.8 MB，因为 Swift 运行库一起打进去了；新系统版仍是 716 KB。</li>
+                    <li>老系统的 WebKit 没有 flex gap，包里带 <code>legacy.js</code> / <code>legacy.css</code>：检测到不支持就自动用外边距补间距，并把 <code>-webkit-sticky</code>、惯性滚动补上。</li>
+                    <li>32 位设备（armv7）最高只能到 iOS 10，现代 Xcode 已经不支持，所以这条线到头是 iOS 12 + arm64。</li>
+                    <li>自己编：<code>mobile-ios12/</code> 是独立工程，macOS 上 <code>bash build-ios12.sh 26.12.2</code> 直接出包。</li>
+                  </ul>
+                </section>
                 <section class="help-section" id="whatsnew1202">
                   <h2>26.12.2 登录页「测试连接」：自己签名的 App 连不上时先看这里</h2>
                   <ul class="news">
