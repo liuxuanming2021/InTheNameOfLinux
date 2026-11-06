@@ -350,9 +350,7 @@
       state.token = d.token || '';
       state.name = d.name || name;
       state.admin = !!d.admin;
-      state.role = d.role || (d.owner ? 'owner' : (d.su ? 'su' : (d.admin ? 'admin' : 'player')));
-      state.canManage = state.role === 'owner' || state.role === 'su' || state.role === 'admin' || state.role === 'moderator';
-      state.moderatorOnly = state.role === 'moderator';
+      applyRole(d.role || (d.owner ? 'owner' : (d.su ? 'su' : (d.admin ? 'admin' : 'player'))));
       state.verified = d.verified === true;
       state.needVerify = false;
       state.su = !!d.su;
@@ -421,17 +419,31 @@
     if (status) status.classList.toggle('hidden', !state.owner);
   }
 
-  function enterApp() {
-    $('login').classList.add('hidden');
-    $('app').classList.remove('hidden');
-    // 底栏现在只有「管理」一个入口，命令是管理页里的子标签
+  /** 把角色落到 state，并同步底栏「管理」入口与子标签的可见性 */
+  function applyRole(role) {
+    state.role = role || 'player';
+    state.canManage = state.role === 'owner' || state.role === 'su' || state.role === 'admin' || state.role === 'moderator';
+    state.moderatorOnly = state.role === 'moderator';
+
     show('tab-admin', state.canManage);
-    $('admin-card').classList.toggle('hidden', !state.canManage);
+    var card = $('admin-card');
+    if (card) card.classList.toggle('hidden', !state.canManage);
+
     var fakeTab = $('admin-tabs') ? $('admin-tabs').querySelector('[data-admin="fake"]') : null;
     var cmdTab = $('admin-tabs') ? $('admin-tabs').querySelector('[data-admin="cmd"]') : null;
     if (fakeTab) fakeTab.classList.toggle('hidden', state.moderatorOnly);
     if (cmdTab) cmdTab.classList.toggle('hidden', state.moderatorOnly);
-    if (state.moderatorOnly) $('set-admin').textContent = '协管';
+    var note = $('mod-note');
+    if (note) note.classList.toggle('hidden', !state.moderatorOnly);
+    var setAdmin = $('set-admin');
+    if (setAdmin) setAdmin.textContent = state.moderatorOnly ? '协管' : '管理员';
+    return state.role;
+  }
+
+  function enterApp() {
+    $('login').classList.add('hidden');
+    $('app').classList.remove('hidden');
+    applyRole(state.role);
     $('status-card').classList.toggle('hidden', !state.owner);
     // 设置页的「管理」整块（su 开关 + Linux 系插件 + 联动状态）只给服主看，
     // 普通管理员只保留底栏「管理」页
@@ -463,7 +475,11 @@
   function switchPage(page) {
     if (!PAGE_IDS[page]) page = 'me';
     // 管理 / 命令只有管理员能进
-    if ((page === 'cmd' || page === 'admin') && !state.canManage) page = 'more';
+    if ((page === 'cmd' || page === 'admin') && !state.canManage) {
+      // 角色还没从 /api/me 回来时先记着，等认出来是协管再跳回去
+      state.pendingPage = page;
+      page = 'more';
+    }
     var prevPage = state.page;
     // 每次从别的页面进管理页，都回到「在线」这一项
     if (page === 'admin' && prevPage !== 'admin' && !state.keepAdminTab) state.adminTab = 'online';
@@ -732,6 +748,14 @@
       state.verified = d.verified === true || !d.verifyRequired;
       state.su = !!d.su;
       state.owner = !!d.owner;
+      state.admin = d.admin === true || state.owner || state.su;
+      if (d.role) applyRole(d.role);
+      if (state.pendingPage && state.canManage) {
+        var want = state.pendingPage;
+        state.pendingPage = '';
+        if (want === 'admin') setAdminTab(state.adminTab || 'online');
+        switchPage(want);
+      }
       applyOwnerPanels();
       state.me = d.data;
       renderMe(d.data);
@@ -748,8 +772,11 @@
   }
 
   /** 设置页的「玩家身份」一行：服主 / 副服主 / 市长 / 协管 / 管理员 / 普通玩家 */
+  var ROLE_LABEL = { owner: '服主', su: '服主', admin: '管理员', moderator: '协管', player: '普通玩家' };
+
   function renderIdentity(d) {
-    var role = (d && d.identity && d.identity.label) || (d && d.role) || '普通玩家';
+    var role = (d && d.identity && d.identity.label) || ROLE_LABEL[state.role] || (d && d.role) || '普通玩家';
+    if (role === 'moderator') role = '协管';
     if (state.admin && role === '普通玩家') role = '管理员';
     $('set-role').textContent = role;
   }
@@ -1991,7 +2018,13 @@
     }).catch(function (e) { toast(e.message); });
   }
 
+  var MODERATOR_MAX_MINUTES = 30 * 24 * 60;   // 协管的处罚上限：30 天
+
   function applyPenalty(type, name, minutes, reason) {
+    if (state.moderatorOnly && Number(minutes || 0) > MODERATOR_MAX_MINUTES) {
+      toast('协管最多只能处罚 30 天，要更久请让管理员操作');
+      return;
+    }
     api('/api/admin/penalty', {
       body: { op: 'apply', type: type, name: name, minutes: minutes || 0, reason: reason || '' }
     }).then(function (r) {
@@ -2538,9 +2571,7 @@
     state.token = localStorage.getItem(LS.token) || '';
     state.name = localStorage.getItem(LS.name) || '';
     state.admin = localStorage.getItem(LS.admin) === '1';
-    state.role = localStorage.getItem(LS.role) || (state.admin ? 'admin' : 'player');
-    state.canManage = state.role === 'owner' || state.role === 'su' || state.role === 'admin' || state.role === 'moderator';
-    state.moderatorOnly = state.role === 'moderator';
+    applyRole(localStorage.getItem(LS.role) || (state.admin ? 'admin' : 'player'));
     $('f-server').value = state.server;
 
     window.addEventListener('error', function (e) {
