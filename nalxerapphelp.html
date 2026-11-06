@@ -684,6 +684,18 @@
       </ul>
     </section>
 
+                <section class="help-section" id="entitlement">
+                  <h2>装 ipa 报「Application is missing the application-identifier entitlement」</h2>
+                  <ul class="news">
+                    <li>这句话的意思是：这个包装进去的时候<strong>没有带 application-identifier 这个授权项</strong>，不是包坏了，是「没签名 / 签名没注入授权」。</li>
+                    <li>三条路，任选一条：
+                      <br>· <b>先签名再装</b>：全能签里不要点「安装」，走「签名」→ 选证书 → 签完再装；
+                      <br>· <b>用电脑签</b>：Sideloadly / AltStore 登 Apple ID 重签，最稳；
+                      <br>· <b>直接用 ad-hoc 版</b>：下载页那两个「装不上？用 ad-hoc 版」，包里已经用 <code>codesign --sign -</code> 写入了 <code>application-identifier</code> 与 <code>_CodeSignature</code>，TrollStore 这类只认授权的安装器可以直接装。</li>
+                    <li>ad-hoc 版<strong>没有</strong>开发者证书，越狱/TrollStore 之外的普通机器仍然要用证书重签一次才能启动，这点和未签名版一样。</li>
+                    <li>如果重签后还是报同样的错，换一个 Bundle ID（比如 <code>top.nalxer.app2</code>）再签，多半是和已装的旧包冲突。</li>
+                  </ul>
+                </section>
                 <section class="help-section" id="ios12">
                   <h2>iOS 12 老系统版（26.12.2 起）</h2>
                   <ul class="news">
