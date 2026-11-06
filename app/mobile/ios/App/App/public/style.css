@@ -66,6 +66,7 @@ a { color: var(--accent); }
 
 /* ── 登录 ────────────────────────────────────────── */
 .login-wrap {
+  min-height: 100vh;
   min-height: 100dvh;
   display: flex; flex-direction: column; justify-content: center;
   padding: calc(28px + var(--safe-t)) 22px calc(28px + var(--safe-b));
@@ -118,7 +119,7 @@ a { color: var(--accent); }
 .btn-mini { padding: 7px 11px; font-size: 12.5px; border-radius: 10px; font-weight: 600; flex: 0 0 auto; }
 
 /* ── 框架 ────────────────────────────────────────── */
-#app { min-height: 100dvh; }
+#app { min-height: 100vh; min-height: 100dvh; }
 .topbar {
   position: sticky; top: 0; z-index: 30;
   display: flex; align-items: center; justify-content: space-between;
@@ -429,7 +430,7 @@ a { color: var(--accent); }
 
 /* ── 弹窗（身份验证 / su） ───────────────────────── */
 .modal {
-  position: fixed; inset: 0; z-index: 80;
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 80;
   display: flex; align-items: center; justify-content: center;
   padding: 18px;
   background: rgba(9, 14, 22, 0.52);
@@ -816,7 +817,7 @@ body[data-skin="ios"] #cmd-groups .seg-btn { flex: 0 0 auto; white-space: nowrap
 
 /* ── 开屏动画 ────────────────────────────────────── */
 .splash {
-  position: fixed; inset: 0; z-index: 300;
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 300;
   display: flex; align-items: center; justify-content: center;
   background:
     radial-gradient(120% 80% at 50% 0%, var(--accent-soft), transparent 60%),
