@@ -420,6 +420,14 @@
   }
 
   /** 把角色落到 state，并同步底栏「管理」入口与子标签的可见性 */
+  /** 「管理权限」这一行只回答有 / 无；协管单独标出来，别和「玩家身份」混在一起 */
+  function paintAdminLabel() {
+    var el = $('set-admin');
+    if (!el) return;
+    if (!state.canManage) { el.textContent = '无'; return; }
+    el.textContent = state.moderatorOnly ? '有（协管）' : '有';
+  }
+
   function applyRole(role, caps) {
     state.role = role || 'player';
     if (caps && typeof caps === 'object') state.caps = caps;
@@ -449,8 +457,7 @@
         (c.config === true ? '' : '插件配置只有服主能改。');
       note.classList.toggle('hidden', !state.canManage || state.role === 'owner' || c.ban === true);
     }
-    var setAdmin = $('set-admin');
-    if (setAdmin) setAdmin.textContent = state.moderatorOnly ? '协管' : '管理员';
+    paintAdminLabel();
     return state.role;
   }
 
@@ -465,7 +472,6 @@
     $('f-server-edit').value = state.server;
     $('set-name').textContent = state.name;
     $('set-server').textContent = state.server.replace(/^https?:\/\//, '');
-    $('set-admin').textContent = state.admin ? '有' : '否';
     state.page = 'me';
     switchPage('me');
     loadMe();
