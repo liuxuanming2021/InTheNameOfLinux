@@ -9,6 +9,7 @@
     token: 'nalxer.token',
     name: 'nalxer.name',
     admin: 'nalxer.admin',
+    role: 'nalxer.role',
     expire: 'nalxer.expire',
     theme: 'nalxer.theme',
     skin: 'nalxer.skin',
@@ -33,6 +34,9 @@
     token: '',
     name: '',
     admin: false,
+    role: 'player',
+    canManage: false,
+    moderatorOnly: false,
     page: 'me',
     lastAdminTab: 'player',
     me: null,
@@ -242,6 +246,7 @@
         var data = null;
         try { data = txt ? JSON.parse(txt) : {}; } catch (e) { data = { ok: false, message: '服务器返回的不是 JSON' }; }
         if (r.status === 401) {
+          if (data && data.code === 'session_kicked') { state.kicked = data.message || '这个账号已在另一台设备登录'; }
           if (!opts.quiet) { logout(true); }
           var e401 = new Error((data && data.message) || '登录已过期，请重新登录');
           e401.status = 401;
@@ -269,6 +274,7 @@
     localStorage.setItem(LS.token, state.token);
     localStorage.setItem(LS.name, state.name);
     localStorage.setItem(LS.admin, state.admin ? '1' : '0');
+    localStorage.setItem(LS.role, state.role || 'player');
   }
 
   /** 登录页的「测试连接」：只打 /api/health，把原始错误原样展示。 */
@@ -323,12 +329,30 @@
     btn.disabled = true;
     btn.textContent = '登录中…';
 
-    api('/api/login', { body: { name: name, password: pass }, quiet: true }).then(function (r) {
+    var body = { name: name, password: pass };
+    if (state.takeover) body.takeover = '1';
+    api('/api/login', { body: body, quiet: true }).then(function (r) {
       var d = r.data || {};
-      if (!d.ok) throw new Error(d.message || '登录失败');
+      if (!d.ok) {
+        // 已经在别的设备登录：问一句，同意就把那台踢下线
+        if (d.code === 'session_taken' && !state.takeover) {
+          state.takeover = true;
+          btn.disabled = false; btn.textContent = '登录';
+          var NL = String.fromCharCode(10);
+          if (confirm((d.message || '这个账号已在另一台设备登录') + NL + NL + '要踢掉那台设备，直接在这里登录吗？')) {
+            login();
+          }
+          return;
+        }
+        throw new Error(d.message || '登录失败');
+      }
+      state.takeover = false;
       state.token = d.token || '';
       state.name = d.name || name;
       state.admin = !!d.admin;
+      state.role = d.role || (d.owner ? 'owner' : (d.su ? 'su' : (d.admin ? 'admin' : 'player')));
+      state.canManage = state.role === 'owner' || state.role === 'su' || state.role === 'admin' || state.role === 'moderator';
+      state.moderatorOnly = state.role === 'moderator';
       state.verified = d.verified === true;
       state.needVerify = false;
       state.su = !!d.su;
@@ -361,8 +385,13 @@
   }
 
   function logout(silent) {
+    if (!silent && state.token) {
+      // 告诉服务端「我退了」，另一台设备才能立刻登录
+      api('/api/logout', { body: {}, quiet: true }).catch(function () {});
+    }
     state.token = '';
     state.name = '';
+    state.takeover = false;
     state.admin = false;
     state.me = null;
     state.chatMsgs = [];
@@ -370,6 +399,8 @@
     localStorage.removeItem(LS.token);
     localStorage.removeItem(LS.name);
     localStorage.removeItem(LS.admin);
+    localStorage.removeItem(LS.role);
+    state.role = 'player'; state.canManage = false; state.moderatorOnly = false;
     // 下次登录 / 重新进软件都从「我的」开始，不接着停在退出前那一页
     state.page = 'me';
     state.adminTab = 'online';
@@ -394,8 +425,13 @@
     $('login').classList.add('hidden');
     $('app').classList.remove('hidden');
     // 底栏现在只有「管理」一个入口，命令是管理页里的子标签
-    show('tab-admin', state.admin);
-    $('admin-card').classList.toggle('hidden', !state.admin);
+    show('tab-admin', state.canManage);
+    $('admin-card').classList.toggle('hidden', !state.canManage);
+    var fakeTab = $('admin-tabs') ? $('admin-tabs').querySelector('[data-admin="fake"]') : null;
+    var cmdTab = $('admin-tabs') ? $('admin-tabs').querySelector('[data-admin="cmd"]') : null;
+    if (fakeTab) fakeTab.classList.toggle('hidden', state.moderatorOnly);
+    if (cmdTab) cmdTab.classList.toggle('hidden', state.moderatorOnly);
+    if (state.moderatorOnly) $('set-admin').textContent = '协管';
     $('status-card').classList.toggle('hidden', !state.owner);
     // 设置页的「管理」整块（su 开关 + Linux 系插件 + 联动状态）只给服主看，
     // 普通管理员只保留底栏「管理」页
@@ -427,7 +463,7 @@
   function switchPage(page) {
     if (!PAGE_IDS[page]) page = 'me';
     // 管理 / 命令只有管理员能进
-    if ((page === 'cmd' || page === 'admin') && !state.admin) page = 'more';
+    if ((page === 'cmd' || page === 'admin') && !state.canManage) page = 'more';
     var prevPage = state.page;
     // 每次从别的页面进管理页，都回到「在线」这一项
     if (page === 'admin' && prevPage !== 'admin' && !state.keepAdminTab) state.adminTab = 'online';
@@ -1922,10 +1958,10 @@
         '<span class="side">' + (penalties.length ? '在惩罚中：' + esc(penalties.join(' / ')) : '没有惩罚') + '</span></div>' +
         '<div class="kv">' + rows + '</div></div>';
 
-      var kinds = [
-        ['banmsg', '禁言'], ['banmove', '禁止移动'], ['banblock', '禁止交互'],
-        ['all', '全部禁止'], ['ban', '封禁']
-      ];
+      var kinds = state.moderatorOnly
+        ? [['banmsg', '禁言']]
+        : [['banmsg', '禁言'], ['banmove', '禁止移动'], ['banblock', '禁止交互'],
+           ['all', '全部禁止'], ['ban', '封禁']];
       html += '<div class="hint" style="margin-top:12px">惩罚（分钟数留空 = 永久）</div>' +
         '<div class="seg" style="margin-top:6px">' +
         kinds.map(function (k) {
@@ -2502,6 +2538,9 @@
     state.token = localStorage.getItem(LS.token) || '';
     state.name = localStorage.getItem(LS.name) || '';
     state.admin = localStorage.getItem(LS.admin) === '1';
+    state.role = localStorage.getItem(LS.role) || (state.admin ? 'admin' : 'player');
+    state.canManage = state.role === 'owner' || state.role === 'su' || state.role === 'admin' || state.role === 'moderator';
+    state.moderatorOnly = state.role === 'moderator';
     $('f-server').value = state.server;
 
     window.addEventListener('error', function (e) {
