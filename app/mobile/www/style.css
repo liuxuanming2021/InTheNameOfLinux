@@ -1422,3 +1422,12 @@ body[data-skin="miuix"] #f-team-name {
 /* 队伍设置里被前置条件挡住的开关：整行变淡，开关不可点 */
 .set-row.is-disabled { opacity: .55; }
 .set-row.is-disabled .switch { cursor: not-allowed; }
+
+/* 多服务器：配置行 / 顶部切换按钮 */
+.topbar-actions { display: flex; align-items: center; gap: 8px; }
+.srv-row { border-bottom: 1px solid var(--card-b); padding: 10px 0; }
+.srv-row:last-child { border-bottom: 0; }
+.srv-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 13px; }
+.srv-row input { width: 100%; box-sizing: border-box; margin-top: 6px; padding: 10px 12px; border-radius: 12px;
+  border: 1px solid var(--card-b); background: var(--bg-soft); color: var(--text); font-size: 14px; }
+.srv-pick { width: 100%; }
