@@ -1284,7 +1284,7 @@
   function pushSystemNotice(m) {
     var ln = capPlugin('LocalNotifications');
     if (!ln || !document.hidden || !notifyOutOn()) return;
-    var who = m.name + (m.channel === 'team' ? ' · 队伍频道' : ' · 公屏');
+    var who = m.name + (m.channel === 'team' ? ' · 队伍频道' : (m.channel === 'manage' ? ' · 队伍' : ' · 公屏'));
     try {
       ln.schedule({
         notifications: [{
@@ -1337,14 +1337,36 @@
       state.notifiedInit = true;
       return;
     }
-    if (!pick || pick.id <= (state.notifiedMax || 0)) return;
-    state.notifiedMax = Math.max(state.notifiedMax || 0, maxId);
+    var prevMax = state.notifiedMax || 0;
+    if (!pick || pick.id <= prevMax) return;
+    state.notifiedMax = Math.max(prevMax, maxId);
+
+    if (document.hidden) {
+      // 退到后台：页面弹窗不出现，所有新消息都走系统通知（一次最多 5 条，免得刷屏）
+      var fresh = [];
+      for (var j = 0; j < list.length; j++) {
+        var mm = list[j];
+        if (!mm || !mm.id || mm.source === 'notice') continue;
+        if (mm.name === state.name && mm.source === 'app') continue;
+        if (mm.id <= prevMax) continue;
+        fresh.push(mm);
+      }
+      fresh.sort(function (a, b) { return a.id - b.id; });
+      var start = Math.max(0, fresh.length - 5);
+      for (var q = start; q < fresh.length; q++) {
+        pushSystemNotice(fresh[q]);
+      }
+      alertSound();
+      alertVibrate();
+      return;
+    }
     showMsgPop(pick);
   }
 
   var popTimer = null;
   function showMsgPop(m) {
     if (!m) return;
+    if (document.hidden) { pushSystemNotice(m); return; }
     // 声音 + 震动 + （后台时）系统通知：每页都算
     alertSound();
     alertVibrate();
@@ -1619,10 +1641,21 @@
         (isLeader ? ' data-tset="' + key + '" data-tid="' + tid + '" data-on="' + (on ? '1' : '0') + '"' : ' disabled') +
         '></button></div>';
     }
+    // 领地共享：必须先开进队验证；没开时开关是灰的，下面写清楚为什么
+    var landOn = team.landShare === true;
+    var landRow = '<div class="set-row' + (applyOn ? '' : ' is-disabled') + '">' +
+      '<div class="set-main"><b>领地共享</b><span>' +
+      (applyOn ? '队内互相能进对方领地、动箱子、用门和按钮' : '需要先打开上面的「队伍申请」') +
+      '</span></div>' +
+      '<button class="switch" role="switch" aria-checked="' + (landOn ? 'true' : 'false') + '"' +
+      (isLeader && applyOn ? ' data-tset="land" data-tid="' + tid + '" data-on="' + (landOn ? '1' : '0') + '"' : ' disabled') +
+      '></button></div>';
+
     var switches = '<div class="team-switches">' +
       setRow('队伍聊天', '队员之间收发队伍消息', 'chat', chatOn2) +
       setRow('队伍伤害', '队友之间可以互相造成伤害', 'friendly-fire', ffOn) +
       setRow('队伍申请', '打开后加入要队长批准，关掉就是直接加入', 'apply', applyOn) +
+      landRow +
       '</div>';
     var acts = '<div class="action-grid" style="margin-top:10px">' +
       (isLeader ? '<button class="seg-btn" data-tact="invite" data-tid="' + tid + '">邀请</button>' : '') +
@@ -2427,7 +2460,16 @@
       if (t.hasAttribute('data-tset')) {
         var k = t.getAttribute('data-tset');
         var on = t.getAttribute('data-on') === '1';
-        teamAction('setting', k + ':' + (on ? 'off' : 'on'), t.getAttribute('data-tid'));
+        if (k === 'land') {
+          var landTid = t.getAttribute('data-tid');
+          api('/api/team', { body: { action: 'land', team: landTid, on: on ? '0' : '1' } }).then(function (r) {
+            var dd = r.data || {};
+            toast(dd.message || (dd.ok ? '完成' : '失败'));
+            loadTeam();
+          }).catch(function (e) { toast(e.message); });
+        } else {
+          teamAction('setting', k + ':' + (on ? 'off' : 'on'), t.getAttribute('data-tid'));
+        }
         return;
       }
       if (t.hasAttribute('data-apply')) {

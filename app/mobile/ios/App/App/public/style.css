@@ -1418,3 +1418,7 @@ body[data-skin="miuix"] #f-team-name {
 
 /* 登录页「测试连接」的输出：保留换行，别挤成一行 */
 #diag-box { white-space: pre-line; }
+
+/* 队伍设置里被前置条件挡住的开关：整行变淡，开关不可点 */
+.set-row.is-disabled { opacity: .55; }
+.set-row.is-disabled .switch { cursor: not-allowed; }
