@@ -330,23 +330,16 @@
     btn.textContent = '登录中…';
 
     var body = { name: name, password: pass };
-    if (state.takeover) body.takeover = '1';
     api('/api/login', { body: body, quiet: true }).then(function (r) {
       var d = r.data || {};
       if (!d.ok) {
-        // 已经在别的设备登录：问一句，同意就把那台踢下线
-        if (d.code === 'session_taken' && !state.takeover) {
-          state.takeover = true;
-          btn.disabled = false; btn.textContent = '登录';
-          var NL = String.fromCharCode(10);
-          if (confirm((d.message || '这个账号已在另一台设备登录') + NL + NL + '要踢掉那台设备，直接在这里登录吗？')) {
-            login();
-          }
-          return;
-        }
-        throw new Error(d.message || '登录失败');
+        // 单设备登录：这里不做「踢掉另一台」，只能等那台退出，或让管理员用
+        // /nalxerapp logout <名字> 释放
+        var msg = d.message || '登录失败';
+        if (d.retryAfter) msg += '（' + d.retryAfter + ' 秒后再试）';
+        if (d.remaining != null) msg += String.fromCharCode(10) + '还能再试 ' + d.remaining + ' 次';
+        throw new Error(msg);
       }
-      state.takeover = false;
       state.token = d.token || '';
       state.name = d.name || name;
       state.admin = !!d.admin;
@@ -358,6 +351,7 @@
       applyOwnerPanels();
       persist();
       enterApp();
+      toast(d.welcome || ('登录成功，欢迎回来，' + state.name));
     }).catch(function (e) {
       err.textContent = e.message;
       err.classList.remove('hidden');
