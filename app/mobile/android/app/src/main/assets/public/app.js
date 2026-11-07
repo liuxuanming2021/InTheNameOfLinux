@@ -1,4 +1,4 @@
-/* Nalxer App 1.3.1 —— 我的 / 聊天 / 队伍 / 头衔 / 命令 / 更多 */
+/* LinuxAPP 1.3.1 —— 我的 / 聊天 / 队伍 / 头衔 / 命令 / 更多 */
 (function () {
   'use strict';
 
@@ -345,7 +345,7 @@
       if (err && (err.status || err.needVerify)) throw err;
       if (err && err.message && err.message.indexOf('登录已过期') >= 0) throw err;
       if (err && err.message && err.message.indexOf('连接超时') >= 0) throw err;
-      throw new Error('连不上 ' + url + ' —— 看这几点：服务器开着吗 / 云服务器安全组放行这个端口了吗 / plugins 里有没有 NalxerApp');
+      throw new Error('连不上 ' + url + ' —— 看这几点：服务器开着吗 / 云服务器安全组放行这个端口了吗 / plugins 里有没有 LinuxAPP');
     });
   }
 
@@ -591,7 +591,7 @@
       b.classList.toggle('active', b.getAttribute('data-page') === page);
     });
 
-    var meta = PAGE_TITLE[page] || ['Nalxer', ''];
+    var meta = PAGE_TITLE[page] || ['LinuxAPP', ''];
     $('page-title').textContent = meta[0];
     $('page-sub').textContent = meta[1] || state.name;
     // 顶栏标题淡入一下，别硬跳
@@ -1657,7 +1657,7 @@
     var box = $('su-log');
     if (!box) return;
     box.innerHTML = '';
-    suAppend('Nalxer App —— 服务器控制台', 'dim-line');
+    suAppend('LinuxAPP —— 服务器控制台', 'dim-line');
     suAppend('输入的命令会以 CONSOLE 身份执行，回显就是服务器后台那份。', 'dim-line');
     suAppend('stop / restart / end 不给执行。', 'dim-line');
     suAppend('', 'dim-line');
@@ -2502,7 +2502,7 @@
         var caps = d.capabilities || {};
         var on = Object.keys(caps).filter(function (k) { return caps[k]; });
         $('server-msg').textContent = d.ok
-          ? ('通了：' + (d.app || 'NalxerApp') + ' v' + (d.version || '?') +
+          ? ('通了：' + (d.app || 'LinuxAPP') + ' v' + (d.version || '?') +
             '（' + (on.length ? on.join('、') + ' ✓' : '没接上任何插件') + '）')
           : '连上了，但服务器说：' + (d.message || '不正常');
       })

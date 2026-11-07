@@ -1,6 +1,6 @@
 {
   "appId": "top.nalxer.app",
-  "appName": "Nalxer",
+  "appName": "LinuxAPP",
   "webDir": "www",
   "bundledWebRuntime": false,
   "android": {
