@@ -166,7 +166,7 @@
 
 <section class="page-hero">
   <div class="container">
-    <span class="plug-hero-ver">26.12.11 · Android / iOS</span>
+    <span class="plug-hero-ver">26.13.0 · Android / iOS</span>
     <h1>Nalxer App 帮助中心</h1>
     <p>安装、配置、接口、App 用法，一页看完</p>
   </div>
@@ -199,10 +199,10 @@
 
 <section class="help-section" id="install">
     <h2><span class="num">1</span>安装插件</h2>
-    <p><b>两个 jar</b>：<b>NalxerApp.jar</b> 硬依赖 <b>InTheNameOfLinux.jar</b> —— 26.11.11 起 App 的服务端就是直接调 ITNOL 的 API，老版本 ITNOL 缺这些方法会报「服务器没有 ITNOL 插件」，所以两个必须一起换、版本对齐。AuthMe、经济插件、LinuxTeam、LinuxTitle 这些是接上就用，没接就少一块数据，不会报错。</p>
+    <p><b>两个 jar</b>：<b>LinuxAPP.jar</b> 硬依赖 <b>InTheNameOfLinux.jar</b> —— 26.11.11 起 App 的服务端就是直接调 ITNOL 的 API，老版本 ITNOL 缺这些方法会报「服务器没有 ITNOL 插件」，所以两个必须一起换、版本对齐。AuthMe、经济插件、LinuxTeam、LinuxTitle 这些是接上就用，没接就少一块数据，不会报错。</p>
 
     <ol class="steps">
-      <li>把 <code>NalxerApp.jar</code> 放进服务器的 <code>plugins/</code> 目录。服务端用 Paper 或 Spigot 1.12.2，Java 8。</li>
+      <li>把 <code>LinuxAPP.jar</code> 放进服务器的 <code>plugins/</code> 目录。服务端用 Paper 或 Spigot 1.12.2，Java 8。</li>
       <li>重启服务器。插件会自己生成配置和密钥，并在 <code>49282</code> 端口把接口开起来（默认监听 <code>0.0.0.0</code>，云服务器要能直连）。</li>
       <li>看控制台的 <code>[联动]</code> 日志，确认 AuthMe、金币、点券、封禁、队伍、头衔都接上了。</li>
       <li>在服务器本机执行 <code>curl http://127.0.0.1:49282/api/health</code>，能返回一串 JSON 就说明接口是活的；在手机浏览器里试 <code>http://你的服务器IP:49282/api/health</code> 能看到同样的 JSON，就说明安全组也放行了。</li>
@@ -210,14 +210,14 @@
 
     <p>正常启动时控制台会依次打出这几行（装了什么就出现什么，没装的那一项不会打）：</p>
 
-    <div class="code-block"><div>[NalxerApp] Loading NalxerApp v 26.12.11</div><div>[NalxerApp] Enabling NalxerApp v 26.12.11</div><div>[NalxerApp] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[NalxerApp] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[NalxerApp] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[NalxerApp] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[NalxerApp] [联动] 已接上 LinuxTeam 队伍（信息 / 建队 / 加入 / 退出 / 踢人 / 转让）</div><div>[NalxerApp] [联动] 已接上 LinuxTitle 头衔（列表 / 佩戴）</div><div>[NalxerApp] [联动] 已接上 ITNOL 禁言判定（App 里发聊天前会先查）</div><div>[NalxerApp] [联动] 已接上 ITNOL 身份（只用来读身份，旧版本起不再要求 App 里二次验证）</div><div>[NalxerApp] [联动] 已接上 ITNOL 举报（列表 / 提交 / 接受 / 驳回）</div><div>[NalxerApp] [联动] 已接上 FakePlayerPlugin 假人（列表 / 召唤 / 移除）</div><div>[NalxerApp] [联动] 已接上 XlandCore 身份（服主 / 副服主 / 市长 / 协管）</div><div>[NalxerApp] [联动] 已接上 NalxerLink 1.24.0 —— 安卓客户端发的消息会进公屏，标「FS1安卓端」</div><div>[NalxerApp] 接口已启动：http://0.0.0.0:49282/api/health（明文直连，手机里填 http://服务器IP:49282 就能用）</div><div>[NalxerApp] NalxerApp 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是，队伍：是，头衔：是）</div><div>[NalxerApp] 聊天通道已开启 —— 游戏里说话会同步到 App，App 发的消息带 [LinuxAPP]  前缀广播进游戏</div><div>[NalxerApp] 二次身份验证：关闭（旧版本起整套去掉，登录成功直接进主界面）</div><div>[NalxerApp] 命令控制台 / su 名单：[Linux582021, fs1]（不在名单里的管理员只能封禁 / 惩罚 / 处理举报 / 管假人）</div></div>
+    <div class="code-block"><div>[LinuxAPP] Loading LinuxAPP v 26.13.0</div><div>[LinuxAPP] Enabling LinuxAPP v 26.13.0</div><div>[LinuxAPP] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[LinuxAPP] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[LinuxAPP] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[LinuxAPP] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[LinuxAPP] [联动] 已接上 LinuxTeam 队伍（信息 / 建队 / 加入 / 退出 / 踢人 / 转让）</div><div>[LinuxAPP] [联动] 已接上 LinuxTitle 头衔（列表 / 佩戴）</div><div>[LinuxAPP] [联动] 已接上 ITNOL 禁言判定（App 里发聊天前会先查）</div><div>[LinuxAPP] [联动] 已接上 ITNOL 身份（只用来读身份，旧版本起不再要求 App 里二次验证）</div><div>[LinuxAPP] [联动] 已接上 ITNOL 举报（列表 / 提交 / 接受 / 驳回）</div><div>[LinuxAPP] [联动] 已接上 FakePlayerPlugin 假人（列表 / 召唤 / 移除）</div><div>[LinuxAPP] [联动] 已接上 XlandCore 身份（服主 / 副服主 / 市长 / 协管）</div><div>[LinuxAPP] [联动] 已接上 NalxerLink 1.24.0 —— 安卓客户端发的消息会进公屏，标「FS1安卓端」</div><div>[LinuxAPP] 接口已启动：http://0.0.0.0:49282/api/health（明文直连，手机里填 http://服务器IP:49282 就能用）</div><div>[LinuxAPP] LinuxAPP 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是，队伍：是，头衔：是）</div><div>[LinuxAPP] 聊天通道已开启 —— 游戏里说话会同步到 App，App 发的消息带 [LinuxAPP]  前缀广播进游戏</div><div>[LinuxAPP] 二次身份验证：关闭（旧版本起整套去掉，登录成功直接进主界面）</div><div>[LinuxAPP] 命令控制台 / su 名单：[Linux582021, fs1]（不在名单里的管理员只能封禁 / 惩罚 / 处理举报 / 管假人）</div></div>
 
     <p>哪一行结尾写的是「未检测到」，就是对应的插件没装、没启用或者版本不认识。那一项在 App 里会显示成 <code>—</code>，其余功能照常，不用为了一行日志去折腾服务器。</p>
 
     <h3>启动后生成的文件</h3>
     <p>没有子目录、没有数据库，就这几个文件：</p>
 
-    <div class="code-block"><div>plugins/NalxerApp/</div><div>├── config.yml   <span class="comment"># 全部配置；token.secret 也写在这个文件里</span></div><div>├── stats.yml    <span class="comment"># 离线玩家的数据缓存（金币 / 点券 / 等级 / 时长）</span></div><div>└── audit.log    <span class="comment"># 封禁 / 解封 / 登录的审计记录</span></div></div>
+    <div class="code-block"><div>plugins/LinuxAPP/</div><div>├── config.yml   <span class="comment"># 全部配置；token.secret 也写在这个文件里</span></div><div>├── stats.yml    <span class="comment"># 离线玩家的数据缓存（金币 / 点券 / 等级 / 时长）</span></div><div>└── audit.log    <span class="comment"># 封禁 / 解封 / 登录的审计记录</span></div></div>
 
     <div class="tip tip-warn">
       <span class="tip-icon">⚠</span>
@@ -253,7 +253,7 @@
           <tr><td><code>http.port</code></td><td><code>49282</code></td><td>接口端口。改了记得同步改 Nginx 里的 <code>proxy_pass</code>，两边要对得上。</td></tr>
           <tr><td><code>http.threads</code></td><td><code>8</code></td><td>处理请求的线程数。几十个人的服 8 个足够，没必要往上加。</td></tr>
           <tr><td><code>http.tls</code></td><td><code>false</code></td><td>插件自带 HTTPS 的总开关。开了就不用在前面挂 Nginx，地址直接写 <code>https://域名:49282</code>。</td></tr>
-          <tr><td><code>http.keystore</code></td><td><code>keystore.p12</code></td><td>证书文件（PKCS12），放在 <code>plugins/NalxerApp/</code> 下。</td></tr>
+          <tr><td><code>http.keystore</code></td><td><code>keystore.p12</code></td><td>证书文件（PKCS12），放在 <code>plugins/LinuxAPP/</code> 下。</td></tr>
           <tr><td><code>http.keystore-password</code></td><td>空</td><td>p12 的密码，开了 <code>tls</code> 就不能留空。</td></tr>
           <tr><td><code>token.secret</code></td><td><code>""</code></td><td>令牌签名密钥。留空会自动生成一串随机值写回配置；换掉它等于所有人重新登录一次。</td></tr>
           <tr><td><code>token.ttl-hours</code></td><td><code>168</code></td><td>令牌有效期（小时）。168 = 7 天，过期的令牌直接返回 401。</td></tr>
@@ -329,7 +329,7 @@
     <p>服务器上就这一个服务、又懒得维护 Nginx 的话，插件内置了 HTTPS（Java 自带 HttpsServer，没有额外依赖）。
        把 certbot 签的证书转成 PKCS12 丢进插件目录就行：</p>
 
-    <div class="code-block"><div># 1. 证书转 PKCS12</div><div>openssl pkcs12 -export -out keystore.p12 \</div><div>  -inkey /etc/letsencrypt/live/api.nalxer.top/privkey.pem \</div><div>  -in    /etc/letsencrypt/live/api.nalxer.top/fullchain.pem \</div><div>  -passout pass:你的密码</div><div></div><div># 2. 放进插件目录</div><div>cp keystore.p12 plugins/NalxerApp/</div></div>
+    <div class="code-block"><div># 1. 证书转 PKCS12</div><div>openssl pkcs12 -export -out keystore.p12 \</div><div>  -inkey /etc/letsencrypt/live/api.nalxer.top/privkey.pem \</div><div>  -in    /etc/letsencrypt/live/api.nalxer.top/fullchain.pem \</div><div>  -passout pass:你的密码</div><div></div><div># 2. 放进插件目录</div><div>cp keystore.p12 plugins/LinuxAPP/</div></div>
 
     <div class="code-block"><div>http:</div><div>  port: 49282</div><div>  tls: true</div><div>  keystore: keystore.p12</div><div>  keystore-password: '你的密码'</div></div>
 
@@ -498,8 +498,8 @@
           <tr><th>平台</th><th>文件</th><th>怎么装</th></tr>
         </thead>
         <tbody>
-          <tr><td>安卓</td><td><code>Nalxer-26.12.11.apk</code>（约 3.34 MB）</td><td>传到手机点开装；系统提示「未知来源」时给浏览器一次安装权限</td></tr>
-          <tr><td>iOS</td><td><code>Nalxer-26.12.11-unsigned.ipa</code>（约 1.17 MB）</td><td>电脑装 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>，插上 iPhone，把 ipa 拖进去、填 Apple ID、点 Start</td></tr>
+          <tr><td>安卓</td><td><code>Nalxer-26.13.0.apk</code>（约 3.34 MB）</td><td>传到手机点开装；系统提示「未知来源」时给浏览器一次安装权限</td></tr>
+          <tr><td>iOS</td><td><code>Nalxer-26.13.0-unsigned.ipa</code>（约 1.17 MB）</td><td>电脑装 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>，插上 iPhone，把 ipa 拖进去、填 Apple ID、点 Start</td></tr>
         </tbody>
       </table>
     </div>
@@ -550,9 +550,9 @@
     <h3>FS1 安卓端（NalxerLink）发的消息也能看见（26.11.14）</h3>
     <p>如果服务器上装了 <code>NalxerLink</code>（给安卓客户端用的登录 / 聊天接口），那边发的聊天会以
       <code>[App] 用户名: 内容</code> 的形式广播到控制台。<b>这里的用户名就是对方在 FS1 安卓客户端登录时
-      填的那个账号</b>（比如 <code>Linux582021</code>），不是固定的「FS1玩家」字样。NalxerApp 会把这行认出来，
+      填的那个账号</b>（比如 <code>Linux582021</code>），不是固定的「FS1玩家」字样。LinuxAPP 会把这行认出来，
       原样用这个用户名进 App 的「世界」频道，后面标 <b>· FS1安卓端</b>——一眼能分清是 <b>游戏里</b> 说的、
-      <b>NalxerApp</b> 发的、还是 <b>FS1 安卓端</b> 发的。显示形如：<code>Linux582021 · 23:59 · FS1安卓端</code>。</p>
+      <b>LinuxAPP</b> 发的、还是 <b>FS1 安卓端</b> 发的。显示形如：<code>Linux582021 · 23:59 · FS1安卓端</code>。</p>
     <ul>
       <li>开关：<code>chat.capture-link</code>，默认 <code>true</code>；关掉就不再读这类广播。</li>
       <li>前缀名单：<code>chat.link-speakers</code>，默认 <code>[app]</code>。别的客户端广播前缀不是 <code>[App]</code> 的话，把它加进这个列表。</li>
@@ -630,21 +630,14 @@
   </section>
 
 <section class="help-section" id="whatsnew">
-    <h2><span class="num">7</span>26.12.11 更新说明</h2>
-    <p>26.12.11 这一版主要是「登录更稳、服务器更不容易被拖垮」：</p>
+    <h2><span class="num">7</span>26.13.0 更新说明</h2>
+    <p>26.13.0 这一版有两件事：队伍能共享领地了，插件也改名成 LinuxAPP 了。</p>
     <ul>
-      <li><b>登录冷却</b>：同一台设备 / 同一个 IP，60 秒内最多试 5 次，超了要等 30 秒；同一个账号连续输错 10 次锁 5 分钟。从第 5 次失败起，界面会直接告诉你「还能再试 N 次」。</li>
-      <li><b>不能抢登了</b>：新设备登录不会再把旧设备顶掉，而是直接提示「这个账号已经在另一台设备上登录了」。换设备只有两条路：在原设备上点退出登录，或让管理员在控制台执行 <code>/nalxerapp logout &lt;玩家名&gt;</code>。</li>
-      <li><b>假人崩溃修好了</b>：跨世界或移除假人时，实体追踪器还在给已经销毁的假人发包，会抛空指针把整个世界 tick 带崩；现在发包前先判空并兜住异常。</li>
-      <li><b>解封不再卡服</b>：以前每解封一次都要在主线程重写整份 data.yml，记录一多就卡；现在主线程只取快照，写文件放到异步线程。</li>
-      <li><b>顺手做了一轮审计</b>：离线玩家名改成带缓存的索引（不再每次请求扫全表）、权限判定加缓存、su 控制台禁掉 <code>reload</code> / <code>op</code> 这类会卡服或提权的命令。</li>
-    </ul>
-    <ul>
-      <li><b>协管（moderator）的管理页</b>：只有 在线 / 玩家 / 举报 / 惩罚 四个子标签，顶部写明权限范围；能看在线、看玩家详情、看管理层名单、处理举报、禁言与解除禁言，封禁类处罚要管理员（服务端 403，不是只藏按钮）。</li>
-      <li><b>处罚时长上限 30 天</b>：协管一次最多 43200 分钟，超过会被拒（「协管最多只能处罚 30 天，要更久请让管理员操作」），客户端也会先拦一次。</li>
-      <li><b>单设备登录</b>：同一账号第二台设备登录会被拒（403 <code>session_taken</code>），可以选「踢掉那台设备并登录」，旧设备下次请求直接 401 <code>session_kicked</code>；「更多」里退出登录会释放位置。</li>
-      <li><b>开屏 / 登录页图标</b>：换成应用图标（<code>icon-192.png</code>），跟桌面图标一致。</li>
-      <li><b>iOS 12 聊天输入条</b>：老 WebKit 下用 fixed 定位钉在底栏上方，并给聊天页补了底部内距。</li>
+      <li><b>队伍「领地共享」</b>：队伍卡片里，「队伍申请」下面多了一个开关。打开后，队长和每个队员名下的 Residence 领地会对全队开放 17 项基础权限（建造、破坏、使用、容器、按钮、拉杆、中继器、门、压力板、音符盒、附魔、酿造、铁砧、蛋糕、龙蛋、床、工作台）；关掉就把这些权限收回。有人入队、退队、被踢，都会自动补上或收回。</li>
+      <li><b>必须先开「队伍申请」</b>：没开进队验证时，这个开关是灰的，点不动，下面写着「需要先打开上面的「队伍申请」」。这样不会出现「谁都能进队、顺手把领地也交出去」。</li>
+      <li><b>插件改名 LinuxAPP</b>：jar 从 <code>NalxerApp.jar</code> 改成 <code>LinuxAPP.jar</code>，命令用 <code>/linuxapp</code>（<code>/nalxerapp</code> 也还能用）。第一次启动会自动把 <code>plugins/NalxerApp</code> 里的配置、登录记录、队伍申请搬到 <code>plugins/LinuxAPP</code>，旧的不用手动删。</li>
+      <li><b>装两个 jar 才完整</b>：<code>LinuxAPP.jar</code> + <code>InTheNameOfLinux.jar</code> 一起放进 plugins。LinuxAPP 硬依赖 ITNOL，少了它不会启动。</li>
+      <li><b>领地共享靠的是命令 + 存档</b>：不直接调 Residence 的 Java 接口（它把 WorldGuard / Kingdoms 写进了类里，服务器没装就崩），改成读 <code>plugins/Residence/Save/Worlds</code> 找归属、用控制台 <code>resadmin pset</code> 改权限，所以服务器不需要额外装 WorldGuard。</li>
     </ul>
     <p>此前版本要点：这一版加了主题（风格 + 颜色），把聊天的实时刷新彻底修好，并让 App 里做的操作在执行人一栏写成「APP端（用户名）」。</p>
     <ul>
@@ -994,7 +987,7 @@
     </div>
 
     <h3>审计日志</h3>
-    <p>每一次封禁和解封都会往 <code>plugins/NalxerApp/audit.log</code> 追加一行，一行一次操作，纯文本，直接 <code>tail -f</code> 看：</p>
+    <p>每一次封禁和解封都会往 <code>plugins/LinuxAPP/audit.log</code> 追加一行，一行一次操作，纯文本，直接 <code>tail -f</code> 看：</p>
 
     <div class="code-block"><div>2026-11-02 21:55:10  Linux582021 封禁 Alex_02（7 天）原因：飞行作弊</div><div>2026-11-02 21:55:25  Linux582021 解封 Alex_02</div><div>2026-11-02 21:54:25  127.0.0.1 登录 Steve → 成功</div></div>
 
@@ -1171,7 +1164,7 @@
       <div class="faq-a-wrap">
         <div class="faq-a">
           经济插件一般把余额存在内存里，玩家下线才写盘，有的干脆只对在线玩家提供查询接口。插件能做的只有两件事：在线时直接问经济插件要，离线时读它落盘的数据。<br>
-          插件已经做了能做的：玩家在线时把金币记进 <code>plugins/NalxerApp/stats.yml</code>，离线后读这份缓存显示，所以一般不会是 0。但如果那个玩家从没在线过一次、或者换了经济插件导致旧缓存对不上，就只能是 0 —— 这不是 App 的问题。<br>
+          插件已经做了能做的：玩家在线时把金币记进 <code>plugins/LinuxAPP/stats.yml</code>，离线后读这份缓存显示，所以一般不会是 0。但如果那个玩家从没在线过一次、或者换了经济插件导致旧缓存对不上，就只能是 0 —— 这不是 App 的问题。<br>
           另外新人第一次进服之前没有任何数据，显示 0 是正常的。
         </div>
       </div>
@@ -1239,7 +1232,7 @@
     <h3>监听与审计</h3>
     <p>接口默认监听 <code>0.0.0.0:49282</code>，公网可以直接连（明文 HTTP）。想加密就挂 Nginx 或开插件自带 TLS；
        安全组里也可以只放行自己常用的网段。所有封禁 / 解封都写进
-       <code>plugins/NalxerApp/audit.log</code>，谁在什么时候封了谁、什么原因、多长时间，一行一条。</p>
+       <code>plugins/LinuxAPP/audit.log</code>，谁在什么时候封了谁、什么原因、多长时间，一行一条。</p>
 
     <div class="tip tip-danger">
       <span class="tip-icon">⚠</span>
@@ -1269,7 +1262,7 @@
     <div class="footer-brand">Nalxer App 帮助</div>
     <p>安装、配置、接口、App 用法，一页看完</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v 26.12.11 · Android / iOS · Made with ♥ by Linux582021
+      v 26.13.0 · Android / iOS · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
 <a href="index.html">← 插件列表</a>
