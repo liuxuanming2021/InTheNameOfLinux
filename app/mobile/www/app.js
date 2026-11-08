@@ -328,7 +328,8 @@
         var data = null;
         try { data = txt ? JSON.parse(txt) : {}; } catch (e) { data = { ok: false, message: '服务器返回的不是 JSON' }; }
         if (r.status === 401) {
-          if (data && data.code === 'session_kicked') { state.kicked = data.message || '这个账号已在另一台设备登录'; }
+          if (data && data.message) { state.kicked = data.message; }
+          else if (data && data.code === 'session_kicked') { state.kicked = '这个账号已在另一台设备登录'; }
           if (!opts.quiet) { logout(true); }
           var e401 = new Error((data && data.message) || '登录已过期，请重新登录');
           e401.status = 401;
@@ -485,7 +486,14 @@
     $('app').classList.add('hidden');
     $('login').classList.remove('hidden');
     setTimeout(hideSplash, 260);
-    if (!silent) toast('已退出登录');
+    if (state.kicked) {
+      var box = $('login-err');
+      if (box) { box.textContent = state.kicked; box.classList.remove('hidden'); }
+      toast(state.kicked);
+      state.kicked = '';
+    } else if (!silent) {
+      toast('已退出登录');
+    }
   }
 
   /** 设置页里那块「管理」只对服主显示；普通管理员连入口都看不见。 */
