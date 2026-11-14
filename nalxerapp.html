@@ -456,7 +456,7 @@
       <span class="tip-icon">ℹ️</span>
       <div class="tip-body">
         <strong>地址两种写法都行</strong>
-        App 里的地址随便改：直连就填 <code>http://服务器IP:49282</code>，挂了 Nginx 就填 <code>https://api.nalxer.top</code>，设置页还有「测试连接」按钮能当场验证。
+        App 默认连 <code>https://api.nalxer.top:49283</code>（插件的 HTTPS 端口，证书放 <code>plugins/LinuxAPP/certs/</code> 就行，不用 Nginx）。内网直连可以填 <code>http://服务器IP:49282</code>；「更多 → 接口地址」里有「测试连接」，当场看到服务器版本号。
         安卓 9 以后默认禁止明文 HTTP，填 <code>http</code> 打不开的话就在 App 里换成 https 域名。
       </div>
     </div>

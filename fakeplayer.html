@@ -172,7 +172,7 @@
   <div class="cover-overlay"></div>
 
   <div class="cover-inner">
-    <span class="plug-hero-ver">26.11.6 · Paper 1.12.2</span>
+    <span class="plug-hero-ver">26.12.11 · Paper 1.12.2</span>
 
     <h1 class="cover-title">FakePlayerPlugin</h1>
     <p class="cover-subtitle">FAKE PLAYER</p>
@@ -315,6 +315,55 @@
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+
+<!-- ── 每个假人的开关（26.12） ─────────────────────────── -->
+<section id="switches">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">26.12 NEW</span>
+      <h2>每个假人一套开关</h2>
+      <p>以前只有「召唤 / 移除」，现在每个假人都能单独调</p>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card reveal">
+        <div class="card-icon">⏻</div>
+        <h3>启用 / 停用</h3>
+        <p>停用 = 把假人从服务器上撤下来，不再刷怪、不再占在线人数，<b>坐标和各项开关都留着</b>，想用的时候一键回来。</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">🧱</div>
+        <h3>区块常驻</h3>
+        <p>关掉就只在有真人靠近时加载区块，省性能；开着就是传统挂机，机器 24 小时不停。</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">👹</div>
+        <h3>模拟刷怪</h3>
+        <p>假人所在区块是否按「有玩家在线」参与刷怪判定。刷怪塔要开，挂机收菜可以关。</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">🏚️</div>
+        <h3>只刷黑屋</h3>
+        <p>只在有遮挡的黑屋里允许刷怪，露天场地一律不刷 —— 防止挂机点把整片地形刷满怪。</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">🛡️</div>
+        <h3>无敌</h3>
+        <p>开了之后除 <code>/kill</code> 和掉虚空，任何伤害都打不死。改完会<b>自动把已召唤的假人各重生一次</b>才生效。</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">🎮</div>
+        <h3>游戏模式</h3>
+        <p>创造 / 生存 / 冒险 / 旁观四选一，按假人的用途挑；同样改完自动重生生效。</p>
+      </div>
+    </div>
+
+    <p class="reveal" style="margin-top: 22px; color: var(--text-2);">
+      这些开关在游戏里用 <code>/fp</code> 面板点，在 LinuxAPP 里也能点（管理 → 假人 → 点名字进详情）。
+    </p>
   </div>
 </section>
 
