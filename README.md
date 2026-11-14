@@ -1,355 +1,97 @@
-# LinuxWeb —— Linux582021 的插件官网
+# LinuxWeb —— 插件官网与帮助中心
 
-`InTheNameOfLinux`、`LinuxTitle`、`FakePlayerPlugin` 三款插件的官方网站 / 使用文档。
-**纯静态、零依赖、零构建**：HTML 文件直接双击就能看，丢到任何静态托管
-（GitHub Pages / 宝塔 / Nginx）都能跑。
+`InTheNameOfLinux` 这一套插件（以及 LinuxAPP 手机端）的**官网 / 使用文档**仓库。
+纯静态：一个页面就是一个 `.html`，样式写在各自的 `<style>` 里，没有构建步骤，
+推到 GitHub Pages 就能看。
 
-> 同一台服务器的官网在另一个目录：`../NalxerWeb/`（`nalxer.top`）。
-> 两者关系：**LinuxWeb 是插件官网，NalxerWeb 是跑这些插件的服务器官网**，
-> 两个站之间互相有跳转（导航栏的「Nalxer 服务器 →」）。
+线上地址：**<https://linux.nalxer.top/>**（仓库里的 `CNAME`）
 
 ---
 
-## 1. 目录结构
+## 1. 仓库里有什么
 
 ```
-LinuxWeb/
-├─ index.html              插件列表主页（3 张插件卡片 + 关于作者）
+/
+├── index.html                  首页：9 张插件卡片 + 导航
+├── CNAME                       linux.nalxer.top
+├── icon.svg                    favicon / apple-touch-icon
 │
-├─ linux.html              InTheNameOfLinux 介绍页
-├─ linuxhelp.html          InTheNameOfLinux 帮助中心（13 章）
+├── linux.html                  InTheNameOfLinux 总览
+├── linuxhelp.html              总帮助入口
+├── linuxpluginhelp.html        插件说明（命令、权限、配置全量）
 │
-├─ title.html              LinuxTitle 介绍页
-├─ titlehelp.html          LinuxTitle 帮助中心（7 章）
+├── ace.html        acehelp.html          LinuxACE（箱子锁 / 锁容器）
+├── chest.html      chesthelp.html        LinuxChestGUI
+├── fakeplayer.html fakeplayerhelp.html   FakePlayerPlugin（假人挂机）
+├── linuxtab.html   linuxtabhelp.html     LinuxTAB（TAB 列表 / 称号前缀）
+├── sync.html       synchelp.html         LinuxSync
+├── team.html       teamhelp.html         LinuxTeam（队伍）
+├── title.html      titlehelp.html        LinuxTitle（头衔）
 │
-├─ fakeplayer.html         FakePlayerPlugin 介绍页
-├─ fakeplayerhelp.html     FakePlayerPlugin 帮助中心（5 章）
+├── nalxerapp.html               LinuxAPP（手机端）介绍页
+├── nalxerapphelp.html           LinuxAPP 使用帮助（安装 / 配置 / 接口 / 排错）
 │
-├─ CNAME                   自定义域名（linux.nalxer.top）
-├─ icon.svg                favicon 与 apple-touch-icon
-├─ _tools/
-│  └─ check_html.py        结构校验脚本（Python 标准库，无需安装依赖）
-├─ 协管使用说明-26.11.4正式版.txt      可发给协管的纯文本说明
-├─ 管理员使用说明-26.11.4正式版.txt    可发给管理员的纯文本说明
-└─ README.md               本文件
+├── download/                   所有 jar / apk / ipa 都放这里
+│   ├── LinuxAPP.jar
+│   ├── InTheNameOfLinux.jar
+│   ├── LinuxAPP-<版本>.apk
+│   ├── LinuxAPP-ios-native-{adhoc,unsigned}.ipa
+│   └── Nalxer-<版本>-ios12-{adhoc,unsigned}.ipa
+│
+└── _tools/                     check_html.py（结构校验）、文本版使用说明
 ```
 
-每个插件都是「介绍页 + 帮助页」成对出现，命名规则为 `<插件>.html` 与 `<插件>help.html`。
-
-没有打包器、没有 npm、没有 CSS 框架 —— 所有样式都写在各自文件的 `<style>` 里。
+每个插件都是「介绍页 + 帮助页」成对出现。
 
 ## 2. 本地预览
 
-直接双击 `index.html` 即可（会先看到插件列表，再从卡片进入各插件）。若要用 HTTP 方式预览（推荐，避免个别浏览器对 `file://` 的限制）：
+双击 `index.html` 就能看，但**下载链接和相对路径建议用 HTTP 方式**打开：
 
-```powershell
-cd E:\Plugins\LinuxWeb
+```bash
+cd LinuxWeb
 python -m http.server 8080
-# 然后打开 http://127.0.0.1:8080
+# http://127.0.0.1:8080
 ```
 
-## 3. 页面结构
+## 3. 当前版本（与服务端 `plugins/` 里的 jar 对齐）
 
-### 页面总览
+| 插件 | 版本 |
+| --- | --- |
+| InTheNameOfLinux | 26.11.6-RC |
+| LinuxACE | 26.11.5 |
+| LinuxChestGUI | 26.11.7-Beta |
+| LinuxSync | 26.11.5 |
+| LinuxTAB | 26.11.8 |
+| LinuxTeam | 26.11.5 |
+| LinuxTitle | 26.11.5 |
+| FakePlayerPlugin | 26.12.11 |
+| LinuxAPP（插件 + 手机端） | 26.13.55 |
 
-| 文件 | 类型 | 行数 | 内容 |
-|---|---|---|---|
-| `index.html` | 主页 | 1316 | 插件列表（4 张卡片）+ 关于作者 |
-| `linux.html` | 介绍 | 2032 | InTheNameOfLinux 功能介绍 |
-| `linuxhelp.html` | 帮助 | 2912 | InTheNameOfLinux 帮助中心 |
-| `title.html` | 介绍 | 1331 | LinuxTitle 功能介绍 |
-| `titlehelp.html` | 帮助 | 1679 | LinuxTitle 帮助中心 |
-| `fakeplayer.html` | 介绍 | 1313 | FakePlayerPlugin 功能介绍 |
-| `fakeplayerhelp.html` | 帮助 | 1591 | FakePlayerPlugin 帮助中心 |
-| `team.html` | 介绍 | 526 | LinuxTeam 功能介绍（含 GUI 面板预览与附魔联动流程） |
-| `teamhelp.html` | 帮助 | 749 | LinuxTeam 帮助中心 |
+## 4. 发新版本时要改的地方
 
-### index.html（1316 行）
+1. `download/` 里放新包（老包可以删，只留最新一版）；
+2. 对应页面的 `<span class="plug-hero-ver">` 版本串；
+3. 帮助页顶部「这一版改了什么」的表格；
+4. `index.html` 卡片里的 `<p class="plug-ver">`；
+5. 首页 `LinuxAPP` 卡片的正文（功能变了就顺手改）。
 
-Hero 区 + 3 张插件卡片（每张含图标、名称、版本、分类标签、5 条功能要点、
-「查看介绍」「使用帮助」按钮）+ 关于作者。
+## 5. 部署
 
-| 区块 id | 内容 |
-|---|---|
-| `#plugins` | 插件列表，4 张卡片 |
-| `#about` | 关于作者（说明插件均运行在 Paper 1.12.2，且插件之间可互相配合） |
+推 `main`，GitHub Pages 自己构建（大约 1~5 分钟）。仓库 → Settings → Pages 确认分支是 `main` / 根目录。
 
-### linux.html（2032 行，原 index.html 改名）
-
-| 区块 id | 内容 |
-|---|---|
-| `#whatsnew` | 本版更新亮点（26.11.4正式版 新增：非法 NBT 检测合并 BanNbt / 查询带维度坐标 / 主页点击即执行 / 配置键自动补齐） |
-| `#features` | 核心功能十宫格 |
-| `#penalty` | 封禁系统 |
-| `#report` | 举报系统 |
-| `#moderator` | 协管权限体系 |
-| `#commands` | 命令列表 |
-| `#tech` | 技术亮点 |
-| `#roles` | 角色与权限三档对照 |
-| `#credits` | 感谢列表 |
-
-### linuxhelp.html（2912 行，原 help.html 改名）
-
-左侧目录 + 右侧正文，14 个章节：
-
-| 章节 | id |
-|---|---|
-| 更新日志 | `#changelog` |
-| 1 感谢列表 | `#credits` |
-| 2 快速开始 | `#quickstart` |
-| 3 命令详解 | `#commands` |
-| 4 举报系统 | `#report` |
-| 5 二次确认机制 | `#confirm` |
-| 6 权限说明 | `#permissions` |
-| 7 配置说明 | `#config` |
-| ↳ 完整配置参考（子项） | `#config-ref` |
-| 8 非法 NBT 检测 | `#nbt` |
-| 9 插件联动 | `#integration` |
-| 10 故障排查 | `#troubleshooting` |
-| 11 常见问题 | `#faq` |
-| 12 到期自动解除与手动解除 | `#expiry` |
-| 13 卸载与备份 | `#uninstall` |
-
-### title.html（1331 行）
-
-| 区块 id | 内容 |
-|---|---|
-| `#features` | 六大功能模块（28 个头衔 / 自动解锁 / 节日活动 / 每日头衔 / 聊天前缀 / 新人引导） |
-| `#titles` | 头衔一览表（成长 / 技巧 / 社交 / 活动 / 每日） |
-| `#commands` | 命令一览（9 条） |
-
-### titlehelp.html（1679 行）
-
-| 章节 | id |
-|---|---|
-| 1 快速开始 | `#quickstart` |
-| 2 命令详解 | `#commands` |
-| 3 解锁条件 | `#unlock` |
-| 4 节日活动 | `#festival` |
-| 5 配置说明 | `#config` |
-| 6 权限节点 | `#permissions` |
-| 7 常见问题 | `#faq` |
-
-### fakeplayer.html（1313 行）
-
-| 区块 id | 内容 |
-|---|---|
-| `#features` | 六大功能模块（创建假人 / 管理与移除 / 数据持久化 / 区块保护 / AuthMe 兼容 / 仅 OP 可用） |
-| `#commands` | 命令一览（7 条，全部需要 OP） |
-
-### fakeplayerhelp.html（1591 行）
-
-| 章节 | id |
-|---|---|
-| 1 快速开始 | `#quickstart` |
-| 2 命令详解 | `#commands` |
-| 3 使用技巧 | `#usage` |
-| 4 配置与数据 | `#config` |
-| 5 常见问题 | `#faq` |
-
-## 4. 内容同步（最重要的一节）
-
-这个网站是**手工同步**的，没有自动生成。插件那边改了东西，必须回来改对应条目，否则网站会和实际行为不一致。
-
-当前基线：**插件版本 26.11.4正式版**。
-
-| 插件侧变动 | 网站要改哪里 |
-|---|---|
-| 版本号 `plugin.yml` 的 `version` | `linux.html` 的 hero 徽章 + 页脚；`linuxhelp.html` 页脚（共 3 处，搜索 `v26.`） |
-| **每次发版的新增功能** | `linux.html` 的 `#whatsnew`「更新亮点」区块 + `linuxhelp.html` 的 `#changelog`「更新日志」表（**26.11.3 起新增的两处，以前没有，最容易被忘**） |
-| 新增 / 删除 / 改名子命令 | `linuxhelp.html` §2 命令表、`linux.html` §commands 命令表、`linuxhelp.html` §9 相关 FAQ |
-| `config.yml` 增删配置项或改默认值 | `linuxhelp.html` §6 关键配置项表 |
-| 权限节点变化 | `linuxhelp.html` §5 权限表 |
-| 用户可见的行为变化 | `linuxhelp.html` §8 故障排查（旧的排查建议会变成误导） |
-| 新增占位符变量 | `linuxhelp.html` §7「PlaceholderAPI 变量」表 |
-| 数据文件增减 | `linuxhelp.html` §7「数据文件」表 |
-| 登录 / 密码流程变化 | `linuxhelp.html` §1 快速开始、§2 登录相关表、§9 相关 FAQ |
-| fs1 保护的放行名单 / 通知文案变化 | `linuxhelp.html` §7 配置说明表（`fs1-protection-takeover`、`console-cmd-enabled`）、§9 FAQ「为什么我不能对 fs1 使用命令」、`linux.html` `#whatsnew` |
-| 功能被**删除**（配置项 / 命令 / 占位符） | 全站搜该名字：配置表、命令表、FAQ、`#changelog`、PAPI 变量表都要清；**不能只删一处** |
-| 命令接管 / 插件所有权 / 审计防篡改等新机制 | `linuxhelp.html` §6 配置说明表（`command-takeover`、`command-takeover-exclude`、`owner-force-permissions`）、`#changelog` |
-| 监听器冲突、被其他插件取消等对抗行为 | `linux.html` `#whatsnew`、`linuxhelp.html` `#changelog`；**不要**写进"使用说明"，那属于实现细节 |
-
-**已经踩过的坑**（写下来避免重复）：
-
-- 版本号曾长期停在 `v26.10.5-Alpha`，而插件早已是 26.11.x —— 改版本号要三处一起改。
-- `/linux login <密码>` 这种用法在 26.11.2 已被移除（会进服务端日志），网站 FAQ 原来只"建议"用聊天栏，现在改成了明确说明「不支持」。
-- **删除功能比新增功能更容易漏**：「突破 fs1 拦截」通道被整体移除（`Fs1Refuse` 类、`/linux fs` 命令、`fs1-refuse-enabled` 与 `fs1-offline-console` 两个配置项、`%inl_fs1%` 占位符），
-  而网站上两条配置、三条 FAQ、`#whatsnew` 卡片、`linux.html` 的权限清单**全都还在讲它** ——
-  **发版时请按功能名全站搜索一遍，而不是只改你记得的那一处**。
-- hero 徽章曾长期写着「SHA-256 加密存储」，而实现早就是 **PBKDF2-HMAC-SHA256 12 万次迭代**；`linux.html` §tech 的「安全」卡片同样是旧文案。**加密算法这类"技术描述"最容易被忽略，因为它不属于配置项，没有对照表可查**。
-- 26.11.3 之前网站**没有任何"本版改了什么"的入口**，用户升级后只能靠 FAQ 猜。现已补上 `#whatsnew` 与 `#changelog`，发版时请一并更新。
-
-## 5. 样式约定
-
-### 设计变量
-
-两个页面各自维护一份 CSS 变量，**改配色时两边都要改**：
-
-```css
---blue: #0071e3;        /* 主色 */
---blue-hover: ...;
---bg / --bg-secondary / --bg-tertiary;
---text / --text-secondary;
---border-light;
---code-bg / --code-keyword / --code-value / --code-comment;
+```bash
+git add -A
+git commit -m "站点：更新到 26.13.55"
+git push
 ```
 
-风格取向：圆角卡片 + 细边框 + 轻阴影，Apple 风格的留白，靠 `IntersectionObserver` 做滚动淡入（`.reveal`）。
+## 6. 手机端源码
 
-### 移动端断点
+客户端与插件源码在另一个仓库：**<https://github.com/liuxuanming2021/LinuxAPP>**
+（插件 `src/`、网页版 `app/mobile/www`、iOS 12 壳 `app/mobile-ios12`、原生 iOS `app/mobile-ios-native`、CI）。
 
-| 断点 | 作用 |
-|---|---|
-| `≤ 900px` | 导航折叠为汉堡菜单；`linuxhelp.html` 侧栏变横向胶囊；表格解除 `nowrap` |
-| `≤ 768px` | `index.html` 表格折行、字号下调、区块内边距收紧 |
-| `≤ 480px` | `linuxhelp.html` 进一步缩小字号与内边距 |
+## 7. 注意
 
-### 移动端排版的四条硬规矩
-
-这几条是修「手机上字挤在一起」时踩出来的，**新增样式时请遵守**：
-
-1. **不要把 `white-space: nowrap` 用在会装长内容的单元格上。**
-   桌面上好看，手机上会让首列（如 36 字符的 `/linux banblock <玩家> [时间] [原因]`）占满宽度，把相邻列压成一条缝，中文只能挤成一团。窄屏必须覆盖为 `white-space: normal`。
-
-2. **中文标题不要用负 `letter-spacing`。**
-   负字距是为西文排印（`InTheNameOfLinux`、`v26.11.2`）准备的；中文没有字母间隙，负值会让汉字重叠发糊。中文标题统一 `letter-spacing: 0`，局部紧凑改用 `padding` 或 `margin` 收。
-
-3. **CJK 要显式给断行兜底。**
-   中文默认不在字与字之间断行：
-   ```css
-   word-break: break-word;
-   overflow-wrap: break-word;
-   ```
-   长命令 / 变量名 / 域名再补 `overflow-wrap: anywhere`。`break-word` 不会破坏正常英文单词。
-
-4. **超宽表格用横向滚动，不要压缩列。**
-   `overflow-x: auto` + `-webkit-overflow-scrolling: touch`；配合窄屏负外边距做通栏。
-
-## 6. 改完必跑：结构校验
-
-```powershell
-python E:\Plugins\LinuxWeb\_tools\check_html.py `
-       E:\Plugins\LinuxWeb\linux.html E:\Plugins\LinuxWeb\linuxhelp.html
-```
-
-全部通过时输出 `总体: 全部通过` 且退出码为 `0`。它检查：
-
-- 标签配对（有多余闭合标签、或有非可选标签未闭合就报错）
-- 重复 `id`
-- 页内锚点是否有对应目标
-- 可疑占位符（`{{ }}`、`TODO`、`undefined`、`NaN`）
-
-**建议的改动流程**：改 HTML → 跑校验 → 浏览器开 DevTools 的设备模拟（375×667 / 390×844）确认无横向滚动条 → 提交。
-
-## 7. 部署
-
-静态站点，把 `LinuxWeb/` 下的文件（不含 `_tools/` 与 README）上传到站点目录即可。GitHub Pages 的话直接推到仓库根或 `/docs`。
-
-页面指向服务器官网 `http://nalxer.top` 的位置共 5 处：`index.html` 3 处（导航外链、页脚链接、页脚「Nalxer 服务器 → nalxer.top」文字）、`linuxhelp.html` 2 处（导航外链、页脚链接）。域名如果换了，直接搜索 `nalxer.top` 一并替换。
-
-## 8. 当前状态与已知事项
-
-**已完成**
-
-- 两页结构校验通过；页内锚点全部有目标；`id` 无重复
-- `icon.svg` 已补齐（此前缺失，浏览器 404）
-- 移动端排版四项根因已修（`nowrap` 压列、负字距、CJK 不断行、表格挤压）
-
-**未覆盖 / 待确认**
-
-- `linux.html` 的表格折行规则在 `≤768px` 生效；**769–900px 区间只折叠了导航，没处理表格**。若在竖屏平板上发现表格偏挤，把断点提到 900px 即可。
-- 两页各自维护一份 CSS 变量，容易漂移。若日后要抽公共样式，建议外链一个 `style.css`（目前为了"单文件可分享"刻意内联）。
-- 版本号在 3 处硬编码，没有自动注入。若接入构建流程，可用占位符替换。
-
----
-
-## 9. 感谢列表
-
-本插件与官方的开发维护离不开以下贡献者。**官网两页都设有对应区块**
-（`linux.html` 的 `#credits`、`linuxhelp.html` 的第 12 章 `#credits`），改动贡献者时这三处要一起改。
-
-| 贡献者 | 身份 | 贡献 |
-|---|---|---|
-| **Linux582021** | 作者 | 插件作者与主要维护者：整体架构、封禁 / 举报 / 协管 / 保护体系、配置与文档、官网维护 |
-| **星白喵喵** | 作者 | **提供 BanNbt 插件源码**。其非法 NBT 检测逻辑已成为本插件的一部分，即 `/linux nbtview` 与周期扫描功能；检测阈值与判定规则依据其原始实现 |
-
-### 非法 NBT 检测的来源说明（写文档时的口径）
-
-该功能原本是独立插件 `BanNbt`，源码由 **星白喵喵** 提供，现已整体合并进 `InTheNameOfLinux`。
-对外说明时请区分两部分，**不要把别人的成果写成自己的**：
-
-| | 内容 |
-|---|---|
-| **沿用其原始实现** | 附魔等级上限、属性修饰符阈值（攻击力 / 击退抗性 / 最大生命 / 移动速度 / 护甲 / 护甲韧性）、抗性提升压缩规则 |
-| **本插件后续补充** | 豁免玩家与世界配置化（不再硬编码名字）、饰品兼容（`#pscharm:` 标记）、悬浮详情播报、`/linux nbtview` 手动扫描 |
-
-插件内的作者显示**不需要改代码**：`InTheNameOfLinux` 主页的作者行由
-`authorsDisplay()` 读取 `plugin.yml` 的 `authors` 字段动态生成
-（元数据读不到时才退回常量 `AUTHOR`）。因此只需维护 `plugin.yml`：
-
-```yaml
-authors: [Linux582021, 星白喵喵]
-```
-
-> 注意：这种**行内**写法 YAML 会正确解析成列表（已实测），
-> `String.join("、", authors)` 得到 `Linux582021、星白喵喵`，游戏内主页显示正常。
-
----
-
-相关文档：插件源码与完整改动记录见 `../InTheNameOfLinux/`（`FIXES-2026-09-25-round2.md` 第 8 节记录了网站同步的每一项）。
-
-
-================================================================================
-LinuxTeam 官网页面（2026-10-14 新增）
-================================================================================
-
-新增两个页面：
-  team.html       介绍页（526 行）—— 与其它插件的介绍页同构：
-                  封面 → 为什么需要 → GUI 面板预览 → 核心功能 Bento
-                  → 疯狂附魔联动 → 命令一览 → 底部 CTA
-  teamhelp.html   帮助页（749 行）—— 左侧目录 + 右侧正文，共 10 节：
-                  快速开始 / GUI 面板怎么点 / 命令详解 / 队伍聊天频道 /
-                  队友免误伤 / 疯狂附魔联动 / 配置说明 / 权限节点 /
-                  变量与联动 / 常见问题
-
---------------------------------------------------------------------------------
-新版式组件（追加在 style.css 末尾，只被这两个页面使用）
---------------------------------------------------------------------------------
-  .page-scrim      壁纸压暗罩（fixed，覆盖整个视口）
-  .glass-stage     玻璃展台：给面板加一层柔和的径向环境光晕
-  .glass-panel     玻璃面板本体（暗玻璃 + 上缘高光 + 外侧软阴影 + 斜向扫光）
-  .glass-titlebar  面板顶栏（模仿窗口标题条，含三个圆点）
-  .glass-dot       顶栏圆点
-  .glass-title     顶栏标题
-  .inv-grid        6×3 箱子格子演示（CSS 画，不用图片）
-  .inv-slot        格子；.on / .head 表示"有内容"，hover 用 ::after 显示名称
-  .glass-caption   面板下方说明文字
-  .glass-flow      附魔联动流程条
-  .flow-tag        流程条上的标签；.ok / .no 表示通过与拦截
-
---------------------------------------------------------------------------------
-玻璃方案的三轮迭代（为什么最终是"暗玻璃"）
---------------------------------------------------------------------------------
-第 1 版  浅色玻璃 rgba(255,255,255,0.10) + 白字
-         实测（无头 Edge 整页截图）：壁纸高光区上白字读不出来。
-第 2 版  加深色压暗罩 + 提高玻璃白度 + 深色投影
-         顶部封面能读了，但滚动后的区域仍糊；壁纸亮部太多，效果不稳定。
-第 3 版  backdrop-filter 里加 brightness(0.58) 压暗背后
-         效果不稳定（部分区域反而更亮），且依赖具体浏览器实现。
-定稿     **暗玻璃**：深钢青蓝 @ 0.76 不透度 + 白字 + 上缘细高光
-         · 保留 24% 透光率 —— 壁纸仍然透得出来，"透明"的要求满足
-         · 白字对比度约 10:1（WCAG AA 要求 4.5:1），任何壁纸下都能读
-         · 帮助页（body.pure-white）自动退回浅色，不受影响
-         · 不支持 backdrop-filter 或用户要求减少动效时退回实色，优先可读
-
-结论：浅玻璃的可读性取决于壁纸当处长什么样，而壁纸是可换的、内容是不可控的。
-      暗玻璃把"可读性"从看运气变成有保证，同时仍然保留透明质感。
-
---------------------------------------------------------------------------------
-验证方式
---------------------------------------------------------------------------------
-  · _tools/check_html.py 结构校验：10 个页面全部通过
-  · 无头 Edge 整页截图（--headless=new --window-size=1440,7000）逐版对比
-  · 站内链接与同页锚点全量扫描：无缺失
-
-<!-- pages rebuild 26.12.9 -->
+- 页面里不要写死服务端 IP；对外统一 `https://api.nalxer.top:49283`。
+- `download/` 里的 ipa 都是**未签名**的，用户要自己用 Sideloadly / AltStore 自签；`*-adhoc.ipa` 是 CI 假签名，作用只是能被安装工具识别。
+- 帮助页里旧的 `verify.*`（二次验证）配置已经废弃，页面里明确标了「已废弃」，别再照着配。
