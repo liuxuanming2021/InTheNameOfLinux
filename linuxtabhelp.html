@@ -166,7 +166,7 @@
 
 <section class="page-hero">
   <div class="container">
-    <span class="plug-hero-ver">26.11.8</span>
+    <span class="plug-hero-ver">26.11.9</span>
     <h1>LinuxTAB 帮助中心</h1>
     <p>布局、顺序、头尾面板与命令，一页看完</p>
   </div>
@@ -202,7 +202,7 @@
     <p>LinuxTAB 不需要前置插件，一个 jar 就能跑。队伍、头衔、假人都是可选的联动项：装了谁就接谁，没装也只是少一块信息，不会报错、不会影响其它功能。</p>
 
     <ol class="steps">
-      <li>把 <code>LinuxTAB-26.11.8.jar</code> 放进服务器的 <code>plugins/</code> 目录。服务端用 Paper 或 Spigot 1.12.2，Java 8 及以上。</li>
+      <li>把 <code>LinuxTAB-26.11.9.jar</code> 放进服务器的 <code>plugins/</code> 目录。服务端用 Paper 或 Spigot 1.12.2，Java 8 及以上。</li>
       <li>重启服务器。第一次启动会生成 <code>plugins/LinuxTAB/config.yml</code>，默认就是「2 列 × 20 行、补空位、延迟列开」。</li>
       <li>看一眼控制台的启动摘要，确认列数、补位、延迟列、PlaceholderAPI 都是你要的状态。</li>
       <li>之后改配置只需要 <code>/linuxtab reload</code>，不用重启服务器；玩家列表会在下一次刷新（默认 20 tick）内变过来。</li>
@@ -559,7 +559,7 @@
       <div class="faq-a-wrap">
         <div class="faq-a">
           这个已经修了：补位空行现在全部放进队名以 <code>U+FFFF</code> 开头的计分板队伍里，客户端按队伍名排序时它们必然沉底，不会再插到真人中间。<br>
-          如果升级之后还出现，先确认你确实用的是 26.11.8，然后 <code>/linuxtab debug</code> 打开调试，看 <code>[布局]</code> 那行打印的位次——空行应该全部排在所有 <code>player:</code> 之后。顺序对但显示不对，通常是客户端缓存，让玩家退出列表界面再打开一次。
+          如果升级之后还出现，先确认你确实用的是 26.11.9，然后 <code>/linuxtab debug</code> 打开调试，看 <code>[布局]</code> 那行打印的位次——空行应该全部排在所有 <code>player:</code> 之后。顺序对但显示不对，通常是客户端缓存，让玩家退出列表界面再打开一次。
         </div>
       </div>
     </div>
@@ -661,7 +661,7 @@
     <div class="footer-brand">LinuxTAB 帮助</div>
     <p>多列 · 队伍 · 头衔 · 延迟，把玩家列表做成展示面板</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v26.11.8 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+      v26.11.9 · Minecraft 1.12.2 · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
 <a href="index.html">← 插件列表</a>

@@ -166,7 +166,7 @@
 
 <section class="page-hero">
   <div class="container">
-    <span class="plug-hero-ver">26.11.17</span>
+    <span class="plug-hero-ver">26.11.18</span>
     <h1>LinuxSpawn 帮助中心</h1>
     <p>刷怪倍率、配置文件、卡服分析与 App 联动</p>
   </div>
@@ -258,8 +258,8 @@
         <tr><td><code>safety.min-tps</code></td><td>15.0</td><td>低于这个 TPS 就不再补刷（世界仍被接管）</td></tr>
         <tr><td><code>cleaner.auto.enabled</code></td><td>true</td><td>自动清理自然怪物</td></tr>
         <tr><td><code>cleaner.auto.interval-seconds</code></td><td>600</td><td>多久清一次</td></tr>
-        <tr><td><code>cleaner.auto.batch-size</code></td><td>250</td><td><b>26.11.17 新增</b>，每 tick 最多删多少只，50~2000</td></tr>
-        <tr><td><code>cleaner.auto.budget-ms</code></td><td>4</td><td><b>26.11.17 新增</b>，每 tick 最多花多少毫秒，1~20</td></tr>
+        <tr><td><code>cleaner.auto.batch-size</code></td><td>250</td><td><b>26.11.18 新增</b>，每 tick 最多删多少只，50~2000</td></tr>
+        <tr><td><code>cleaner.auto.budget-ms</code></td><td>4</td><td><b>26.11.18 新增</b>，每 tick 最多花多少毫秒，1~20</td></tr>
         <tr><td><code>cleaner.auto.protect-named</code></td><td>true</td><td>有名字的不清</td></tr>
         <tr><td><code>cleaner.auto.protect-tamed</code></td><td>true</td><td>驯服的不清</td></tr>
         <tr><td><code>cleaner.auto.protect-leashed</code></td><td>true</td><td>拴着的不清</td></tr>
@@ -272,11 +272,11 @@
 </section>
 
 <section class="help-section" id="perf">
-    <h2><span class="num">4</span>卡服分析与 26.11.17 加固</h2>
+    <h2><span class="num">4</span>卡服分析与 26.11.18 加固</h2>
 
     <p><b>结论：不会比原版更卡。</b>它调的是原版同一个 <code>SpawnerCreature</code>，一轮的耗时和原版完全一样
     （测试服实测单轮 0.24 ms）；倍率只是让这一 tick 多跑几轮，而且有 <code>max-cycles-per-tick</code> 截断。
-    真正需要防的是<b>清理</b>和<b>每 tick 的杂项开销</b>，26.11.17 把这些都改了：</p>
+    真正需要防的是<b>清理</b>和<b>每 tick 的杂项开销</b>，26.11.18 把这些都改了：</p>
 
     <table>
       <thead><tr><th>位置</th><th>改之前</th><th>改之后</th></tr></thead>
@@ -330,7 +330,7 @@
 </section>
 
 <section class="help-section" id="faq">
-    <h2><span class="num">6</span>和 InTheNameOfLinux 联动（26.11.17）</h2>
+    <h2><span class="num">6</span>和 InTheNameOfLinux 联动（26.11.18）</h2>
     <p>缺 ITNOL 时自动降级、不报错；装了就用上这三条：</p>
     <table class="tbl">
       <thead><tr><th>能力</th><th>说明</th></tr></thead>
@@ -375,7 +375,7 @@
     <div class="footer-brand">LinuxSpawn 帮助</div>
     <p>在服务器里放置不会掉线的"假玩家"</p>
     <p style="margin-top: 16px; font-size: 13px;">
-      v26.12.11 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+      v26.12.12 · Minecraft 1.12.2 · Made with ♥ by Linux582021
     </p>
     <p style="margin-top: 12px;">
 <a href="index.html">← 插件列表</a>
