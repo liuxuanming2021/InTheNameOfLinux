@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>帮助 · LinuxAPP</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css?v=20261101c">
+    <link rel="stylesheet" href="liquid-glass.css?v=20261101c">
+</head>
+<body class="pure-white">
+
+<!-- ===== 液态玻璃折射滤镜（被 liquid-glass.css 的 backdrop-filter 引用） =====
+     这是"玻璃的厚度场"：把背景按边缘梯度掰弯，
+     让它像透过一块有弧边的玻璃，而不是糊了一层白膜。 -->
+<svg class="lw-glass-defs" aria-hidden="true" focusable="false"
+     width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <defs>
+        <filter id="lw-glass" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="40"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="50"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thick" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="48"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="72"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thin" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="16"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="20"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="24"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+    </defs>
+</svg>
+
+
+<div class="bg-mobile" aria-hidden="true"></div>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="linuxapp.html">LinuxAPP 介绍</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          <span class="nav-text">Nalxer 服务器</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="plug-hero-ver">26.13.60 · Android / iOS</span>
+    <p class="plug-hero-sub" style="margin-top:10px;color:#6b7280;font-size:13px;">本页对应 26.13.60。小节标题里的 1.x / 26.11.x 是「这个功能哪版加的」，功能本身一直在用；已废弃的会明确标出来。</p>
+    <h1>LinuxAPP 帮助中心</h1>
+    <p>安装、配置、接口、App 用法，一页看完</p>
+  </div>
+</section>
+
+<div class="container content-layout no-toc">
+
+      <aside class="sidebar" id="sidebar">
+            <div class="sidebar-track">
+        <ul class="sidebar-flat">
+          <li class="sidebar-group-label" data-group="开始使用">开始使用</li>
+          <li><a href="#install">安装插件</a></li>
+          <li><a href="#config">配置</a></li>
+          <li><a href="#nginx">Nginx 反代</a></li>
+          <li class="sidebar-group-label" data-group="接口与数据">接口与数据</li>
+          <li><a href="#api">接口表</a></li>
+          <li><a href="#data">数据字段</a></li>
+          <li class="sidebar-group-label" data-group="手机端">手机端</li>
+          <li><a href="#use">App 使用</a></li>
+          <li><a href="#admin">管理员</a></li>
+          <li><a href="#console">服务器命令</a></li>
+          <li class="sidebar-group-label" data-group="排查与安全">排查与安全</li>
+          <li><a href="#faq">常见问题</a></li>
+          <li><a href="#security">安全说明</a></li>
+        </ul>
+      </div>
+    </aside>
+
+  <main class="main-content">
+
+<section class="help-section" id="install">
+
+    <h2><span class="num">0</span>26.13.54 ~ 26.13.60 修了什么</h2>
+    <p>这一轮都是「打完包才发现」的坑，记下来免得以后再踩：</p>
+    <table class="help-table">
+      <thead><tr><th>问题</th><th>原因</th><th>现在</th></tr></thead>
+      <tbody>
+        <tr><td>点假人「重生」/改无敌，控制台报 <code>NullPointerException</code></td>
+            <td>HTTP 线程直接调了 NMS 的 <code>PlayerChunkMap.addPlayer</code>，和服务器 tick 抢同一张表</td>
+            <td>假人、领地这些操作统一转投主线程执行（最多等 8 秒），不再报错</td></tr>
+        <tr><td>「无敌」关掉，界面马上又自己弹回打开</td>
+            <td>写配置时传的是字符串 <code>"false"</code>，Bukkit 的 <code>getBoolean</code> 只认 Boolean，遇到 String 就返回默认值 true</td>
+            <td>改成写真正的布尔值，关掉就是关掉</td></tr>
+        <tr><td>控制台执行输出显示不全</td>
+            <td>回传上限只有 40 行 / 4000 字，且 su 模式读到第一段就收工</td>
+            <td>上限 250 行 / 24000 字，分段读日志直到没有新行</td></tr>
+        <tr><td>网页版退出登录后，另一台还登不进去</td>
+            <td>退出只发一次明文 <code>/api/logout</code>，服务器开严格加密时被 426 拒掉</td>
+            <td>先走加密通道，失败再补明文，1.5 秒兜底</td></tr>
+      </tbody>
+    </table>
+
+    <h2><span class="num">1</span>安装插件</h2>
+    <p><b>两个 jar</b>：<b>LinuxAPP.jar</b> 硬依赖 <b>InTheNameOfLinux.jar</b> —— 26.11.11 起 App 的服务端就是直接调 ITNOL 的 API，老版本 ITNOL 缺这些方法会报「服务器没有 ITNOL 插件」，所以两个必须一起换、版本对齐。AuthMe、经济插件、LinuxTeam、LinuxTitle 这些是接上就用，没接就少一块数据，不会报错。</p>
+
+    <ol class="steps">
+      <li>把 <code>LinuxAPP.jar</code> 放进服务器的 <code>plugins/</code> 目录。服务端用 Paper 或 Spigot 1.12.2，Java 8。</li>
+      <li>重启服务器。插件会自己生成配置和密钥，并在 <code>49282</code> 端口把接口开起来（默认监听 <code>0.0.0.0</code>，云服务器要能直连）。</li>
+      <li>看控制台的 <code>[联动]</code> 日志，确认 AuthMe、金币、点券、封禁、队伍、头衔都接上了。</li>
+      <li>在服务器本机执行 <code>curl http://127.0.0.1:49282/api/health</code>，能返回一串 JSON 就说明接口是活的；在手机浏览器里试 <code>http://你的服务器IP:49282/api/health</code> 能看到同样的 JSON，就说明安全组也放行了。</li>
+    </ol>
+
+    <p>正常启动时控制台会依次打出这几行（装了什么就出现什么，没装的那一项不会打）：</p>
+
+    <div class="code-block"><div>[LinuxAPP] Loading LinuxAPP v 26.13.60</div><div>[LinuxAPP] Enabling LinuxAPP v 26.13.60</div><div>[LinuxAPP] [联动] 已接上 AuthMe —— 用游戏密码登录</div><div>[LinuxAPP] [联动] 已接上 Vault 经济 —— 金币数据</div><div>[LinuxAPP] [联动] 已接上 PlayerPoints —— 点券数据</div><div>[LinuxAPP] [联动] 已接上 InTheNameOfLinux —— 封禁 / 解封</div><div>[LinuxAPP] [联动] 已接上 LinuxTeam 队伍（信息 / 建队 / 加入 / 退出 / 踢人 / 转让）</div><div>[LinuxAPP] [联动] 已接上 LinuxTitle 头衔（列表 / 佩戴）</div><div>[LinuxAPP] [联动] 已接上 ITNOL 禁言判定（App 里发聊天前会先查）</div><div>[LinuxAPP] [联动] 已接上 ITNOL 身份（只用来读身份，旧版本起不再要求 App 里二次验证）</div><div>[LinuxAPP] [联动] 已接上 ITNOL 举报（列表 / 提交 / 接受 / 驳回）</div><div>[LinuxAPP] [联动] 已接上 FakePlayerPlugin 假人（列表 / 召唤 / 移除）</div><div>[LinuxAPP] [联动] 已接上 XlandCore 身份（服主 / 副服主 / 市长 / 协管）</div><div>[LinuxAPP] [联动] 已接上 NalxerLink 1.24.0 —— 安卓客户端发的消息会进公屏，标「FS1安卓端」</div><div>[LinuxAPP] 接口已启动：http://0.0.0.0:49282/api/health（明文直连，手机里填 http://服务器IP:49282 就能用）</div><div>[LinuxAPP] LinuxAPP 已启用 —— 手机 App 接口就绪（AuthMe 登录：是，金币：是，点券：是，封禁：是，队伍：是，头衔：是）</div><div>[LinuxAPP] 聊天通道已开启 —— 游戏里说话会同步到 App，App 发的消息带 [LinuxAPP]  前缀广播进游戏</div><div>[LinuxAPP] 二次身份验证：关闭（旧版本起整套去掉，登录成功直接进主界面）</div><div>[LinuxAPP] 命令控制台 / su 名单：[Linux582021, fs1]（不在名单里的管理员只能封禁 / 惩罚 / 处理举报 / 管假人）</div></div>
+
+    <p>哪一行结尾写的是「未检测到」，就是对应的插件没装、没启用或者版本不认识。那一项在 App 里会显示成 <code>—</code>，其余功能照常，不用为了一行日志去折腾服务器。</p>
+
+    <h3>启动后生成的文件</h3>
+    <p>没有子目录、没有数据库，就这几个文件：</p>
+
+    <div class="code-block"><div>plugins/LinuxAPP/</div><div>├── config.yml   <span class="comment"># 全部配置；token.secret 也写在这个文件里</span></div><div>├── stats.yml    <span class="comment"># 离线玩家的数据缓存（金币 / 点券 / 等级 / 时长）</span></div><div>└── audit.log    <span class="comment"># 封禁 / 解封 / 登录的审计记录</span></div></div>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>默认就是公网直连，明文传输，心里有数就行</strong>
+        插件默认监听 <code>0.0.0.0:49282</code>，手机直接连 <code>http://服务器IP:49282</code>，不需要 Nginx。
+        代价是密码和令牌在公网上是明文（限流、令牌签名、审计都还在）。想加密有两条路：
+        前面挂 Nginx（见 <a href="#nginx">Nginx 反代</a>），或者开 <code>http.tls: true</code> 让插件自己上 HTTPS
+        （见本节末尾）。
+      </div>
+    </div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>服务器是离线模式也没关系</strong>
+        登录校验走的是 AuthMe 的账号数据，和正版验证无关。只要玩家在 AuthMe 里注册过，就能用游戏 ID + 游戏密码登录 App。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="config">
+    <h2><span class="num">2</span>配置</h2>
+    <p>全部配置都在一个 <code>config.yml</code> 里，改完执行 <code>/linuxapp reload</code> 就生效，不用重启服务器。</p>
+
+    <div class="table-scroll">
+      <table class="help-table config-table">
+        <thead>
+          <tr><th>键</th><th>默认值</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>http.host</code></td><td><code>0.0.0.0</code></td><td>监听地址。<code>0.0.0.0</code> = 所有网卡（手机才能直连）；只想让本机 Nginx 转发就写 <code>127.0.0.1</code>。</td></tr>
+          <tr><td><code>http.port</code></td><td><code>49282</code></td><td>接口端口。改了记得同步改 Nginx 里的 <code>proxy_pass</code>，两边要对得上。</td></tr>
+          <tr><td><code>http.threads</code></td><td><code>8</code></td><td>处理请求的线程数。几十个人的服 8 个足够，没必要往上加。</td></tr>
+          <tr><td><code>http.tls</code></td><td><code>false</code></td><td>插件自带 HTTPS 的总开关。开了就不用在前面挂 Nginx，地址直接写 <code>https://域名:49282</code>。</td></tr>
+          <tr><td><code>http.keystore</code></td><td><code>keystore.p12</code></td><td>证书文件（PKCS12），放在 <code>plugins/LinuxAPP/</code> 下。</td></tr>
+          <tr><td><code>http.keystore-password</code></td><td>空</td><td>p12 的密码，开了 <code>tls</code> 就不能留空。</td></tr>
+          <tr><td><code>token.secret</code></td><td><code>""</code></td><td>令牌签名密钥。留空会自动生成一串随机值写回配置；换掉它等于所有人重新登录一次。</td></tr>
+          <tr><td><code>token.ttl-hours</code></td><td><code>168</code></td><td>令牌有效期（小时）。168 = 7 天，过期的令牌直接返回 401。</td></tr>
+          <tr><td><code>login.require-authme</code></td><td><code>true</code></td><td><code>true</code> = 登录必须通过 AuthMe 校验游戏密码（推荐）；<code>false</code> = 不校验密码，只放行<strong>此刻在游戏里在线</strong>的玩家，给正版服 / 没装 AuthMe 的服用。关掉它之后，知道别人 ID 的人可以在对方在线时登进去，别在装了 AuthMe 的服上关。</td></tr>
+          <tr><td><code>login.attempts-per-minute</code></td><td><code>5</code></td><td>每个 IP 每分钟允许几次<strong>登录尝试</strong>。这是防撞库的第一道闸。</td></tr>
+          <tr><td><code>login.requests-per-minute</code></td><td><code>180</code></td><td>每个 IP 每分钟允许多少次<strong>请求</strong>（所有接口合计）。App 自动刷新 30 秒一次，180 有富余。</td></tr>
+          <tr><td><code>admin.players</code></td><td><code>[]</code></td><td>管理员名单，填游戏 ID。名单里的人能看到玩家管理页；服务器 OP 自动算管理员，不用重复填。</td></tr>
+          <tr><td><code>data.*</code></td><td>全 <code>true</code></td><td>某一项数据要不要对外提供（<code>coins</code> / <code>points</code> / <code>level</code> / <code>playtime</code> / <code>team</code> / <code>title</code>）。关掉哪一项，App 里对应的那一块就显示 <code>—</code>，接口也不返回。</td></tr>
+          <tr><td><code>verify.enabled</code> / <code>verify.players</code></td><td><code>—</code></td><td><strong>已废弃</strong>：26.13 起不再二次验证，用游戏密码登录成功就直接进主界面。这两项只为兼容老配置留着，填什么都不生效。</td></tr>
+          <tr><td><code>su.players</code></td><td><code>[Linux582021, fs1]</code></td><td>能碰「命令控制台」和「su（任意命令）」的账号。不在这份名单里的管理员照样能封禁 / 惩罚 / 处理举报 / 管假人，但命令控制台直接返回 <code>403</code>。App 设置里还要再打开「启用 su 控制台」开关才看得见入口。</td></tr>
+          <tr><td><code>chat.capture-link</code></td><td><code>true</code></td><td>26.11.14：把 <code>logs/latest.log</code> 里 <code>[App] 名字: 内容</code> 这种广播收进 App 公屏，标「FS1安卓端」。</td></tr>
+          <tr><td><code>chat.link-speakers</code></td><td><code>[app]</code></td><td>认哪些方括号前缀是「安卓端发来的聊天」。默认 <code>app</code>（NalxerLink 的广播前缀）；也可以写 <code>fs1</code>、<code>nalxerlink</code>。</td></tr>
+          <tr><td><code>features.*</code></td><td>全 <code>true</code></td><td>1.3.0 起的功能开关：<code>chat</code> / <code>team</code> / <code>titles</code> / <code>checkin</code> / <code>report</code> / <code>penalty</code> / <code>fakes</code> / <code>console</code>。关掉后对应接口直接返回 <code>403</code>，App 里那一页也不再出现。</td></tr>
+          <tr><td><code>debug</code></td><td><code>false</code></td><td>打开后每个请求都往控制台打一行（路径、耗时、来源 IP），排查连不上时用，平时关着。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>一份改过的配置长这样</h3>
+
+    <div class="code-block"><div>http:</div><div>  host: 0.0.0.0         <span class="comment"># 直连要 0.0.0.0；只走本机 Nginx 就 127.0.0.1</span></div><div>  port: 49282</div><div>  threads: 8</div><div></div><div>token:</div><div>  secret: ""          <span class="comment"># 留空，首次启动自动生成</span></div><div>  ttl-hours: 168     <span class="comment"># 7 天</span></div><div></div><div>login:</div><div>  require-authme: true</div><div>  attempts-per-minute: 5</div><div>  requests-per-minute: 180</div><div></div><div>admin:</div><div>  players:</div><div>    - Linux582021</div><div>    - Steve</div></div>
+
+    <p>存盘之后执行 <code>/linuxapp reload</code>。配置写错（缩进错、键名拼错）插件不会崩，会在控制台打一行黄色警告并且继续用旧配置跑。</p>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>reload 不会把谁踢下线</strong>
+        只有改了 <code>token.secret</code>，已经发出去的令牌才会立刻失效 —— 因为签名换了，旧令牌验不过。改端口、改限流、改管理员名单都不影响已登录的人。
+      </div>
+    </div>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>token.secret 别提交进 Git</strong>
+        这个密钥是签令牌用的，泄露了别人就能自己伪造一个「已登录」的令牌。仓库里放的是空的 <code>config.yml</code>，
+        线上那个文件用 <code>.gitignore</code> 排除掉。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="nginx">
+    <h2><span class="num">3</span>Nginx 反代</h2>
+    <p>直连已经能用（<code>http://服务器IP:49282</code>），这一节是给「想要 https、想要域名」的人准备的：Nginx 转一次，顺便把 http 跳 https 一起做了。</p>
+
+    <div class="code-block"><div>server {</div><div>    listen 80;</div><div>    server_name api.nalxer.top;</div><div>    return 301 https://$host$request_uri;</div><div>}</div><div></div><div>server {</div><div>    listen 443 ssl http2;</div><div>    server_name api.nalxer.top;</div><div></div><div>    ssl_certificate     /etc/letsencrypt/live/api.nalxer.top/fullchain.pem;</div><div>    ssl_certificate_key /etc/letsencrypt/live/api.nalxer.top/privkey.pem;</div><div></div><div>    location /api/ {</div><div>        proxy_pass            http://127.0.0.1:49282;</div><div>        proxy_set_header      Host              $host;</div><div>        proxy_set_header      X-Real-IP         $remote_addr;</div><div>        proxy_set_header      X-Forwarded-For   $proxy_add_x_forwarded_for;</div><div>        proxy_set_header      X-Forwarded-Proto $scheme;</div><div>        proxy_read_timeout    15s;</div><div>    }</div><div>}</div></div>
+
+    <p>证书路径按你自己的改，用 <code>certbot --nginx -d api.nalxer.top</code> 签的话它长这样。<code>proxy_pass</code> 后面是纯地址，<strong>不要</strong>再拼一个 <code>/api/</code>，拼了会把路径再叠一遍，变成 <code>/api/api/login</code>。</p>
+
+    <p>改完先 <code>nginx -t</code> 看语法，再 <code>systemctl reload nginx</code>。然后本机验一下：
+       <code>curl -I https://api.nalxer.top/api/health</code>，返回 <code>200</code> 就通了。</p>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>一定要传 X-Real-IP，否则限流会把所有人算成一个 IP</strong>
+        插件看到的来源地址是 Nginx 的 <code>127.0.0.1</code>。少了这一行，全服所有玩家在限流眼里是同一个人：
+        一个人连续输错 5 次密码，所有人接下来一分钟都登不上，日志里也全是 127.0.0.1，出了问题根本没法查是谁。
+      </div>
+    </div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>前面还有 Cloudflare 怎么办</strong>
+        Nginx 拿到的 <code>$remote_addr</code> 会是 Cloudflare 的节点 IP。要么让 Nginx 认 <code>CF-Connecting-IP</code>，
+        要么在插件前面就别加这一层 —— 加一层就得配一次真实 IP，多一层就多一个「限流算错人」的机会。
+      </div>
+    </div>
+    <h3>不想挂 Nginx：让插件自己上 HTTPS</h3>
+    <p>服务器上就这一个服务、又懒得维护 Nginx 的话，插件内置了 HTTPS（Java 自带 HttpsServer，没有额外依赖）。
+       把 certbot 签的证书转成 PKCS12 丢进插件目录就行：</p>
+
+    <div class="code-block"><div># 1. 证书转 PKCS12</div><div>openssl pkcs12 -export -out keystore.p12 \</div><div>  -inkey /etc/letsencrypt/live/api.nalxer.top/privkey.pem \</div><div>  -in    /etc/letsencrypt/live/api.nalxer.top/fullchain.pem \</div><div>  -passout pass:你的密码</div><div></div><div># 2. 放进插件目录</div><div>cp keystore.p12 plugins/LinuxAPP/</div></div>
+
+    <div class="code-block"><div>http:</div><div>  port: 49282</div><div>  tls: true</div><div>  keystore: keystore.p12</div><div>  keystore-password: '你的密码'</div></div>
+
+    <p>重启后控制台会打 <code>接口已启动：https://0.0.0.0:49282/api/health（插件自带 TLS，证书来自 keystore.p12）</code>，
+       App 里地址填 <code>https://你的域名:49282</code>。</p>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>证书得和域名对得上，用 IP 直连手机不认</strong>
+        自签证书或者「证书是 api.nalxer.top、App 里却填 IP」都会在手机上直接报证书错误。
+        换证书要重启服务器；<code>tls: true</code> 但 p12 缺失或密码错时，插件打一条警告后<strong>退回普通 HTTP</strong>，不会起不来。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="api">
+    <h2><span class="num">4</span>接口表</h2>
+    <p>一共 16 个普通接口 + 13 个管理员接口，除了 <code>health</code> 和 <code>login</code>，其它都要在请求头里带 <code>Authorization: Bearer &lt;token&gt;</code>。</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>方法</th><th>路径</th><th>要令牌</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/health</code></td><td>否</td><td>返回版本、监听地址和 <code>capabilities</code>（哪些插件接上了）。连不上、数据全是 0，第一个要看的就是它。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/login</code></td><td>否</td><td>body 传 <code>name</code> + <code>password</code>，校验通过返回 <code>token</code> 和过期时间。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/me</code></td><td>是</td><td>当前登录玩家的完整数据，App 的「我的」页只靠这个接口。字段见下一节。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/me?name=Steve</code></td><td>是</td><td>管理员查别人的数据。普通玩家查别人会拿到 <code>403</code>，查自己不带参数就行。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/online</code></td><td>是</td><td>在线人数和在线玩家名单（名字 + 延迟）。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/players</code></td><td>是</td><td>在线玩家列表：名字 / 等级 / 延迟 / 世界 / 队伍 / 头衔，最多 200 条。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/chat?since=0</code></td><td>是</td><td>聊天记录（环形缓冲 120 条），参数 <code>since</code> 是上一条的 id，只回新的。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/chat</code></td><td>是</td><td>发一条聊天，body：<code>message</code>（最多 200 字）。被禁言会返回 <code>403</code>。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/team</code></td><td>是</td><td>我的队伍（成员、队长、队标）+ 全部队伍列表。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/team</code></td><td>是</td><td>队伍操作，body：<code>action</code>（create / join / leave / kick / disband / transfer）+ <code>arg</code>。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/titles</code></td><td>是</td><td>头衔总览：当前佩戴、已解锁数量、全部头衔 + 解锁条件。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/titles</code></td><td>是</td><td>佩戴 / 卸下，body：<code>id</code>（传空串是卸下）。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/checkin</code></td><td>是</td><td>签到状态：今天签没签、连续多少天、累计多少天、下次重置时间（北京时间 0 点）。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/checkin</code></td><td>是</td><td>签今天的到。返回 <code>reward</code>（5000 金币 / N 点券）；当天重复调用返回 <code>400</code> 和「今天已经签过了」。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/reports</code></td><td>是</td><td>我提交过的举报 + 处理结果。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/report</code></td><td>是</td><td>举报别人，body：<code>target</code> / <code>reason</code>。返回举报编号。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/linux</code></td><td>是</td><td>Linux 系插件清单：名字 / 版本 / 是否运行 / config.yml 大小 / 目录里的文件。需要管理员。</td></tr>
+<tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/linux/config?name=LinuxTAB</code></td><td>是</td><td>读这个插件的 config.yml 原文，App 里直接改。</td></tr>
+<tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/linux/config</code></td><td>是</td><td>保存配置：body <code>{name,text}</code>。先做 YAML 语法检查，过了才写盘 + 重载，旧文件留 <code>config.yml.app-bak</code>。</td></tr>
+<tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/linux/op</code></td><td>是</td><td>启停重载：body <code>{name,op:enable|disable|reload}</code>。</td></tr>
+<tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/status</code></td><td>是</td><td>插件联动状态（11 个插件 + 8 个功能开关），App 设置页那张状态表就是它。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/players?q=st</code></td><td>是</td><td>在线 + 离线一起搜（离线名字来自 ITNOL 的历史记录），最多 60 条。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/player?name=Steve</code></td><td>是</td><td>单个玩家详情：数据 + 他身上生效的惩罚 + 举报记录。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/penalties</code></td><td>是</td><td>当前所有惩罚记录（禁言 / 移动 / 方块 / 封禁）。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/penalty</code></td><td>是</td><td><code>op=apply|release</code>，apply 传 <code>type</code> / <code>name</code> / <code>minutes</code> / <code>reason</code>。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/reports?pending=1</code></td><td>是</td><td>举报列表，<code>pending=1</code> 只看没处理的。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/report</code></td><td>是</td><td>处理举报：<code>op=accept|reject</code> + <code>id</code> + <code>note</code>。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/fakes</code></td><td>是</td><td>假人列表：名字 / UUID / 世界 / 是否活跃 / 坐标。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/fake</code></td><td>是</td><td><code>op=add|remove</code>。召唤要求本人正在游戏里（假人要站在你脚下）。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/commands</code></td><td>是</td><td>命令白名单 + 分组清单，App 的「服务器命令」页靠它渲染。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/exec</code></td><td>是</td><td>执行一条白名单命令，body：<code>command</code>。返回真实回显，最多 40 行。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/su</code></td><td>是</td><td>1.7.0 的 su：验证过 Linux 身份后执行<b>任意命令</b>（不走白名单，<code>stop</code> / <code>restart</code> 仍然拦），body：<code>command</code>。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/search?q=st</code></td><td>是</td><td>按名字模糊搜玩家，最多 30 条，每条带 <code>name</code> / <code>online</code> / <code>banned</code>。需要管理员。</td></tr>
+          <tr><td><span class="badge badge-new">GET</span></td><td><code>/api/admin/bans</code></td><td>是</td><td>当前生效的封禁列表，带原因和到期时间。需要管理员。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/ban</code></td><td>是</td><td>封禁，body：<code>name</code> / <code>reason</code> / <code>minutes</code>。需要管理员。</td></tr>
+          <tr><td><span class="badge badge-new">POST</span></td><td><code>/api/admin/unban</code></td><td>是</td><td>解封，body：<code>name</code>。需要管理员。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>手动试一次登录</h3>
+
+    <div class="code-block"><div>curl -X POST https://api.nalxer.top/api/login \</div><div>     -H "Content-Type: application/json" \</div><div>     -d '{"name":"Steve","password":"你的游戏密码"}'</div><div></div><div><span class="comment"># 返回</span></div><div>{"ok":true,"token":"eyJhbGciOi...","name":"Steve","admin":false,"expiresIn":604800}</div></div>
+
+    <p>拿到 <code>token</code> 之后可以接着试：</p>
+
+    <div class="code-block"><div>curl https://api.nalxer.top/api/me \</div><div>     -H "Authorization: Bearer eyJhbGciOi..."</div></div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>会碰到的状态码</strong>
+        <code>200</code> 成功、<code>400</code> 参数不对、<code>401</code> 令牌没有或过期（重新登录）、
+        <code>403</code> 令牌是好的但你没有管理员权限、<code>404</code> 路径写错了、
+        <code>429</code> 触发限流（等一分钟，不用改配置）、<code>5xx</code> 服务端执行失败（消息里会写原因，比如玩家不存在）。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="data">
+    <h2><span class="num">5</span>数据字段</h2>
+    <p><code>/api/me</code> 返回一个 JSON 对象，App 的每一块显示都对应其中几个。下面挑常用的写，<strong>加粗的是 1.2.0 新增</strong>的。</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>name</code></td><td>string</td><td>游戏 ID，就是登录时填的那个名字。</td></tr>
+          <tr><td><code>uuid</code></td><td>string</td><td>玩家 UUID，带连字符的完整形式。</td></tr>
+          <tr><td><code>online</code></td><td>boolean</td><td>现在是否在线。离线也能拿到数据，只是这个字段是 <code>false</code>。</td></tr>
+          <tr><td><code>coins</code></td><td>number</td><td>金币数量。没装经济插件时是 0，要靠 <code>hasCoins</code> 判断该不该显示。</td></tr>
+          <tr><td><code>hasCoins</code></td><td>boolean</td><td>服务端有没有接上金币来源。<code>false</code> 时 App 显示「—」而不是 0。</td></tr>
+          <tr><td><code>points</code></td><td>number</td><td>点券数量，同理。</td></tr>
+          <tr><td><code>hasPoints</code></td><td>boolean</td><td>服务端有没有接上点券来源。</td></tr>
+          <tr><td><code>level</code></td><td>number</td><td>玩家等级。<strong>1.2.0 起离线时也读真实存档</strong>（<code>world/playerdata/&lt;uuid&gt;.dat</code> 的 NBT），不再是 0。</td></tr>
+          <tr><td><code>exp</code></td><td>number</td><td>当前这一级已经攒的经验，用于画进度条。</td></tr>
+          <tr><td><code>totalExp</code></td><td>number</td><td>从 0 级算起的总经验，不掉级就只增不减。</td></tr>
+          <tr><td><code>levelLive</code></td><td>number</td><td>实时等级，含经验条上那点还没存盘的进度。</td></tr>
+          <tr><td><strong><code>expIntoLevel</code></strong></td><td>number</td><td>当前这一级已经攒的经验（和 <code>exp</code> 同义，App 用它算进度百分比）。</td></tr>
+          <tr><td><strong><code>expToNext</code></strong></td><td>number</td><td>升到下一级要多少经验（1.12.2 公式：2L+7 / 5L-38 / 9L-158）。</td></tr>
+          <tr><td><strong><code>identity</code></strong></td><td>object</td><td>玩家身份（来自 XlandCore）：<code>{role, label, prefix, roles, hasXland}</code>，label 是「服主 / 副服主 / 市长 / 协管 / 管理员 / 普通玩家」。</td></tr>
+          <tr><td><strong><code>role</code></strong></td><td>string</td><td>上面那个 label 的简写，省得 App 再拆一层。</td></tr>
+          <tr><td><strong><code>teamTag</code></strong></td><td>string</td><td>队伍标识（队标）带色码，没队伍是空串。</td></tr>
+          <tr><td><strong><code>titleId</code></strong> / <code>titleName</code></td><td>string</td><td>头衔 id 和干净名字，没戴头衔是空串。</td></tr>
+          <tr><td><strong><code>muted</code></strong></td><td>boolean</td><td>是否被 ITNOL 禁言（App 发聊天前会看它）。</td></tr>
+          <tr><td><strong><code>health</code></strong> / <code>maxHealth</code> / <code>food</code></td><td>number</td><td>在线时的生命、血量上限、饥饿值。</td></tr>
+          <tr><td><strong><code>gamemode</code></strong> / <code>world</code> / <code>ping</code></td><td>string / string / number</td><td>游戏模式、所在世界、延迟（毫秒）。</td></tr>
+          <tr><td><strong><code>banUntil</code></strong></td><td>number</td><td>封禁到期时间戳（毫秒），永久封禁是 0。</td></tr>
+          <tr><td><code>playtimeHours</code></td><td>number</td><td>累计在线小时数，保留一位小数。</td></tr>
+          <tr><td><code>firstPlayed</code></td><td>string</td><td>第一次进服时间，ISO 8601 格式。</td></tr>
+          <tr><td><code>lastPlayed</code></td><td>string</td><td>最近一次进服时间，同样 ISO 8601。</td></tr>
+          <tr><td><code>team</code></td><td>string</td><td>LinuxTeam 队伍名。没队伍是空字符串，App 显示「无队伍」。</td></tr>
+          <tr><td><code>title</code></td><td>string</td><td>LinuxTitle 头衔。没头衔是空字符串。</td></tr>
+          <tr><td><code>banned</code></td><td>boolean</td><td>当前是否处于封禁状态。被封的人也能登录 App 看自己的状态。</td></tr>
+          <tr><td><code>banReason</code></td><td>string</td><td>封禁原因。没封禁是空字符串。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>离线为什么也能看到等级</strong>
+        1.2.0 起离线玩家的等级直接从 <code>world/playerdata/&lt;uuid&gt;.dat</code> 的 NBT 里读，
+        不再依赖「上次有人在线时缓存下来的值」，所以挂机号、退服很久的人也能看到真实等级。<code>levelLive</code> 只是标记这次读数是不是实时的。
+      </div>
+    </div>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>别拿 <code>coins: 0</code> 直接当「没钱」</strong>
+        判断有没有这个数据源看 <code>hasCoins</code>。只读 <code>coins</code> 的话，没装经济插件的服务器上每个人看起来都是穷光蛋。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="use">
+    <h2><span class="num">6</span>App 使用</h2>
+    <p>普通玩家五个页签：<strong>我的</strong>（数据 + 签到）、<strong>聊天</strong>（公屏 + 队伍频道 + 队伍管理）、<strong>头衔</strong>、<strong>更多</strong>（在线玩家 / 设置）。管理员会多一个<strong>管理</strong>页签，里面分「玩家 / 举报 / 惩罚 / 假人 / 命令」五块。</p>
+    <p>1.4.0 把原来单独的「队伍」「命令」两页合了进来：队伍相关全在聊天页，命令在管理页的最后一个子标签里。</p>
+
+    <h3>每日签到</h3>
+    <p>「我的」页顶部那张卡就是签到：点一下领奖励，<strong>50% 是 5000 金币</strong>，剩下的是 <strong>1–5 点券</strong>。
+       每天北京时间 0 点重置。</p>
+    <ul>
+      <li>连续签到天数会累加，断一天就从 1 重新算；累计天数永远只增不减。</li>
+      <li>当天签过按钮变「已签到」，再点会被服务端挡回来（`400`）。</li>
+      <li>奖励真的进游戏账户，下线也算数 —— 走的是 Vault 和 PlayerPoints。</li>
+    </ul>
+
+    <h3>装到手机上</h3>
+    <p>两个平台给的包不一样，别装错：</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>平台</th><th>文件</th><th>怎么装</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>安卓</td><td><code>LinuxAPP-26.13.60.apk</code>（约 3.34 MB）</td><td>传到手机点开装；系统提示「未知来源」时给浏览器一次安装权限</td></tr>
+          <tr><td>iOS</td><td><code>LinuxAPP-26.13.60-unsigned.ipa</code>（约 1.17 MB）</td><td>电脑装 <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a>，插上 iPhone，把 ipa 拖进去、填 Apple ID、点 Start</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>iOS 这个 ipa 是在 macOS 上编出来的真机包，<strong>没有签名</strong> —— 苹果不允许未签名的 App 在手机上跑，
+       所以要用你自己的 Apple ID 重签一次。Sideloadly 在 Windows 和 Mac 上都能用，全程不用越狱。</p>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>免费 Apple ID 签的 App 7 天到期</strong>
+        到期后图标点不开，用 Sideloadly 再签一次就行 —— 游戏数据、App 里的登录状态都还在。
+        想省这个麻烦就买开发者账号（一年），签一次能用一年。
+      </div>
+    </div>
+
+    <h3>第一次登录</h3>
+    <p>先填接口地址（<code>https://api.nalxer.top</code>，不要带 <code>/api</code> 后缀），再填游戏 ID 和游戏密码。
+       这里的密码就是进服用的那个 AuthMe 密码，不是邮箱密码、也不是论坛账号。</p>
+    <p>登录成功会拿到一个令牌，默认 7 天有效。这 7 天里打开 App 不用再输密码；令牌过期会回到登录页，重新登一次即可。</p>
+
+    <h3>「我的」页看什么</h3>
+    <p>从上到下一屏：在线状态 → 金币 / 点券 / 等级三张卡 → 经验进度条 → 队伍和头衔 → 累计在线时长和最近一次上线时间。
+       被封禁的账号在最上面多一条红色横幅，写着原因和到期时间。</p>
+
+    <h3>「聊天」页怎么用</h3>
+    <p>游戏里公屏说的每句话都会同步到这里（带 <code>· 游戏</code> 标记），在 App 里发的消息会以 <code>[LinuxAPP] 你的名字：内容</code> 的格式广播回服务器，游戏里的人能看见。30 秒自动拉一次新消息，有未读时底部页签上会出现小红点。</p>
+    <h3>队伍频道（1.4.0）</h3>
+    <p>聊天页顶部有「世界 / 队伍」两个小按钮。点「队伍」就只看队内消息：发出去的话只有队友看得到，游戏里也会以 <code>[队伍] 队标 名字 » 内容</code> 的样子出现。</p>
+    <ul>
+      <li>一个人在几个队里时，队伍频道下面会多出一排队名，点哪个看哪个、发到哪个。</li>
+      <li>队伍管理也在这一页：成员、贡献、退出、踢人、转让、解散、建队、加入，都在聊天记录下面。</li>
+      <li>队长把队伍聊天关了（<code>/team setting chat off</code>），App 这边发会被挡回来。</li>
+    </ul>
+    <p>发不出去通常就两个原因：被 ITNOL 禁言了（返回「你被禁言了，现在不能在服务器说话」），或者单条超过 200 字。</p>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>控制台 / RCON 的 say 也会进来（1.3.1）</strong>
+        服务器控制台敲 <code>say 今晚八点维护</code>、面板用 RCON 发播报，都会以「控制台」的身份出现在聊天里。
+        万一你那边的面板走的是别的派发方式，插件还会盯 <code>logs/latest.log</code> 里
+        <code>[Server]</code> / <code>[Rcon]</code> / <code>[CONSOLE]</code> 开头的播报行兜底
+        （<code>chat.capture-log</code>，默认开）。同一句话不会重复出现。
+      </div>
+    </div>
+
+    <h3>FS1 安卓端（NalxerLink）发的消息也能看见（26.11.14）</h3>
+    <p>如果服务器上装了 <code>NalxerLink</code>（给安卓客户端用的登录 / 聊天接口），那边发的聊天会以
+      <code>[App] 用户名: 内容</code> 的形式广播到控制台。<b>这里的用户名就是对方在 FS1 安卓客户端登录时
+      填的那个账号</b>（比如 <code>Linux582021</code>），不是固定的「FS1玩家」字样。LinuxAPP 会把这行认出来，
+      原样用这个用户名进 App 的「世界」频道，后面标 <b>· FS1安卓端</b>——一眼能分清是 <b>游戏里</b> 说的、
+      <b>LinuxAPP</b> 发的、还是 <b>FS1 安卓端</b> 发的。显示形如：<code>Linux582021 · 23:59 · FS1安卓端</code>。</p>
+    <ul>
+      <li>开关：<code>chat.capture-link</code>，默认 <code>true</code>；关掉就不再读这类广播。</li>
+      <li>前缀名单：<code>chat.link-speakers</code>，默认 <code>[app]</code>。别的客户端广播前缀不是 <code>[App]</code> 的话，把它加进这个列表。</li>
+      <li>实现方式：只读 <code>logs/latest.log</code>，不碰 NalxerLink 本身，那个插件怎么升级都行。</li>
+    </ul>
+
+    <h3>在 App 里管 Linux 系插件（1.7.0）</h3>
+    <p>设置页最下面一张「Linux 系插件」卡，点进去就是列表：每个插件一行，写清楚版本、有没有 config.yml、目录里还有哪些文件。</p>
+    <ul>
+      <li><b>停用 / 启用</b>：直接 <code>disablePlugin</code>，停用后服务器立刻不再跑它（被别的插件依赖会失败并告诉你）。</li>
+      <li><b>重载配置</b>：等于 <code>reloadConfig()</code>。</li>
+      <li><b>改配置</b>：把 config.yml 原文读出来，在手机上改完点「保存并重载」。保存前先跑一遍 YAML 语法检查，写错了不落盘、原文还能继续改；成功会留一份 <code>config.yml.app-bak</code>。</li>
+    </ul>
+    <div class="tip">列的是自家插件：名字以 <code>Linux</code> 开头的（LinuxACE / LinuxChestGUI / LinuxSync / LinuxTAB / LinuxTeam / LinuxTitle）加上假人插件 <code>FakePlayerPlugin</code>；插件联动状态那张表也只显示这些。</div>
+
+    <h3>「队伍」页怎么用</h3>
+    <p>没队伍时给的是「建队」按钮和全服队伍列表，点一个就能申请加入；有队伍时显示队长、队标、成员（在线的人名是亮的），队长能踢人 / 转让 / 解散，队员只能退出。所有操作直接调 LinuxTeam，和游戏里 <code>/team</code> 命令是同一套数据。</p>
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>队伍操作要人先进服</strong>
+        LinuxTeam 的部分操作需要在线玩家对象，人在线时最好用。离线时点建队会提示「队伍操作要先进服」，这是正常的。
+      </div>
+    </div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>一个人可以在好几个队里（1.3.1）</strong>
+        LinuxTeam 支持多队，App 现在按「我所在的全部队伍」一张张列出来，每张卡有自己的退出 / 解散按钮。
+      </div>
+    </div>
+
+    <h3>「头衔」页怎么用</h3>
+    <p>顶上是你现在戴的头衔（右边有「卸下」），下面是全部头衔和它们的解锁条件 —— 条件都翻成了人话：「今日在线 12 小时」「挖矿 99999 次」「管理员发放」「节日活动」。已解锁的点一下就能戴上，进服或重新进服后会在名字前面显示。</p>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>离线也能看到自己戴的头衔（1.3.1）</strong>
+        以前这块要走玩家对象，人不在线就读不出来 —— 明明戴着却显示「没有」。
+        现在直接读 LinuxTitle 的存档（active id + titles.yml），离线也在。
+        另外解锁判断统一按小写比，titles.yml 里 id 写成大写也认。
+      </div>
+    </div>
+
+    <h3>管理页怎么封人</h3>
+    <p>只有 <code>admin.players</code> 名单里的人或者 OP 才看得到这个入口。流程是五步，一步都不能少：</p>
+
+    <ol class="steps">
+      <li>进管理页，在搜索框里打一部分名字（打 <code>st</code> 就能搜到 <code>Steve</code>），等结果出来。</li>
+      <li>点一下要处理的那个玩家，选中之后底部才会亮出操作栏。</li>
+      <li>点「封禁」，填原因 —— 这一栏建议写清楚，玩家在 App 里看到的就是它。</li>
+      <li>选时长：1 小时 / 1 天 / 7 天 / 30 天 / 永久。</li>
+      <li>再点一次「确认封禁」。在线的人会被当场踢下线，封禁立刻生效，同时写一条审计日志。</li>
+    </ol>
+
+    <p>解封在同一个页面：<code>admin/bans</code> 列表里点开那条封禁，点「解封」就行，不用填原因。</p>
+
+    <h3>刷新和设置</h3>
+    <ul>
+      <li>「我的」页每 <strong>30 秒</strong>自动刷一次，下拉也能立刻刷。</li>
+      <li>设置页可以改接口地址（换服务器用）、清掉本地令牌（等于退出登录）、看 App 版本号。</li>
+      <li>退出登录只删手机上的令牌，不影响游戏账号，也不影响别人。</li>
+    </ul>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>离线也能看，只是数字不涨</strong>
+        人不在线时 App 照样能登录、照样显示上次存盘的数据，只有「在线状态」是灰的。
+        在线时长、经验这些要等下次进服才会更新。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="whatsnew">
+    <h2><span class="num">7</span>26.13.60 更新说明</h2>
+    <p>26.13.60 这一版有两件事：队伍能共享领地了，插件也改名成 LinuxAPP 了。</p>
+    <ul>
+      <li><b>队伍「领地共享」</b>：队伍卡片里，「队伍申请」下面多了一个开关。打开后，队长和每个队员名下的 Residence 领地会对全队开放 17 项基础权限（建造、破坏、使用、容器、按钮、拉杆、中继器、门、压力板、音符盒、附魔、酿造、铁砧、蛋糕、龙蛋、床、工作台）；关掉就把这些权限收回。有人入队、退队、被踢，都会自动补上或收回。</li>
+      <li><b>必须先开「队伍申请」</b>：没开进队验证时，这个开关是灰的，点不动，下面写着「需要先打开上面的「队伍申请」」。这样不会出现「谁都能进队、顺手把领地也交出去」。</li>
+      <li><b>插件改名 LinuxAPP</b>：jar 从 <code>LinuxAPP.jar</code> 改成 <code>LinuxAPP.jar</code>，命令用 <code>/linuxapp</code>（<code>/linuxapp</code> 也还能用）。第一次启动会自动把 <code>plugins/LinuxAPP</code> 里的配置、登录记录、队伍申请搬到 <code>plugins/LinuxAPP</code>，旧的不用手动删。</li>
+      <li><b>装两个 jar 才完整</b>：<code>LinuxAPP.jar</code> + <code>InTheNameOfLinux.jar</code> 一起放进 plugins。LinuxAPP 硬依赖 ITNOL，少了它不会启动。</li>
+      <li><b>领地共享靠的是命令 + 存档</b>：不直接调 Residence 的 Java 接口（它把 WorldGuard / Kingdoms 写进了类里，服务器没装就崩），改成读 <code>plugins/Residence/Save/Worlds</code> 找归属、用控制台 <code>resadmin pset</code> 改权限，所以服务器不需要额外装 WorldGuard。</li>
+    </ul>
+    <p>此前版本要点：这一版加了主题（风格 + 颜色），把聊天的实时刷新彻底修好，并让 App 里做的操作在执行人一栏写成「APP端（用户名）」。</p>
+    <ul>
+      <li><b>动效</b>：开屏动画、切页滑入（按底栏顺序决定方向）、顶栏标题淡入、底栏选中态过渡、弹窗淡入缩放；系统开了「减少动态效果」就自动关掉。</li>
+      <li><b>分段控件</b>：不再左右滑动，改成一整条带分隔线的合体按钮，条目多了换行、文字居中。</li>
+      <li><b>管理页「在线」多了管理层名单</b>：服主 / 副服主 / 管理员 / 协管，在不在线都列，按身份优先、同级在线优先；每行「详情」直接进玩家详情。</li>
+      <li><b>保护对象不再假成功</b>：对 ITNOL 的保护对象点禁言/禁移动/禁交互/全禁，现在会明确告诉你「ITNOL 会拦住这类惩罚」，不会再弹成功。</li>
+      <li><b>玩家详情能返回了</b>：以前点返回会被异步回来的请求又拽回详情页，现在不会。</li>
+      <li><b>iOS 风格 + 悬浮导航</b>：主题里风格多了 <b>iOS</b>（卡片半透明液态玻璃、顶栏与弹窗毛玻璃、系统式分段控件）；主题弹窗里还有「悬浮导航栏」开关，底栏会变成浮起来的一颗胶囊，iOS 风格默认开。</li>
+      <li><b>分段控件圆角修好</b>：以前按钮自己带圆角和投影，套在胶囊容器里圆角对不上、投影还会溢出来。现在容器统一裁切、按钮不再自带投影；条目多了横向滑动，不折行。</li>
+      <li><b>Miuix 布局</b>：不只是配色，卡片内距、圆角、行高、按钮形状、页面边距都跟着 Miuix 走。</li>
+      <li><b>默认落在「我的」</b>：登录 / 重新登录 / 冷启动都从「我的」开始。</li>
+      <li><b>ITNOL 回到插件管理</b>：InTheNameOfLinux 现在出现在「插件联动」和插件管理里，但它的配置、启停、重载只有 <code>Linux582021</code> 能用，别人看到的是灰按钮。</li>
+      <li><b>主题</b>：更多页 →「显示」→「主题」，点开是二级菜单。风格可选 <b>默认</b> 和 <b>Miuix</b>（大圆角、无边框卡片、胶囊按钮、浅底输入框）；颜色可选 天蓝色 / 淡粉色 / 淡绿色 / 古董白 / 黑色 / 灰色，默认天蓝色，深色模式会自动换成对应的深色版本。选完立刻生效并记在本地。</li>
+      <li><b>聊天实时刷新</b>：服务端 <code>/api/chat</code> 原来返回的是全局最后一条消息的 id，游标会被别的频道推过去；重启后 id 又从 1 重来，旧游标就永远查不到新消息。现在返回本次实际最后一条的 id，并在游标跑飞时回 <code>reset</code> 让客户端重拉。App 里聊天页改成 2 秒一轮、8 秒卡死自愈、切到后台再回来立刻刷一次，<b>每次切页也会重拉该页数据</b>。</li>
+      <li><b>只认 <code>[APP]</code> 日志</b>：<code>[NalxerLink] [Link] 有效 token：0</code> 这种插件自身的运行日志不会再被当成玩家发言，只把 <code>[APP] 玩家名：内容</code> 当成 FS1 安卓端的消息。</li>
+      <li><b>执行人写 APP端</b>：从 App 里做的举报受理/驳回、禁言/禁止移动/禁止交互/全部禁止、封禁/解封，记录里的执行人是 <code>APP端（用户名）</code>；在游戏里做的保持原样。</li>
+      <li><b>队伍离线可用</b>：人不在游戏里也能建队 / 加入 / 退出 / 踢人 / 转让 / 解散 —— 之前只要离线，所有队伍按钮都回一句「你现在不在游戏里」。</li>
+      <li><b>队伍管理补齐</b>：邀请、改队标、队伍聊天开关、转让队长、踢人、解散；多队玩家每张卡片上的按钮只对那一支队生效。</li>
+      <li><b>举报筛选</b>：全部 / 待处理 / 已处理，已处理的显示受理还是驳回、处理人和备注。</li>
+      <li><b>玩家详情单独一页</b>：搜索框里点「详情」直接进详情页，左上角有返回，不再挤在管理页下面。</li>
+      <li><b>设置页分组</b>：账号 / 显示 / 管理 / 接口地址 / 插件联动 / 关于软件 / 退出登录，版本号和作者只在「关于软件」和页面最底下出现一次。</li>
+      <li><b>权限收紧</b>：普通玩家看不到「改 Linux 系插件配置文件」的入口。</li>
+      <li><b>26.11.14 NalxerLink 的安卓消息进公屏</b>：装了 <code>NalxerLink</code> 的服务器，安卓客户端（FS1 安卓端）发的聊天会出现在 App 的「世界」频道，名字后面标「· FS1安卓端」，和游戏发言、App 发言一眼分清。只在服务端读日志，不改 NalxerLink；开关 <code>chat.capture-link</code>，前缀名单 <code>chat.link-speakers</code>。</li>
+      <li><b>26.11.12 队伍 / 转账 / 聊天</b>：加入队伍成功却弹「加入失败」已修（LinuxTeam 的 <code>join</code> 是 void，以前把 null 当 false）；接上 <b>NalxerECO</b> 的转账，聊天输入框旁边多一个「转账」按钮，金币走 Vault、点券走 PlayerPoints，规则和税都沿用那个插件的实现；聊天重复显示修好（服务端 1.5 秒内同一句只存一次，App 端按消息 id 去重、请求串行，不再丢最新一条）；有人上线/下线时公屏中间出现灰条提示；在线玩家点「管理」直接进详情页。</li>
+          <li><b>26.11.11 硬依赖 ITNOL</b>：举报 / 惩罚 / 封禁 / 身份验证以前靠反射猜方法名，线上 ITNOL 版本一对不上就报「服务器没有 ITNOL 插件」，已处理的举报也读不出来。现在 plugin.yml 写死 <code>depend: [InTheNameOfLinux]</code>，代码直接调 <code>ReportManager</code> / <code>LinuxPenalty</code> / <code>BanManager</code> / <code>LoginManager</code>，缺插件直接不启动并说明原因。</li>
+      <li><b>26.11.10 我的页加了举报</b>：以前只有管理员能在管理页看举报，普通玩家既没地方提交、也看不到自己举报的结果。现在「我的」页有一张「举报玩家」卡：填 ID 和理由就能提交，下面按时间列出自己的举报，已处理的会写受理还是驳回、谁处理、备注是什么。</li>
+      <li><b>26.11.9 补两处点击</b>：队伍卡片上的按钮（邀请 / 改队标 / 队伍聊天开关 / 转让 / 踢人 / 解散 / 退出）之前按了没反应，是点击事件的匹配列表里漏了这几个按钮；玩家详情页里开惩罚提示「先选一个玩家」，是详情搬成独立页后还去旧位置找名字。</li>
+    </ul>
+    <div class="tip tip-info">
+      <div class="tip-title">版本号的写法</div>
+      从这里开始版本号跟服务端插件对齐，写成 <code>26.11.x</code> 这种「年份.月份.序号」，不再用 1.x。
+    </div>
+  </section>
+    
+        <section class="help-section" id="whatsnew22">
+      <h2>26.11.42 队伍和聊天合成「社交」</h2>
+      <ul class="news">
+        <li>底栏变成：我的 / 社交 / 头衔 / 管理 / 更多，队伍不再是单独一页。</li>
+        <li>社交页顶部的切换控件是三段：公屏 / 队伍频道 / 队伍；最后一段就是队伍管理（我的队伍、建队、服务器上的队伍）。</li>
+        <li>切到「队伍」时聊天输入条会收起，整页只放队伍相关的内容。</li>
+      </ul>
+    </section>
+                <section class="help-section" id="whatsnew28">
+      <h2>26.11.48 消息提醒：提示音 + 振动 + 系统通知</h2>
+      <ul class="news">
+        <li>以前只有顶部弹窗，现在同时响提示音、振动一下（走系统原生的振动与音频，网页版退回浏览器能力）。</li>
+        <li>停在聊天页也会弹，不再只在别的页面弹。</li>
+        <li>新增两个开关：「软件内提醒」（弹窗 + 提示音 + 振动）和「软件外提醒」（退到后台推一条系统通知），各管各的。</li>
+        <li>第一次打开会申请通知权限；拒绝后可以去系统设置里再打开。</li>
+        <li>Miuix 主题的圆角补回来了：选择控件是完整胶囊，输入框有圆角描边，卡片/弹窗/按钮都跟 Miuix 一致。</li>
+      </ul>
+    </section>
+
+                <section class="help-section" id="whatsnew1203">
+                  <h2>26.12.3 新图标 + iOS 12 定位修复</h2>
+                  <ul class="news">
+                    <li><b>换图标</b>：蓝→紫对角渐变底 + 白色 N + 右下薄荷绿点，圆角与配色都重新调过；安卓同时出了自适应前景和圆形版。</li>
+                    <li><b>iOS 12 的开屏动画、弹窗跑到左上角</b>：根因是 CSS 里用了 <code>inset: 0</code>（iOS 14.1 才支持）和 <code>100dvh</code>（iOS 15.4 才支持），老 WebKit 直接丢掉这两条 → 全屏遮罩没有定位。
+                      现在 <code>top/right/bottom/left</code> 与 <code>100vh</code> 都先写了一遍，老系统也认得。</li>
+                    <li>老系统兼容层再补一批：开屏内部、消息弹窗、弹窗卡片之间用外边距补 flex gap；<code>.splash</code> / <code>.modal</code> 再兜一次四方向和宽高。</li>
+                    <li>iOS 12 包的版本号改成读 <code>$(MARKETING_VERSION)</code>，CI 传什么就是什么，不会再出现「包里写着旧版本」。</li>
+                  </ul>
+                </section>
+                <section class="help-section" id="whatsnew1204">
+                  <h2>26.12.4 新图标：白底蓝标</h2>
+                  <ul class="news">
+                    <li>图标换成白底 + 极淡网格 + 蓝色渐变 N（右下蓝点），跟系统里一堆彩色图标放在一起更清爽，也更好认。</li>
+                    <li>iOS 12 那个包之前用的是 Capacitor 框架的默认图标（白底蓝色叉），现在和正式版统一，都是自己的 N。</li>
+                    <li>安卓同步换了方形 / 圆形 / 自适应前景三套资源。</li>
+                  </ul>
+                </section>
+                <section class="help-section" id="whatsnew1206">
+                  <h2>26.12.6 协管权限 / 单设备登录 / 开屏图标 / iOS 12 输入条</h2>
+                  <ul class="news">
+                    <li><b>协管有权限了</b>：XlandCore 的 <code>moderators</code> 名单、<code>config.yml</code> 里新加的 <code>admin.moderators</code>、或游戏里带 <code>linuxapp.moderator</code> 权限的人，登录后角色是 <code>moderator</code>，底栏出现「管理」，但只有「在线 / 玩家 / 举报 / 惩罚」四格。</li>
+                    <li>协管能做的：看在线列表和管理层名单、查玩家详情、处理举报、<b>禁言 / 解除禁言</b>。封禁、禁止移动、禁止交互、全部惩罚、假人、插件配置、su 控制台一律 403，文案直接说「协管只能禁言」。</li>
+                    <li><b>一个账号同时只能在一台设备登录</b>：第二台会提示「已经在另一台设备上登录了，请先在那边退出登录」；原设备点「退出登录」后马上可以换机。原设备还开着的话，下一次请求会收到「已经在另一台设备登录」并被登出。</li>
+                    <li>手机丢了或重装了：登录时确认「踢掉那台设备」就能顶掉旧会话（<code>takeover</code>），不必等旧机操作。</li>
+                    <li><b>开屏和登录页的图标</b>换成框架那张图，和桌面上一致。</li>
+                    <li><b>iOS 12 的聊天输入栏</b>以前会跟着页面滚走，现在老系统单独走 <code>position: fixed</code>，钉在底栏上方。</li>
+                  </ul>
+                </section>
+                <section class="help-section" id="whatsnew1205">
+                  <h2>26.12.5 图标：回到白底蓝叉</h2>
+                  <ul class="news">
+                    <li>图标按你的要求换成 Capacitor 框架自带的那张（白底 + 淡对角网格 + 蓝色交叉标），iOS 用框架原图逐字节替换。</li>
+                    <li>安卓由 1024 主图缩放生成方 / 圆 / 自适应三套，背景色改成白色，自适应前景缩进 66% 安全区。</li>
+                    <li>iOS 12 分支同步换成同一张，两个包图标一致。</li>
+                  </ul>
+                </section>
+                <section class="help-section" id="entitlement">
+                  <h2>装 ipa 报「Application is missing the application-identifier entitlement」</h2>
+                  <ul class="news">
+                    <li>这句话的意思是：这个包装进去的时候<strong>没有带 application-identifier 这个授权项</strong>，不是包坏了，是「没签名 / 签名没注入授权」。</li>
+                    <li>三条路，任选一条：
+                      <br>· <b>先签名再装</b>：全能签里不要点「安装」，走「签名」→ 选证书 → 签完再装；
+                      <br>· <b>用电脑签</b>：Sideloadly / AltStore 登 Apple ID 重签，最稳；
+                      <br>· <b>直接用 ad-hoc 版</b>：下载页那两个「装不上？用 ad-hoc 版」，包里已经用 <code>codesign --sign -</code> 写入了 <code>application-identifier</code> 与 <code>_CodeSignature</code>，TrollStore 这类只认授权的安装器可以直接装。</li>
+                    <li>ad-hoc 版<strong>没有</strong>开发者证书，越狱/TrollStore 之外的普通机器仍然要用证书重签一次才能启动，这点和未签名版一样。</li>
+                    <li>如果重签后还是报同样的错，换一个 Bundle ID（比如 <code>top.nalxer.app2</code>）再签，多半是和已装的旧包冲突。</li>
+                  </ul>
+                </section>
+                <section class="help-section" id="ios12">
+                  <h2>iOS 12 老系统版（26.12.2 起）</h2>
+                  <ul class="news">
+                    <li>下载页多了一个 <code>Nalxer-26.12.6-ios12-unsigned.ipa</code>，最低 <b>iOS 12.0</b>，给 iPhone 6 / 6 Plus / 5s / iPad 4 这类老机器用。</li>
+                    <li>它用的是 Capacitor 3.9.0（新版框架最低要 iOS 13），前端和主版本是<strong>同一套</strong> <code>mobile/www</code>，功能没有删减。</li>
+                    <li>包体约 16.0 MB，因为 Swift 运行库一起打进去了；新系统版仍是 1.12 MB。</li>
+                    <li>老系统的 WebKit 没有 flex gap，包里带 <code>legacy.js</code> / <code>legacy.css</code>：检测到不支持就自动用外边距补间距，并把 <code>-webkit-sticky</code>、惯性滚动补上。</li>
+                    <li>32 位设备（armv7）最高只能到 iOS 10，现代 Xcode 已经不支持，所以这条线到头是 iOS 12 + arm64。</li>
+                    <li>自己编：<code>mobile-ios12/</code> 是独立工程，macOS 上 <code>bash build-ios12.sh 26.12.6</code> 直接出包。</li>
+                  </ul>
+                </section>
+                <section class="help-section" id="whatsnew1202">
+                  <h2>26.12.2 登录页「测试连接」：自己签名的 App 连不上时先看这里</h2>
+                  <ul class="news">
+                    <li>登录按钮下面多了一个「测试连接」，只请求 <code>/api/health</code>，不用账号密码。</li>
+                    <li>成功会显示 <code>HTTP 200，服务端版本 x.y.z</code>；失败会把原始错误原样贴出来。</li>
+                    <li>常见三种原因会自动附上建议：
+                      <br>· <b>ATS</b>：重签名工具（全能签等）重写了 Info.plist，把 http 访问拦掉了 —— 重签时不要勾「修改 Info.plist」，或换回我们给的未签名 ipa 再签；
+                      <br>· <b>Load failed</b>：先在 Safari 打开同一个地址，能看到 JSON 就说明网络没问题、是签名包被限制了 http；
+                      <br>· <b>超时</b>：地址写错、端口没放行、或服务器只在内网。</li>
+                    <li>iOS 端 Info.plist 补了 <code>NSLocalNetworkUsageDescription</code> 与 <code>NSBonjourServices</code>，连局域网服务器时会弹权限说明。</li>
+                  </ul>
+                </section>
+                <section class="help-section" id="whatsnew1201">
+                  <h2>26.12.1 正式版 公屏上下线带时间</h2>
+                  <ul class="news">
+                    <li>公屏里「XX 上线了 / XX 下线了」后面带上时间，例如「TabCheck 上线了 · 01:20」。</li>
+                    <li>提示保持居中灰条，和微信「消息已撤回」一样，不占聊天气泡的位置。</li>
+                    <li>这个版本作为 26.12.6 正式版发布。</li>
+                  </ul>
+                </section>
+                <section class="help-section" id="whatsnew36">
+                  <h2>26.11.46 队伍页彻底不跟随滚动</h2>
+                  <ul class="news">
+                    <li>只有「公屏」「队伍频道」会跟着消息滚到底，「队伍」页完全不跟随。</li>
+                    <li>切到「队伍」时会回到页面顶部，从队伍卡片第一行开始看，不会被上一页的滚动位置带跑。</li>
+                  </ul>
+                </section>
+                <section class="help-section" id="whatsnew35">
+                  <h2>26.11.45 队伍页不再被拉到底</h2>
+                  <ul class="news">
+                    <li>只有「公屏」和「队伍频道」会跟着消息自动滚到底。</li>
+                    <li>「队伍」页保持你当前的位置，来消息也不会把你拽走，方便看队伍和申请。</li>
+                  </ul>
+                </section>
+                <section class="help-section" id="whatsnew34">
+                  <h2>26.11.44 发消息 / 来消息直接拉到底</h2>
+                  <ul class="news">
+                    <li>发完消息、收到新消息都直接把聊天拉到最后，不再做「刚好露出一条」的定位。</li>
+                    <li>进聊天页、切频道同样落在最底部。</li>
+                  </ul>
+                </section>
+                <section class="help-section" id="whatsnew33">
+                  <h2>26.11.43 聊天自动跟到最新一条</h2>
+                  <ul class="news">
+                    <li>自己发完消息，列表自动滚到底，不用再手动往下拉。</li>
+                    <li>别人发来消息也自动跟过去，保证最新那条露在输入框上方，不会被挡住。</li>
+                    <li>切频道、重新进聊天页同样会停在最新的位置。</li>
+                  </ul>
+                </section>
+                <section class="help-section" id="whatsnew32">
+      <h2>26.11.42 提醒更聪明：哪页都能收到</h2>
+      <ul class="news">
+        <li>以前只有聊天页才会提醒，现在<b>任何页面</b>收到别人的新消息都会提示（每 4 秒查一次）。</li>
+        <li>在聊天页只出声、只震动，不再弹卡片挡住消息；在别的页面才弹顶部卡片。</li>
+        <li>顶部卡片会避开灵动岛 / 刘海（跟着系统安全区下移），不会再被挡掉。</li>
+      </ul>
+    </section>
+<section class="help-section" id="whatsnew31">
+      <h2>26.11.41 队伍频道会跟着开关消失 / 大数字带单位</h2>
+      <ul class="news">
+        <li>队长把某个队的<b>队伍聊天</b>关掉后，聊天页顶部的「队伍频道」如果没别的队能用，整段就不显示了；正在队伍频道的话会自己回到公屏。</li>
+        <li>队伍频道里多个队的切换条，也会把关了聊天的队过滤掉。</li>
+        <li>所有开关（深色模式、软件内/外提醒、队伍三个开关）都加了滑动过渡，点下去是滑过去的，不是瞬间跳。</li>
+        <li>金币、点券带单位了：1000 → <b>1K</b>，一百万 → <b>1M</b>，十亿 → <b>1B</b>，再往上还有 T / Q。转账弹窗里的余额也一起改了。</li>
+      </ul>
+    </section>
+<section class="help-section" id="whatsnew30">
+      <h2>26.11.40 队伍申请与队长审批</h2>
+      <ul class="news">
+        <li>队伍页多了一排开关：<b>队伍聊天</b>、<b>队伍伤害</b>、<b>队伍申请</b>，队长点一下就能改，非队长只能看。</li>
+        <li>「队伍申请」打开后，这个队就<b>不再直接进</b>：别人点「申请加入」，队长的队伍卡片上会出现「加入申请 N 条」，可以逐条<b>同意</b>或<b>拒绝</b>。</li>
+        <li>公开队照旧一键加入，没有申请这一步；服务器队伍列表里，需要申请的队伍排在最前面，按钮写「申请加入」，还带一个「需申请」标签。</li>
+        <li>同意时如果对方不在线，也照样批准 —— 他下次进服就在队里了。</li>
+      </ul>
+    </section>
+<section class="help-section" id="whatsnew29">
+      <h2>26.11.49 提醒更靠谱、名字不分大小写</h2>
+      <ul class="news">
+        <li>消息提醒只在真的来了新消息时出现，点来点去不会再重复弹旧消息；软件内提醒弹 2 秒。</li>
+        <li>提醒带提示音与震动（系统原生方式）；退到后台可以推一条系统通知，两个开关各管一边。</li>
+        <li>玩家名一律不分大小写：输 <code>apptest</code> 也能找到 <code>AppTest</code>，名字来源是 InTheNameOfLinux 记过的真实玩家名单。</li>
+        <li>进「管理」默认落在「在线」；从玩家详情返回，回到刚才那一级（在线 / 玩家 / 举报…），不再被拽回玩家页。</li>
+        <li>iOS 浅色模式下状态栏改成深色字，看得清了。</li>
+      </ul>
+    </section>
+<section class="help-section" id="whatsnew27">
+      <h2>26.11.47 管理入口只给服主</h2>
+      <ul class="news">
+        <li>普通管理员在「更多」页看不到「管理」那一块了：su 开关、Linux 系插件、插件联动状态一起隐藏。</li>
+        <li>导航栏的「管理」页照旧：在线、玩家、举报、惩罚、假人、命令、su 都在。</li>
+        <li>就算绕过界面调接口，服务端也会回 403「插件配置只有服主能改」。</li>
+      </ul>
+    </section>
+<section class="help-section" id="whatsnew26">
+      <h2>26.11.46 权限、提醒、历史消息</h2>
+      <ul class="news">
+        <li>插件配置文件的读取、保存、启停、重载只有服主能做；普通管理员进到插件管理只能看，按钮是灰的。</li>
+        <li>主题（风格 + 颜色）对所有人都开放，在「更多 → 显示 → 主题」。</li>
+        <li>聊天有了入场动画；别人发消息时顶部会弹一条 1.5 秒的提醒，可在「更多 → 显示 → 消息弹窗提醒」关掉。</li>
+        <li>每次打开社交页、切换公屏 / 队伍频道，都会重新拉最近 200 条历史，不会再「只看到刚发的」。</li>
+        <li>底栏选中块的圆角改成跟导航栏一致，看起来更贴。</li>
+      </ul>
+    </section>
+<section class="help-section" id="whatsnew25">
+      <h2>26.11.45 一点手感上的修补</h2>
+      <ul class="news">
+        <li>命令分组、多队伍切换、举报筛选这些「点一下会重建按钮」的选择控件，白块现在也会滑过去，不再直接跳。</li>
+        <li>底栏选中块再放大一圈，圆角 18px（悬浮导航 20px）。</li>
+        <li>顶部下拉、底部上推的回弹更明显：最大 150px、阻尼 0.55、松手 420ms 回位。</li>
+      </ul>
+    </section>
+<section class="help-section" id="whatsnew20">
+      <h2>26.11.40 选择控件的白块会滑过去</h2>
+      <ul class="news">
+        <li>点开哪个选项，白色滑块就平移到哪一格，0.28 秒的缓动，和 iOS 的分段控件手感一致。</li>
+        <li>选项换行到第二行时，滑块也会跟着跳到对应的一行。</li>
+        <li>深色模式滑块是半透明白；系统开了「减少动态效果」就不做动画。</li>
+      </ul>
+    </section>
+<section class="help-section" id="whatsnew18">
+      <h2>26.11.18 又改了这些</h2>
+      <ul class="news">
+        <li><b>iOS 风格回到普通配色</b>：不再做半透明毛玻璃，卡片 / 顶栏 / 弹窗都是实底；圆角、间距、胶囊按钮、悬浮导航这些布局保持原样。</li>
+        <li><b>开屏停 2 秒</b>：最少显示两秒再进入，不会一闪而过。</li>
+        <li><b>管理列表挪到在线玩家下面</b>：管理 → 在线，先「在线玩家」，再「管理层」。</li>
+        <li><b>详情按钮点了没反应修好</b>：整行都能点；按下后 1 秒内不再重绘列表；返回时作废在飞请求，不会被拽回详情页。</li>
+        <li><b>开关跟随主题色</b>：iOS 皮肤里「开」不再固定绿色，改成你选的强调色。</li>
+        <li><b>控件布局收尾</b>：分段控件圆角裁齐（不再顶出容器）、聊天页吸顶条不再左右出血、接口地址输入框铺满卡片。</li>
+      </ul>
+    </section>
+
+
+
+<section class="help-section" id="theme">
+    <h2><span class="num">8</span>换主题：风格与颜色（26.12.6）</h2>
+    <p>更多页 →「显示」卡 →「主题」，点开是二级菜单：</p>
+    <table>
+      <thead><tr><th>项目</th><th>可选</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>风格</td><td><code>默认</code> / <code>Miuix</code> / <code>iOS</code></td><td>默认是原来的界面；Miuix 把卡片改成大圆角无边框、按钮和开关改成胶囊、输入框改成浅底无边框、底栏去上边框加阴影；iOS 是液态玻璃：半透明卡片 + 背景毛玻璃、顶栏和弹窗一起毛玻璃、系统式分段控件、按钮带轻微投影。</td></tr>
+        <tr><td>颜色</td><td>天蓝色 / 淡粉色 / 淡绿色 / 古董白 / 黑色 / 灰色</td><td>改的是强调色：按钮、选中态、标签、未读小红点。默认天蓝色；深色模式自动用同一颜色的深色版，不会深底深字。</td></tr>
+      </tbody>
+    </table>
+    <p>选完立刻生效，存在浏览器本地（<code>nalxer.skin</code>、<code>nalxer.accent</code>），换设备或清缓存会回到「默认 · 天蓝色」。</p>
+    <div class="tip tip-info">
+      <div class="tip-title">深色和颜色是两个开关</div>
+      「深色模式」在设置的显卡片里，「主题」只管风格和强调色；两者可以随便组合，比如 Miuix + 淡粉色 + 深色。
+    </div>
+  </section>
+
+
+
+<section class="help-section" id="staff">
+    <h2><span class="num">10</span>管理层名单（26.12.6）</h2>
+    <p>管理页的「在线」子标签，最上面多了一张「管理层」卡：</p>
+    <ul>
+      <li><b>服主 / 副服主 / 管理员 / 协管</b>四组，在不在线都列出来，右边写每组多少人；</li>
+      <li>排序：先按身份（服主 &gt; 副服主 &gt; 管理员 &gt; 协管），同一身份在线的排前面，再按名字；</li>
+      <li>每行一个是「在线 / 离线」，一个是「详情」按钮 —— 点了直接进该玩家的详情页，不用再去搜索框里搜。</li>
+    </ul>
+    <p>名单来源：服主 / 副服主 / 协管读 XlandCore 的配置名单，管理员读服务器 OP 列表。</p>
+  </section>
+
+<section class="help-section" id="navfloat">
+    <h2><span class="num">9</span>悬浮导航栏（26.12.6）</h2>
+    <p>主题弹窗里有一个「悬浮导航栏」开关。打开后底部那排页签会从贴底的一条，变成浮在屏幕下方的一颗胶囊：</p>
+    <ul>
+      <li>半透明底 + 背景毛玻璃 + 大投影，页面内容从它下面滚过去；</li>
+      <li>选中的那项是一颗浅色胶囊（颜色跟着主题的强调色）；</li>
+      <li>页面底部会自动留出空间，聊天输入框和提示条也会跟着上移，不会被挡住。</li>
+    </ul>
+    <p>默认策略：<b>iOS 风格自动开</b>，其他风格默认关。手动改过之后以你选的为准（记在 <code>nalxer.navfloat</code>）。</p>
+  </section>
+
+<section class="help-section" id="admin">
+    <h2><span class="num">7</span>管理员</h2>
+    <p>两种方式成为管理员：把游戏 ID 写进 <code>admin.players</code>，或者给这个玩家服务器 OP（OP 自动算管理员，不用重复填）。</p>
+
+    <div class="code-block"><div>admin:</div><div>  players:</div><div>    - Linux582021    <span class="comment"># 一个 ID 一行（不区分大小写）</span></div><div>    - Steve</div></div>
+
+    <p>改完 <code>/linuxapp reload</code>，名单里的人下次打开 App 就能看到管理页。被移出名单的人要重新登录一次才会掉权限 —— 他手上的令牌还是管理员令牌，直到过期。</p>
+
+    <h3>管理页有七块（1.7.0）</h3>
+    <p>顶上一个横条切子页：<b>在线 / 玩家 / 举报 / 惩罚 / 假人 / 命令 / su</b>。</p>
+    <ul>
+      <li><b>在线</b>：当前在服里的人，点名能进玩家详情。</li>
+      <li><b>玩家</b>：在线 + 离线一起搜，点开有金币 / 等级 / 身份（服主、副服主、市长、协管，读 XlandCore）/ 队伍 / 头衔 / 封禁，下面五种惩罚一键开。</li>
+      <li><b>举报 / 惩罚 / 假人</b>：举报能看未处理和已处理；惩罚按类型解除；假人可以停用 / 启用、停载区块、关刷怪、重生、移除。</li>
+      <li><b>命令</b>：白名单里的常用命令，点一条填参数再执行。</li>
+      <li><b>su</b>：仿真控制台，只有设置里打开才出现，打开前要验一次 Linux 身份；输入的命令以服务器控制台身份执行，回显就是后台那份。</li>
+    </ul>
+
+    <h3>管理页：玩家 / 举报 / 惩罚 / 假人</h3>
+    <p>管理员的「更多」页会多出一张<strong>管理</strong>卡，四个子标签：</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>子标签</th><th>能做什么</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>玩家</td><td>搜在线或离线的玩家 → 点开详情（等级 / 金币 / 点券 / 队伍 / 头衔 / 历史惩罚 / 相关举报）→ 直接封禁或开惩罚。</td></tr>
+          <tr><td>举报</td><td>看玩家提交的举报（举报人、被举报人、理由、时间），逐条<strong>受理</strong>或<strong>驳回</strong>，可以写处理备注。</td></tr>
+          <tr><td>惩罚</td><td>所有生效中的禁言 / 移动封禁 / 方块封禁 / 封禁，按类型分组，点一下就解除。</td></tr>
+          <tr><td>假人</td><td>FakePlayerPlugin 的假人列表（坐标、在线状态），能直接移除；召唤需要你本人正在游戏里。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠️</span>
+      <div class="tip-body">
+        <strong>举报有 30 分钟冷却</strong>
+        同一份举报提交后 30 分钟内不能受理，这是 ITNOL 留的调查时间，不是 App 的 bug。
+      </div>
+    </div>
+
+    <h3>封禁时长选项</h3>
+    <p>App 里给的是四个档，对应的就是接口里的 <code>minutes</code>：</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>选项</th><th>minutes</th><th>什么时候用</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>永久</td><td><code>0</code></td><td>作弊、开小号报复。不传 <code>minutes</code> 也是永久。</td></tr>
+          <tr><td>1 小时</td><td><code>60</code></td><td>刷屏、骂人这类小问题，冷静一下就行。</td></tr>
+          <tr><td>1 天</td><td><code>1440</code></td><td>反复犯同一个小毛病。</td></tr>
+          <tr><td>7 天</td><td><code>10080</code></td><td>恶意破坏、偷东西。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>审计日志</h3>
+    <p>每一次封禁和解封都会往 <code>plugins/LinuxAPP/audit.log</code> 追加一行，一行一次操作，纯文本，直接 <code>tail -f</code> 看：</p>
+
+    <div class="code-block"><div>2026-11-02 21:55:10  Linux582021 封禁 Alex_02（7 天）原因：飞行作弊</div><div>2026-11-02 21:55:25  Linux582021 解封 Alex_02</div><div>2026-11-02 21:54:25  127.0.0.1 登录 Steve → 成功</div></div>
+
+    <p>日志只追加、不自动清理。一个几十人的服务器一年也就几百行，占不了多少地方；真嫌大就手动归档一下，别直接删 —— 出了纠纷它是唯一能拿出来说话的东西。</p>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>管理员名单不是权限组</strong>
+        <code>admin.players</code> 里的人能封人、解封、搜人，还能在下一节的「服务器命令」里跑白名单内的命令。
+        但 <strong>stop / op / give / whitelist 这类写死在黑名单里</strong>，改配置也放不开 —— 出问题最多影响玩家，不会把服务器搞挂。
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="console">
+    <h2><span class="num">8</span>服务器命令（管理员）</h2>
+    <p>管理员在 App 的管理页会多一个「服务器命令」标签。它不是给玩家看的榜单，而是一个<strong>受控的命令执行器</strong>：
+       点一条命令 → 参数自动填进输入框 → 服务器主线程执行 → 回显原样贴回来。</p>
+
+    <p>这样做的好处是 ITNOL 的 <code>/linux xxx</code>、LinuxTAB 的 <code>/ltab</code>、<code>/team</code>、<code>/title</code>、
+       <code>/fp</code> 全都能用，插件以后加新子命令也不用改 App。</p>
+
+    <div class="steps">
+      <li><strong>先选分组</strong>：封禁与解封 / 查人 / 服务器 / Linux 系插件，四个分组覆盖日常操作。</li>
+      <li><strong>点一条</strong>：命令根和参数占位符会填进下面的输入框，比如 <code>linux ban &lt;玩家&gt; [原因]</code>。</li>
+      <li><strong>补完参数</strong>，点「执行」（或直接按回车）。</li>
+      <li><strong>看回显</strong>：下面是服务器真实的输出，分页、配色都已经被剥掉，只剩文字。</li>
+    </div>
+
+    <h3>默认能用哪些命令</h3>
+    <p>白名单在 <code>admin.commands.allow</code>，默认这些根命令：</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>根命令</th><th>干什么</th><th>例子</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>linux</code></td><td>ITNOL 总入口：封禁、查人、插件状态、审计、日志</td><td><code>linux plugins</code>、<code>linux lookup Steve</code></td></tr>
+          <tr><td><code>tempban</code> / <code>unban</code></td><td>临时封禁 / 解封（<code>linux ban</code> 没有时间参数，定时要用 tempban）</td><td><code>tempban Steve 7d 刷屏</code></td></tr>
+          <tr><td><code>banip</code> / <code>unbanip</code></td><td>封 IP（小号报复时用，注意别把网吧 / 学校网段封了）</td><td><code>banip Steve</code></td></tr>
+          <tr><td><code>banlist</code></td><td>看全部封禁记录，分页</td><td><code>banlist 2</code></td></tr>
+          <tr><td><code>ltab</code> / <code>lchest</code></td><td>LinuxTAB 状态与刷新 / 箱子面板</td><td><code>ltab info</code></td></tr>
+          <tr><td><code>title</code> / <code>team</code></td><td>头衔 / 队伍插件</td><td><code>title help</code></td></tr>
+          <tr><td><code>fp</code> / <code>fplist</code> / <code>fpr</code> / <code>fpsave</code> / <code>fpreload</code></td><td>假人插件的增删查、重载、存盘</td><td><code>fplist</code></td></tr>
+          <tr><td><code>linuxsync</code> / <code>linuxapp</code></td><td>玩家数据同步 / 本插件自己的状态与重载</td><td><code>linuxapp status</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>要放开别的根命令，往 <code>admin.commands.allow</code> 里加一行，然后 <code>/linuxapp reload</code>：</p>
+
+    <div class="code-block"><div>admin:</div><div>  commands:</div><div>    enabled: true</div><div>    allow: [linux, banlist, unban, tempban, ltab, team, title, fp]</div><div>    <span class="comment"># 只写根命令，不带斜杠；子命令不受限</span></div></div>
+
+    <h3>永远执行不了的命令</h3>
+    <p>下面这些在代码里写死，<strong>改配置也放不开</strong>：</p>
+
+    <div class="table-scroll">
+      <table class="help-table">
+        <thead>
+          <tr><th>命令</th><th>为什么锁死</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>stop</code> <code>restart</code> <code>reload</code></td><td>一键把服务器关掉或重载，手滑一次全服掉线</td></tr>
+          <tr><td><code>op</code> <code>deop</code> <code>whitelist</code> <code>permissions</code></td><td>提权类，等于把服务器送给别人</td></tr>
+          <tr><td><code>give</code> <code>gamemode</code> <code>gm</code></td><td>刷物品 / 改模式，会直接毁经济</td></tr>
+          <tr><td><code>kick</code> <code>plugins</code> <code>version</code> <code>sudo</code></td><td>踢人、暴露插件列表、代执行任意命令</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip tip-warn">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>执行前会再问一次</strong>
+        标了「谨慎」的命令（封禁、封 IP 这类），点执行时 App 会弹一次确认框，把命令原文念一遍。
+        手指滑到就执行的年代已经过去了。
+      </div>
+    </div>
+
+    <h3>边界与超时</h3>
+    <p>每条命令最多等 <strong>5 秒</strong>，回显最多 <strong>40 行 / 4000 字</strong>，超了就截断 —— 防止有人拿 <code>banlist</code> 一口气翻几百页把 App 卡死。</p>
+    <p>命令在服务器<strong>主线程</strong>执行，和你在控制台敲是一样的效果；执行记录会写进控制台和 <code>audit.log</code>：</p>
+
+    <div class="code-block"><div>2026-11-03 01:44:02  Linux582021 控制台执行 ltab info</div><div>2026-11-03 01:44:15  Linux582021 控制台执行 tempban Steve 7d 刷屏</div></div>
+
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <div class="tip-body">
+        <strong>命令现在是管理页里的一个子标签</strong>
+        1.4.0 起底栏没有单独的「命令」了，进「管理 → 命令」；白名单、危险命令二次确认这些规则没变。
+      </div>
+    </div>
+
+    <h3>不再有「Linux 身份验证」（26.13 起）</h3>
+    <p>以前用受保护账号登录 App 还要再输一次 ITNOL 密码，<strong>这套已经整套去掉</strong>：AuthMe 校验通过就进主界面，
+       日志里会打一行 <code>[LinuxAPP] 二次身份验证：关闭</code>。</p>
+    <ul>
+      <li>权限改成按身份给：<code>caps</code> 里 <code>view / report / mute / ban / fake / config / su</code> 七项，界面按这些显示页签和按钮。</li>
+      <li>Linux 系插件的<strong>配置改不动</strong>不是验证问题，是只有 <code>Linux582021</code> 一个人能改（管理 → 插件）。</li>
+      <li>命令控制台与 su 也按账号给，别人点开会直接提示「只对服主账号开放」。</li>
+    </ul>
+
+    <h3>su 控制台（1.7.0）</h3>
+    <p>「管理 → 命令」最上面那张卡。验证过 Linux 身份之后，可以在弹窗里输入<b>任意命令</b>，不再受
+       <code>admin.commands.allow</code> 白名单限制 —— 给东西、传送、改权限、装插件都行。</p>
+    <ul>
+      <li>只拦 <code>stop</code> / <code>restart</code> / <code>end</code>：这三条按下去服务器就没了，App 里补救不了。</li>
+      <li>每条都写 <code>audit.log</code>，格式 <code>X su 执行 命令</code>。</li>
+      <li>回显里要是「错误 / 找不到 / Unknown command」，App 会直接标红说失败，不会假装成功。</li>
+    </ul>
+
+    <h3>假人逐个开关（1.4.1）</h3>
+    <p>假人列表每个名字下面会标「区块已加载 / 没加载」「会刷怪 / 不刷怪」，右边四个按钮：</p>
+    <ul>
+      <li><b>停载区块 / 加载区块</b> —— 对应 FakePlayerPlugin 的区块常驻（<code>keep-loaded-chunks</code>）；</li>
+      <li><b>关刷怪 / 开刷怪</b> —— 对应 <code>spawn.*</code>，假人站着的地方刷不刷怪；</li>
+      <li><b>重生</b>（按新设置重新出现）、<b>移除</b>。</li>
+    </ul>
+
+    <h3>举报能看已处理（1.4.1）</h3>
+    <p>举报子页分「待处理 / 已处理」两个标签，已处理的会显示处理结果（受理 / 驳回）、处理人和备注。
+       接口是 <code>GET /api/admin/reports?pending=0</code>，返回里带 <code>count</code> / <code>handledCount</code> / <code>pendingCount</code>。</p>
+
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <div class="tip-body">
+        <strong>命令页要重新登录才出现</strong>
+        刚被加进 <code>admin.players</code> 的人，手上的令牌还是普通令牌；让他在设置页退出登录再登一次，管理页和命令标签才会出来。
+      </div>
+    </div>
+  </section>
+
+  <section class="help-section" id="faq">
+    <h2><span class="num">9</span>常见问题</h2>
+    <p>下面这几条覆盖了绝大多数「打不开 / 数据不对」的情况，按顺序试。</p>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>登录提示「游戏密码不对」</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          App 校验的是 <strong>AuthMe 的密码</strong>，不是论坛密码、不是邮箱密码。先在游戏里 <code>/login 密码</code> 确认这个密码是对的。<br>
+          还是不对的话按顺序查：① 玩家在 AuthMe 里注册过没有（<code>plugins/AuthMe/</code> 里能不能找到这个 ID）；② 大小写有没有打错，ID 是区分大小写的；③ 服务器是不是把 <code>login.require-authme</code> 改成了 <code>false</code> —— 关掉后不再校验密码，只放行在线玩家，离线时怎么登都失败。<br>
+          另外注意限流：一分钟内输错 5 次会返回 429，这时候密码是对的也登不上，等一分钟再试。
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>数据全是 0，或者显示成「—」</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          「—」表示<strong>服务端根本没接上那一项数据源</strong>，不是你的数据丢了。用浏览器打开 <code>https://api.nalxer.top/api/health</code>，里面有一个 <code>capabilities</code> 字段，写着每一项接没接上：<br>
+          <code>coins: false</code> → 服务器没装经济插件，或者装了但插件名不在 <code>data.*</code> 的识别列表里；<br>
+          <code>points: false</code> → 点券插件没接上；<br>
+          <code>team: false</code> / <code>title: false</code> → LinuxTeam / LinuxTitle 没装。 <br>
+          而如果显示的是 <strong>0</strong> 而不是「—」，说明数据源接上了，只是这个玩家确实没有：新号、或者数据存在别的插件里。
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>离线玩家的金币显示 0</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          经济插件一般把余额存在内存里，玩家下线才写盘，有的干脆只对在线玩家提供查询接口。插件能做的只有两件事：在线时直接问经济插件要，离线时读它落盘的数据。<br>
+          插件已经做了能做的：玩家在线时把金币记进 <code>plugins/LinuxAPP/stats.yml</code>，离线后读这份缓存显示，所以一般不会是 0。但如果那个玩家从没在线过一次、或者换了经济插件导致旧缓存对不上，就只能是 0 —— 这不是 App 的问题。<br>
+          另外新人第一次进服之前没有任何数据，显示 0 是正常的。
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>手机连不上，浏览器打开 http://服务器IP:49282/api/health 也打不开</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          先分清是<strong>哪一层</strong>不通：本机 / 安全组 / App 填的地址。<br>
+          ① 服务器本机 <code>curl http://127.0.0.1:49282/api/health</code> 不通 → 插件没起来、端口被占，或者 <code>config.yml</code> 的 <code>http.host</code> 被改成了别的网卡，看一眼启动日志；老版本默认是 <code>127.0.0.1:8787</code>（只监听本机），新 jar 会自动改成 <code>0.0.0.0:49282</code>，日志里有一行「已自动改成」；<br>
+          ② 本机通、手机浏览器打 <code>http://服务器IP:49282/api/health</code> 不通 → 云服务器安全组 / 系统防火墙没放行 49282，去控制台加一条入站规则（TCP 49282）；<br>
+          ③ 浏览器能打开、App 连不上 → App 里的地址填错了：忘了端口、多写了 <code>/api</code>、或者末尾多了斜杠。设置页的「测试连接」会直接告诉你通没通、联动接没接上。<br>
+          走 <code>https://api.nalxer.top</code> 域名的话，还要确认 Nginx 反代指向 <code>127.0.0.1:49282</code>、证书没过期（<code>nginx -t</code>，再看 <code>/var/log/nginx/error.log</code>）。
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>服务器换了地址 / 换了域名，App 怎么改</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          进 App 的<strong>设置页</strong>，「接口地址」那一栏直接改成新的 <code>https://</code> 地址，保存后会要求重新登录一次（旧域名发的令牌不作数）。<br>
+          如果连 App 的登录页都进不去（老地址已经彻底不能用了），在登录页也能找到「修改接口地址」的入口。这个地址是存在手机本地的，卸载重装会清掉，等于回到第一次打开的状态。
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span>管理员在管理页搜不到某个玩家</span>
+        <span class="faq-icon"></span>
+      </div>
+      <div class="faq-a-wrap">
+        <div class="faq-a">
+          搜索走的是服务器上记录的玩家数据，<strong>从来没进过服的名字搜不到</strong>，这是正常的。<br>
+          另外两种可能：① 你手上的令牌是加进 <code>admin.players</code> 之前登录的，重新登录一次才会带上管理员身份；② 名字打错了 —— 搜索是模糊匹配但区分大小写，试试只打前三个字母。
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="help-section" id="security">
+    <h2><span class="num">10</span>安全说明</h2>
+    <p>这一节说清楚：密码去了哪、令牌怎么算的、什么样的部署方式等于没设防。</p>
+
+    <h3>密码</h3>
+    <p>App 里输入的密码，只在登录那一次请求里出现一次。插件拿到之后立刻交给 AuthMe 校验，校验完就丢掉 ——
+       <strong>不写配置文件、不写日志、不存数据库</strong>。所以别人拿到服务器上的文件，也翻不到任何人的密码。</p>
+
+    <h3>令牌</h3>
+    <p>登录成功后发的是 HMAC 签名令牌，签名的密钥就是 <code>token.secret</code>。令牌里带着玩家名和过期时间，
+       服务端每次校验都重新算一次签名，对不上就直接 401。默认有效期 <strong>7 天（168 小时）</strong>，改密钥等于让所有令牌立刻作废。</p>
+
+    <h3>限流</h3>
+    <p>每个 IP 每分钟 <strong>5 次登录尝试 / 180 次请求</strong>。前者挡撞库，后者挡脚本刷接口。
+       这两个数字都按 IP 算，所以 Nginx 那一行 <code>X-Real-IP</code> 是硬要求 —— 少了它，全服共用 127.0.0.1 这一个额度。</p>
+
+    <h3>监听与审计</h3>
+    <p>接口默认监听 <code>0.0.0.0:49282</code>，公网可以直接连（明文 HTTP）。想加密就挂 Nginx 或开插件自带 TLS；
+       安全组里也可以只放行自己常用的网段。所有封禁 / 解封都写进
+       <code>plugins/LinuxAPP/audit.log</code>，谁在什么时候封了谁、什么原因、多长时间，一行一条。</p>
+
+    <div class="tip tip-danger">
+      <span class="tip-icon">⚠</span>
+      <div class="tip-body">
+        <strong>别用明文 HTTP 暴露这个接口</strong>
+        密码是在请求体里传的，走 <code>http://</code> 等于把每个人的游戏密码写在明信片上寄出去。
+        一定要 HTTPS，证书用 Let's Encrypt 免费签就行。安卓 9 以后默认也禁止明文 HTTP，这条路本来就走不通。
+      </div>
+    </div>
+
+    <div class="tip tip-info">
+      <span class="tip-icon">ℹ️</span>
+      <div class="tip-body">
+        <strong>被限流挡住的时候怎么办</strong>
+        等一分钟。限流是按 IP 的滑动窗口算的，不会因为你重开 App 就重置。
+        如果是整栋楼共用出口 IP（学校、网吧、公司 NAT），确实可能出现「别人试错把我锁了」的情况 ——
+        这种环境只能把 <code>login.attempts-per-minute</code> 调大，或者干脆别在公共网络里登。
+      </div>
+    </div>
+  </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">LinuxAPP 帮助</div>
+    <p>安装、配置、接口、App 用法，一页看完</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v 26.13.60 · Android / iOS · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+<a href="index.html">← 插件列表</a>
+        &nbsp;·&nbsp;
+<a href="linuxapp.html">插件介绍</a>
+        &nbsp;·&nbsp;
+<a href="linuxhelp.html">综合帮助</a>
+        &nbsp;·&nbsp;
+<a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+    // 页面切换动画：进入淡入 + 离开淡出
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('page-anim');
+
+      // 从 bfcache 返回时清掉淡出状态，否则页面会是半透明的
+      window.addEventListener('pageshow', function () {
+        root.classList.remove('page-leaving');
+      });
+
+      function isInternal(a) {
+        if (!a || !a.href) return false;
+        if (a.target && a.target !== '_self') return false;
+        if (a.hasAttribute('download')) return false;
+        var h = a.getAttribute('href') || '';
+        if (h.charAt(0) === '#') return false;
+        if (a.hostname && a.hostname !== location.hostname) return false;
+        return true;
+      }
+
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a') : null;
+        if (!isInternal(a)) return;
+        if (a.pathname === location.pathname && a.hash) return;
+        e.preventDefault();
+        root.classList.add('page-leaving');
+        setTimeout(function () { location.href = a.href; }, 340);
+      }, true);
+    })();
+
+
+    // 滚动高亮：侧栏 + 本页目录
+    (function () {
+      var links = document.querySelectorAll('.sidebar a');
+      if (!links.length) return;
+
+      function activate(id) {
+        links.forEach(function (a) {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+        });
+      }
+
+      var targets = [];
+      links.forEach(function (a) {
+        var id = (a.getAttribute('href') || '').slice(1);
+        if (!id) return;
+        var el = document.getElementById(id);
+        if (el) targets.push(el);
+      });
+      if (!targets.length) return;
+
+      if (!('IntersectionObserver' in window)) {
+        activate(targets[0].id);
+        return;
+      }
+
+      var visible = {};
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          visible[en.target.id] = en.isIntersecting;
+        });
+        for (var i = 0; i < targets.length; i++) {
+          if (visible[targets[i].id]) { activate(targets[i].id); break; }
+        }
+      }, { rootMargin: '-90px 0px -70% 0px', threshold: 0 });
+
+      targets.forEach(function (t) { io.observe(t); });
+    })();
+
+    // 移动端侧栏抽屉
+    (function () {
+      var sb = document.getElementById('sidebar');
+      var tg = document.getElementById('navToggle');
+      if (!sb || !tg) return;
+
+      var bd = document.createElement('div');
+      bd.className = 'sidebar-backdrop';
+      document.body.appendChild(bd);
+
+      function close() {
+        sb.classList.remove('open');
+        bd.classList.remove('open');
+      }
+
+      tg.addEventListener('click', function (e) {
+        e.stopPropagation();
+        sb.classList.toggle('open');
+        bd.classList.toggle('open');
+      });
+
+      bd.addEventListener('click', close);
+      sb.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') close();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') close();
+      });
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 920) close();
+      });
+    })();
+
+  document.querySelectorAll('.faq-q').forEach((q) => {
+    q.addEventListener('click', () => {
+      q.parentElement.classList.toggle('open');
+    });
+  });
+
+  const sidebarLinks = document.querySelectorAll('.sidebar a');
+    // 参与滚动高亮的锚点：各章节 + 侧栏指向的其它锚点（如 #config-ref）
+    const watched = [];
+    const seen = {};
+    sidebarLinks.forEach((link) => {
+      const href = link.getAttribute('href') || '';
+      if (href.charAt(0) !== '#') return;
+      const id = href.slice(1);
+      if (seen[id]) return;
+      const el = document.getElementById(id);
+      if (el) { watched.push(el); seen[id] = true; }
+    });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        sidebarLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, {
+    rootMargin: '-80px 0px -60% 0px',
+    threshold: 0
+  });
+
+  watched.forEach((s) => observer.observe(s));
+
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      // 只处理本页锚点；别的页面的 #xxx 交给浏览器
+      if (this.getAttribute('href').indexOf('#') > 0) return;
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>
