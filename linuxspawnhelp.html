@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>帮助 · LinuxSpawn</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css?v=20261101c">
+    <link rel="stylesheet" href="liquid-glass.css?v=20261101c">
+</head>
+<body class="pure-white">
+
+<!-- ===== 液态玻璃折射滤镜（被 liquid-glass.css 的 backdrop-filter 引用） =====
+     这是"玻璃的厚度场"：把背景按边缘梯度掰弯，
+     让它像透过一块有弧边的玻璃，而不是糊了一层白膜。 -->
+<svg class="lw-glass-defs" aria-hidden="true" focusable="false"
+     width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <defs>
+        <filter id="lw-glass" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="40"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="50"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thick" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="48"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="72"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thin" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="16"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="20"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="24"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+    </defs>
+</svg>
+
+
+<div class="bg-mobile" aria-hidden="true"></div>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="fakeplayer.html">FakePlayerPlugin 介绍</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          <span class="nav-text">Nalxer 服务器</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="plug-hero-ver">26.11.16</span>
+    <h1>LinuxSpawn 帮助中心</h1>
+    <p>刷怪倍率、配置文件、卡服分析与 App 联动</p>
+  </div>
+</section>
+
+<div class="container content-layout no-toc">
+
+      <aside class="sidebar" id="sidebar">
+            <div class="sidebar-track">
+                <ul class="sidebar-flat">
+          <li class="sidebar-group-label" data-group="开始使用">开始使用</li>
+          <li><a href="#quickstart">快速开始</a></li>
+          <li><a href="#commands">命令详解</a></li>
+          <li class="sidebar-group-label" data-group="功能说明">功能说明</li>
+          <li><a href="#config">配置文件全键</a></li>
+          <li><a href="#perf">卡服分析与加固</a></li>
+          <li><a href="#app">和 LinuxAPP 联动</a></li>
+          <li class="sidebar-group-label" data-group="参考与帮助">参考与帮助</li>
+          <li><a href="#faq">常见问题</a></li>
+        </ul>
+      </div>
+    </aside>
+
+  <main class="main-content">
+
+<section class="help-section" id="quickstart">
+    <h2><span class="num">1</span>快速开始</h2>
+
+    <p>LinuxSpawn 只改一件事：<b>原版刷怪的频率</b>。它把世界的
+    <code>ticksPerMonsterSpawns</code> / <code>ticksPerAnimalSpawns</code> 置 0，让原版那次调用直接返回，
+    然后每 tick 自己调用<b>同一个</b> <code>SpawnerCreature.a(...)</code>。位置、群系、光照、地表、
+    世界边界、玩家距离、生物上限、<code>CreatureSpawnEvent</code> 全部还是原版代码在判断。</p>
+
+    <h3>安装</h3>
+    <ol>
+      <li>把 <code>LinuxSpawn.jar</code> 放进 <code>plugins/</code>，重启服务器。</li>
+      <li>控制台出现 <code>[LinuxSpawn] 已接管世界 world</code> 就说明生效了。</li>
+      <li>进游戏执行 <code>/spawnrate list</code> 看每个世界的倍率。</li>
+    </ol>
+
+    <div class="note">
+      <p><b>只支持 1.12.2（v1_12_R1）。</b>它直接调用 NMS 的 <code>SpawnerCreature</code>，
+      其他版本类签名不同，启动会直接停用自己。</p>
+    </div>
+
+    <h3>三个最常用的操作</h3>
+    <pre><code>/spawnrate set world monster 2      # 生存世界怪物 2 倍
+/spawnrate set world creature 0    # 动物不刷
+/spawnrate stats                   # 看每秒循环数与单轮耗时</code></pre>
+</section>
+
+<section class="help-section" id="commands">
+    <h2><span class="num">2</span>命令详解</h2>
+    <p>主命令 <code>/spawnrate</code>，别名 <code>/sprate</code>；权限 <code>spawnrate.admin</code>（默认 OP）。</p>
+
+    <table>
+      <thead><tr><th>命令</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><code>/spawnrate list</code></td><td>列出所有世界的接管状态、四类倍率和玩家数</td></tr>
+        <tr><td><code>/spawnrate stats</code></td><td>每秒原版循环数、每秒生成数、单轮耗时、当前 TPS</td></tr>
+        <tr><td><code>/spawnrate set &lt;世界&gt; &lt;类别&gt; &lt;倍率&gt;</code></td><td>类别：<code>monster</code> / <code>creature</code> / <code>water-creature</code> / <code>ambient</code>；倍率 0~1000，写回 config.yml 并立即生效</td></tr>
+        <tr><td><code>/spawnrate clean [世界|*] [类别|all] [半径|all] [dry]</code></td><td>分批清理自然怪物；<code>dry</code> 只统计不删</td></tr>
+        <tr><td><code>/spawnrate reload</code></td><td>重读 config.yml（保留注释，不会被格式化掉）</td></tr>
+      </tbody>
+    </table>
+
+    <h3>倍率是怎么算的</h3>
+    <p>原版怪物每 tick 跑一次、动物每 400 tick 跑一次；倍率 1 就是原版，2 就是每 tick 跑两轮，
+    0.5 就是隔一 tick 跑一轮。动物类别实际周期是 <code>lcm(动物周期, 400)</code>，所以倍率会按这个基准折算。
+    一轮的循环次数上限由 <code>max-cycles-per-tick</code>（默认 8）截断，防止某个世界一口气跑太多。</p>
+</section>
+
+<section class="help-section" id="config">
+    <h2><span class="num">3</span>配置文件全键</h2>
+    <p>文件：<code>plugins/LinuxSpawn/config.yml</code>。改完 <code>/spawnrate reload</code> 即可，不用重启。</p>
+
+    <table>
+      <thead><tr><th>键</th><th>默认</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><code>enabled</code></td><td>true</td><td>总开关；关掉就不接管任何世界</td></tr>
+        <tr><td><code>default-multiplier.monster</code></td><td>1.0</td><td>没单独配置的世界用这个</td></tr>
+        <tr><td><code>default-multiplier.creature</code></td><td>1.0</td><td>动物</td></tr>
+        <tr><td><code>default-multiplier.water-creature</code></td><td>1.0</td><td>水生</td></tr>
+        <tr><td><code>default-multiplier.ambient</code></td><td>1.0</td><td>环境（蝙蝠等）</td></tr>
+        <tr><td><code>worlds.&lt;世界&gt;.enabled</code></td><td>—</td><td>单独开关某个世界；<code>false</code> 就完全还原原版</td></tr>
+        <tr><td><code>worlds.&lt;世界&gt;.&lt;类别&gt;</code></td><td>—</td><td>该世界的四类倍率</td></tr>
+        <tr><td><code>max-cycles-per-tick</code></td><td>8</td><td>单 tick 最多跑几轮，1~64</td></tr>
+        <tr><td><code>safety.enabled</code></td><td>true</td><td>低 TPS 自动暂停</td></tr>
+        <tr><td><code>safety.min-tps</code></td><td>15.0</td><td>低于这个 TPS 就不再补刷（世界仍被接管）</td></tr>
+        <tr><td><code>cleaner.auto.enabled</code></td><td>true</td><td>自动清理自然怪物</td></tr>
+        <tr><td><code>cleaner.auto.interval-seconds</code></td><td>600</td><td>多久清一次</td></tr>
+        <tr><td><code>cleaner.auto.batch-size</code></td><td>250</td><td><b>26.11.16 新增</b>，每 tick 最多删多少只，50~2000</td></tr>
+        <tr><td><code>cleaner.auto.budget-ms</code></td><td>4</td><td><b>26.11.16 新增</b>，每 tick 最多花多少毫秒，1~20</td></tr>
+        <tr><td><code>cleaner.auto.protect-named</code></td><td>true</td><td>有名字的不清</td></tr>
+        <tr><td><code>cleaner.auto.protect-tamed</code></td><td>true</td><td>驯服的不清</td></tr>
+        <tr><td><code>cleaner.auto.protect-leashed</code></td><td>true</td><td>拴着的不清</td></tr>
+        <tr><td><code>cleaner.auto.protect-from-mob-spawner</code></td><td>true</td><td>刷怪笼产物不清</td></tr>
+        <tr><td><code>cleaner.auto.protect-invulnerable</code></td><td>true</td><td>无敌的不清</td></tr>
+        <tr><td><code>cleaner.auto.protected-types</code></td><td>[wither, ender_dragon]</td><td>白名单实体类型</td></tr>
+        <tr><td><code>debug</code></td><td>false</td><td>打印每次循环的细节（排查用，平时关）</td></tr>
+      </tbody>
+    </table>
+</section>
+
+<section class="help-section" id="perf">
+    <h2><span class="num">4</span>卡服分析与 26.11.16 加固</h2>
+
+    <p><b>结论：不会比原版更卡。</b>它调的是原版同一个 <code>SpawnerCreature</code>，一轮的耗时和原版完全一样
+    （测试服实测单轮 0.24 ms）；倍率只是让这一 tick 多跑几轮，而且有 <code>max-cycles-per-tick</code> 截断。
+    真正需要防的是<b>清理</b>和<b>每 tick 的杂项开销</b>，26.11.16 把这些都改了：</p>
+
+    <table>
+      <thead><tr><th>位置</th><th>改之前</th><th>改之后</th></tr></thead>
+      <tbody>
+        <tr><td>世界列表</td><td>每 tick 复制一份 <code>Bukkit.getWorlds()</code></td><td>缓存 20 tick</td></tr>
+        <tr><td><code>doMobSpawning</code></td><td>每 tick 读 gamerule 并解析字符串</td><td>缓存 20 tick</td></tr>
+        <tr><td>清理半径</td><td>每只实体 new 一个 <code>Location</code></td><td>直接用 NMS 坐标算平方距离</td></tr>
+        <tr><td>清理执行</td><td>单 tick 遍历并删除全部命中实体</td><td>每 tick 最多 250 只 / 4 ms</td></tr>
+        <tr><td>刷怪笼标记</td><td>每次生成都写一遍 NBT</td><td>已有 tag 就跳过</td></tr>
+        <tr><td>TPS 保护</td><td>没有</td><td>低于 15 自动暂停，恢复后继续</td></tr>
+      </tbody>
+    </table>
+
+    <h3>压测数据（测试服，Paper 1.12.2）</h3>
+    <ul>
+      <li>倍率 1：约 20 次循环 / 秒，单轮 0.24 ms，TPS 19.9。</li>
+      <li>倍率 5：循环数升到窗口均值 35.7 次 / 秒（60 秒窗口被前段 1 倍稀释，即时值约 100），
+      <b>生成数仍是 1.4 只 / 秒</b> —— 因为 mobcap 已满，说明上限还是原版在管。</li>
+      <li>整个过程 TPS 19.86，恢复倍率后 19.87。</li>
+    </ul>
+</section>
+
+<section class="help-section" id="app">
+    <h2><span class="num">5</span>和 LinuxAPP 联动</h2>
+
+    <p>服务端装了 <code>LinuxAPP</code>（26.13.56 起）后，启动日志会出现：</p>
+    <pre><code>[LinuxAPP] [联动] 已接上 LinuxSpawn 刷怪（状态 / 倍率 / 清理）</code></pre>
+
+    <p>手机 App（iOS 13+ 原生界面）的「管理」页会多一个<b>刷怪</b>页签：</p>
+    <ul>
+      <li>总览：接管状态、当前 TPS、单 tick 上限、低 TPS 保护阈值、自动清理剩余时间。</li>
+      <li>每个世界一节：怪物 / 动物 / 水生 / 环境四类倍率，点一下就能改。</li>
+      <li>操作：清理这个世界的自然怪物、全部世界各清一次、让 LinuxSpawn 重读 config.yml。</li>
+    </ul>
+
+    <p>底层接口（也可以自己写脚本调）：</p>
+    <table>
+      <thead><tr><th>接口</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><code>GET /api/admin/spawn</code></td><td>返回 <code>{ok, available, data:{enabled,tps,safety…,worlds:[…]}}</code></td></tr>
+        <tr><td><code>POST /api/admin/spawn {"action":"set","world":"world","category":"monster","value":2}</code></td><td>改倍率</td></tr>
+        <tr><td><code>POST /api/admin/spawn {"action":"clean","world":"world"}</code></td><td>分批清理</td></tr>
+        <tr><td><code>POST /api/admin/spawn {"action":"reload"}</code></td><td>重读配置</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      <p>LinuxSpawn 没装时，<code>GET /api/admin/spawn</code> 返回 <code>available:false</code>，
+      App 里那个页签也会自动隐藏。</p>
+    </div>
+</section>
+
+<section class="help-section" id="faq">
+    <h2><span class="num">6</span>常见问题</h2>
+
+    <h3>调了倍率但怪物没变多？</h3>
+    <p>先看 <code>/spawnrate stats</code>：<b>循环数</b>上升但<b>生成数</b>不变，说明是 mobcap 满了 ——
+    这时候该清怪或调 <code>spawn-limits</code>，而不是继续加倍率。</p>
+
+    <h3>生存世界怪太少 / 太多，人少的时候卡？</h3>
+    <p>把倍率单独给那个世界设，或者用 <code>safety.min-tps</code> 让低 TPS 时自动停。</p>
+
+    <h3>刷怪笼会受影响吗？</h3>
+    <p>不会。刷怪笼是 <code>TileEntityMobSpawner</code> 自己 tick，LinuxSpawn 完全不碰；
+    它产出的怪还会被清理器保护（<code>protect-from-mob-spawner</code>）。</p>
+
+    <h3>清理会不会把我养的动物清了？</h3>
+    <p>默认类别只有 <code>monster</code>；而且命名、驯服、拴绳、无敌、刷怪笼产物都不清。
+    想连动物一起清就加类别 <code>creature</code>，但建议保留 <code>protect-tamed</code>。</p>
+
+    <h3>能卸载吗？</h3>
+    <p>直接删 jar 重启即可，<code>onDisable</code> 会把两个计数器还原成原版值，不会留下被接管的世界。</p>
+
+    <h3>多人同时改倍率会冲突吗？</h3>
+    <p>每次 <code>set</code> 都会重写 config.yml 并 reload；两个人同时改不同世界没问题，改同一个值以最后一次为准。</p>
+</section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">LinuxSpawn 帮助</div>
+    <p>在服务器里放置不会掉线的"假玩家"</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v26.12.11 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+<a href="index.html">← 插件列表</a>
+        &nbsp;·&nbsp;
+<a href="fakeplayer.html">插件介绍</a>
+        &nbsp;·&nbsp;
+<a href="linuxhelp.html">综合帮助</a>
+        &nbsp;·&nbsp;
+<a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+    // 页面切换动画：进入淡入 + 离开淡出
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('page-anim');
+
+      // 从 bfcache 返回时清掉淡出状态，否则页面会是半透明的
+      window.addEventListener('pageshow', function () {
+        root.classList.remove('page-leaving');
+      });
+
+      function isInternal(a) {
+        if (!a || !a.href) return false;
+        if (a.target && a.target !== '_self') return false;
+        if (a.hasAttribute('download')) return false;
+        var h = a.getAttribute('href') || '';
+        if (h.charAt(0) === '#') return false;
+        if (a.hostname && a.hostname !== location.hostname) return false;
+        return true;
+      }
+
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a') : null;
+        if (!isInternal(a)) return;
+        if (a.pathname === location.pathname && a.hash) return;
+        e.preventDefault();
+        root.classList.add('page-leaving');
+        setTimeout(function () { location.href = a.href; }, 340);
+      }, true);
+    })();
+
+
+    // 滚动高亮：侧栏 + 本页目录
+    (function () {
+      var links = document.querySelectorAll('.sidebar a');
+      if (!links.length) return;
+
+      function activate(id) {
+        links.forEach(function (a) {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+        });
+      }
+
+      var targets = [];
+      links.forEach(function (a) {
+        var id = (a.getAttribute('href') || '').slice(1);
+        if (!id) return;
+        var el = document.getElementById(id);
+        if (el) targets.push(el);
+      });
+      if (!targets.length) return;
+
+      if (!('IntersectionObserver' in window)) {
+        activate(targets[0].id);
+        return;
+      }
+
+      var visible = {};
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          visible[en.target.id] = en.isIntersecting;
+        });
+        for (var i = 0; i < targets.length; i++) {
+          if (visible[targets[i].id]) { activate(targets[i].id); break; }
+        }
+      }, { rootMargin: '-90px 0px -70% 0px', threshold: 0 });
+
+      targets.forEach(function (t) { io.observe(t); });
+    })();
+
+    // 移动端侧栏抽屉
+    (function () {
+      var sb = document.getElementById('sidebar');
+      var tg = document.getElementById('navToggle');
+      if (!sb || !tg) return;
+
+      var bd = document.createElement('div');
+      bd.className = 'sidebar-backdrop';
+      document.body.appendChild(bd);
+
+      function close() {
+        sb.classList.remove('open');
+        bd.classList.remove('open');
+      }
+
+      tg.addEventListener('click', function (e) {
+        e.stopPropagation();
+        sb.classList.toggle('open');
+        bd.classList.toggle('open');
+      });
+
+      bd.addEventListener('click', close);
+      sb.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') close();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') close();
+      });
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 920) close();
+      });
+    })();
+
+  document.querySelectorAll('.faq-q').forEach((q) => {
+    q.addEventListener('click', () => {
+      q.parentElement.classList.toggle('open');
+    });
+  });
+
+  const sidebarLinks = document.querySelectorAll('.sidebar a');
+    // 参与滚动高亮的锚点：各章节 + 侧栏指向的其它锚点（如 #config-ref）
+    const watched = [];
+    const seen = {};
+    sidebarLinks.forEach((link) => {
+      const href = link.getAttribute('href') || '';
+      if (href.charAt(0) !== '#') return;
+      const id = href.slice(1);
+      if (seen[id]) return;
+      const el = document.getElementById(id);
+      if (el) { watched.push(el); seen[id] = true; }
+    });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        sidebarLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, {
+    rootMargin: '-80px 0px -60% 0px',
+    threshold: 0
+  });
+
+  watched.forEach((s) => observer.observe(s));
+
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>
