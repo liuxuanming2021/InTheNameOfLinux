@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>LinuxShop · 系统商店 / 抽奖 / 股票</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css?v=20261117a">
+    <link rel="stylesheet" href="liquid-glass.css?v=20261117a">
+</head>
+<body class="intro-page">
+
+<!-- ===== 液态玻璃折射滤镜（被 liquid-glass.css 的 backdrop-filter 引用） =====
+     这是"玻璃的厚度场"：把背景按边缘梯度掰弯，
+     让它像透过一块有弧边的玻璃，而不是糊了一层白膜。 -->
+<svg class="lw-glass-defs" aria-hidden="true" focusable="false"
+     width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <defs>
+        <filter id="lw-glass" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="40"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="50"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thick" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="48"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="60"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="72"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+        <filter id="lw-glass-thin" x="0" y="0" width="100%" height="100%"
+                    color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="soft"/>
+            <feOffset in="soft" dx="8" dy="0" result="sxp"/>
+            <feOffset in="soft" dx="-8" dy="0" result="sxn"/>
+            <feComposite in="sxp" in2="sxn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gx"/>
+            <feOffset in="soft" dx="0" dy="8" result="syp"/>
+            <feOffset in="soft" dx="0" dy="-8" result="syn"/>
+            <feComposite in="syp" in2="syn" operator="arithmetic"
+                         k1="0" k2="-2.5" k3="2.5" k4="0.5" result="gy"/>
+            <feColorMatrix in="gx" type="matrix"
+                           values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="mx"/>
+            <feColorMatrix in="gy" type="matrix"
+                           values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="my"/>
+            <feComposite in="mx" in2="my" operator="arithmetic"
+                         k1="0" k2="1" k3="1" k4="0" result="base_map"/>
+            <feComponentTransfer in="base_map" result="map">
+                <feFuncR type="linear" slope="1.05" intercept="-0.025"/>
+                <feFuncG type="linear" slope="1.05" intercept="-0.025"/>
+            </feComponentTransfer>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="16"
+                               xChannelSelector="R" yChannelSelector="G" result="dispR"/>
+            <feColorMatrix in="dispR" type="matrix"
+                           values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyR"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="20"
+                               xChannelSelector="R" yChannelSelector="G" result="dispG"/>
+            <feColorMatrix in="dispG" type="matrix"
+                           values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="onlyG"/>
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="24"
+                               xChannelSelector="R" yChannelSelector="G" result="dispB"/>
+            <feColorMatrix in="dispB" type="matrix"
+                           values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="onlyB"/>
+            <feBlend in="onlyR" in2="onlyG" mode="screen" result="rg"/>
+            <feBlend in="rg" in2="onlyB" mode="screen"/>
+        </filter>
+    </defs>
+</svg>
+
+
+<div class="bg-mobile" aria-hidden="true"></div>
+
+<video class="bg-video" id="bgVideo" loop muted playsinline
+       preload="none" aria-hidden="true" poster="mobile.jpg"></video>
+
+<nav class="nav-home">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">L</span>
+      Linux582021 的插件
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#plugins">插件列表</a></li>
+      <li><a href="#features">功能</a></li>
+      <li><a href="#commands">命令</a></li>
+      <li><a href="linuxhelp.html" class="nav-help">综合帮助</a></li>
+      <li>
+        <a href="http://nalxer.top" target="_blank" rel="noopener noreferrer" class="nav-external">
+          <span class="nav-text">Nalxer 服务器</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<header class="cover cover-page has-video">
+  <div class="cover-overlay"></div>
+
+    <div class="cover-inner">
+    <span class="plug-hero-ver">26.11.1 · Paper 1.12.2</span>
+
+    <h1 class="cover-title">LinuxShop</h1>
+    <p class="cover-subtitle">SHOP · LOTTERY · STOCK</p>
+
+    <hr class="cover-divider">
+
+    <p class="cover-quote">
+      买、卖、抽、赌都在这一个界面里
+      <br>
+      <strong>回收价只有买价的 10%</strong>
+    </p>
+
+    <div class="cover-nav">
+        <a href="#features" class="cover-btn">了解功能</a>
+        <a href="#rules" class="cover-btn">抽奖与股票规则</a>
+        <a href="linuxhelp.html" class="cover-btn">综合帮助中心</a>
+    </div>
+
+    <div class="cover-remark">
+      <p><strong>8</strong> 个分类 · <strong>90+</strong> 件商品 · 1000 次/天</p>
+    </div>
+  </div>
+</header>
+<div class="intro-body">
+
+<section id="what">
+  <div class="container">
+    <div class="intro-split">
+      <div class="intro-copy reveal">
+        <p class="eyebrow">WHAT IT IS</p>
+        <h2>一个界面解决四种玩法</h2>
+        <p>系统商店沿用 EconomyShop 的分类买/卖，回收价统一压到买价的 <strong>十分之一</strong>，
+        金币不会从商店里凭空变多。抽奖只给<strong>特效</strong>，不给任何物品或货币；
+        股票是零和的随机游走，赚亏全看买卖时机。</p>
+        <p>全部文字、提示、物品名都是中文，1.12.2 服务端直接能用。</p>
+      </div>
+      <div class="intro-stats reveal">
+        <div class="stat-block"><span class="stat-num">10%</span><span class="stat-label">回收价 / 买价</span></div>
+        <div class="stat-block"><span class="stat-num">1000</span><span class="stat-label">每天抽奖次数</span></div>
+        <div class="stat-block"><span class="stat-num">50 万</span><span class="stat-label">抽奖 / 炒股门槛</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="alt">
+  <div class="container">
+    <p class="eyebrow">FEATURES</p>
+    <h2>功能</h2>
+    <div class="grid grid-3">
+      <div class="card reveal">
+        <h3>/shop 系统商店</h3>
+        <p>8 个分类、90 多件商品。左键买 1、Shift+左键买 64、右键卖 1、Shift+右键卖 64，
+        每次操作后自动刷新，lore 里直接写买价和回收价。</p>
+      </div>
+      <div class="card reveal">
+        <h3>/lottery 抽奖</h3>
+        <p>金币 10000 / 次，点券 10 / 次，可单抽或十连。每人每天 1000 次，
+        金币低于 50 万不能用金币抽（点券不受限），100 抽必出稀有特效。</p>
+      </div>
+      <div class="card reveal">
+        <h3>奖品只有特效</h3>
+        <p>移动拖尾与头顶粒子两类，金币池 10 天、点券池 30 天，
+        100 抽保底 30 / 60 天。到期自动失效，重复抽到自动叠加时间。</p>
+      </div>
+      <div class="card reveal">
+        <h3>/stock 股票</h3>
+        <p>5 只股票，每 60 秒跳一次价。涨 / 跌 / 平稳三种趋势随机切换，
+        带 1% 手续费，买卖各 1 股或 10 股。</p>
+      </div>
+      <div class="card reveal">
+        <h3>点卷商店入口</h3>
+        <p>商店主界面右下角就是点卷商店，点一下直接打开 PointsShop 的界面，
+        没装也不报错，只提示未安装。</p>
+      </div>
+      <div class="card reveal">
+        <h3>全中文 + 低依赖</h3>
+        <p>Vault 经济 + PlayerPoints 点券，PointsShop 可选。
+        自带 data.yml 保存股价、持股、抽奖次数与特效到期时间。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="rules">
+  <div class="container">
+    <p class="eyebrow">RULES</p>
+    <h2>抽奖与股票规则</h2>
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <h3>抽奖</h3>
+        <ul>
+          <li>每天最多 <strong>1000</strong> 次（金币 + 点券合计，0 点清空）</li>
+          <li>金币单抽 <strong>10000</strong>，十连 100000</li>
+          <li>金币余额低于 <strong>50 万</strong> 不能抽金币池（点券抽奖例外）</li>
+          <li>点券单抽 <strong>10</strong>，十连 100</li>
+          <li><strong>100 抽</strong>保底一个稀有特效，抽到后重新计数</li>
+          <li>奖品只发特效，绝不产出金币、点券或物品</li>
+        </ul>
+      </div>
+      <div class="card reveal">
+        <h3>股票</h3>
+        <ul>
+          <li>金币余额低于 <strong>50 万</strong> 不能交易（和抽奖同一门槛）</li>
+          <li>每 60 秒更新一次价格，走势条显示最近 12 次</li>
+          <li>涨 / 跌 / 平稳随机切换，趋势持续 5~20 次后重新抽</li>
+          <li>带 <strong>均值回归</strong>：离基准价越远，往回拉得越狠，不会一直涨或一直跌</li>
+          <li>单次最大涨跌幅 8%，买卖各收 <strong>1%</strong> 手续费</li>
+          <li>价格只在玩家之间转移，服务器不增发金币</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="commands" class="alt">
+  <div class="container">
+    <p class="eyebrow">COMMANDS</p>
+    <h2>命令</h2>
+    <div class="card reveal">
+      <ul>
+        <li><code>/shop</code> — 打开系统商店（别名：商店、lsshop）</li>
+        <li><code>/lottery</code> — 打开抽奖（别名：抽奖、lsdraw）</li>
+        <li><code>/stock</code> — 打开股票（别名：股票、lsstock）</li>
+        <li><code>/linuxshop reload</code> — 重载配置</li>
+        <li><code>/linuxshop giveeffect &lt;玩家&gt; &lt;特效id&gt; &lt;天&gt;</code> — 直接发特效</li>
+        <li><code>/linuxshop resetdraws &lt;玩家&gt;</code> — 清空今日抽奖次数</li>
+        <li><code>/linuxshop prices</code> / <code>/linuxshop eco &lt;玩家&gt;</code> — 看股价 / 看余额（排查用）</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="compat">
+  <div class="container">
+    <p class="eyebrow">COMPAT</p>
+    <h2>和别的插件怎么相处</h2>
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <h3>Vault 经济</h3>
+        <p>反射接 Vault 的 <code>getBalance</code> / <code>withdrawPlayer</code> /
+        <code>depositPlayer</code>，EssentialsX 之类都能用。经济插件比它晚启动也没关系，
+        插件会在 20 秒后自动重试一次。</p>
+      </div>
+      <div class="card reveal">
+        <h3>PlayerPoints / PointsShop</h3>
+        <p>点券走 PlayerPoints 3.x；点卷商店只负责打开 PointsShop 的界面，
+        没装就显示「未安装点券商店」，其余功能照常。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="get">
+  <div class="cta-band reveal">
+    <p class="cta-wordmark">LinuxShop</p>
+    <p>商店、抽奖、股票，一个插件全包了。</p>
+    <div class="cta-actions">
+      <a href="index.html#plugins" class="btn btn-primary">← 返回插件列表</a>
+      <a href="linuxhelp.html" class="btn btn-secondary">综合帮助中心</a>
+    </div>
+  </div>
+</section>
+</div>
+
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">LinuxShop</div>
+    <p>系统商店 · 抽奖 · 股票，全部中文</p>
+    <p style="margin-top: 16px; font-size: 13px;">
+      v26.11.1 · Minecraft 1.12.2 · Made with ♥ by Linux582021
+    </p>
+    <p style="margin-top: 12px;">
+<a href="index.html">← 插件列表</a>
+        &nbsp;·&nbsp;
+<a href="linuxshop.html#rules">玩法说明</a>
+        &nbsp;·&nbsp;
+<a href="linuxhelp.html">综合帮助</a>
+        &nbsp;·&nbsp;
+<a href="http://nalxer.top" target="_blank" rel="noopener noreferrer">Nalxer 服务器 → nalxer.top</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+    // 页面切换动画：进入淡入 + 离开淡出
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('page-anim');
+
+      // 从 bfcache 返回时清掉淡出状态，否则页面会是半透明的
+      window.addEventListener('pageshow', function () {
+        root.classList.remove('page-leaving');
+      });
+
+      function isInternal(a) {
+        if (!a || !a.href) return false;
+        if (a.target && a.target !== '_self') return false;
+        if (a.hasAttribute('download')) return false;
+        var h = a.getAttribute('href') || '';
+        if (h.charAt(0) === '#') return false;
+        if (a.hostname && a.hostname !== location.hostname) return false;
+        return true;
+      }
+
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a') : null;
+        if (!isInternal(a)) return;
+        if (a.pathname === location.pathname && a.hash) return;
+        e.preventDefault();
+        root.classList.add('page-leaving');
+        setTimeout(function () { location.href = a.href; }, 340);
+      }, true);
+    })();
+
+    // 背景视频：只在宽屏加载（与主页一致）
+    (function () {
+      var v = document.getElementById('bgVideo');
+      if (!v) return;
+      var mq = window.matchMedia('(min-width: 921px)');
+      function apply() {
+        if (mq.matches) {
+          if (!v.getAttribute('src')) {
+            v.setAttribute('src', 'video.mp4');
+            v.load();
+            var pr = v.play();
+            if (pr && pr.catch) { pr.catch(function () {}); }
+          }
+        } else {
+          try { v.pause(); } catch (e) {}
+          v.removeAttribute('src');
+          try { v.load(); } catch (e) {}
+        }
+      }
+      apply();
+      if (mq.addEventListener) { mq.addEventListener('change', apply); }
+      else if (mq.addListener) { mq.addListener(apply); }
+    })();
+
+  // 滚动淡入
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // 触发一次就撤掉监听，避免反复播放
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    // 不能用 0.1：比视口高的元素永远凑不满 10%，会一直 opacity:0
+    threshold: 0,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  document.querySelectorAll('.reveal').forEach((el) => {
+    observer.observe(el);
+  });
+
+  // 兜底：滚动结束后仍未显示的，直接显示（防止某些浏览器不触发）
+  setTimeout(function () {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) {
+        el.classList.add('visible');
+      }
+    });
+  }, 1200);
+
+  // 平滑滚动
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ============================================================
+  // 移动端汉堡菜单
+  // ============================================================
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('open') &&
+          !navLinks.contains(e.target) &&
+          !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>
